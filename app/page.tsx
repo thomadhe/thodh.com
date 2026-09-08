@@ -1,69 +1,104 @@
-import Image from "next/image";
+import { BouncingApps } from "@/components/bouncing-apps"
+import { ProjectCard } from "@/components/project-card"
+import { SiteHeader } from "@/components/site-header"
+import {
+  buildingProjects,
+  CONTACT_EMAIL,
+  shippedProjects,
+} from "@/lib/projects"
+
+function MailIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m3 7 9 6 9-6" />
+    </svg>
+  )
+}
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
+    <div className="page-grid min-h-full">
+      <div className="mx-auto flex min-h-full w-full max-w-lg flex-col px-5 sm:px-6">
+        <SiteHeader actionHref="/kontakt" actionLabel="Kontakt" />
+
+        <main className="flex flex-1 flex-col gap-16 py-14 sm:py-16">
+          <section className="flex flex-col items-center text-center">
+            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-700/80">
+              Om meg
+            </p>
+            <h1 className="mt-4 max-w-sm text-[2rem] font-semibold leading-[1.15] tracking-tight text-neutral-950 sm:text-[2.35rem]">
+              Thomas bygger nyttige ting
+            </h1>
+            <p className="mt-6 max-w-md font-mono text-[13px] leading-7 text-neutral-500">
+              Student på NTNU. Viber litt på fritiden og deler
+              prosessen. Ta en titt på hva jeg har lagd :)
+            </p>
+            <div className="relative mt-8 h-[300px] w-full">
+              <BouncingApps />
+            </div>
             <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="mt-2 inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-neutral-950 text-sm font-medium text-white transition-colors hover:bg-neutral-800"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+              <MailIcon />
+              Kontakt meg
+            </a>
+          </section>
+
+          <section>
+            <div className="mb-4">
+              <p className="font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-neutral-400">
+                Shipped
+              </p>
+              <h2 className="mt-2 text-xl font-semibold tracking-tight text-neutral-950">
+                Ute nå
+              </h2>
+            </div>
+
+            <div className="overflow-hidden rounded-3xl border border-black/5 bg-white">
+              {shippedProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <div className="mb-4">
+              <p className="font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-neutral-400">
+                Building
+              </p>
+              <h2 className="mt-2 text-xl font-semibold tracking-tight text-neutral-950">
+                Under arbeid
+              </h2>
+            </div>
+
+            <div className="overflow-hidden rounded-3xl border border-black/5 bg-white">
+              {buildingProjects.map((project, i) => (
+                <div key={project.id}>
+                  {i > 0 ? <div className="h-px bg-black/5" /> : null}
+                  <ProjectCard project={project} />
+                </div>
+              ))}
+            </div>
+          </section>
+        </main>
+
+        <footer className="border-t border-black/5 py-8">
+          <p className="text-center font-mono text-[11px] uppercase tracking-[0.18em] text-neutral-400">
+            Lær → Bygg → Del
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+        </footer>
+      </div>
     </div>
-  );
+  )
 }
