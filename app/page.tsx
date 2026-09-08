@@ -40,8 +40,8 @@ export default function Home() {
               Thomas bygger nyttige ting
             </h1>
             <p className="mt-6 max-w-md font-mono text-[13px] leading-7 text-neutral-500">
-              Student på NTNU. Viber litt på fritiden og deler
-              prosessen. Ta en titt på hva jeg har lagd :)
+              Student på NTNU. Viber litt på fritiden, ta en titt på hva
+              jeg har lagd :)
             </p>
             <div className="relative mt-8 h-[300px] w-full">
               <BouncingApps />

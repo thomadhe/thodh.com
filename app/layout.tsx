@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     template: "%s — thodh.com",
   },
   description:
-    "Student på NTNU. Viber litt på fritiden.",
+    "Student på NTNU. Viber litt på fritiden, ta en titt på hva jeg har lagd :)",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
