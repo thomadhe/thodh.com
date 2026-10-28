@@ -3,6 +3,7 @@ import { LiveDuration } from "@/components/live-duration"
 import { formatStarted, type Project } from "@/lib/projects"
 
 export function ProjectCard({ project }: { project: Project }) {
+  const external = project.href?.startsWith("https://") ?? false
   const barColor =
     project.status === "shipped" ? "bg-emerald-500" : "bg-blue-500"
 
@@ -15,12 +16,14 @@ export function ProjectCard({ project }: { project: Project }) {
             {project.href ? (
               <a
                 href={project.href}
-                target="_blank"
-                rel="noopener noreferrer"
+                target={external ? "_blank" : undefined}
+                rel={external ? "noopener noreferrer" : undefined}
                 className="text-[15px] font-semibold tracking-tight text-neutral-950 transition-colors hover:text-neutral-600"
               >
                 {project.name}
-                <span className="ml-1.5 inline-block text-neutral-400">↗</span>
+                <span aria-hidden="true" className="ml-1.5 inline-block text-neutral-400">
+                  {external ? "↗" : "→"}
+                </span>
               </a>
             ) : (
               <h3 className="text-[15px] font-semibold tracking-tight text-neutral-950">

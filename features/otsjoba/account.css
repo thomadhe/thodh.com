@@ -1,0 +1,11 @@
+.account-save-status { color: #53664f; font-size: 12px; padding: 0 0 18px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.account-save-status button { text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.legacy-import { padding: 20px; margin-bottom: 24px; background: #f3eee3; border: 1px solid #ded7c7; border-radius: 14px; font-size: 14px; }
+.legacy-import p { margin: 8px 0 14px; line-height: 1.6; }
+.legacy-import button { background: #fff; border: 1px solid #ccc6b9; border-radius: 8px; padding: 9px 12px; margin: 0 10px 6px 0; cursor: pointer; }
+.legacy-import button:disabled { opacity: .5; }
+.account-notice { max-width: 540px; margin: 12vh auto; padding: 24px; line-height: 1.7; }
+.account-notice h1 { font-size: 28px; font-weight: 600; margin-bottom: 12px; }
+.account-notice a, .account-notice button { display: inline-block; margin: 20px 20px 0 0; text-decoration: underline; cursor: pointer; }
+.profile > div:last-child { min-width: 0; }
+.account-email { max-width: 145px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

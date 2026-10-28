@@ -1,0 +1,2333 @@
+{
+  "it": [
+    {
+      "id": "it-caffe",
+      "title": "En pause på kafé",
+      "subtitle": "Bestill, presiser og be om regningen.",
+      "level": "A2",
+      "icon": "coffee",
+      "opening": "Buongiorno! Accomodati pure. Oggi abbiamo anche dei cornetti appena sfornati.",
+      "openingTranslation": "God dag! Bare sett deg. I dag har vi også nybakte croissanter.",
+      "steps": [
+        {
+          "question": "Che cosa desideri da bere?",
+          "translation": "Hva ønsker du å drikke?",
+          "expected": [
+            "Vorrei un cappuccino, per favore.",
+            "Prendo un cappuccino, per favore."
+          ],
+          "hint": "Bestill en cappuccino høflig: «Vorrei un cappuccino, per favore.»",
+          "reply": "Certo! Te lo porto subito.",
+          "replyTranslation": "Selvfølgelig! Jeg kommer med den med en gang."
+        },
+        {
+          "question": "Vuoi anche qualcosa da mangiare?",
+          "translation": "Vil du også ha noe å spise?",
+          "expected": [
+            "Sì, vorrei un cornetto senza crema.",
+            "Vorrei un cornetto senza crema.",
+            "Prendo un cornetto senza crema."
+          ],
+          "hint": "Be om en croissant uten krem: «Vorrei un cornetto senza crema.»",
+          "reply": "Va bene, un cornetto semplice.",
+          "replyTranslation": "Greit, en vanlig croissant."
+        },
+        {
+          "question": "Hai finito o desideri altro?",
+          "translation": "Er du ferdig, eller ønsker du noe mer?",
+          "expected": [
+            "Ho finito, grazie. Posso pagare con la carta?",
+            "Posso pagare con la carta, per favore?"
+          ],
+          "hint": "Si at du er ferdig, og spør om kortbetaling.",
+          "reply": "Sì, puoi pagare con la carta alla cassa.",
+          "replyTranslation": "Ja, du kan betale med kort i kassen."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "vorrei",
+          "translation": "jeg vil gjerne ha"
+        },
+        {
+          "word": "appena sfornato",
+          "translation": "nybakt"
+        },
+        {
+          "word": "senza crema",
+          "translation": "uten krem"
+        },
+        {
+          "word": "il conto",
+          "translation": "regningen"
+        },
+        {
+          "word": "pagare con la carta",
+          "translation": "betale med kort"
+        }
+      ]
+    },
+    {
+      "id": "it-treno",
+      "title": "På vei med tog",
+      "subtitle": "Finn avgang, billett og riktig spor.",
+      "level": "A2",
+      "icon": "train",
+      "opening": "Buongiorno, sono qui per aiutarti a organizzare il viaggio. Dove vuoi andare?",
+      "openingTranslation": "God dag, jeg er her for å hjelpe deg med å planlegge reisen. Hvor vil du dra?",
+      "steps": [
+        {
+          "question": "Che biglietto ti serve?",
+          "translation": "Hvilken billett trenger du?",
+          "expected": [
+            "Vorrei un biglietto per Firenze.",
+            "Mi serve un biglietto per Firenze."
+          ],
+          "hint": "Be om én billett til Firenze.",
+          "reply": "Va bene. Preferisci partire la mattina o il pomeriggio?",
+          "replyTranslation": "Greit. Foretrekker du å reise om morgenen eller ettermiddagen?"
+        },
+        {
+          "question": "Quando vorresti partire?",
+          "translation": "Når vil du gjerne reise?",
+          "expected": [
+            "Vorrei partire domani mattina.",
+            "Preferisco partire domani mattina."
+          ],
+          "hint": "Svar at du vil reise i morgen tidlig.",
+          "reply": "C’è un treno alle nove, con un cambio.",
+          "replyTranslation": "Det går et tog klokken ni, med ett bytte."
+        },
+        {
+          "question": "Hai qualche domanda sul viaggio?",
+          "translation": "Har du noen spørsmål om reisen?",
+          "expected": [
+            "Dove devo cambiare treno?",
+            "Mi può dire dove devo cambiare treno?"
+          ],
+          "hint": "Spør hvor du må bytte tog.",
+          "reply": "In questo esempio devi cambiare a Bologna.",
+          "replyTranslation": "I dette eksempelet må du bytte i Bologna."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "un biglietto",
+          "translation": "en billett"
+        },
+        {
+          "word": "partire",
+          "translation": "reise / dra"
+        },
+        {
+          "word": "domani mattina",
+          "translation": "i morgen tidlig"
+        },
+        {
+          "word": "cambiare treno",
+          "translation": "bytte tog"
+        },
+        {
+          "word": "il binario",
+          "translation": "sporet"
+        }
+      ]
+    },
+    {
+      "id": "it-presentarsi",
+      "title": "Mer enn et første hei",
+      "subtitle": "Fortell om deg selv og hvorfor du lærer.",
+      "level": "B1",
+      "icon": "hand",
+      "opening": "Ciao! Io sono Giulia. Mi piacerebbe sapere qualcosa di te e del tuo rapporto con l’italiano.",
+      "openingTranslation": "Hei! Jeg er Giulia. Jeg vil gjerne høre litt om deg og forholdet ditt til italiensk.",
+      "steps": [
+        {
+          "question": "Perché hai deciso di studiare italiano?",
+          "translation": "Hvorfor bestemte du deg for å lære italiensk?",
+          "expected": [
+            "Studio italiano perché vorrei conoscere meglio la cultura italiana.",
+            "Vorrei conoscere meglio la cultura italiana, per questo studio italiano."
+          ],
+          "hint": "Knytt motivasjonen til kultur: «Studio italiano perché vorrei conoscere meglio la cultura italiana.»",
+          "reply": "È una bella motivazione. La lingua può aiutarti a capire punti di vista diversi.",
+          "replyTranslation": "Det er en fin motivasjon. Språket kan hjelpe deg å forstå ulike perspektiver."
+        },
+        {
+          "question": "Qual è la cosa più difficile quando parli?",
+          "translation": "Hva er vanskeligst når du snakker?",
+          "expected": [
+            "Capisco abbastanza bene, ma faccio fatica a trovare le parole.",
+            "Faccio fatica a trovare le parole, anche se capisco abbastanza bene."
+          ],
+          "hint": "Bruk «ma» eller «anche se» for å uttrykke en kontrast.",
+          "reply": "Capisco. Possiamo esercitarci a riformulare un’idea con parole più semplici.",
+          "replyTranslation": "Jeg forstår. Vi kan øve på å formulere en idé med enklere ord."
+        },
+        {
+          "question": "Come vorresti usare l’italiano nei prossimi mesi?",
+          "translation": "Hvordan vil du bruke italiensk de neste månedene?",
+          "expected": [
+            "Vorrei parlare con più sicurezza quando viaggio in Italia.",
+            "Quando viaggio in Italia, vorrei parlare con più sicurezza."
+          ],
+          "hint": "Beskriv et mål med «vorrei» og en situasjon med «quando».",
+          "reply": "Allora partiamo da situazioni concrete e proviamo a sviluppare le risposte.",
+          "replyTranslation": "Da begynner vi med konkrete situasjoner og øver på å utdype svarene."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "conoscere meglio",
+          "translation": "bli bedre kjent med"
+        },
+        {
+          "word": "fare fatica a",
+          "translation": "streve med å"
+        },
+        {
+          "word": "anche se",
+          "translation": "selv om"
+        },
+        {
+          "word": "con più sicurezza",
+          "translation": "med større trygghet"
+        },
+        {
+          "word": "riformulare",
+          "translation": "formulere på nytt"
+        }
+      ]
+    },
+    {
+      "id": "it-ristorante",
+      "title": "En middag med meninger",
+      "subtitle": "Begrunn et valg og løs et lite problem.",
+      "level": "B1",
+      "icon": "utensils",
+      "opening": "Stasera scegliamo un ristorante insieme. Mi interessa sapere che cosa conta per te quando mangi fuori.",
+      "openingTranslation": "I kveld velger vi en restaurant sammen. Jeg er interessert i hva som er viktig for deg når du spiser ute.",
+      "steps": [
+        {
+          "question": "Preferisci un posto elegante o un locale semplice?",
+          "translation": "Foretrekker du et elegant sted eller et enkelt spisested?",
+          "expected": [
+            "Preferisco un locale semplice, purché si mangi bene.",
+            "Un locale semplice va bene, se il cibo è buono."
+          ],
+          "hint": "Velg et enkelt sted, med god mat som betingelse. Prøv «purché» eller «se».",
+          "reply": "Sono d’accordo: l’atmosfera conta, ma il cibo è fondamentale.",
+          "replyTranslation": "Jeg er enig: atmosfæren teller, men maten er avgjørende."
+        },
+        {
+          "question": "Che cosa diresti se il piatto arrivasse freddo?",
+          "translation": "Hva ville du sagt hvis maten kom kald?",
+          "expected": [
+            "Mi scusi, il piatto è freddo. Potrebbe riscaldarlo?",
+            "Potrebbe riscaldare il piatto, per favore? È freddo."
+          ],
+          "hint": "Forklar problemet og be høflig om hjelp med «potrebbe».",
+          "reply": "Mi dispiace, lo faccio riscaldare subito.",
+          "replyTranslation": "Beklager, jeg sørger for at den blir varmet med en gang."
+        },
+        {
+          "question": "Come racconteresti questa serata a un amico?",
+          "translation": "Hvordan ville du fortalt en venn om denne kvelden?",
+          "expected": [
+            "All’inizio il piatto era freddo, però il personale ha risolto il problema.",
+            "Il personale ha risolto il problema, anche se all’inizio il piatto era freddo."
+          ],
+          "hint": "Fortell om problemet og løsningen. Bruk «però» eller «anche se».",
+          "reply": "Hai collegato bene i due momenti della serata.",
+          "replyTranslation": "Du har knyttet de to øyeblikkene i kvelden godt sammen."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "purché",
+          "translation": "forutsatt at"
+        },
+        {
+          "word": "il personale",
+          "translation": "personalet"
+        },
+        {
+          "word": "riscaldare",
+          "translation": "varme opp"
+        },
+        {
+          "word": "risolvere un problema",
+          "translation": "løse et problem"
+        },
+        {
+          "word": "però",
+          "translation": "men / likevel"
+        }
+      ]
+    },
+    {
+      "id": "it-abitudini",
+      "title": "Tid til det som teller",
+      "subtitle": "Sammenlign vaner og fortell om en endring.",
+      "level": "B1",
+      "icon": "wave",
+      "opening": "Oggi parliamo delle piccole abitudini che cambiano le nostre giornate. A volte basta poco per stare meglio.",
+      "openingTranslation": "I dag snakker vi om små vaner som endrer dagene våre. Noen ganger skal det lite til for å få det bedre.",
+      "steps": [
+        {
+          "question": "C’è un’abitudine che hai cambiato di recente?",
+          "translation": "Er det en vane du nylig har endret?",
+          "expected": [
+            "Prima guardavo il telefono appena sveglio, ora preferisco leggere.",
+            "Ora preferisco leggere, mentre prima guardavo subito il telefono.",
+            "Prima guardavo il telefono appena sveglia, ora preferisco leggere."
+          ],
+          "hint": "Sammenlign før og nå med «prima» og «ora». Eksempelet bruker hankjønnsformen «sveglio»; du kan bruke «sveglia».",
+          "reply": "È un cambiamento interessante. Ti lascia più spazio per pensare?",
+          "replyTranslation": "Det er en interessant endring. Gir det deg mer rom til å tenke?"
+        },
+        {
+          "question": "Che effetto ha avuto sulla tua giornata?",
+          "translation": "Hvilken virkning har det hatt på dagen din?",
+          "expected": [
+            "Mi sento più tranquillo e riesco a concentrarmi meglio.",
+            "Mi sento più tranquilla e riesco a concentrarmi meglio."
+          ],
+          "hint": "Beskriv ro og konsentrasjon. Velg «tranquillo» eller «tranquilla».",
+          "reply": "Quindi hai notato un vantaggio concreto nella vita quotidiana.",
+          "replyTranslation": "Så du har merket en konkret fordel i hverdagen."
+        },
+        {
+          "question": "Che consiglio daresti a chi vuole cambiare una piccola abitudine?",
+          "translation": "Hvilket råd ville du gitt noen som vil endre en liten vane?",
+          "expected": [
+            "Consiglierei di iniziare con un obiettivo piccolo e realistico.",
+            "Secondo me, è meglio iniziare con un obiettivo piccolo e realistico."
+          ],
+          "hint": "Gi et forsiktig råd: start med et lite og realistisk mål.",
+          "reply": "Un passo alla volta: è un consiglio facile da mettere in pratica.",
+          "replyTranslation": "Ett skritt av gangen: det er et råd som er lett å sette ut i livet."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "un’abitudine",
+          "translation": "en vane"
+        },
+        {
+          "word": "appena sveglio / sveglia",
+          "translation": "rett etter at man har våknet"
+        },
+        {
+          "word": "riuscire a",
+          "translation": "klare å"
+        },
+        {
+          "word": "consiglierei",
+          "translation": "jeg ville anbefalt"
+        },
+        {
+          "word": "mettere in pratica",
+          "translation": "sette ut i livet"
+        }
+      ]
+    },
+    {
+      "id": "it-turismo",
+      "title": "Hvem tilhører byen?",
+      "subtitle": "Drøft turisme med forbehold og motargumenter.",
+      "level": "B2",
+      "icon": "compass",
+      "opening": "Immaginiamo una città molto visitata. Il turismo crea opportunità, ma può anche cambiare la vita dei residenti. Proviamo a discutere entrambe le prospettive.",
+      "openingTranslation": "La oss forestille oss en mye besøkt by. Turismen skaper muligheter, men kan også endre innbyggernes liv. La oss drøfte begge perspektivene.",
+      "steps": [
+        {
+          "question": "Qual è, secondo te, il principale vantaggio del turismo?",
+          "translation": "Hva er etter din mening den viktigste fordelen med turisme?",
+          "expected": [
+            "Il turismo sostiene l’economia locale, a patto che i benefici siano distribuiti equamente.",
+            "A patto che i benefici siano distribuiti equamente, il turismo sostiene l’economia locale."
+          ],
+          "hint": "Knytt økonomisk nytte til en betingelse: «a patto che» + konjunktiv.",
+          "reply": "Hai introdotto una condizione importante: conta anche chi beneficia della crescita.",
+          "replyTranslation": "Du har innført en viktig betingelse: det betyr også noe hvem som nyter godt av veksten."
+        },
+        {
+          "question": "Come risponderesti a chi vuole limitare drasticamente il numero dei visitatori?",
+          "translation": "Hvordan ville du svart noen som vil begrense antallet besøkende kraftig?",
+          "expected": [
+            "Capisco la preoccupazione, tuttavia un limite rigido potrebbe penalizzare le piccole imprese.",
+            "Un limite rigido potrebbe penalizzare le piccole imprese, anche se capisco la preoccupazione."
+          ],
+          "hint": "Anerkjenn bekymringen før du presenterer et motargument. Bruk «tuttavia».",
+          "reply": "È un’obiezione pertinente. Una misura può risolvere un problema e crearne un altro.",
+          "replyTranslation": "Det er en relevant innvending. Et tiltak kan løse ett problem og skape et annet."
+        },
+        {
+          "question": "Quale compromesso proporresti?",
+          "translation": "Hvilket kompromiss ville du foreslått?",
+          "expected": [
+            "Proporrei di distribuire meglio i flussi turistici e di coinvolgere i residenti nelle decisioni.",
+            "Coinvolgerei i residenti nelle decisioni e cercherei di distribuire meglio i flussi turistici."
+          ],
+          "hint": "Foreslå både bedre fordeling av besøk og medvirkning fra innbyggerne.",
+          "reply": "La proposta tiene insieme la gestione delle visite e la partecipazione dei residenti.",
+          "replyTranslation": "Forslaget kombinerer styring av besøk med innbyggernes deltakelse."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "a patto che",
+          "translation": "forutsatt at"
+        },
+        {
+          "word": "equamente",
+          "translation": "rettferdig"
+        },
+        {
+          "word": "tuttavia",
+          "translation": "likevel / imidlertid"
+        },
+        {
+          "word": "penalizzare",
+          "translation": "gå ut over / stille dårligere"
+        },
+        {
+          "word": "coinvolgere",
+          "translation": "involvere"
+        },
+        {
+          "word": "i residenti",
+          "translation": "innbyggerne"
+        }
+      ]
+    },
+    {
+      "id": "it-appuntamenti",
+      "title": "Skal vi finne på noe?",
+      "subtitle": "Lag en plan, avtal et møtested og ha et alternativ.",
+      "level": "A2",
+      "icon": "wave",
+      "opening": "Ciao, sono Giulia! Questo fine settimana ho un po’ di tempo libero. Organizziamo qualcosa insieme?",
+      "openingTranslation": "Hei, jeg er Giulia! Denne helgen har jeg litt ledig tid. Skal vi finne på noe sammen?",
+      "steps": [
+        {
+          "question": "Ti va di fare una passeggiata sabato?",
+          "translation": "Har du lyst til å gå en tur på lørdag?",
+          "expected": [
+            "Sì, volentieri! Sono libero sabato pomeriggio.",
+            "Sì, volentieri! Sono libera sabato pomeriggio."
+          ],
+          "hint": "Si ja og fortell at du er ledig lørdag ettermiddag. Velg «libero» eller «libera».",
+          "reply": "Sabato pomeriggio va bene anche per me.",
+          "replyTranslation": "Lørdag ettermiddag passer for meg også."
+        },
+        {
+          "question": "A che ora e dove ci incontriamo?",
+          "translation": "Når og hvor skal vi møtes?",
+          "expected": [
+            "Possiamo incontrarci alle tre davanti alla biblioteca.",
+            "Ci incontriamo alle tre davanti alla biblioteca?"
+          ],
+          "hint": "Foreslå klokken tre foran biblioteket: «alle tre davanti alla biblioteca».",
+          "reply": "La biblioteca è facile da trovare. Io arrivo a piedi.",
+          "replyTranslation": "Biblioteket er lett å finne. Jeg kommer til fots."
+        },
+        {
+          "question": "E se piove, che cosa possiamo fare?",
+          "translation": "Og hvis det regner, hva kan vi gjøre?",
+          "expected": [
+            "Se piove, possiamo andare al museo.",
+            "Possiamo andare al museo se piove."
+          ],
+          "hint": "Foreslå et museumsbesøk hvis det regner. Bruk «se piove».",
+          "reply": "Così abbiamo anche un programma al coperto.",
+          "replyTranslation": "Da har vi også en plan for noe innendørs."
+        },
+        {
+          "question": "Come confermi il nostro appuntamento con un breve messaggio?",
+          "translation": "Hvordan bekrefter du avtalen vår i en kort melding?",
+          "expected": [
+            "Allora ci vediamo sabato alle tre davanti alla biblioteca. A presto!",
+            "Confermato: sabato alle tre davanti alla biblioteca. A presto!"
+          ],
+          "hint": "Gjenta dag, klokkeslett og møtested. Avslutt gjerne med «A presto!».",
+          "reply": "Perfetto, ho segnato l’appuntamento. A sabato!",
+          "replyTranslation": "Flott, jeg har skrevet opp avtalen. Vi ses på lørdag!"
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "ti va di…?",
+          "translation": "har du lyst til å …?"
+        },
+        {
+          "word": "volentieri",
+          "translation": "gjerne"
+        },
+        {
+          "word": "davanti a",
+          "translation": "foran"
+        },
+        {
+          "word": "a piedi",
+          "translation": "til fots"
+        },
+        {
+          "word": "al coperto",
+          "translation": "innendørs / under tak"
+        },
+        {
+          "word": "ci vediamo",
+          "translation": "vi ses"
+        }
+      ]
+    },
+    {
+      "id": "it-racconto-passato",
+      "title": "Turen du fortsatt husker",
+      "subtitle": "Fortell med bakgrunn, hendelse og avslutning.",
+      "level": "B1",
+      "icon": "compass",
+      "opening": "Oggi raccontiamo una piccola avventura del passato. Può essere un ricordo vero oppure una storia inventata: l’importante è far capire che cosa è successo.",
+      "openingTranslation": "I dag forteller vi om et lite eventyr fra fortiden. Det kan være et ekte minne eller en oppdiktet historie: det viktige er å få fram hva som skjedde.",
+      "steps": [
+        {
+          "question": "Dove hai passato un fine settimana che ricordi bene, e con chi?",
+          "translation": "Hvor tilbrakte du en helg du husker godt, og hvem var du sammen med?",
+          "expected": [
+            "L’estate scorsa ho passato un fine settimana in montagna con alcuni amici.",
+            "Ho passato un fine settimana in montagna con alcuni amici, l’estate scorsa."
+          ],
+          "hint": "Plasser historien i tid og sted. Eksempelet bruker «ho passato» om en avsluttet helg.",
+          "reply": "Un fine settimana in montagna offre molti spunti per un racconto.",
+          "replyTranslation": "En helg på fjellet gir mange muligheter for en fortelling."
+        },
+        {
+          "question": "Com’era il tempo e che cosa stavate facendo prima dell’imprevisto?",
+          "translation": "Hvordan var været, og hva holdt dere på med før det uventede skjedde?",
+          "expected": [
+            "Faceva bel tempo e camminavamo su un sentiero vicino al lago.",
+            "Camminavamo su un sentiero vicino al lago e faceva bel tempo."
+          ],
+          "hint": "Bruk imperfetto til bakgrunnen: «faceva» om været og «camminavamo» om det dere holdt på med.",
+          "reply": "Fin qui sembra una giornata tranquilla. Poi qualcosa è cambiato.",
+          "replyTranslation": "Så langt høres det ut som en rolig dag. Så endret noe seg."
+        },
+        {
+          "question": "Che cosa è successo mentre camminavate?",
+          "translation": "Hva skjedde mens dere gikk?",
+          "expected": [
+            "Mentre camminavamo, è cominciato a piovere e abbiamo cercato un riparo.",
+            "È cominciato a piovere mentre camminavamo, così abbiamo cercato un riparo."
+          ],
+          "hint": "Kombiner «mentre camminavamo» med hendelsene «è cominciato» og «abbiamo cercato».",
+          "reply": "La pioggia ha cambiato i vostri piani. Vediamo come si conclude la storia.",
+          "replyTranslation": "Regnet endret planene deres. La oss se hvordan historien slutter."
+        },
+        {
+          "question": "Come è finita la giornata e perché la ricordi ancora?",
+          "translation": "Hvordan endte dagen, og hvorfor husker du den fortsatt?",
+          "expected": [
+            "Alla fine abbiamo trovato un piccolo bar. Ricordo quella giornata perché abbiamo riso molto.",
+            "Abbiamo trovato un piccolo bar e abbiamo riso molto: per questo ricordo ancora quella giornata."
+          ],
+          "hint": "Avslutt med det som skjedde til slutt, og forklar hvorfor minnet har blitt værende.",
+          "reply": "A volte è proprio un imprevisto a rendere speciale un ricordo.",
+          "replyTranslation": "Noen ganger er det nettopp noe uventet som gjør et minne spesielt."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "l’estate scorsa",
+          "translation": "i fjor sommer"
+        },
+        {
+          "word": "un sentiero",
+          "translation": "en sti"
+        },
+        {
+          "word": "mentre",
+          "translation": "mens"
+        },
+        {
+          "word": "un imprevisto",
+          "translation": "noe uventet / en uventet hendelse"
+        },
+        {
+          "word": "un riparo",
+          "translation": "ly / et sted å søke ly"
+        },
+        {
+          "word": "alla fine",
+          "translation": "til slutt"
+        }
+      ]
+    },
+    {
+      "id": "it-descrivere-sintomi",
+      "title": "Finn ordene hos legen",
+      "subtitle": "Bestill time og beskriv en oppdiktet plage tydelig.",
+      "level": "B1",
+      "icon": "hand",
+      "opening": "Facciamo una scena inventata: devi telefonare a uno studio medico e spiegare come ti senti. Ci concentriamo su come descrivere la situazione, senza parlare di cure.",
+      "openingTranslation": "Vi spiller en oppdiktet scene: du skal ringe et legekontor og forklare hvordan du føler deg. Vi øver på å beskrive situasjonen, uten å diskutere behandling.",
+      "steps": [
+        {
+          "question": "Come inizi la telefonata per chiedere un appuntamento?",
+          "translation": "Hvordan innleder du telefonsamtalen for å be om en time?",
+          "expected": [
+            "Buongiorno, vorrei prenotare una visita perché non mi sento bene.",
+            "Buongiorno, non mi sento bene e vorrei fissare un appuntamento."
+          ],
+          "hint": "Be høflig om en time med «vorrei prenotare una visita» eller «vorrei fissare un appuntamento».",
+          "reply": "Continuiamo la scena: la persona al telefono ti chiede di descrivere il problema.",
+          "replyTranslation": "Vi fortsetter scenen: personen i telefonen ber deg beskrive problemet."
+        },
+        {
+          "question": "Nel nostro esempio hai mal di gola e un po’ di tosse. Come lo spieghi?",
+          "translation": "I eksempelet vårt har du vondt i halsen og litt hoste. Hvordan forklarer du det?",
+          "expected": [
+            "Ho mal di gola e un po’ di tosse.",
+            "Mi fa male la gola e ho un po’ di tosse."
+          ],
+          "hint": "Du kan si både «ho mal di gola» og «mi fa male la gola». Legg til «un po’ di tosse».",
+          "reply": "Ora aggiungiamo un’informazione sul momento in cui sono iniziati i disturbi.",
+          "replyTranslation": "Nå legger vi til en opplysning om når plagene begynte."
+        },
+        {
+          "question": "Come dici che i disturbi sono iniziati ieri e che durante la notte hai dormito poco?",
+          "translation": "Hvordan sier du at plagene begynte i går, og at du sov lite i natt?",
+          "expected": [
+            "I disturbi sono iniziati ieri e stanotte ho dormito poco.",
+            "Da ieri ho questi disturbi. Stanotte ho dormito poco."
+          ],
+          "hint": "Bruk «sono iniziati ieri» om starten eller «da ieri» om noe som fortsatt pågår. «Stanotte» betyr her i natt som var.",
+          "reply": "Nel racconto abbiamo sia l’inizio dei disturbi sia un dettaglio sulla notte.",
+          "replyTranslation": "Beskrivelsen inneholder både når plagene begynte og en detalj om natten."
+        },
+        {
+          "question": "La persona al telefono parla troppo in fretta. Come chiedi di ripetere l’orario dell’appuntamento?",
+          "translation": "Personen i telefonen snakker for fort. Hvordan ber du om å få gjentatt tidspunktet for timen?",
+          "expected": [
+            "Mi scusi, potrebbe ripetere l’orario più lentamente?",
+            "Potrebbe ripetere più lentamente l’orario dell’appuntamento, per favore?"
+          ],
+          "hint": "Be om en langsommere gjentakelse med «potrebbe ripetere» og «più lentamente».",
+          "reply": "Certo. Nella nostra scena l’appuntamento è domani alle dieci.",
+          "replyTranslation": "Selvfølgelig. I scenen vår er timen i morgen klokken ti."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "fissare un appuntamento",
+          "translation": "avtale en time"
+        },
+        {
+          "word": "una visita medica",
+          "translation": "en legekonsultasjon"
+        },
+        {
+          "word": "avere mal di gola",
+          "translation": "ha vondt i halsen"
+        },
+        {
+          "word": "la tosse",
+          "translation": "hosten / hoste"
+        },
+        {
+          "word": "un disturbo",
+          "translation": "en plage"
+        },
+        {
+          "word": "più lentamente",
+          "translation": "langsommere"
+        }
+      ]
+    },
+    {
+      "id": "it-casa-proprietario",
+      "title": "En beskjed til utleieren",
+      "subtitle": "Forklar et problem og avtal en praktisk løsning.",
+      "level": "B1",
+      "icon": "hand",
+      "opening": "Immagina di vivere in un appartamento in affitto. La finestra della camera non si chiude bene e vuoi scrivere alla persona che ti affitta la casa.",
+      "openingTranslation": "Tenk deg at du bor i en leid leilighet. Soveromsvinduet lukker seg ikke ordentlig, og du vil skrive til den du leier av.",
+      "steps": [
+        {
+          "question": "Come descrivi il problema nel primo messaggio?",
+          "translation": "Hvordan beskriver du problemet i den første meldingen?",
+          "expected": [
+            "Buongiorno, la finestra della camera non si chiude bene e vorrei segnalarle il problema.",
+            "Buongiorno, vorrei segnalarle che la finestra della camera non si chiude bene."
+          ],
+          "hint": "Si hvilket vindu det gjelder, og beskriv problemet. «Vorrei segnalarle» er en høflig måte å gjøre noen oppmerksom på noe på.",
+          "reply": "Nel messaggio è utile precisare anche da quanto tempo succede.",
+          "replyTranslation": "Det er også nyttig å presisere i meldingen hvor lenge dette har pågått."
+        },
+        {
+          "question": "Come spieghi da quando succede e quale effetto ha sulla stanza?",
+          "translation": "Hvordan forklarer du når problemet begynte, og hvilken virkning det har på rommet?",
+          "expected": [
+            "Succede da qualche giorno e di notte entra aria fredda.",
+            "Da qualche giorno la finestra non si chiude bene, così di notte entra aria fredda."
+          ],
+          "hint": "Fortell at det har pågått i noen dager, og at kald luft kommer inn om natten.",
+          "reply": "Queste informazioni aiutano a capire la situazione senza doverla indovinare.",
+          "replyTranslation": "Disse opplysningene gjør det lettere å forstå situasjonen uten å måtte gjette."
+        },
+        {
+          "question": "Come chiedi che qualcuno venga a controllare la finestra?",
+          "translation": "Hvordan ber du om at noen kommer og ser på vinduet?",
+          "expected": [
+            "Sarebbe possibile mandare qualcuno a controllare la finestra questa settimana?",
+            "Potrebbe mandare qualcuno a controllare la finestra questa settimana?"
+          ],
+          "hint": "Formuler et konkret, høflig ønske med «sarebbe possibile» eller «potrebbe».",
+          "reply": "Nella scena, ti propongono una visita giovedì pomeriggio.",
+          "replyTranslation": "I scenen foreslår de å komme torsdag ettermiddag."
+        },
+        {
+          "question": "Giovedì sei a casa solo dopo le cinque. Come rispondi?",
+          "translation": "På torsdag er du hjemme først etter klokken fem. Hvordan svarer du?",
+          "expected": [
+            "Giovedì va bene, ma sarò a casa solo dopo le cinque. È possibile venire a quell’ora?",
+            "Sarò a casa dopo le cinque. Si potrebbe fissare la visita per quell’ora?"
+          ],
+          "hint": "Gi tydelig beskjed om når du er hjemme, og spør om tidspunktet passer.",
+          "reply": "Ora l’altra persona può confermare l’orario oppure proporti un’alternativa.",
+          "replyTranslation": "Nå kan den andre personen bekrefte tidspunktet eller foreslå et alternativ."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "in affitto",
+          "translation": "til leie / leid"
+        },
+        {
+          "word": "segnalare un problema",
+          "translation": "melde fra om et problem"
+        },
+        {
+          "word": "chiudersi",
+          "translation": "lukke seg / kunne lukkes"
+        },
+        {
+          "word": "da qualche giorno",
+          "translation": "i noen dager"
+        },
+        {
+          "word": "sarebbe possibile…?",
+          "translation": "ville det være mulig å …?"
+        },
+        {
+          "word": "a quell’ora",
+          "translation": "på det tidspunktet"
+        }
+      ]
+    },
+    {
+      "id": "it-opinione-film",
+      "title": "En film å snakke om",
+      "subtitle": "Oppsummer handlingen og begrunn en anbefaling.",
+      "level": "B1",
+      "icon": "wave",
+      "opening": "Parliamo di un film che hai visto, oppure inventiamone uno. Non serve raccontare tutto: scegli i dettagli che aiutano a capire la tua opinione.",
+      "openingTranslation": "La oss snakke om en film du har sett, eller finne på en. Du trenger ikke fortelle alt: velg detaljene som gjør meningen din forståelig.",
+      "steps": [
+        {
+          "question": "Di che cosa parla il film, senza svelare il finale?",
+          "translation": "Hva handler filmen om, uten at du røper slutten?",
+          "expected": [
+            "Parla di due amici che si ritrovano dopo molti anni e decidono di fare un viaggio insieme.",
+            "È la storia di due amici che, dopo molti anni, si ritrovano e partono per un viaggio."
+          ],
+          "hint": "Gi en kort oppsummering. I eksempelet møtes to venner igjen og reiser sammen.",
+          "reply": "Un incontro dopo tanti anni può far emergere ricordi e cambiamenti.",
+          "replyTranslation": "Et møte etter mange år kan bringe fram minner og endringer."
+        },
+        {
+          "question": "Quale aspetto ti è piaciuto di più, e perché?",
+          "translation": "Hva likte du best, og hvorfor?",
+          "expected": [
+            "Mi sono piaciuti soprattutto i dialoghi, perché sembravano spontanei e credibili.",
+            "Ho apprezzato i dialoghi: sembravano spontanei e credibili."
+          ],
+          "hint": "Begrunn hva du likte. Merk flertallet i «mi sono piaciuti i dialoghi».",
+          "reply": "I dialoghi possono rendere i personaggi vicini alla nostra esperienza.",
+          "replyTranslation": "Dialogene kan gjøre personene lette å kjenne seg igjen i."
+        },
+        {
+          "question": "C’è qualcosa che ti ha convinto meno?",
+          "translation": "Var det noe du syntes fungerte mindre godt?",
+          "expected": [
+            "La prima parte era un po’ lenta, anche se mi è piaciuto il film nel complesso.",
+            "Il film mi è piaciuto nel complesso, però la prima parte era un po’ lenta."
+          ],
+          "hint": "Legg inn en nyanse med «anche se» eller «però». Eksempelet kritiserer tempoet i starten.",
+          "reply": "Si può apprezzare un film e allo stesso tempo riconoscerne un limite.",
+          "replyTranslation": "Man kan like en film og samtidig se en svakhet ved den."
+        },
+        {
+          "question": "A chi consiglieresti questo film?",
+          "translation": "Hvem ville du anbefalt denne filmen til?",
+          "expected": [
+            "Lo consiglierei a chi ama le storie di amicizia e non cerca un film d’azione.",
+            "Consiglierei questo film a chi preferisce le storie di amicizia ai film d’azione."
+          ],
+          "hint": "Gi en anbefaling til en bestemt type seer: «lo consiglierei a chi…».",
+          "reply": "Una raccomandazione è più utile quando spiega a chi potrebbe piacere il film.",
+          "replyTranslation": "En anbefaling er mer nyttig når den forklarer hvem som kan komme til å like filmen."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "svelare il finale",
+          "translation": "røpe slutten"
+        },
+        {
+          "word": "ritrovarsi",
+          "translation": "møtes igjen / finne hverandre igjen"
+        },
+        {
+          "word": "credibile",
+          "translation": "troverdig"
+        },
+        {
+          "word": "nel complesso",
+          "translation": "alt i alt"
+        },
+        {
+          "word": "allo stesso tempo",
+          "translation": "samtidig"
+        },
+        {
+          "word": "lo consiglierei",
+          "translation": "jeg ville anbefalt den"
+        }
+      ]
+    },
+    {
+      "id": "it-chiarire-malinteso",
+      "title": "Vent, mente du …?",
+      "subtitle": "Be om forklaring og rydd opp i en misforståelse.",
+      "level": "B1",
+      "icon": "hand",
+      "opening": "Immaginiamo di preparare una presentazione insieme. Un messaggio poco chiaro ha creato confusione sulla scadenza. Proviamo a chiarire senza dare la colpa a nessuno.",
+      "openingTranslation": "La oss tenke oss at vi forbereder en presentasjon sammen. En uklar melding har skapt forvirring om fristen. Vi prøver å rydde opp uten å legge skylden på noen.",
+      "steps": [
+        {
+          "question": "Ti ho scritto: «Mandami tutto entro venerdì». Come chiedi che cosa intendo con «tutto»?",
+          "translation": "Jeg har skrevet: «Send meg alt innen fredag.» Hvordan spør du hva jeg mener med «alt»?",
+          "expected": [
+            "Quando dici «tutto», intendi anche le immagini o soltanto il testo?",
+            "Con «tutto» intendi il testo e le immagini, oppure solo il testo?"
+          ],
+          "hint": "Spør konkret om «alt» betyr både tekst og bilder. Bruk «intendi».",
+          "reply": "Intendevo sia il testo sia le immagini, ma avrei dovuto specificarlo.",
+          "replyTranslation": "Jeg mente både teksten og bildene, men jeg burde ha presisert det."
+        },
+        {
+          "question": "Tu pensavi di dover mandare soltanto il testo. Come lo spieghi senza accusarmi?",
+          "translation": "Du trodde du bare skulle sende teksten. Hvordan forklarer du det uten å anklage meg?",
+          "expected": [
+            "Scusa, pensavo di dover mandare soltanto il testo. Forse ho capito male.",
+            "Scusa, avevo capito che servisse soltanto il testo. Forse c’è stato un malinteso."
+          ],
+          "hint": "Bruk gjerne den enklere formuleringen «pensavo di dover mandare». Beskriv din forståelse i stedet for å plassere skyld.",
+          "reply": "Può succedere. Nel mio messaggio mancava qualche dettaglio.",
+          "replyTranslation": "Det kan skje. Meldingen min manglet noen detaljer."
+        },
+        {
+          "question": "Il testo è pronto, ma le immagini arriveranno lunedì. Quale soluzione proponi?",
+          "translation": "Teksten er klar, men bildene kommer først på mandag. Hvilken løsning foreslår du?",
+          "expected": [
+            "Posso mandarti il testo venerdì e aggiungere le immagini lunedì. Per te va bene?",
+            "Ti mando il testo venerdì; per le immagini, invece, avrei bisogno di tempo fino a lunedì."
+          ],
+          "hint": "Skill mellom de to leveransene. Bruk «invece» hvis du vil markere forskjellen.",
+          "reply": "Per me va bene ricevere le due parti in momenti diversi.",
+          "replyTranslation": "Det passer for meg å få de to delene på ulike tidspunkt."
+        },
+        {
+          "question": "Come riassumi l’accordo per evitare un altro malinteso?",
+          "translation": "Hvordan oppsummerer du avtalen for å unngå en ny misforståelse?",
+          "expected": [
+            "Quindi, per essere sicuri: testo entro venerdì e immagini entro lunedì. Ho capito bene?",
+            "Ricapitolando, ti mando il testo entro venerdì e le immagini entro lunedì. Confermi?"
+          ],
+          "hint": "Oppsummer begge fristene og be om bekreftelse. «Entro» betyr senest eller innen.",
+          "reply": "Confermo: testo entro venerdì e immagini entro lunedì.",
+          "replyTranslation": "Jeg bekrefter: tekst innen fredag og bilder innen mandag."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "un malinteso",
+          "translation": "en misforståelse"
+        },
+        {
+          "word": "una scadenza",
+          "translation": "en frist"
+        },
+        {
+          "word": "intendere",
+          "translation": "mene / ha til hensikt"
+        },
+        {
+          "word": "specificare",
+          "translation": "presisere"
+        },
+        {
+          "word": "entro venerdì",
+          "translation": "innen fredag / senest fredag"
+        },
+        {
+          "word": "ricapitolando",
+          "translation": "for å oppsummere"
+        }
+      ]
+    },
+    {
+      "id": "it-disaccordo-gentile",
+      "title": "Uenig, men fortsatt i dialog",
+      "subtitle": "Anerkjenn et poeng og bygg et saklig motargument.",
+      "level": "B2",
+      "icon": "hand",
+      "opening": "Discutiamo una proposta immaginaria: vietare completamente i telefoni durante le riunioni. Io presenterò una posizione netta; tu puoi renderla più sfumata.",
+      "openingTranslation": "Vi diskuterer et tenkt forslag: å forby telefoner helt under møter. Jeg legger fram et tydelig standpunkt; du kan gjøre det mer nyansert.",
+      "steps": [
+        {
+          "question": "Io penso che i telefoni distraggano sempre. Come riconosci una parte del mio argomento senza accettarlo del tutto?",
+          "translation": "Jeg mener at telefoner alltid distraherer. Hvordan anerkjenner du en del av argumentet mitt uten å godta det fullt ut?",
+          "expected": [
+            "Capisco che possano distrarre, ma non credo che il problema sia il telefono in sé.",
+            "È vero che possono distrarre; tuttavia, non è detto che siano sempre un ostacolo."
+          ],
+          "hint": "Start med det du kan anerkjenne. «Non è detto che» betyr at noe ikke nødvendigvis er slik, og følges her av konjunktiv.",
+          "reply": "Per me resta il rischio che qualcuno smetta di seguire la discussione.",
+          "replyTranslation": "For meg gjenstår risikoen for at noen slutter å følge diskusjonen."
+        },
+        {
+          "question": "Quale esempio concreto potrebbe mettere in discussione un divieto assoluto?",
+          "translation": "Hvilket konkret eksempel kan utfordre et absolutt forbud?",
+          "expected": [
+            "Per esempio, qualcuno potrebbe dover restare reperibile per una persona di cui si prende cura.",
+            "Un divieto assoluto non terrebbe conto di chi deve essere reperibile per motivi familiari."
+          ],
+          "hint": "Presenter et relevant unntak med «potrebbe» eller «non terrebbe conto di».",
+          "reply": "Questo caso richiede attenzione: una regola uguale per tutti può avere effetti diversi.",
+          "replyTranslation": "Dette tilfellet krever omtanke: en regel som er lik for alle, kan ha ulike virkninger."
+        },
+        {
+          "question": "Temo però che troppe eccezioni rendano inutile la regola. Come rispondi senza liquidare la mia preoccupazione?",
+          "translation": "Jeg frykter likevel at for mange unntak gjør regelen meningsløs. Hvordan svarer du uten å avfeie bekymringen min?",
+          "expected": [
+            "La tua preoccupazione è comprensibile; distinguerei però le necessità concrete dalle semplici abitudini.",
+            "Hai ragione a temere troppe eccezioni, ma potremmo definire criteri chiari per limitarle."
+          ],
+          "hint": "Anerkjenn bekymringen og foreslå et skille eller tydelige kriterier. «Distinguerei» gjør forslaget mindre kategorisk.",
+          "reply": "Allora il punto è stabilire criteri comprensibili, senza dover discutere ogni singolo caso.",
+          "replyTranslation": "Da handler det om å fastsette forståelige kriterier uten å måtte diskutere hvert enkelt tilfelle."
+        },
+        {
+          "question": "Quale accordo pratico proporresti alla fine della discussione?",
+          "translation": "Hvilken praktisk avtale ville du foreslått til slutt i diskusjonen?",
+          "expected": [
+            "Proporrei di tenere i telefoni in silenzioso e di concordare in anticipo le eccezioni necessarie.",
+            "Potremmo tenere i telefoni in silenzioso, prevedendo eccezioni concordate per chi deve essere reperibile."
+          ],
+          "hint": "Avslutt med en gjennomførbar avtale som tar hensyn til begge perspektivene.",
+          "reply": "È una proposta su cui possiamo confrontarci, tenendo presenti sia l’attenzione sia le esigenze personali.",
+          "replyTranslation": "Det er et forslag vi kan diskutere med både oppmerksomhet og personlige behov i tankene."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "non è detto che",
+          "translation": "det er ikke nødvendigvis slik at"
+        },
+        {
+          "word": "in sé",
+          "translation": "i seg selv"
+        },
+        {
+          "word": "essere reperibile",
+          "translation": "være tilgjengelig / kunne kontaktes"
+        },
+        {
+          "word": "tenere conto di",
+          "translation": "ta hensyn til"
+        },
+        {
+          "word": "liquidare una preoccupazione",
+          "translation": "avfeie en bekymring"
+        },
+        {
+          "word": "concordare in anticipo",
+          "translation": "avtale på forhånd"
+        }
+      ]
+    },
+    {
+      "id": "it-desideri-ipotesi",
+      "title": "Hvis du kunne velge fritt",
+      "subtitle": "Utforsk ønsker, forbehold og mulige konsekvenser.",
+      "level": "B2",
+      "icon": "compass",
+      "opening": "Immagina di poterti prendere qualche mese per un progetto personale. Possiamo sognare un po’, ma anche ragionare sulle condizioni che renderebbero il progetto possibile.",
+      "openingTranslation": "Se for deg at du kunne ta noen måneder til et personlig prosjekt. Vi kan drømme litt, men også tenke gjennom hva som skulle til for å gjøre prosjektet mulig.",
+      "steps": [
+        {
+          "question": "Se potessi dedicare tre mesi a un progetto, che cosa sceglieresti?",
+          "translation": "Hvis du kunne bruke tre måneder på et prosjekt, hva ville du valgt?",
+          "expected": [
+            "Se potessi prendermi tre mesi, sceglierei di vivere in Italia e seguire un corso di fotografia.",
+            "Sceglierei un corso di fotografia in Italia, se potessi dedicarci tre mesi."
+          ],
+          "hint": "Kombiner «se potessi» med «sceglierei». Eksempelet handler om et fotokurs i Italia.",
+          "reply": "Un progetto del genere unirebbe un interesse personale all’esperienza di vivere in un altro paese.",
+          "replyTranslation": "Et slikt prosjekt ville kombinert en personlig interesse med erfaringen av å bo i et annet land."
+        },
+        {
+          "question": "Perché preferiresti questo progetto a una semplice vacanza?",
+          "translation": "Hvorfor ville du foretrukket dette prosjektet framfor en vanlig ferie?",
+          "expected": [
+            "Per quanto mi piaccia viaggiare, vorrei anche acquisire una competenza e conoscere persone con interessi simili.",
+            "Rispetto a una vacanza, questo progetto mi permetterebbe di imparare qualcosa e creare nuove relazioni."
+          ],
+          "hint": "Begrunn forskjellen. «Per quanto mi piaccia» anerkjenner at du liker å reise, før du legger til et annet ønske.",
+          "reply": "Quindi cercheresti un’esperienza con un ritmo e uno scopo diversi da quelli di una vacanza.",
+          "replyTranslation": "Du ville altså søkt en opplevelse med en annen rytme og et annet formål enn en ferie."
+        },
+        {
+          "question": "Quale condizione dovrebbe essere soddisfatta prima di partire?",
+          "translation": "Hvilken betingelse måtte være oppfylt før du reiste?",
+          "expected": [
+            "Partirei a condizione di avere un budget sufficiente e di poter mantenere i miei impegni essenziali.",
+            "Se avessi un budget sufficiente e potessi organizzare i miei impegni, partirei più serenamente."
+          ],
+          "hint": "Knytt ønsket til penger og forpliktelser. Du kan bruke «a condizione di» eller en ny setning med «se».",
+          "reply": "Le condizioni pratiche possono trasformare un desiderio generico in un piano da valutare.",
+          "replyTranslation": "De praktiske betingelsene kan gjøre et løst ønske til en plan man kan vurdere."
+        },
+        {
+          "question": "Se tre mesi non fossero possibili, come adatteresti il progetto senza abbandonarlo?",
+          "translation": "Hvis tre måneder ikke var mulig, hvordan ville du tilpasset prosjektet uten å gi det opp?",
+          "expected": [
+            "Se non potessi partire per tre mesi, comincerei con un corso più breve e valuterei in seguito come continuare.",
+            "Ridimensionerei il progetto: inizierei con due settimane, senza rinunciare all’idea di proseguire più avanti."
+          ],
+          "hint": "Foreslå en mindre versjon av planen. Bruk «comincerei», «inizierei» eller «ridimensionerei».",
+          "reply": "In questo modo cambierebbe la dimensione del progetto, ma il tuo interesse resterebbe il punto di partenza.",
+          "replyTranslation": "På den måten ville omfanget av prosjektet endret seg, mens interessen din fortsatt ville vært utgangspunktet."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "se potessi",
+          "translation": "hvis jeg kunne / hvis du kunne"
+        },
+        {
+          "word": "acquisire una competenza",
+          "translation": "tilegne seg en ferdighet"
+        },
+        {
+          "word": "a condizione di",
+          "translation": "på betingelse av å"
+        },
+        {
+          "word": "un impegno",
+          "translation": "en forpliktelse / en avtale"
+        },
+        {
+          "word": "ridimensionare",
+          "translation": "redusere omfanget av / skalere ned"
+        },
+        {
+          "word": "senza rinunciare a",
+          "translation": "uten å gi avkall på"
+        }
+      ]
+    }
+  ],
+  "ru": [
+    {
+      "id": "ru-kafe",
+      "title": "En kafé med karakter",
+      "subtitle": "Forklar preferanser og sammenlign steder.",
+      "level": "B1",
+      "icon": "coffee",
+      "opening": "Привет! Давай выберем кафе, где можно спокойно посидеть и поговорить.",
+      "openingTranslation": "Hei! La oss velge en kafé der vi kan sitte i ro og snakke.",
+      "openingTransliteration": "Privet! Davay vyberem kafe, gde mozhno spokoyno posidet’ i pogovorit’.",
+      "steps": [
+        {
+          "question": "Что для тебя важнее: хорошая еда или приятная атмосфера?",
+          "translation": "Hva er viktigst for deg: god mat eller hyggelig atmosfære?",
+          "transliteration": "Chto dlya tebya vazhneye: khoroshaya yeda ili priyatnaya atmosfera?",
+          "expected": [
+            "Для меня важнее атмосфера, потому что я хочу спокойно поговорить.",
+            "Мне важнее атмосфера, потому что я хочу спокойно поговорить."
+          ],
+          "hint": "Velg atmosfæren og begrunn det med «потому что».",
+          "reply": "Понимаю. Тогда лучше поискать тихое место.",
+          "replyTranslation": "Jeg forstår. Da er det bedre å se etter et rolig sted.",
+          "replyTransliteration": "Ponimayu. Togda luchshe poiskat’ tikhoye mesto."
+        },
+        {
+          "question": "Почему тебе не понравилось предыдущее кафе?",
+          "translation": "Hvorfor likte du ikke den forrige kafeen?",
+          "transliteration": "Pochemu tebe ne ponravilos’ predydushcheye kafe?",
+          "expected": [
+            "Там было слишком шумно, и мы почти не слышали друг друга.",
+            "Мы почти не слышали друг друга, потому что там было слишком шумно."
+          ],
+          "hint": "Beskriv at det var for mye støy til at dere kunne høre hverandre.",
+          "reply": "Да, в таком месте трудно поддерживать разговор.",
+          "replyTranslation": "Ja, på et slikt sted er det vanskelig å holde en samtale i gang.",
+          "replyTransliteration": "Da, v takom meste trudno podderzhivat’ razgovor."
+        },
+        {
+          "question": "Как предложить другу встретиться в новом кафе?",
+          "translation": "Hvordan kan du foreslå å møtes på en ny kafé?",
+          "transliteration": "Kak predlozhit’ drugu vstretit’sya v novom kafe?",
+          "expected": [
+            "Давай встретимся в новом кафе: говорят, там уютно и не очень шумно.",
+            "Предлагаю встретиться в новом кафе, где уютно и не очень шумно."
+          ],
+          "hint": "Foreslå et nytt sted og beskriv hvorfor det passer.",
+          "reply": "Отлично, такой вариант подходит для спокойной встречи.",
+          "replyTranslation": "Flott, det alternativet passer til et rolig møte.",
+          "replyTransliteration": "Otlichno, takoy variant podkhodit dlya spokoynoy vstrechi."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "приятная атмосфера",
+          "translation": "hyggelig atmosfære",
+          "transliteration": "priyatnaya atmosfera"
+        },
+        {
+          "word": "слишком шумно",
+          "translation": "for mye støy",
+          "transliteration": "slishkom shumno"
+        },
+        {
+          "word": "друг друга",
+          "translation": "hverandre",
+          "transliteration": "drug druga"
+        },
+        {
+          "word": "поддерживать разговор",
+          "translation": "holde en samtale i gang",
+          "transliteration": "podderzhivat’ razgovor"
+        },
+        {
+          "word": "уютно",
+          "translation": "koselig",
+          "transliteration": "uyutno"
+        }
+      ]
+    },
+    {
+      "id": "ru-rabota",
+      "title": "Arbeid på egne vilkår",
+      "subtitle": "Avvei fleksibilitet mot samarbeid.",
+      "level": "B2",
+      "icon": "hand",
+      "opening": "Сегодня обсуждаем удалённую работу. Попробуем не просто выбрать сторону, а объяснить, от чего зависит наш ответ.",
+      "openingTranslation": "I dag diskuterer vi fjernarbeid. La oss ikke bare velge side, men forklare hva svaret vårt avhenger av.",
+      "openingTransliteration": "Segodnya obsuzhdayem udalyonnuyu rabotu. Poprobuyem ne prosto vybrat’ storonu, a ob”yasnit’, ot chego zavisit nash otvet.",
+      "steps": [
+        {
+          "question": "В чём главное преимущество удалённой работы?",
+          "translation": "Hva er den viktigste fordelen med fjernarbeid?",
+          "transliteration": "V chyom glavnoye preimushchestvo udalyonnoy raboty?",
+          "expected": [
+            "На мой взгляд, главное преимущество — гибкость, поскольку она позволяет лучше планировать день.",
+            "Главное преимущество — гибкость, которая позволяет лучше планировать день."
+          ],
+          "hint": "Begrunn fleksibilitet som fordel med «поскольку» eller en relativsetning.",
+          "reply": "Да, возможность распоряжаться временем для многих особенно ценна.",
+          "replyTranslation": "Ja, muligheten til å styre sin egen tid er særlig verdifull for mange.",
+          "replyTransliteration": "Da, vozmozhnost’ rasporyazhat’sya vremenem dlya mnogikh osobenno tsenna."
+        },
+        {
+          "question": "Какой недостаток ты считаешь существенным?",
+          "translation": "Hvilken ulempe regner du som vesentlig?",
+          "transliteration": "Kakoy nedostatok ty schitayesh’ sushchestvennym?",
+          "expected": [
+            "При этом неформальное общение страдает, а некоторые вопросы проще решить лично.",
+            "Существенный недостаток в том, что некоторые вопросы проще решить лично."
+          ],
+          "hint": "Nyanser med «при этом» og forklar verdien av å møtes fysisk.",
+          "reply": "Согласна, не все рабочие ситуации удобно переносить в онлайн.",
+          "replyTranslation": "Enig, det er ikke alle arbeidssituasjoner som egner seg på nett.",
+          "replyTransliteration": "Soglasna, ne vse rabochiye situatsii udobno perenosit’ v onlayn."
+        },
+        {
+          "question": "Какой подход ты предложишь команде?",
+          "translation": "Hvilken tilnærming vil du foreslå for teamet?",
+          "transliteration": "Kakoy podkhod ty predlozhish’ komande?",
+          "expected": [
+            "Я бы предложил гибридный формат при условии, что правила понятны всем.",
+            "Я бы предложила гибридный формат при условии, что правила понятны всем."
+          ],
+          "hint": "Foreslå en hybridmodell med en betingelse. Velg «предложил» eller «предложила».",
+          "reply": "Чёткие договорённости помогут совместить гибкость и совместную работу.",
+          "replyTranslation": "Tydelige avtaler kan bidra til å kombinere fleksibilitet og samarbeid.",
+          "replyTransliteration": "Chyotkiye dogovoryonnosti pomogut sovmestit’ gibkost’ i sovmestnuyu rabotu."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "гибкость",
+          "translation": "fleksibilitet",
+          "transliteration": "gibkost’"
+        },
+        {
+          "word": "поскольку",
+          "translation": "ettersom",
+          "transliteration": "poskol’ku"
+        },
+        {
+          "word": "при этом",
+          "translation": "samtidig",
+          "transliteration": "pri etom"
+        },
+        {
+          "word": "существенный",
+          "translation": "vesentlig",
+          "transliteration": "sushchestvennyy"
+        },
+        {
+          "word": "при условии, что",
+          "translation": "på betingelse av at",
+          "transliteration": "pri uslovii, chto"
+        },
+        {
+          "word": "договорённости",
+          "translation": "avtaler / det man er blitt enige om",
+          "transliteration": "dogovoryonnosti"
+        }
+      ]
+    },
+    {
+      "id": "ru-gorod",
+      "title": "Et nabolag i endring",
+      "subtitle": "Drøft byliv uten enkle enten–eller-svar.",
+      "level": "B2",
+      "icon": "wave",
+      "opening": "Представь, что в твоём районе хотят закрыть часть улиц для машин. Жители спорят. Давай разберём их аргументы.",
+      "openingTranslation": "Se for deg at noen vil stenge deler av gatene i nabolaget ditt for biler. Innbyggerne er uenige. La oss undersøke argumentene deres.",
+      "openingTransliteration": "Predstav’, chto v tvoyom rayone khotyat zakryt’ chast’ ulits dlya mashin. Zhiteli sporyat. Davay razberyom ikh argumenty.",
+      "steps": [
+        {
+          "question": "Какие доводы есть в пользу этой идеи?",
+          "translation": "Hvilke argumenter taler for denne ideen?",
+          "transliteration": "Kakiye dovody yest’ v pol’zu etoy idei?",
+          "expected": [
+            "С одной стороны, станет тише и безопаснее, особенно для детей.",
+            "В пользу этой идеи говорит то, что станет тише и безопаснее для детей."
+          ],
+          "hint": "Presenter ro og trygghet som argumenter, gjerne med «с одной стороны».",
+          "reply": "Это понятный довод. Безопасность важна для всего района.",
+          "replyTranslation": "Det er et forståelig argument. Trygghet er viktig for hele nabolaget.",
+          "replyTransliteration": "Eto ponyatnyy dovod. Bezopasnost’ vazhna dlya vsego rayona."
+        },
+        {
+          "question": "А какие возражения стоит принять всерьёз?",
+          "translation": "Og hvilke innvendinger bør tas på alvor?",
+          "transliteration": "A kakiye vozrazheniya stoit prinyat’ vser’yoz?",
+          "expected": [
+            "С другой стороны, нужно учитывать потребности людей с ограниченной мобильностью.",
+            "Стоит учитывать потребности людей с ограниченной мобильностью."
+          ],
+          "hint": "Ta med mennesker som har begrenset mobilitet. Bruk «учитывать потребности».",
+          "reply": "Верно, доступность нельзя считать второстепенным вопросом.",
+          "replyTranslation": "Riktig, tilgjengelighet kan ikke regnes som et underordnet spørsmål.",
+          "replyTransliteration": "Verno, dostupnost’ nel’zya schitat’ vtorostepennym voprosom."
+        },
+        {
+          "question": "Как проверить идею до окончательного решения?",
+          "translation": "Hvordan kan ideen prøves før en endelig beslutning?",
+          "transliteration": "Kak proverit’ ideyu do okonchatel’nogo resheniya?",
+          "expected": [
+            "Можно провести пробный период и затем обсудить результаты с жителями.",
+            "Я бы предложил пробный период и обсуждение результатов с жителями.",
+            "Я бы предложила пробный период и обсуждение результатов с жителями."
+          ],
+          "hint": "Foreslå en prøveperiode etterfulgt av dialog med innbyggerne.",
+          "reply": "Такой подход позволит опираться на опыт, а не только на предположения.",
+          "replyTranslation": "En slik tilnærming gjør det mulig å bygge på erfaring, ikke bare antakelser.",
+          "replyTransliteration": "Takoy podkhod pozvolit opirat’sya na opyt, a ne tol’ko na predpolozheniya."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "довод",
+          "translation": "argument",
+          "transliteration": "dovod"
+        },
+        {
+          "word": "возражение",
+          "translation": "innvending",
+          "transliteration": "vozrazheniye"
+        },
+        {
+          "word": "учитывать",
+          "translation": "ta hensyn til",
+          "transliteration": "uchityvat’"
+        },
+        {
+          "word": "доступность",
+          "translation": "tilgjengelighet",
+          "transliteration": "dostupnost’"
+        },
+        {
+          "word": "пробный период",
+          "translation": "prøveperiode",
+          "transliteration": "probnyy period"
+        },
+        {
+          "word": "опираться на опыт",
+          "translation": "bygge på erfaring",
+          "transliteration": "opirat’sya na opyt"
+        }
+      ]
+    },
+    {
+      "id": "ru-poezd",
+      "title": "Når reisen tar en vending",
+      "subtitle": "Forklar følger, foreslå løsninger og forhandle.",
+      "level": "B2",
+      "icon": "train",
+      "opening": "Представим, что поезд задерживается, а у тебя пересадка. Нужно спокойно объяснить ситуацию сотруднику и договориться о решении.",
+      "openingTranslation": "La oss tenke oss at toget er forsinket, og du har et togbytte. Du må forklare situasjonen rolig til en ansatt og finne en løsning.",
+      "openingTransliteration": "Predstavim, chto poyezd zaderzhivayetsya, a u tebya peresadka. Nuzhno spokoyno ob”yasnit’ situatsiyu sotrudniku i dogovorit’sya o reshenii.",
+      "steps": [
+        {
+          "question": "Как объяснить, почему задержка для тебя критична?",
+          "translation": "Hvordan forklarer du hvorfor forsinkelsen er kritisk for deg?",
+          "transliteration": "Kak ob”yasnit’, pochemu zaderzhka dlya tebya kritichna?",
+          "expected": [
+            "Из-за задержки я рискую опоздать на следующий поезд, а это последний рейс сегодня.",
+            "Я рискую опоздать на последний поезд сегодня из-за этой задержки."
+          ],
+          "hint": "Knytt årsak og konsekvens sammen med «из-за» og «рискую».",
+          "reply": "Понимаю. Давайте посмотрим, какие варианты ещё доступны.",
+          "replyTranslation": "Jeg forstår. La oss se hvilke alternativer som fortsatt finnes.",
+          "replyTransliteration": "Ponimayu. Davayte posmotrim, kakiye varianty yeshchyo dostupny."
+        },
+        {
+          "question": "Как попросить предложить альтернативный маршрут?",
+          "translation": "Hvordan ber du om et alternativt reiseopplegg?",
+          "transliteration": "Kak poprosit’ predlozhit’ al’ternativnyy marshrut?",
+          "expected": [
+            "Не могли бы вы предложить другой маршрут, даже если потребуется дополнительная пересадка?",
+            "Есть ли другой маршрут, даже если потребуется дополнительная пересадка?"
+          ],
+          "hint": "Be høflig om et alternativ og si at et ekstra bytte går bra.",
+          "reply": "В нашем учебном примере есть вариант с ещё одной пересадкой.",
+          "replyTranslation": "I øvingseksempelet vårt finnes det et alternativ med ett ekstra bytte.",
+          "replyTransliteration": "V nashem uchebnom primere yest’ variant s yeshchyo odnoy peresadkoy."
+        },
+        {
+          "question": "Что стоит уточнить, прежде чем согласиться?",
+          "translation": "Hva bør du avklare før du sier ja?",
+          "transliteration": "Chto stoit utochnit’, prezhde chem soglasit’sya?",
+          "expected": [
+            "Правильно ли я понимаю, что доплачивать не нужно и мой билет остаётся действительным?",
+            "Уточните, пожалуйста: мой билет остаётся действительным без доплаты?"
+          ],
+          "hint": "Avklar både tilleggsbetaling og om billetten fortsatt gjelder.",
+          "reply": "В этом примере билет остаётся действительным без доплаты. В реальной поездке условия нужно уточнять у перевозчика.",
+          "replyTranslation": "I dette eksempelet gjelder billetten uten tillegg. På en virkelig reise må vilkårene avklares med transportøren.",
+          "replyTransliteration": "V etom primere bilet ostayotsya deystvitel’nym bez doplaty. V real’noy poyezdke usloviya nuzhno utochnyat’ u perevozchika."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "задержка",
+          "translation": "forsinkelse",
+          "transliteration": "zaderzhka"
+        },
+        {
+          "word": "пересадка",
+          "translation": "bytte under reisen",
+          "transliteration": "peresadka"
+        },
+        {
+          "word": "рисковать",
+          "translation": "risikere",
+          "transliteration": "riskovat’"
+        },
+        {
+          "word": "даже если",
+          "translation": "selv om / selv hvis",
+          "transliteration": "dazhe yesli"
+        },
+        {
+          "word": "действительный",
+          "translation": "gyldig",
+          "transliteration": "deystvitel’nyy"
+        },
+        {
+          "word": "без доплаты",
+          "translation": "uten tilleggsbetaling",
+          "transliteration": "bez doplaty"
+        }
+      ]
+    },
+    {
+      "id": "ru-traditsii",
+      "title": "Smaken av tradisjon",
+      "subtitle": "Sammenlign perspektiver uten å generalisere.",
+      "level": "B2",
+      "icon": "utensils",
+      "opening": "За ужином разговор зашёл о семейных рецептах. Одни считают, что их нельзя менять, другие любят экспериментировать.",
+      "openingTranslation": "Under middagen kom samtalen inn på familieoppskrifter. Noen mener at de ikke bør endres, mens andre liker å eksperimentere.",
+      "openingTransliteration": "Za uzhinom razgovor zashyol o semeynykh retseptakh. Odni schitayut, chto ikh nel’zya menyat’, drugiye lyubyat eksperimentirovat’.",
+      "steps": [
+        {
+          "question": "Почему людям бывает важно сохранить старый рецепт?",
+          "translation": "Hvorfor kan det være viktig for folk å bevare en gammel oppskrift?",
+          "transliteration": "Pochemu lyudyam byvayet vazhno sokhranit’ staryy retsept?",
+          "expected": [
+            "Дело не только во вкусе: рецепт может быть связан с семейными воспоминаниями.",
+            "Рецепт может быть связан с семейными воспоминаниями, а не только со вкусом."
+          ],
+          "hint": "Forklar at oppskriften også handler om minner. Bruk «дело не только».",
+          "reply": "Да, знакомое блюдо иногда напоминает о человеке или важном событии.",
+          "replyTranslation": "Ja, en kjent rett minner noen ganger om en person eller en viktig begivenhet.",
+          "replyTransliteration": "Da, znakomoye blyudo inogda napominayet o cheloveke ili vazhnom sobytii."
+        },
+        {
+          "question": "Можно ли менять традиционный рецепт, не теряя его смысла?",
+          "translation": "Kan man endre en tradisjonell oppskrift uten å miste betydningen den har?",
+          "transliteration": "Mozhno li menyat’ traditsionnyy retsept, ne teryaya yego smysla?",
+          "expected": [
+            "На мой взгляд, традиция может развиваться, если сохраняется связь с её историей.",
+            "Традиция может развиваться при условии, что сохраняется связь с её историей."
+          ],
+          "hint": "Gi et nyansert ja med en betingelse om tilknytningen til historien.",
+          "reply": "Интересно: для тебя преемственность важнее буквального повторения.",
+          "replyTranslation": "Interessant: for deg er kontinuitet viktigere enn helt nøyaktig gjentakelse.",
+          "replyTransliteration": "Interesno: dlya tebya preyemstvennost’ vazhneye bukval’nogo povtoreniya."
+        },
+        {
+          "question": "Как избежать обобщений, сравнивая пищевые привычки разных стран?",
+          "translation": "Hvordan unngår man generaliseringer når man sammenligner matvaner i ulike land?",
+          "transliteration": "Kak izbezhat’ obobshcheniy, sravnivaya pishchevyye privychki raznykh stran?",
+          "expected": [
+            "Лучше говорить о конкретном опыте и помнить, что привычки различаются даже внутри одной страны.",
+            "Я бы опирался на конкретный опыт, ведь привычки различаются даже внутри одной страны.",
+            "Я бы опиралась на конкретный опыт, ведь привычки различаются даже внутри одной страны."
+          ],
+          "hint": "Ta utgangspunkt i konkrete erfaringer og variasjon innad i et land.",
+          "reply": "Так сравнение получается точнее и оставляет место для разных людей и семей.",
+          "replyTranslation": "Da blir sammenligningen mer presis og gir rom for ulike mennesker og familier.",
+          "replyTransliteration": "Tak sravneniye poluchayetsya tochneye i ostavlyayet mesto dlya raznykh lyudey i semey."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "семейные воспоминания",
+          "translation": "familieminner",
+          "transliteration": "semeynyye vospominaniya"
+        },
+        {
+          "word": "преемственность",
+          "translation": "kontinuitet / videreføring",
+          "transliteration": "preyemstvennost’"
+        },
+        {
+          "word": "буквальный",
+          "translation": "bokstavelig / helt nøyaktig",
+          "transliteration": "bukval’nyy"
+        },
+        {
+          "word": "обобщение",
+          "translation": "generalisering",
+          "transliteration": "obobshcheniye"
+        },
+        {
+          "word": "различаться",
+          "translation": "variere / være forskjellige",
+          "transliteration": "razlichat’sya"
+        },
+        {
+          "word": "сохранять связь",
+          "translation": "bevare tilknytningen",
+          "transliteration": "sokhranyat’ svyaz’"
+        }
+      ]
+    },
+    {
+      "id": "ru-turizm",
+      "title": "Byen som kulisse",
+      "subtitle": "Utfordre en premiss og formuler et avveid standpunkt.",
+      "level": "C1",
+      "icon": "compass",
+      "opening": "Обсудим спорное утверждение: «Чтобы сохранить характер города, нужно ограничить туризм». Попробуем отделить цель от предлагаемых средств.",
+      "openingTranslation": "La oss drøfte en omstridt påstand: «For å bevare en bys særpreg må turismen begrenses.» La oss forsøke å skille målet fra virkemidlene.",
+      "openingTransliteration": "Obsudim spornoye utverzhdeniye: «Chtoby sokhranit’ kharakter goroda, nuzhno ogranichit’ turizm». Poprobuyem otdelit’ tsel’ ot predlagayemykh sredstv.",
+      "steps": [
+        {
+          "question": "Какую скрытую предпосылку ты видишь в этом утверждении?",
+          "translation": "Hvilken skjult forutsetning ser du i denne påstanden?",
+          "transliteration": "Kakuyu skrytuyu predposylku ty vidish’ v etom utverzhdenii?",
+          "expected": [
+            "Оно предполагает, что именно туризм разрушает характер города, хотя причин может быть несколько.",
+            "Здесь туризм представлен как главная причина изменений, хотя это ещё нужно обосновать."
+          ],
+          "hint": "Utfordre årsaksforklaringen: påstanden tar turismens rolle for gitt.",
+          "reply": "Да, прежде чем выбирать меру, стоит проверить, насколько убедительна сама причинная связь.",
+          "replyTranslation": "Ja, før man velger et tiltak, bør man undersøke hvor overbevisende selve årsakssammenhengen er.",
+          "replyTransliteration": "Da, prezhde chem vybirat’ meru, stoit proverit’, naskol’ko ubeditel’na sama prichinnaya svyaz’."
+        },
+        {
+          "question": "Как признать проблему, не соглашаясь с предложенным решением?",
+          "translation": "Hvordan kan du anerkjenne problemet uten å godta den foreslåtte løsningen?",
+          "transliteration": "Kak priznat’ problemu, ne soglashayas’ s predlozhennym resheniyem?",
+          "expected": [
+            "Не отрицая давления на городскую среду, я бы всё же не сводил решение к простому ограничению числа туристов.",
+            "Не отрицая давления на городскую среду, я бы всё же не сводила решение к простому ограничению числа туристов."
+          ],
+          "hint": "Bruk «не отрицая» for å anerkjenne, og «не сводил/сводила бы» for å avgrense konklusjonen.",
+          "reply": "Ты разграничиваешь признание проблемы и поддержку конкретного инструмента.",
+          "replyTranslation": "Du skiller mellom å anerkjenne problemet og å støtte et bestemt virkemiddel.",
+          "replyTransliteration": "Ty razgranichivayesh’ priznaniye problemy i podderzhku konkretnogo instrumenta."
+        },
+        {
+          "question": "Как сформулировать позицию с оговоркой о возможных последствиях?",
+          "translation": "Hvordan kan du formulere et standpunkt med forbehold om mulige følger?",
+          "transliteration": "Kak sformulirovat’ pozitsiyu s ogovorkoy o vozmozhnykh posledstviyakh?",
+          "expected": [
+            "Я поддерживаю адресные меры, но их следует оценивать по последствиям для жителей, а не только по сокращению потока туристов.",
+            "Адресные меры представляются оправданными, если их успех оценивают по качеству жизни жителей, а не только по числу туристов."
+          ],
+          "hint": "Argumenter for målrettede tiltak, med innbyggernes liv som vurderingsgrunnlag.",
+          "reply": "Получилась взвешенная позиция: ты обозначаешь и подход, и критерий его оценки.",
+          "replyTranslation": "Det ble et avveid standpunkt: du angir både en tilnærming og et kriterium for å vurdere den.",
+          "replyTransliteration": "Poluchilas’ vzveshennaya pozitsiya: ty oboznachayesh’ i podkhod, i kriteriy yego otsenki."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "скрытая предпосылка",
+          "translation": "skjult forutsetning",
+          "transliteration": "skrytaya predposylka"
+        },
+        {
+          "word": "причинная связь",
+          "translation": "årsakssammenheng",
+          "transliteration": "prichinnaya svyaz’"
+        },
+        {
+          "word": "не сводить к",
+          "translation": "ikke redusere til",
+          "transliteration": "ne svodit’ k"
+        },
+        {
+          "word": "разграничивать",
+          "translation": "skille mellom",
+          "transliteration": "razgranichivat’"
+        },
+        {
+          "word": "адресные меры",
+          "translation": "målrettede tiltak",
+          "transliteration": "adresnyye mery"
+        },
+        {
+          "word": "взвешенная позиция",
+          "translation": "avveid standpunkt",
+          "transliteration": "vzveshennaya pozitsiya"
+        }
+      ]
+    },
+    {
+      "id": "ru-vystavka",
+      "title": "En utstilling å fortelle om",
+      "subtitle": "Skill mellom det som pågikk, og det du rakk å gjøre.",
+      "level": "B1",
+      "icon": "compass",
+      "opening": "Привет, это Саша. Представим, что вчера ты ходил или ходила на выставку фотографий. Расскажи, как всё прошло.",
+      "openingTranslation": "Hei, det er Sasha. La oss tenke oss at du var på en fotoutstilling i går. Fortell hvordan det gikk.",
+      "openingTransliteration": "Privet, eto Sasha. Predstavim, chto vchera ty khodil ili khodila na vystavku fotografiy. Rasskazhi, kak vsyo proshlo.",
+      "steps": [
+        {
+          "question": "Что ты делал или делала в начале посещения?",
+          "translation": "Hva holdt du på med i begynnelsen av besøket?",
+          "transliteration": "Chto ty delal ili delala v nachale poseshcheniya?",
+          "expected": [
+            "Сначала я долго рассматривал фотографии у входа.",
+            "Сначала я долго рассматривала фотографии у входа."
+          ],
+          "hint": "Beskriv noe som pågikk en stund. Bruk imperfektivt aspekt: «рассматривал» eller «рассматривала».",
+          "reply": "У входа были старые фотографии города. Потом начинался зал с современными снимками.",
+          "replyTranslation": "Ved inngangen var det gamle fotografier av byen. Deretter kom salen med nyere bilder.",
+          "replyTransliteration": "U vkhoda byli staryye fotografii goroda. Potom nachinalsya zal s sovremennymi snimkami."
+        },
+        {
+          "question": "Удалось ли тебе посмотреть всю выставку?",
+          "translation": "Rakk du å se hele utstillingen?",
+          "transliteration": "Udalos’ li tebe posmotret’ vsyu vystavku?",
+          "expected": [
+            "Нет, мне удалось посмотреть только два зала: потом музей закрылся.",
+            "Я успел посмотреть только два зала, потому что музей закрылся.",
+            "Я успела посмотреть только два зала, потому что музей закрылся."
+          ],
+          "hint": "Fortell at du bare rakk to saler før museet stengte. «Посмотреть» viser her til det avsluttede besøket i salene.",
+          "reply": "Жаль, что времени было мало. К некоторым снимкам хочется вернуться.",
+          "replyTranslation": "Synd at det var lite tid. Noen bilder får man lyst til å vende tilbake til.",
+          "replyTransliteration": "Zhal’, chto vremeni bylo malo. K nekotorym snimkam khochetsya vernut’sya."
+        },
+        {
+          "question": "Какая фотография тебе особенно запомнилась и почему?",
+          "translation": "Hvilket fotografi husker du spesielt godt, og hvorfor?",
+          "transliteration": "Kakaya fotografiya tebe osobenno zapomnilas’ i pochemu?",
+          "expected": [
+            "Мне запомнилась фотография пустой улицы, потому что она напомнила мне о детстве.",
+            "Больше всего мне запомнилась пустая улица: она напомнила мне о детстве."
+          ],
+          "hint": "Knytt et bestemt bilde til et minne med «запомнилась» og «напомнила».",
+          "reply": "Иногда даже обычное место на фотографии вызывает личные воспоминания.",
+          "replyTranslation": "Noen ganger vekker selv et vanlig sted på et fotografi personlige minner.",
+          "replyTransliteration": "Inogda dazhe obychnoye mesto na fotografii vyzyvayet lichnyye vospominaniya."
+        },
+        {
+          "question": "Что ты хочешь сделать в следующий раз?",
+          "translation": "Hva vil du gjøre neste gang?",
+          "transliteration": "Chto ty khochesh’ sdelat’ v sleduyushchiy raz?",
+          "expected": [
+            "В следующий раз я хочу прийти пораньше и посмотреть остальные залы.",
+            "Я хочу вернуться, чтобы спокойно посмотреть остальные залы."
+          ],
+          "hint": "Avslutt med en konkret plan. «Остальные залы» betyr de øvrige salene.",
+          "reply": "Тогда для следующего посещения стоит оставить больше времени.",
+          "replyTranslation": "Da er det lurt å sette av mer tid til neste besøk.",
+          "replyTransliteration": "Togda dlya sleduyushchego poseshcheniya stoit ostavit’ bol’she vremeni."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "рассматривать",
+          "translation": "betrakte / se nærmere på",
+          "transliteration": "rassmatrivat’"
+        },
+        {
+          "word": "посмотреть",
+          "translation": "se / få sett",
+          "transliteration": "posmotret’"
+        },
+        {
+          "word": "мне удалось",
+          "translation": "jeg klarte / fikk til",
+          "transliteration": "mne udalos’"
+        },
+        {
+          "word": "запомниться",
+          "translation": "feste seg i minnet",
+          "transliteration": "zapomnit’sya"
+        },
+        {
+          "word": "напомнить о детстве",
+          "translation": "minne om barndommen",
+          "transliteration": "napomnit’ o detstve"
+        },
+        {
+          "word": "остальные залы",
+          "translation": "de øvrige salene",
+          "transliteration": "ostal’nyye zaly"
+        }
+      ]
+    },
+    {
+      "id": "ru-argumenty",
+      "title": "Når et argument skal holde",
+      "subtitle": "Begrunn et syn på læring og møt et motargument.",
+      "level": "B2",
+      "icon": "wave",
+      "opening": "Я Саша. В нашей учебной группе спорят, лучше ли делать записи от руки или на компьютере. Давай сравним подходы, не объявляя один из них лучшим для всех.",
+      "openingTranslation": "Jeg er Sasha. I studiegruppen vår diskuterer de om det er best å ta notater for hånd eller på datamaskin. La oss sammenligne metodene uten å erklære én av dem best for alle.",
+      "openingTransliteration": "Ya Sasha. V nashey uchebnoy gruppe sporyat, luchshe li delat’ zapisi ot ruki ili na komp’yutere. Davay sravnim podkhody, ne ob”yavlyaya odin iz nikh luchshim dlya vsekh.",
+      "steps": [
+        {
+          "question": "Какой способ ты предпочитаешь и чем можешь обосновать свой выбор?",
+          "translation": "Hvilken metode foretrekker du, og hvordan kan du begrunne valget?",
+          "transliteration": "Kakoy sposob ty predpochitayesh’ i chem mozhesh’ obosnovat’ svoy vybor?",
+          "expected": [
+            "Я предпочитаю писать от руки, поскольку так мне легче выделять главное.",
+            "Мне удобнее делать записи от руки: это помогает мне выделять главное."
+          ],
+          "hint": "Velg håndskrift og begrunn det med din egen erfaring. «Поскольку» betyr fordi / ettersom.",
+          "reply": "Здесь можно опираться на собственный опыт, но общий вывод потребует дополнительных оснований.",
+          "replyTranslation": "Her kan man bygge på egen erfaring, men en generell konklusjon krever flere holdepunkter.",
+          "replyTransliteration": "Zdes’ mozhno opirat’sya na sobstvennyy opyt, no obshchiy vyvod potrebuyet dopolnitel’nykh osnovaniy."
+        },
+        {
+          "question": "Другой участник говорит: «На компьютере можно записать гораздо больше». Как ты ответишь?",
+          "translation": "En annen deltaker sier: «På datamaskinen kan man notere mye mer.» Hvordan svarer du?",
+          "transliteration": "Drugoy uchastnik govorit: «Na komp’yutere mozhno zapisat’ gorazdo bol’she». Kak ty otvetish’?",
+          "expected": [
+            "Это верно, однако количество записанного не всегда означает, что материал понятен.",
+            "С этим трудно спорить, но важно не только количество записей, но и понимание материала."
+          ],
+          "hint": "Anerkjenn fordelen før du nyanserer med «однако» eller «но». Unngå å hevde at én metode alltid virker best.",
+          "reply": "Получается, нам нужно различать скорость записи и понимание материала.",
+          "replyTranslation": "Da trenger vi å skille mellom hvor raskt man noterer, og hvor godt man forstår stoffet.",
+          "replyTransliteration": "Poluchayetsya, nam nuzhno razlichat’ skorost’ zapisi i ponimaniye materiala."
+        },
+        {
+          "question": "В какой ситуации компьютер всё же может быть удобнее?",
+          "translation": "I hvilken situasjon kan datamaskinen likevel være mer praktisk?",
+          "transliteration": "V kakoy situatsii komp’yuter vsyo zhe mozhet byt’ udobneye?",
+          "expected": [
+            "Если нужно быстро найти информацию или поделиться записями, компьютер может быть удобнее.",
+            "Компьютер удобнее, когда важно быстро искать информацию и обмениваться записями."
+          ],
+          "hint": "Gi et konkret unntak: søk i notater og deling med andre.",
+          "reply": "Задача тоже влияет на выбор: личные заметки и общий документ могут требовать разных инструментов.",
+          "replyTranslation": "Oppgaven påvirker også valget: egne notater og et felles dokument kan kreve ulike verktøy.",
+          "replyTransliteration": "Zadacha tozhe vliyayet na vybor: lichnyye zametki i obshchiy dokument mogut trebovat’ raznykh instrumentov."
+        },
+        {
+          "question": "Как подвести итог, сохранив свою позицию и признав ограничения?",
+          "translation": "Hvordan kan du oppsummere, beholde standpunktet ditt og samtidig erkjenne begrensningene?",
+          "transliteration": "Kak podvesti itog, sokhraniv svoyu pozitsiyu i priznav ogranicheniya?",
+          "expected": [
+            "Для себя я выбираю записи от руки, хотя для совместной работы предпочту компьютер.",
+            "На мой взгляд, способ стоит выбирать в зависимости от задачи; для личных заметок мне ближе бумага."
+          ],
+          "hint": "Oppsummer med et forbehold. «В зависимости от задачи» betyr avhengig av oppgaven.",
+          "reply": "При таком обсуждении полезно заранее уточнять, какую именно задачу мы решаем.",
+          "replyTranslation": "I en slik diskusjon er det nyttig å avklare på forhånd hvilken oppgave vi faktisk skal løse.",
+          "replyTransliteration": "Pri takom obsuzhdenii polezno zaraneye utochnyat’, kakuyu imenno zadachu my reshayem."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "обосновать выбор",
+          "translation": "begrunne valget",
+          "transliteration": "obosnovat’ vybor"
+        },
+        {
+          "word": "выделять главное",
+          "translation": "trekke frem det viktigste",
+          "transliteration": "vydelyat’ glavnoye"
+        },
+        {
+          "word": "однако",
+          "translation": "imidlertid / likevel",
+          "transliteration": "odnako"
+        },
+        {
+          "word": "с этим трудно спорить",
+          "translation": "det er vanskelig å være uenig i",
+          "transliteration": "s etim trudno sporit’"
+        },
+        {
+          "word": "дополнительные основания",
+          "translation": "flere holdepunkter",
+          "transliteration": "dopolnitel’nyye osnovaniya"
+        },
+        {
+          "word": "в зависимости от задачи",
+          "translation": "avhengig av oppgaven",
+          "transliteration": "v zavisimosti ot zadachi"
+        }
+      ]
+    },
+    {
+      "id": "ru-myagkoe-nesoglasie",
+      "title": "Uenig og fortsatt på lag",
+      "subtitle": "Ta opp en bekymring og finn et kompromiss.",
+      "level": "B2",
+      "icon": "hand",
+      "opening": "Это Саша. Мы с друзьями организуем встречу книжного клуба. Один друг предлагает провести её в парке, но прогноз обещает дождь. Попробуем обсудить это тактично.",
+      "openingTranslation": "Det er Sasha. Vi arrangerer et bokklubbmøte sammen med venner. En venn foreslår å ha det i parken, men det er meldt regn. La oss prøve å drøfte det taktfullt.",
+      "openingTransliteration": "Eto Sasha. My s druz’yami organizuyem vstrechu knizhnogo kluba. Odin drug predlagayet provesti yeyo v parke, no prognoz obeshchayet dozhd’. Poprobuyem obsudit’ eto taktichno.",
+      "steps": [
+        {
+          "question": "Как признать достоинства идеи, прежде чем выразить сомнение?",
+          "translation": "Hvordan kan du anerkjenne fordelene ved ideen før du uttrykker tvil?",
+          "transliteration": "Kak priznat’ dostoinstva idei, prezhde chem vyrazit’ somneniye?",
+          "expected": [
+            "В парке было бы приятно встретиться, но меня немного беспокоит прогноз погоды.",
+            "Идея с парком мне нравится, хотя из-за прогноза погоды у меня есть сомнения."
+          ],
+          "hint": "Begynn med noe positivt om ideen, og beskriv deretter en konkret bekymring.",
+          "reply": "Прогноз действительно стоит учесть, особенно если встречу трудно перенести в последний момент.",
+          "replyTranslation": "Værmeldingen er verdt å ta hensyn til, særlig hvis det er vanskelig å flytte møtet i siste liten.",
+          "replyTransliteration": "Prognoz deystvitel’no stoit uchest’, osobenno yesli vstrechu trudno perenesti v posledniy moment."
+        },
+        {
+          "question": "Друг отвечает: «Ты всегда всё усложняешь». Как вернуть разговор к вопросу о встрече?",
+          "translation": "Vennen svarer: «Du gjør alltid alt så komplisert.» Hvordan fører du samtalen tilbake til møtet?",
+          "transliteration": "Drug otvechayet: «Ty vsegda vsyo uslozhnyayesh’». Kak vernut’ razgovor k voprosu o vstreche?",
+          "expected": [
+            "Я не хочу усложнять план, просто предлагаю подумать, где мы сможем укрыться от дождя.",
+            "Давай обсудим конкретный риск: где мы будем встречаться, если пойдёт дождь?"
+          ],
+          "hint": "Unngå å svare med en anklage. Forklar hensikten eller still et konkret spørsmål om regn.",
+          "reply": "Хорошо, давай вернёмся к организации встречи и рассмотрим запасной вариант.",
+          "replyTranslation": "Greit, la oss gå tilbake til planleggingen av møtet og se på et alternativ.",
+          "replyTransliteration": "Khorosho, davay vernyomsya k organizatsii vstrechi i rassmotrim zapasnoy variant."
+        },
+        {
+          "question": "Как предложить компромисс, не отвергая парк совсем?",
+          "translation": "Hvordan foreslår du et kompromiss uten å avvise parken helt?",
+          "transliteration": "Kak predlozhit’ kompromiss, ne otvergaya park sovsem?",
+          "expected": [
+            "Предлагаю оставить парк основным вариантом, но заранее договориться о помещении на случай дождя.",
+            "Можно встретиться в парке, если будет сухо, а на случай дождя найти помещение."
+          ],
+          "hint": "Behold parken som hovedplan og foreslå et lokale i reserve. Bruk «на случай дождя».",
+          "reply": "Рядом есть общественный центр. Можно узнать, свободна ли там комната в нужное время.",
+          "replyTranslation": "Det ligger et aktivitetshus i nærheten. Vi kan undersøke om de har et ledig rom på det aktuelle tidspunktet.",
+          "replyTransliteration": "Ryadom yest’ obshchestvennyy tsentr. Mozhno uznat’, svobodna li tam komnata v nuzhnoye vremya."
+        },
+        {
+          "question": "Как договориться о следующем шаге и завершить обсуждение?",
+          "translation": "Hvordan blir dere enige om neste steg og avslutter diskusjonen?",
+          "transliteration": "Kak dogovorit’sya o sleduyushchem shage i zavershit’ obsuzhdeniye?",
+          "expected": [
+            "Давай завтра проверим прогноз и сообщим всем окончательное место встречи.",
+            "Предлагаю завтра уточнить погоду и сразу написать участникам, где мы встречаемся."
+          ],
+          "hint": "Avtal når dere bestemmer dere, og hvordan deltakerne får beskjed.",
+          "reply": "Договорились. Завтра сравним варианты и сообщим участникам решение.",
+          "replyTranslation": "Avtale. I morgen sammenligner vi alternativene og gir deltakerne beskjed.",
+          "replyTransliteration": "Dogovorilis’. Zavtra sravnim varianty i soobshchim uchastnikam resheniye."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "выразить сомнение",
+          "translation": "uttrykke tvil",
+          "transliteration": "vyrazit’ somneniye"
+        },
+        {
+          "word": "меня беспокоит",
+          "translation": "jeg er bekymret for",
+          "transliteration": "menya bespokoit"
+        },
+        {
+          "word": "в последний момент",
+          "translation": "i siste liten",
+          "transliteration": "v posledniy moment"
+        },
+        {
+          "word": "запасной вариант",
+          "translation": "alternativ i reserve",
+          "transliteration": "zapasnoy variant"
+        },
+        {
+          "word": "на случай дождя",
+          "translation": "i tilfelle regn",
+          "transliteration": "na sluchay dozhdya"
+        },
+        {
+          "word": "договориться о следующем шаге",
+          "translation": "bli enige om neste steg",
+          "transliteration": "dogovorit’sya o sleduyushchem shage"
+        }
+      ]
+    },
+    {
+      "id": "ru-istochniki",
+      "title": "Hva viser egentlig nyheten?",
+      "subtitle": "Undersøk belegg, årsakspåstander og usikkerhet.",
+      "level": "C1",
+      "icon": "compass",
+      "opening": "Я Саша. Возьмём вымышленную новость: «Читатели живут дольше». В заметке говорится об опросе, но не приводятся ни ссылка на исследование, ни сведения об участниках. Разберём, какие выводы пока допустимы.",
+      "openingTranslation": "Jeg er Sasha. Vi tar en oppdiktet nyhet: «Lesere lever lenger». Notisen omtaler en spørreundersøkelse, men gir verken lenke til studien eller opplysninger om deltakerne. La oss undersøke hvilke konklusjoner det foreløpig er grunnlag for.",
+      "openingTransliteration": "Ya Sasha. Voz’myom vymyshlennuyu novost’: «Chitateli zhivut dol’she». V zametke govoritsya ob oprose, no ne privodyatsya ni ssylka na issledovaniye, ni svedeniya ob uchastnikakh. Razberyom, kakiye vyvody poka dopustimy.",
+      "steps": [
+        {
+          "question": "Что стоит выяснить, прежде чем доверять заголовку?",
+          "translation": "Hva bør vi finne ut før vi stoler på overskriften?",
+          "transliteration": "Chto stoit vyyasnit’, prezhde chem doveryat’ zagolovku?",
+          "expected": [
+            "Прежде всего стоит найти первоисточник и выяснить, кого опрашивали и как измеряли продолжительность жизни.",
+            "Без первоисточника трудно оценить вывод: нужны сведения о выборке, методе и периоде наблюдения."
+          ],
+          "hint": "Etterspør originalkilden og opplysninger om utvalg og metode. Unngå å avvise studien før du har sett den.",
+          "reply": "В нашем примере этих сведений пока нет. Сам заголовок не позволяет восстановить ход исследования.",
+          "replyTranslation": "I eksempelet vårt mangler disse opplysningene foreløpig. Overskriften alene gjør det ikke mulig å forstå hvordan undersøkelsen ble gjennomført.",
+          "replyTransliteration": "V nashem primere etikh svedeniy poka net. Sam zagolovok ne pozvolyayet vosstanovit’ khod issledovaniya."
+        },
+        {
+          "question": "Допустим, связь между чтением и долголетием действительно обнаружена. Доказывает ли это причинность?",
+          "translation": "La oss anta at det faktisk er funnet en sammenheng mellom lesing og et langt liv. Beviser det en årsakssammenheng?",
+          "transliteration": "Dopustim, svyaz’ mezhdu chteniyem i dolgoletiyem deystvitel’no obnaruzhena. Dokazyvayet li eto prichinnost’?",
+          "expected": [
+            "Нет, сама по себе связь не доказывает причинности: на оба показателя могут влиять другие факторы.",
+            "Даже если связь установлена, нельзя исключать влияние образования, дохода или исходного состояния здоровья."
+          ],
+          "hint": "Skill mellom sammenheng og årsak. Presenter andre faktorer som muligheter, ikke som påviste forklaringer.",
+          "reply": "Такие факторы нужно учитывать при анализе. Пока мы лишь перечисляем возможные объяснения.",
+          "replyTranslation": "Slike faktorer må tas med i analysen. Foreløpig nevner vi bare mulige forklaringer.",
+          "replyTransliteration": "Takiye faktory nuzhno uchityvat’ pri analize. Poka my lish’ perechislyayem vozmozhnyye ob”yasneniya."
+        },
+        {
+          "question": "В соцсетях эту новость пересказывают как совет заменить спорт чтением. В чём проблема такого пересказа?",
+          "translation": "I sosiale medier gjengis nyheten som et råd om å erstatte trening med lesing. Hva er problemet med den gjengivelsen?",
+          "transliteration": "V sotssetyakh etu novost’ pereskazyvayut kak sovet zamenit’ sport chteniyem. V chyom problema takogo pereskaza?",
+          "expected": [
+            "Пересказ приписывает исследованию рекомендацию, которая из описанной связи не следует.",
+            "Здесь наблюдение превращают в практический совет, хотя для такого перехода не приведено оснований."
+          ],
+          "hint": "Påpek spranget fra et funn til en anbefaling. «Не следует из» betyr at noe ikke følger av noe annet.",
+          "reply": "В исходной заметке сравнения со спортом не было. При пересказе появился новый вывод.",
+          "replyTranslation": "Den opprinnelige notisen sammenlignet ikke med trening. Gjengivelsen har fått en ny konklusjon.",
+          "replyTransliteration": "V iskhodnoy zametke sravneniya so sportom ne bylo. Pri pereskaze poyavilsya novyy vyvod."
+        },
+        {
+          "question": "Как осторожно пересказать новость, не усиливая её выводов?",
+          "translation": "Hvordan kan du gjengi nyheten varsomt uten å gjøre konklusjonene sterkere?",
+          "transliteration": "Kak ostorozhno pereskazat’ novost’, ne usilivaya yeyo vyvodov?",
+          "expected": [
+            "По сообщению автора заметки, исследование выявило связь между чтением и долголетием; без первоисточника оценить её надёжность нельзя.",
+            "В заметке сообщается о возможной связи, однако судить о причинности и практических рекомендациях пока преждевременно."
+          ],
+          "hint": "Marker hvem opplysningen kommer fra, og hva som fortsatt er ukjent. Bruk «пока преждевременно».",
+          "reply": "До знакомства с первоисточником оставим вопрос открытым и сохраним ссылку на заметку для проверки.",
+          "replyTranslation": "Vi lar spørsmålet stå åpent til vi har sett originalkilden, og tar vare på lenken til notisen for å kontrollere den.",
+          "replyTransliteration": "Do znakomstva s pervoistochnikom ostavim vopros otkrytym i sokhranim ssylku na zametku dlya proverki."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "первоисточник",
+          "translation": "originalkilde",
+          "transliteration": "pervoistochnik"
+        },
+        {
+          "word": "выборка",
+          "translation": "utvalg i en undersøkelse",
+          "transliteration": "vyborka"
+        },
+        {
+          "word": "причинность",
+          "translation": "kausalitet / årsakssammenheng",
+          "transliteration": "prichinnost’"
+        },
+        {
+          "word": "нельзя исключать",
+          "translation": "man kan ikke utelukke",
+          "transliteration": "nel’zya isklyuchat’"
+        },
+        {
+          "word": "не следует из",
+          "translation": "følger ikke av",
+          "transliteration": "ne sleduyet iz"
+        },
+        {
+          "word": "преждевременно",
+          "translation": "for tidlig / prematurt",
+          "transliteration": "prezhdevremenno"
+        },
+        {
+          "word": "приписывать",
+          "translation": "tillegge / tilskrive",
+          "transliteration": "pripisyvat’"
+        }
+      ]
+    },
+    {
+      "id": "ru-rasskazchik",
+      "title": "Mellom fortelleren og teksten",
+      "subtitle": "Tolk en tvetydig forteller og drøft et alternativ.",
+      "level": "C1",
+      "icon": "wave",
+      "opening": "Это Саша. Обсудим вымышленный рассказ: герой уверяет, что помог соседу из бескорыстия, но несколько раз упоминает, что ждал благодарности. Автор не объясняет, как к этому относиться.",
+      "openingTranslation": "Det er Sasha. La oss drøfte en oppdiktet fortelling: Hovedpersonen forsikrer at han hjalp naboen uselvisk, men nevner flere ganger at han ventet på takknemlighet. Forfatteren forklarer ikke hvordan vi skal forstå dette.",
+      "openingTransliteration": "Eto Sasha. Obsudim vymyshlennyy rasskaz: geroy uveryayet, chto pomog sosedu iz beskorystiya, no neskol’ko raz upominayet, chto zhdal blagodarnosti. Avtor ne ob”yasnyayet, kak k etomu otnosit’sya.",
+      "steps": [
+        {
+          "question": "Что позволяет усомниться в том, как герой описывает свои мотивы?",
+          "translation": "Hva gir grunn til å tvile på hvordan hovedpersonen beskriver motivene sine?",
+          "transliteration": "Chto pozvolyayet usomnit’sya v tom, kak geroy opisyvayet svoi motivy?",
+          "expected": [
+            "Его заявления о бескорыстии расходятся с повторяющимся ожиданием благодарности.",
+            "Сомнение вызывает противоречие между заявленным мотивом и деталями, на которых герой настаивает."
+          ],
+          "hint": "Vis til motsetningen i teksten. Ikke trekk inn fakta som ikke finnes i den korte handlingsbeskrivelsen.",
+          "reply": "Это расхождение допускает несколько прочтений: герой может оправдывать себя или не вполне понимать собственные мотивы.",
+          "replyTranslation": "Dette spriket åpner for flere lesninger: Hovedpersonen kan rettferdiggjøre seg selv eller ikke fullt ut forstå sine egne motiver.",
+          "replyTransliteration": "Eto raskhozhdeniye dopuskayet neskol’ko prochteniy: geroy mozhet opravdyvat’ sebya ili ne vpolne ponimat’ sobstvennyye motivy."
+        },
+        {
+          "question": "Обязательно ли считать героя сознательным лжецом?",
+          "translation": "Må vi nødvendigvis betrakte hovedpersonen som en bevisst løgner?",
+          "transliteration": "Obyazatel’no li schitat’ geroya soznatel’nym lzhetsom?",
+          "expected": [
+            "Не обязательно: не исключено, что он искренне считает себя бескорыстным и не замечает противоречия.",
+            "Я бы различал намеренный обман и самообман: текст пока допускает оба толкования.",
+            "Я бы различала намеренный обман и самообман: текст пока допускает оба толкования."
+          ],
+          "hint": "Skill mellom bevisst bedrag og selvbedrag. «Не исключено, что» gir rom for en mulig tolkning.",
+          "reply": "Тогда вопрос касается не только достоверности рассказа, но и того, насколько герой понимает самого себя.",
+          "replyTranslation": "Da handler spørsmålet både om fortellingens pålitelighet og om hvor godt hovedpersonen forstår seg selv.",
+          "replyTransliteration": "Togda vopros kasayetsya ne tol’ko dostovernosti rasskaza, no i togo, naskol’ko geroy ponimayet samogo sebya."
+        },
+        {
+          "question": "Как ответить читателю, который видит в герое только лицемерие?",
+          "translation": "Hvordan kan du svare en leser som bare ser hykleri hos hovedpersonen?",
+          "transliteration": "Kak otvetit’ chitatelyu, kotoryy vidit v geroye tol’ko litsemeriye?",
+          "expected": [
+            "Такое прочтение возможно, однако оно оставляет в стороне вероятность внутреннего конфликта.",
+            "Я понимаю эту трактовку, но ожидание благодарности само по себе ещё не отменяет желания помочь."
+          ],
+          "hint": "Anerkjenn den andre lesningen og vis hva den kan overse. «Само по себе» betyr i seg selv.",
+          "reply": "Возможно, напряжение между желанием помочь и потребностью в признании и делает героя неоднозначным.",
+          "replyTranslation": "Kanskje er det spenningen mellom ønsket om å hjelpe og behovet for anerkjennelse som gjør hovedpersonen tvetydig.",
+          "replyTransliteration": "Vozmozhno, napryazheniye mezhdu zhelaniyem pomoch’ i potrebnost’yu v priznanii i delayet geroya neodnoznachnym."
+        },
+        {
+          "question": "Как сформулировать итоговую интерпретацию, сохранив неоднозначность?",
+          "translation": "Hvordan kan du formulere en samlet tolkning og bevare tvetydigheten?",
+          "transliteration": "Kak sformulirovat’ itogovuyu interpretatsiyu, sokhraniv neodnoznachnost’?",
+          "expected": [
+            "Мне кажется, рассказ исследует смешанные мотивы человека, не сводя их ни к чистому бескорыстию, ни к простому расчёту.",
+            "Я понимаю этот рассказ как попытку показать, что желание помочь может сосуществовать с потребностью в признании."
+          ],
+          "hint": "Formuler en tolkning med «мне кажется» eller «я понимаю ... как». Bevar spennet mellom flere motiver.",
+          "reply": "При дальнейшем чтении можно искать детали, которые поддерживают эту интерпретацию или заставляют её пересмотреть.",
+          "replyTranslation": "Ved videre lesning kan vi lete etter detaljer som støtter denne tolkningen eller gjør at vi må revurdere den.",
+          "replyTransliteration": "Pri dal’neyshem chtenii mozhno iskat’ detali, kotoryye podderzhivayut etu interpretatsiyu ili zastavlyayut yeyo peresmotret’."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "бескорыстие",
+          "translation": "uselviskhet",
+          "transliteration": "beskorystiye"
+        },
+        {
+          "word": "расходиться с",
+          "translation": "stå i motsetning til",
+          "transliteration": "raskhodit’sya s"
+        },
+        {
+          "word": "самообман",
+          "translation": "selvbedrag",
+          "transliteration": "samoobman"
+        },
+        {
+          "word": "прочтение",
+          "translation": "lesning / tolkning",
+          "transliteration": "prochteniye"
+        },
+        {
+          "word": "оставлять в стороне",
+          "translation": "la ligge / se bort fra",
+          "transliteration": "ostavlyat’ v storone"
+        },
+        {
+          "word": "потребность в признании",
+          "translation": "behov for anerkjennelse",
+          "transliteration": "potrebnost’ v priznanii"
+        },
+        {
+          "word": "неоднозначность",
+          "translation": "tvetydighet / flertydighet",
+          "transliteration": "neodnoznachnost’"
+        }
+      ]
+    },
+    {
+      "id": "ru-soveshchanie",
+      "title": "Et møte som lander",
+      "subtitle": "Avklar forsinkelse, prioriteringer og ansvar.",
+      "level": "B2",
+      "icon": "hand",
+      "opening": "Я Саша, сегодня мы коллеги на рабочей встрече. Демонстрация проекта назначена на пятницу, но часть данных ещё не готова. Нам нужно согласовать реалистичный план.",
+      "openingTranslation": "Jeg er Sasha, og i dag er vi kolleger på et arbeidsmøte. Demonstrasjonen av prosjektet er satt til fredag, men en del av dataene er ennå ikke klare. Vi må bli enige om en realistisk plan.",
+      "openingTransliteration": "Ya Sasha, segodnya my kollegi na rabochey vstreche. Demonstratsiya proyekta naznachena na pyatnitsu, no chast’ dannykh yeshchyo ne gotova. Nam nuzhno soglasovat’ realistichnyy plan.",
+      "steps": [
+        {
+          "question": "Как сообщить о задержке, не обвиняя коллег?",
+          "translation": "Hvordan kan du melde fra om forsinkelsen uten å anklage kolleger?",
+          "transliteration": "Kak soobshchit’ o zaderzhke, ne obvinyaya kolleg?",
+          "expected": [
+            "Проверка данных занимает больше времени, чем ожидалось, поэтому полный отчёт к пятнице не будет готов.",
+            "Часть данных ещё проходит проверку, и это влияет на срок подготовки полного отчёта."
+          ],
+          "hint": "Beskriv oppgaven og konsekvensen. «Чем ожидалось» betyr enn ventet.",
+          "reply": "Понятно. Заказчику важно увидеть, как работает основная часть проекта, даже если отчёт будет готов позже.",
+          "replyTranslation": "Jeg forstår. Oppdragsgiveren trenger å se hvordan hoveddelen av prosjektet fungerer, selv om rapporten blir ferdig senere.",
+          "replyTransliteration": "Ponyatno. Zakazchiku vazhno uvidet’, kak rabotayet osnovnaya chast’ proyekta, dazhe yesli otchyot budet gotov pozzhe."
+        },
+        {
+          "question": "Что нужно уточнить, чтобы определить приоритеты?",
+          "translation": "Hva må avklares for å bestemme prioriteringene?",
+          "transliteration": "Chto nuzhno utochnit’, chtoby opredelit’ prioritety?",
+          "expected": [
+            "Давайте уточним, какие результаты обязательны для демонстрации, а какие можно представить позже.",
+            "Правильно ли я понимаю, что сейчас важнее показать основной процесс, чем закончить весь отчёт?"
+          ],
+          "hint": "Skill mellom det som må være klart til demonstrasjonen, og det som kan vente.",
+          "reply": "Да, к пятнице нужен работающий основной процесс. Полный отчёт можно обсудить отдельно.",
+          "replyTranslation": "Ja, til fredag trenger vi en fungerende hovedprosess. Den fullstendige rapporten kan vi drøfte separat.",
+          "replyTransliteration": "Da, k pyatnitse nuzhen rabotayushchiy osnovnoy protsess. Polnyy otchyot mozhno obsudit’ otdel’no."
+        },
+        {
+          "question": "Как предложить план с учётом этого приоритета?",
+          "translation": "Hvordan foreslår du en plan som tar hensyn til denne prioriteringen?",
+          "transliteration": "Kak predlozhit’ plan s uchyotom etogo prioriteta?",
+          "expected": [
+            "Предлагаю подготовить демонстрацию к пятнице, а срок полного отчёта согласовать после проверки данных.",
+            "Можно сосредоточиться на демонстрации, а окончательную дату отчёта определить, когда станет ясен объём оставшейся работы."
+          ],
+          "hint": "Gi et konkret forslag uten å love en ukjent leveringsdato. Bruk «согласовать» om å avtale.",
+          "reply": "Для такого плана нужно распределить задачи и выбрать момент, когда мы снова проверим сроки.",
+          "replyTranslation": "Med en slik plan må vi fordele oppgavene og velge når vi skal vurdere fristene på nytt.",
+          "replyTransliteration": "Dlya takogo plana nuzhno raspredelit’ zadachi i vybrat’ moment, kogda my snova proverim sroki."
+        },
+        {
+          "question": "Как зафиксировать договорённости в конце встречи?",
+          "translation": "Hvordan oppsummerer og nedtegner du avtalene ved slutten av møtet?",
+          "transliteration": "Kak zafiksirovat’ dogovoryonnosti v kontse vstrechi?",
+          "expected": [
+            "Итак, я готовлю демонстрацию, команда проверяет данные, а в четверг мы уточняем срок отчёта.",
+            "Давайте запишем: демонстрация — моя задача, проверка данных — задача команды; в четверг сверим сроки."
+          ],
+          "hint": "Oppsummer hvem som gjør hva, og avtal en oppfølging på torsdag.",
+          "reply": "Договорились. Я внесу эти пункты в заметки встречи и отмечу проверку сроков на четверг.",
+          "replyTranslation": "Avtale. Jeg legger disse punktene inn i møtenotatene og setter opp fristavklaringen til torsdag.",
+          "replyTransliteration": "Dogovorilis’. Ya vnesu eti punkty v zametki vstrechi i otmechu proverku srokov na chetverg."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "чем ожидалось",
+          "translation": "enn ventet",
+          "transliteration": "chem ozhidalos’"
+        },
+        {
+          "word": "определить приоритеты",
+          "translation": "bestemme prioriteringene",
+          "transliteration": "opredelit’ prioritety"
+        },
+        {
+          "word": "с учётом",
+          "translation": "med hensyn til",
+          "transliteration": "s uchyotom"
+        },
+        {
+          "word": "согласовать срок",
+          "translation": "avtale en frist",
+          "transliteration": "soglasovat’ srok"
+        },
+        {
+          "word": "распределить задачи",
+          "translation": "fordele oppgavene",
+          "transliteration": "raspredelit’ zadachi"
+        },
+        {
+          "word": "зафиксировать договорённости",
+          "translation": "nedtegne det man har blitt enige om",
+          "transliteration": "zafiksirovat’ dogovoryonnosti"
+        }
+      ]
+    },
+    {
+      "id": "ru-nyuansy-obshcheniya",
+      "title": "Det som ligger mellom ordene",
+      "subtitle": "Avklar tone, følelser og forventninger i en relasjon.",
+      "level": "B2",
+      "icon": "hand",
+      "opening": "Это Саша. Представь: ты предложил или предложила другу встретиться, а в ответ получил или получила только короткое «посмотрим». Тебе непонятно, что стоит за этим ответом. Попробуем прояснить ситуацию.",
+      "openingTranslation": "Det er Sasha. Tenk deg at du foreslo å møtes med en venn og bare fikk et kort «vi får se» til svar. Du er usikker på hva som ligger bak svaret. La oss prøve å avklare situasjonen.",
+      "openingTransliteration": "Eto Sasha. Predstav’: ty predlozhil ili predlozhila drugu vstretit’sya, a v otvet poluchil ili poluchila tol’ko korotkoye «posmotrim». Tebe neponyatno, chto stoit za etim otvetom. Poprobuyem proyasnit’ situatsiyu.",
+      "steps": [
+        {
+          "question": "Как описать своё впечатление, не выдавая его за факт?",
+          "translation": "Hvordan beskriver du inntrykket ditt uten å fremstille det som et faktum?",
+          "transliteration": "Kak opisat’ svoyo vpechatleniye, ne vydavaya yego za fakt?",
+          "expected": [
+            "Мне показалось, что ты не очень хочешь встречаться, но, возможно, я неверно понимаю твой ответ.",
+            "Твой ответ прозвучал для меня немного холодно, хотя я понимаю, что по сообщению трудно судить о настроении."
+          ],
+          "hint": "Marker at det er ditt inntrykk med «мне показалось» eller «для меня». Åpne for at du kan ha misforstått.",
+          "reply": "Я не хотел тебя обидеть. Я ответил коротко, потому что пока не знаю своего расписания.",
+          "replyTranslation": "Jeg mente ikke å såre deg. Jeg svarte kort fordi jeg ennå ikke kjenner timeplanen min.",
+          "replyTransliteration": "Ya ne khotel tebya obidet’. Ya otvetil korotko, potomu chto poka ne znayu svoyego raspisaniya."
+        },
+        {
+          "question": "Как уточнить, правильно ли ты понимаешь объяснение?",
+          "translation": "Hvordan kan du kontrollere om du forstår forklaringen riktig?",
+          "transliteration": "Kak utochnit’, pravil’no li ty ponimayesh’ ob”yasneniye?",
+          "expected": [
+            "То есть дело в расписании, а не в том, что ты не хочешь видеться?",
+            "Правильно ли я понимаю, что ты пока не можешь выбрать день, но сама идея встречи тебе подходит?"
+          ],
+          "hint": "Gjengi forklaringen som et spørsmål. Bruk «то есть» for å avklare hva den innebærer.",
+          "reply": "Да, именно так. Встретиться хочу, но смогу назвать день только завтра.",
+          "replyTranslation": "Ja, akkurat. Jeg vil gjerne møtes, men kan først si hvilken dag det blir i morgen.",
+          "replyTransliteration": "Da, imenno tak. Vstretit’sya khochu, no smogu nazvat’ den’ tol’ko zavtra."
+        },
+        {
+          "question": "Как объяснить, что помогло бы тебе в похожей ситуации?",
+          "translation": "Hvordan forklarer du hva som ville hjulpet deg i en lignende situasjon?",
+          "transliteration": "Kak ob”yasnit’, chto pomoglo by tebe v pokhozhey situatsii?",
+          "expected": [
+            "Мне было бы спокойнее, если бы ты сразу писал, что пока не знаешь расписания.",
+            "В такой ситуации мне помогает короткое объяснение: тогда я не пытаюсь угадать, что ты имеешь в виду."
+          ],
+          "hint": "Beskriv ditt eget behov uten «ты всегда» eller «ты никогда». «Мне было бы спокойнее» betyr at du ville følt deg roligere.",
+          "reply": "Понимаю. В следующий раз постараюсь добавить пару слов о том, почему пока не могу ответить точно.",
+          "replyTranslation": "Jeg forstår. Neste gang skal jeg prøve å legge til et par ord om hvorfor jeg ennå ikke kan gi et sikkert svar.",
+          "replyTransliteration": "Ponimayu. V sleduyushchiy raz postarayus’ dobavit’ paru slov o tom, pochemu poka ne mogu otvetit’ tochno."
+        },
+        {
+          "question": "Как завершить разговор и договориться о встрече без давления?",
+          "translation": "Hvordan avslutter du samtalen og avtaler veien videre uten å presse?",
+          "transliteration": "Kak zavershit’ razgovor i dogovorit’sya o vstreche bez davleniya?",
+          "expected": [
+            "Спасибо за объяснение. Напиши завтра, когда узнаешь расписание, и тогда выберем день.",
+            "Теперь мне понятнее. Давай вернёмся к планам завтра, когда у тебя будет больше ясности."
+          ],
+          "hint": "Takk for avklaringen og foreslå å ta opp planene igjen i morgen.",
+          "reply": "Хорошо, завтра напишу. Тогда посмотрим, какой день удобен нам обоим.",
+          "replyTranslation": "Greit, jeg skriver i morgen. Da ser vi hvilken dag som passer for oss begge.",
+          "replyTransliteration": "Khorosho, zavtra napishu. Togda posmotrim, kakoy den’ udoben nam oboim."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "мне показалось",
+          "translation": "jeg fikk inntrykk av",
+          "transliteration": "mne pokazalos’"
+        },
+        {
+          "word": "неверно понимать",
+          "translation": "misforstå",
+          "transliteration": "neverno ponimat’"
+        },
+        {
+          "word": "дело в",
+          "translation": "det skyldes / saken handler om",
+          "transliteration": "delo v"
+        },
+        {
+          "word": "иметь в виду",
+          "translation": "mene / sikte til",
+          "transliteration": "imet’ v vidu"
+        },
+        {
+          "word": "без давления",
+          "translation": "uten press",
+          "transliteration": "bez davleniya"
+        },
+        {
+          "word": "прояснить ситуацию",
+          "translation": "avklare situasjonen",
+          "transliteration": "proyasnit’ situatsiyu"
+        }
+      ]
+    },
+    {
+      "id": "ru-esli-by",
+      "title": "Hvis hverdagen tok en ny retning",
+      "subtitle": "Utforsk et hypotetisk valg og det du ville savnet.",
+      "level": "B2",
+      "icon": "compass",
+      "opening": "Я Саша. Представим, что у тебя появилась возможность провести полгода в другом городе и заниматься творческим проектом. Все бытовые вопросы уже решены. Осталось понять, подходит ли тебе такой опыт.",
+      "openingTranslation": "Jeg er Sasha. La oss tenke oss at du fikk muligheten til å tilbringe et halvt år i en annen by og arbeide med et kreativt prosjekt. Alle praktiske spørsmål er allerede løst. Nå gjenstår det å finne ut om en slik erfaring passer for deg.",
+      "openingTransliteration": "Ya Sasha. Predstavim, chto u tebya poyavilas’ vozmozhnost’ provesti polgoda v drugom gorode i zanimat’sya tvorcheskim proyektom. Vse bytovyye voprosy uzhe resheny. Ostalos’ ponyat’, podkhodit li tebe takoy opyt.",
+      "steps": [
+        {
+          "question": "Если бы у тебя появилась такая возможность, чему хотелось бы посвятить эти полгода?",
+          "translation": "Hvis du fikk en slik mulighet, hva ville du ønske å bruke dette halvåret på?",
+          "transliteration": "Yesli by u tebya poyavilas’ takaya vozmozhnost’, chemu khotelos’ by posvyatit’ eti polgoda?",
+          "expected": [
+            "Если бы у меня появилась такая возможность, мне хотелось бы написать сборник рассказов.",
+            "Мне хотелось бы посвятить эти полгода фотографии и подготовить небольшую выставку."
+          ],
+          "hint": "Bruk «если бы» og fortidsform for en hypotetisk betingelse. «Мне хотелось бы» uttrykker et ønske uten kjønnsbøyning.",
+          "reply": "У такого проекта есть и личная сторона: новое место может изменить привычный ритм работы.",
+          "replyTranslation": "Et slikt prosjekt har også en personlig side: Et nytt sted kan endre den vante arbeidsrytmen.",
+          "replyTransliteration": "U takogo proyekta yest’ i lichnaya storona: novoye mesto mozhet izmenit’ privychnyy ritm raboty."
+        },
+        {
+          "question": "Что пришлось бы изменить в привычной жизни?",
+          "translation": "Hva måtte du ha endret i det vanlige livet ditt?",
+          "transliteration": "Chto prishlos’ by izmenit’ v privychnoy zhizni?",
+          "expected": [
+            "Пришлось бы привыкнуть к новому распорядку и чаще общаться с близкими на расстоянии.",
+            "Мне пришлось бы заново выстроить повседневные привычки и искать время для разговоров с близкими."
+          ],
+          "hint": "Beskriv tilpasninger med «пришлось бы» etterfulgt av infinitiv.",
+          "reply": "Даже временный переезд затрагивает привычки и отношения. Стоит подумать, что помогло бы сохранить связь с близкими.",
+          "replyTranslation": "Selv en midlertidig flytting påvirker vaner og relasjoner. Det er verdt å tenke på hva som kunne hjulpet deg med å holde kontakten med dine nærmeste.",
+          "replyTransliteration": "Dazhe vremennyy pereyezd zatragivayet privychki i otnosheniya. Stoit podumat’, chto pomoglo by sokhranit’ svyaz’ s blizkimi."
+        },
+        {
+          "question": "Что могло бы заставить тебя отказаться от предложения?",
+          "translation": "Hva kunne fått deg til å takke nei til tilbudet?",
+          "transliteration": "Chto moglo by zastavit’ tebya otkazat’sya ot predlozheniya?",
+          "expected": [
+            "Мне пришлось бы отказаться, если бы близкому человеку понадобилась моя помощь дома.",
+            "Если бы отъезд означал надолго оставить близкого человека без поддержки, я предпочёл бы остаться.",
+            "Если бы отъезд означал надолго оставить близкого человека без поддержки, я предпочла бы остаться."
+          ],
+          "hint": "Sett en tydelig hypotetisk grense. Bruk «если бы ... понадобилась» om et mulig behov for hjelp.",
+          "reply": "В таком выборе личный проект приходится соотносить с обязательствами перед другими людьми.",
+          "replyTranslation": "I et slikt valg må man veie det personlige prosjektet opp mot forpliktelser overfor andre.",
+          "replyTransliteration": "V takom vybore lichnyy proyekt prikhoditsya sootnosit’ s obyazatel’stvami pered drugimi lyud’mi."
+        },
+        {
+          "question": "Какое решение тебе сейчас ближе и при каком условии?",
+          "translation": "Hvilken beslutning heller du mot nå, og under hvilken forutsetning?",
+          "transliteration": "Kakoye resheniye tebe seychas blizhe i pri kakom uslovii?",
+          "expected": [
+            "Скорее всего, я согласился бы, если бы удалось заранее договориться с близкими и продумать поддержку.",
+            "Скорее всего, я согласилась бы, если бы удалось заранее договориться с близкими и продумать поддержку.",
+            "Мне ближе согласие, при условии что получится заранее решить вопросы, важные для близких."
+          ],
+          "hint": "Avslutt med et foreløpig valg og en betingelse. Velg «согласился бы» eller «согласилась бы» etter hva som passer deg.",
+          "reply": "Пока это мысленный эксперимент. Если предложение станет реальным, можно будет вернуться к условиям и уточнить детали.",
+          "replyTranslation": "Foreløpig er dette et tankeeksperiment. Hvis tilbudet blir reelt, kan vi vende tilbake til betingelsene og avklare detaljene.",
+          "replyTransliteration": "Poka eto myslennyy eksperiment. Yesli predlozheniye stanet real’nym, mozhno budet vernut’sya k usloviyam i utochnit’ detali."
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "если бы",
+          "translation": "hvis ... hadde / dersom ... skulle",
+          "transliteration": "yesli by"
+        },
+        {
+          "word": "посвятить время",
+          "translation": "vie tid",
+          "transliteration": "posvyatit’ vremya"
+        },
+        {
+          "word": "пришлось бы",
+          "translation": "måtte ha / ville vært nødt til å",
+          "transliteration": "prishlos’ by"
+        },
+        {
+          "word": "на расстоянии",
+          "translation": "på avstand",
+          "transliteration": "na rasstoyanii"
+        },
+        {
+          "word": "соотносить с",
+          "translation": "vurdere i forhold til / veie opp mot",
+          "transliteration": "sootnosit’ s"
+        },
+        {
+          "word": "при условии что",
+          "translation": "forutsatt at",
+          "transliteration": "pri uslovii chto"
+        }
+      ]
+    }
+  ]
+}

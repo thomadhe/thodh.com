@@ -33,6 +33,28 @@ export const shippedProjects: Project[] = [
     progress: 100,
     index: "1",
   },
+  {
+    id: "sjakk",
+    name: "Sjakk for 2;)",
+    href: "/sjakk",
+    description: "Spill sammen eller inviter en venn på nett. Egne klokker, lek og trening.",
+    category: "Web app · Spill",
+    status: "shipped",
+    startedAt: "2026-09-16T18:18:33+02:00",
+    progress: 100,
+    index: "2",
+  },
+  {
+    id: "spill",
+    name: "Dagens spill",
+    href: "/spill",
+    description: "Fire daglige minispill: Mer eller mindre, Anelsesløs, Stavebien og Sangløs.",
+    category: "Web app · Spill",
+    status: "shipped",
+    startedAt: "2026-10-28T13:00:00+01:00",
+    progress: 100,
+    index: "3",
+  },
 ]
 
 export const buildingProjects: Project[] = [
@@ -47,9 +69,10 @@ export const buildingProjects: Project[] = [
     index: "1",
   },
   {
-    id: "spraklarer",
-    name: "AI Språklærer",
-    description: "Praktisk språktrening for italiensk og russisk.",
+    id: "otsjoba",
+    name: "Otsjoba",
+    href: "/otsjoba",
+    description: "Øv på italiensk og russisk med veiledede samtaler og ordtrening.",
     category: "Web app · Språk",
     status: "building",
     startedAt: "2026-09-01T10:00:00+02:00",
@@ -74,11 +97,24 @@ export const bounceApps: BounceApp[] = [
     logo: "/logos/focusfish.svg",
   },
   {
-    id: "spraklarer",
-    label: "Språklærer",
-    letter: "Å",
+    id: "otsjoba",
+    label: "Otsjoba",
+    letter: "O",
     className: "bg-[#3f5c45] text-white",
     logo: "/logos/spraklarer.svg",
+  },
+  {
+    id: "sjakk",
+    label: "Sjakk for 2;)",
+    letter: "♞",
+    className: "bg-[#171318] text-[#eadbbd]",
+    logo: "/sjakk/favicon.svg",
+  },
+  {
+    id: "spill",
+    label: "Dagens spill",
+    letter: "⇅",
+    className: "bg-emerald-600 text-white",
   },
 ]
 

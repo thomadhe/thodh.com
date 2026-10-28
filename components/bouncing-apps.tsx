@@ -322,7 +322,7 @@ export function BouncingApps() {
   }
 
   return (
-    <div className="relative h-full min-h-[240px] w-full">
+    <div className="relative h-full min-h-[180px] w-full">
       <div
         ref={viewportRef}
         className="absolute inset-0 touch-none overflow-hidden"

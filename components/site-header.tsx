@@ -15,12 +15,15 @@ export function SiteHeader({
       >
         thodh.com
       </Link>
+      <nav className="flex items-center gap-6" aria-label="Nettsted">
+      <Link href="/konto" className="font-mono text-[11px] uppercase tracking-widest text-neutral-500 hover:text-neutral-900">Konto</Link>
       <Link
         href={actionHref}
         className="font-mono text-[11px] uppercase tracking-widest text-neutral-400 transition-colors hover:text-neutral-700"
       >
         {actionLabel}
       </Link>
+      </nav>
     </header>
   )
 }
