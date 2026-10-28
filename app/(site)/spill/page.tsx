@@ -1,30 +1,35 @@
 import type { Metadata } from "next"
-import { SiteHeader } from "@/components/site-header"
+import Link from "next/link"
+import { visningsskrift } from "@/features/spill/components/skrift"
 import { SpillOversikt } from "@/features/spill/components/spill-oversikt"
 import { velgDato } from "@/features/spill/lib/dag"
 
 export const metadata: Metadata = {
-  title: "Dagens spill",
+  title: "Daglige minigames",
   description: "Fire små daglige spill: Mer eller mindre, Anelsesløs, Stavebien og Sangløs.",
 }
 
 export default async function Page({ searchParams }: PageProps<"/spill">) {
   const dato = velgDato((await searchParams).dato)
   return (
-    <div className="page-grid min-h-full">
-      <div className="mx-auto flex min-h-full w-full max-w-lg flex-col px-5 sm:px-6">
-        <SiteHeader actionHref="/kontakt" actionLabel="Kontakt" />
-        <main className="flex flex-1 flex-col gap-6 py-12 sm:py-14">
-          <section className="text-center">
-            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-neutral-400">Daglig</p>
-            <h1 className="mt-2 text-[1.85rem] font-semibold leading-[1.2] tracking-tight text-neutral-950 sm:text-[2.15rem]">
-              Dagens spill
-            </h1>
-            <p className="mx-auto mt-4 max-w-sm font-mono text-[13px] leading-7 text-neutral-500">
-              Fire små spill som byttes ut hver natt. Gikk du glipp av en dag? Velg den i kalenderen.
-            </p>
-          </section>
+    <div className={`${visningsskrift.variable} min-h-dvh bg-[#18191b] text-neutral-100`}>
+      <div className="mx-auto flex min-h-dvh w-full max-w-4xl flex-col px-5 sm:px-8">
+        <header className="flex h-20 items-center justify-between">
+          <Link href="/" className="font-mono text-xs text-neutral-400 transition hover:text-white">
+            ← thodh.com
+          </Link>
+          <Link href="/kontakt" className="font-mono text-xs text-neutral-400 transition hover:text-white">
+            Kontakt
+          </Link>
+        </header>
+        <main className="flex flex-1 flex-col justify-center gap-8 pt-4 pb-16">
+          <h1 className="text-center font-[family-name:var(--font-visning)] text-[2.4rem] leading-[0.95] font-extrabold tracking-[-0.05em] text-neutral-50 sm:text-[3.6rem]">
+            Daglige minigames
+          </h1>
           <SpillOversikt key={dato} dato={dato} />
+          <p className="text-center font-mono text-[11px] leading-6 text-neutral-500">
+            Nye spill hver natt kl. 00 norsk tid. Gikk du glipp av en dag? Trykk på datoen.
+          </p>
         </main>
       </div>
     </div>

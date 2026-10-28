@@ -1,63 +1,57 @@
 "use client"
 
+import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
+import { useState } from "react"
 import { dagNummer, formaterDato, iDagOslo, leggTilDager, START_DATO } from "../lib/dag"
 import { useAlleResultater, type Resultat } from "../lib/lagring"
 import { spill, type Spill } from "../lib/spill"
+import { illustrasjoner } from "./illustrasjoner"
 import { Kalender } from "./kalender"
 
-function Rad({
-  s,
-  dato,
-  iDag,
-  resultater,
-}: {
-  s: Spill
-  dato: string
-  iDag: string
-  resultater: Record<string, Resultat>
-}) {
-  const valgt = resultater[dato]
-  let rekke = 0
+function rekke(resultater: Record<string, Resultat>, iDag: string) {
+  let n = 0
   const iDagFerdig = resultater[iDag] && resultater[iDag].status !== "pagar"
   for (let d = iDagFerdig ? iDag : leggTilDager(iDag, -1); d >= START_DATO; d = leggTilDager(d, -1)) {
     const r = resultater[d]
     if (!r || r.status === "pagar") break
-    rekke++
+    n++
   }
+  return n
+}
+
+function Flis({ s, dato, iDag, resultater }: { s: Spill; dato: string; iDag: string; resultater: Record<string, Resultat> }) {
+  const valgt = resultater[dato]
+  const dager = rekke(resultater, iDag)
+  const Illustrasjon = illustrasjoner[s.id]
   const status = !valgt
-    ? { tekst: "Ikke spilt", stil: "bg-neutral-100 text-neutral-500" }
+    ? null
     : valgt.status === "pagar"
-      ? { tekst: "Påbegynt", stil: "bg-amber-50 text-amber-700" }
-      : {
-          tekst: valgt.etikett ?? "Ferdig",
-          stil: valgt.status === "tapt" ? "bg-rose-50 text-rose-700" : "bg-emerald-50 text-emerald-700",
-        }
+      ? { tekst: "Påbegynt", stil: "bg-amber-300 text-neutral-950" }
+      : { tekst: valgt.etikett ?? "Ferdig", stil: valgt.status === "tapt" ? "bg-rose-500 text-white" : "bg-emerald-400 text-neutral-950" }
 
   return (
     <Link
       href={dato === iDag ? s.href : `${s.href}?dato=${dato}`}
-      className="group flex items-center gap-4 p-5 transition-colors hover:bg-neutral-50 sm:p-6"
+      className="group relative flex min-h-40 flex-col items-center gap-5 rounded-2xl bg-[#2b2d31] px-5 pt-6 pb-7 shadow-[0_2px_0_rgba(0,0,0,0.35)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#33363b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:min-h-52"
     >
-      <span
-        aria-hidden="true"
-        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-xl font-semibold transition group-hover:scale-105 ${s.farge}`}
-      >
-        {s.ikon}
-      </span>
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <h2 className="text-[15px] font-semibold tracking-tight text-neutral-950">{s.navn}</h2>
-          <span className={`rounded-full px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider ${status.stil}`}>
-            {status.tekst}
-          </span>
-        </div>
-        <p className="mt-1 text-sm leading-6 text-neutral-500">{s.kort}</p>
-        {rekke > 1 ? <p className="mt-1 font-mono text-[10px] text-neutral-400">{rekke} dager på rad</p> : null}
+      <h2 className="font-[family-name:var(--font-visning)] text-[1.7rem] leading-none font-extrabold tracking-[-0.04em] text-neutral-50 sm:text-[1.9rem]">
+        {s.navn}
+      </h2>
+      <div className="flex flex-1 items-center justify-center transition duration-200 group-hover:scale-[1.04]">
+        <Illustrasjon />
       </div>
-      <span aria-hidden="true" className="text-neutral-300 transition group-hover:translate-x-0.5 group-hover:text-neutral-500">
-        →
-      </span>
+      {status || dager > 1 ? (
+        <div className="absolute top-3 right-3 flex flex-col items-end gap-1">
+          {status ? (
+            <span className={`rounded-full px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider ${status.stil}`}>
+              {status.tekst}
+            </span>
+          ) : null}
+          {dager > 1 ? <span className="font-mono text-[10px] text-neutral-400">🔥 {dager}</span> : null}
+        </div>
+      ) : null}
+      <span className="sr-only">{s.kort}</span>
     </Link>
   )
 }
@@ -65,65 +59,61 @@ function Rad({
 export function SpillOversikt({ dato }: { dato: string }) {
   const iDag = iDagOslo()
   const alle = useAlleResultater()
+  const [visKalender, setVisKalender] = useState(false)
   const erIDag = dato === iDag
   const lenke = (d: string) => (d === iDag ? "/spill" : `/spill?dato=${d}`)
+  const pil = "flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-neutral-300 transition hover:bg-white/10"
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-neutral-400">
-            Dag {dagNummer(dato) + 1}
-            {erIDag ? " · i dag" : " · arkiv"}
-          </p>
-          <p className="mt-1 text-lg font-semibold first-letter:uppercase tracking-tight text-neutral-950">
-            {formaterDato(dato)}
-          </p>
-        </div>
-        <nav className="flex items-center gap-1" aria-label="Bytt dag">
-          {dato > START_DATO ? (
-            <Link
-              href={lenke(leggTilDager(dato, -1))}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-black/5 bg-white text-neutral-600 transition hover:bg-neutral-50"
-              aria-label="Forrige dag"
-            >
-              ‹
-            </Link>
-          ) : null}
-          {!erIDag ? (
-            <>
-              <Link
-                href={lenke(leggTilDager(dato, 1))}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/5 bg-white text-neutral-600 transition hover:bg-neutral-50"
-                aria-label="Neste dag"
-              >
-                ›
-              </Link>
-              <Link
-                href="/spill"
-                className="ml-1 rounded-full bg-neutral-950 px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-white"
-              >
-                I dag
-              </Link>
-            </>
-          ) : null}
-        </nav>
+      <div className="flex items-center justify-center gap-2">
+        {dato > START_DATO ? (
+          <Link href={lenke(leggTilDager(dato, -1))} className={pil} aria-label="Forrige dag">
+            <ChevronLeft className="h-4 w-4" />
+          </Link>
+        ) : (
+          <span className="h-10 w-10" />
+        )}
+        <button
+          type="button"
+          onClick={() => setVisKalender((v) => !v)}
+          aria-expanded={visKalender}
+          className="flex h-10 items-center gap-2 rounded-full border border-white/10 px-4 text-sm text-neutral-200 transition hover:bg-white/10"
+        >
+          <CalendarDays className="h-4 w-4 text-neutral-400" />
+          <span className="first-letter:uppercase">{formaterDato(dato)}</span>
+          <span className="font-mono text-[10px] uppercase tracking-widest text-neutral-500">
+            #{dagNummer(dato) + 1}
+          </span>
+        </button>
+        {!erIDag ? (
+          <Link href={lenke(leggTilDager(dato, 1))} className={pil} aria-label="Neste dag">
+            <ChevronRight className="h-4 w-4" />
+          </Link>
+        ) : (
+          <span className="h-10 w-10" />
+        )}
       </div>
+      {!erIDag ? (
+        <p className="-mt-3 text-center">
+          <Link href="/spill" className="font-mono text-[11px] uppercase tracking-widest text-neutral-400 underline-offset-4 hover:text-white hover:underline">
+            Til dagens spill →
+          </Link>
+        </p>
+      ) : null}
 
-      <div className="overflow-hidden rounded-3xl border border-black/5 bg-white">
-        {spill.map((s, i) => (
-          <div key={s.id}>
-            {i > 0 ? <div className="h-px bg-black/5" /> : null}
-            <Rad s={s} dato={dato} iDag={iDag} resultater={alle[s.id] ?? {}} />
-          </div>
+      {visKalender ? (
+        <section className="mx-auto w-full max-w-sm rounded-2xl bg-white p-5 text-neutral-900 shadow-xl">
+          <p className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-neutral-400">Spill tidligere dager</p>
+          <Kalender spillIder={spill.map((s) => s.id)} href="/spill" valgt={dato} />
+        </section>
+      ) : null}
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        {spill.map((s) => (
+          <Flis key={s.id} s={s} dato={dato} iDag={iDag} resultater={alle[s.id] ?? {}} />
         ))}
       </div>
-
-      <section className="rounded-3xl border border-black/5 bg-white p-5 sm:p-6">
-        <p className="font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-neutral-400">Kalender</p>
-        <h2 className="mt-2 mb-4 text-xl font-semibold tracking-tight text-neutral-950">Spill tidligere dager</h2>
-        <Kalender spillIder={spill.map((s) => s.id)} href="/spill" valgt={dato} />
-      </section>
     </>
   )
 }

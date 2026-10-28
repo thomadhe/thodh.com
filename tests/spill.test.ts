@@ -60,11 +60,11 @@ test("Mer eller mindre: dataene er komplette og uten duplikater", () => {
   }
 })
 
-test("Stavebien: ti ord fra lett til vanskelig, uten lekkasje i hintene", () => {
+test("Stavebien: fem ord fra lett til vanskelig, uten lekkasje i hintene", () => {
   for (const dato of dager.slice(0, 30)) {
     const ord = dagensStavebien(dato)
-    assert.deepEqual(ord.map((o) => o.level), [1, 1, 2, 2, 3, 3, 4, 4, 5, 5])
-    assert.equal(new Set(ord.map((o) => o.word)).size, 10)
+    assert.deepEqual(ord.map((o) => o.level), [1, 2, 3, 4, 5])
+    assert.equal(new Set(ord.map((o) => o.word)).size, 5)
   }
   for (const o of stavebienOrd) {
     assert.ok(!o.definition.toLowerCase().includes(o.word.toLowerCase()), o.word)
@@ -78,8 +78,8 @@ test("Stavebien: ti ord fra lett til vanskelig, uten lekkasje i hintene", () => 
 test("Sangløs: unike sanger med trackId i alle kategorier", () => {
   assert.equal(new Set(sanglosSanger.map((s) => s.id)).size, sanglosSanger.length)
   assert.equal(new Set(sanglosSanger.map((s) => s.trackId)).size, sanglosSanger.length)
-  for (const k of ["norsk", "internasjonal", "klassiker"]) {
-    assert.ok(sanglosSanger.filter((s) => s.category === k).length >= 140, k)
+  for (const k of ["rock", "hiphop"] as const) {
+    assert.ok(sanglosSanger.filter((s) => s.genre === k).length >= 200, k)
   }
 })
 

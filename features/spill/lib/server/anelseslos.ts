@@ -5,8 +5,10 @@ import path from "node:path"
 import { dagNummer, iRotasjon } from "../dag"
 import { hemmeligeOrd } from "./hemmelige-ord"
 
-// Word vectors: fastText cc.no.300 (Grave et al. 2018, CC BY-SA 3.0), restricted to lemmas from
-// Norsk ordbank bokmål (Språkbanken, CC BY 4.0), L2-normalised and quantised to int8.
+// Word vectors: GloVe (Pennington, Socher & Manning 2014; Common Crawl 42B/840B and Wikipedia+Gigaword 6B,
+// PDDL 1.0), combined and reduced to 300 dims. No subword information, so only context decides similarity.
+// Vocabulary: 25,000 common English lemmas chosen with WordNet 3.0 (© 2006 Princeton University);
+// inflections and British spellings map to their lemma via forms.tsv. L2-normalised, quantised to int8.
 const MAPPE = path.join(process.cwd(), "features", "spill", "data", "anelseslos")
 const DIM = 300
 
@@ -77,8 +79,8 @@ export type GjettSvar =
 
 export function gjett(dato: string, input: string): GjettSvar {
   const ord = normaliser(input)
-  if (!/^[a-zæøåéèêóòôü]{2,22}$/.test(ord)) {
-    return { ok: false, feil: "ugyldig", melding: "Skriv ett ord med bare bokstaver." }
+  if (!/^[a-z]{2,22}$/.test(ord)) {
+    return { ok: false, feil: "ugyldig", melding: "Skriv ett engelsk ord med bare bokstavene a–z." }
   }
   const m = lastModell()
   const i = m.indeks.get(ord) ?? m.former.get(ord)

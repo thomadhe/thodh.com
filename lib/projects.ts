@@ -46,7 +46,7 @@ export const shippedProjects: Project[] = [
   },
   {
     id: "spill",
-    name: "Dagens spill",
+    name: "Daglige minigames",
     href: "/spill",
     description: "Fire daglige minispill: Mer eller mindre, Anelsesløs, Stavebien og Sangløs.",
     category: "Web app · Spill",
@@ -90,20 +90,6 @@ export const bounceApps: BounceApp[] = [
     logo: "/logos/karrierepiloten.jpg",
   },
   {
-    id: "focusfish",
-    label: "Focusfish",
-    letter: "F",
-    className: "bg-[#0f4c5c] text-white",
-    logo: "/logos/focusfish.svg",
-  },
-  {
-    id: "otsjoba",
-    label: "Otsjoba",
-    letter: "O",
-    className: "bg-[#3f5c45] text-white",
-    logo: "/logos/spraklarer.svg",
-  },
-  {
     id: "sjakk",
     label: "Sjakk for 2;)",
     letter: "♞",
@@ -112,7 +98,7 @@ export const bounceApps: BounceApp[] = [
   },
   {
     id: "spill",
-    label: "Dagens spill",
+    label: "Minigames",
     letter: "⇅",
     className: "bg-emerald-600 text-white",
   },

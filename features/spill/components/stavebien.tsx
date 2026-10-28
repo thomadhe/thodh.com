@@ -5,10 +5,15 @@ import type { StavebienWord } from "../data/types"
 import { formaterDato } from "../lib/dag"
 import { useDagligTilstand, useResultater, type Resultat } from "../lib/lagring"
 import { erRiktigStavet, LIV } from "../lib/stavebien-regler"
+import { lydTekst, type LydDel } from "../lib/stavebien-lyd"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
-type Tilstand = { svar: string[]; resultat: Resultat }
-const tom = (): Tilstand => ({ svar: [], resultat: { status: "pagar" } })
+/** A day's word plus URLs of its pre-recorded audio, when generated. */
+export type StaveOrd = StavebienWord & { lyd?: Partial<Record<LydDel, string>> }
+
+// v2: five words per day. Older saves (ten words) fail the shape check and start fresh.
+type Tilstand = { v: 2; svar: string[]; resultat: Resultat }
+const tom = (): Tilstand => ({ v: 2, svar: [], resultat: { status: "pagar" } })
 
 function abonnerStemmer(varsle: () => void) {
   if (!("speechSynthesis" in window)) return () => {}
@@ -18,10 +23,11 @@ function abonnerStemmer(varsle: () => void) {
 
 function finnNorskStemme() {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return undefined
-  const stemmer = speechSynthesis.getVoices()
-  return (
-    stemmer.find((v) => /^(nb|no)(-|_|$)/i.test(v.lang)) ?? stemmer.find((v) => /^nn(-|_|$)/i.test(v.lang))
-  )
+  const stemmer = speechSynthesis.getVoices().filter((v) => /^(nb|no|nn)(-|_|$)/i.test(v.lang))
+  // Neural voices (Edge "Natural", Google, Apple premium) sound far less robotic than the old desktop ones.
+  const poeng = (v: SpeechSynthesisVoice) =>
+    (/natural|neural|online|premium|enhanced|google/i.test(v.name) ? 2 : 0) + (/^nn/i.test(v.lang) ? 0 : 1)
+  return stemmer.sort((a, b) => poeng(b) - poeng(a))[0]
 }
 
 /** "ja" / "nei" / "laster" — whether a Norwegian voice is installed. */
@@ -37,15 +43,47 @@ function useNorskStemme() {
   )
 }
 
+let spiller: HTMLAudioElement | null = null
+
+function stoppLyd() {
+  spiller?.pause()
+  if (typeof window !== "undefined" && "speechSynthesis" in window) speechSynthesis.cancel()
+}
+
 function si(tekst: string, sakte = false) {
   const stemme = finnNorskStemme()
   if (!stemme) return
-  speechSynthesis.cancel()
+  stoppLyd()
   const u = new SpeechSynthesisUtterance(tekst)
   u.voice = stemme
   u.lang = stemme.lang
-  u.rate = sakte ? 0.55 : 0.85
+  u.rate = sakte ? 0.6 : 0.9
   speechSynthesis.speak(u)
+}
+
+/** Plays the recorded clip when there is one, otherwise falls back to the browser's voice. */
+function les(o: StaveOrd, del: LydDel, sakte = false) {
+  const url = o.lyd?.[del]
+  if (!url) return si(lydTekst(o, del), sakte)
+  stoppLyd()
+  spiller = new Audio(url)
+  spiller.playbackRate = sakte ? 0.65 : 1
+  spiller.preservesPitch = true
+  spiller.play().catch(() => si(lydTekst(o, del), sakte))
+}
+
+function LesKnapp({ onClick, etikett }: { onClick: () => void; etikett: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-yellow-200 align-[-3px] text-[11px] not-italic transition hover:bg-yellow-300"
+      aria-label={etikett}
+      title={etikett}
+    >
+      🔊
+    </button>
+  )
 }
 
 function Hjerter({ igjen }: { igjen: number }) {
@@ -73,7 +111,7 @@ function Sammenlign({ svar, fasit }: { svar: string; fasit: string }) {
   )
 }
 
-export function Stavebien({ dato, ord }: { dato: string; ord: StavebienWord[] }) {
+export function Stavebien({ dato, ord }: { dato: string; ord: StaveOrd[] }) {
   const { verdi, lastet, oppdater } = useDagligTilstand<Tilstand>("stavebien", dato, tom)
   const stemme = useNorskStemme()
   const [tekst, setTekst] = useState("")
@@ -92,7 +130,10 @@ export function Stavebien({ dato, ord }: { dato: string; ord: StavebienWord[] })
     if (tilbakemelding === null) felt.current?.focus()
   }, [tilbakemelding, indeks])
 
-  const utenStemme = stemme === "nei"
+  useEffect(() => stoppLyd, [])
+
+  const harLyd = (del: LydDel) => Boolean(naa.lyd?.[del]) || stemme === "ja"
+  const utenStemme = stemme === "nei" && !naa.lyd?.ord
   const synlig = (n: "definisjon" | "setning" | "opprinnelse") => vist.has(n) || (utenStemme && n !== "opprinnelse")
 
   const send = (e: React.FormEvent) => {
@@ -107,6 +148,7 @@ export function Stavebien({ dato, ord }: { dato: string; ord: StavebienWord[] })
       const feil = alle.length - riktige
       const slutt = alle.length >= ord.length || feil >= LIV
       return {
+        v: 2,
         svar: alle,
         resultat: slutt
           ? { status: riktige === ord.length ? "vunnet" : "ferdig", etikett: `${riktige}/${ord.length}`, poeng: riktige }
@@ -120,6 +162,8 @@ export function Stavebien({ dato, ord }: { dato: string; ord: StavebienWord[] })
   const neste = () => {
     setTilbakemelding(null)
     setVist(new Set())
+    // The click is a user gesture, so the next word can be read straight away.
+    if (indeks < ord.length && igjen > 0) les(ord[indeks], "ord")
   }
 
   if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/60" />
@@ -162,8 +206,8 @@ export function Stavebien({ dato, ord }: { dato: string; ord: StavebienWord[] })
           <div className="mt-5 flex items-center justify-center gap-2">
             <button
               type="button"
-              onClick={() => si(naa.word)}
-              disabled={stemme !== "ja"}
+              onClick={() => les(naa, "ord")}
+              disabled={!harLyd("ord")}
               className="flex h-20 w-20 items-center justify-center rounded-full bg-yellow-300 text-3xl shadow-sm transition hover:scale-105 hover:bg-yellow-400 active:scale-95 disabled:opacity-50"
               aria-label="Hør ordet"
             >
@@ -171,8 +215,8 @@ export function Stavebien({ dato, ord }: { dato: string; ord: StavebienWord[] })
             </button>
             <button
               type="button"
-              onClick={() => si(naa.word, true)}
-              disabled={stemme !== "ja"}
+              onClick={() => les(naa, "ord", true)}
+              disabled={!harLyd("ord")}
               className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-base transition hover:bg-neutral-50 disabled:opacity-50"
               aria-label="Hør ordet sakte"
               title="Sakte"
@@ -205,9 +249,15 @@ export function Stavebien({ dato, ord }: { dato: string; ord: StavebienWord[] })
           ))}
         </div>
         <div className="mt-4 space-y-2 text-left text-sm leading-6 text-neutral-700">
-          {synlig("definisjon") ? <p>{naa.definition}</p> : null}
+          {synlig("definisjon") ? (
+            <p>
+              {harLyd("definisjon") ? <LesKnapp onClick={() => les(naa, "definisjon")} etikett="Hør definisjonen" /> : null}
+              {naa.definition}
+            </p>
+          ) : null}
           {synlig("setning") ? (
             <p className="italic text-neutral-500">
+              {harLyd("setning") ? <LesKnapp onClick={() => les(naa, "setning")} etikett="Hør eksempelet" /> : null}
               {naa.sentence.split("___").map((del, i, deler) => (
                 <span key={i}>
                   {del}

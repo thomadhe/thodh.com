@@ -56,5 +56,6 @@ export type SanglosSong = {
   year: number
   /** Apple iTunes trackId with a working preview (verified with the lookup API, country=no). */
   trackId: number
-  category: "norsk" | "internasjonal" | "klassiker"
+  /** "rock" and "hiphop" also have their own daily song; every song is in the "Alle" pool. */
+  genre: "rock" | "hiphop" | "annet"
 }

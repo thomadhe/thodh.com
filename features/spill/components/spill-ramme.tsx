@@ -39,7 +39,7 @@ export function SpillRamme({
             href="/spill"
             className="font-mono text-[11px] uppercase tracking-widest text-neutral-500 transition-colors hover:text-neutral-900"
           >
-            ← Spill
+            ← Minigames
           </Link>
           <div className="flex items-center gap-1.5">
             <button

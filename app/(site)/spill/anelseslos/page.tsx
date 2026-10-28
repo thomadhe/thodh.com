@@ -6,7 +6,7 @@ import { antallOrd } from "@/features/spill/lib/server/anelseslos"
 
 export const metadata: Metadata = {
   title: "Anelsesløs",
-  description: "Finn dagens hemmelige ord. Ordene rangeres etter hvor like de er i betydning.",
+  description: "Finn dagens hemmelige engelske ord. Ordene rangeres etter hvor like de er i betydning.",
 }
 
 export default async function Page({ searchParams }: PageProps<"/spill/anelseslos">) {
@@ -19,13 +19,13 @@ export default async function Page({ searchParams }: PageProps<"/spill/anelseslo
       regler={
         <>
           <p>
-            Ordlisten har {antall.toLocaleString("nb-NO")} norske ord. Grønt betyr blant de 300 nærmeste, gult blant de
-            1 500 nærmeste. Bøyde former som «hunder» regnes som grunnformen «hund». Står du fast, gir et hint et ord som
-            er omtrent dobbelt så nært som ditt beste.
+            Ordene er engelske. Ordlisten har {antall.toLocaleString("nb-NO")} vanlige ord. Grønt betyr blant de 300
+            nærmeste, gult blant de 1 500 nærmeste. Bøyde former som «dogs» regnes som grunnformen «dog». Står du fast,
+            gir et hint et ord som er omtrent dobbelt så nært som ditt beste.
           </p>
           <p className="font-mono text-[11px] text-neutral-400">
-            Likhet beregnet med fastText-ordvektorer (Grave mfl. 2018, CC BY-SA 3.0) og Norsk ordbank (Språkbanken, CC
-            BY 4.0).
+            Likhet beregnet med GloVe-ordvektorer (Pennington, Socher &amp; Manning 2014, PDDL 1.0). Ordutvalg med
+            WordNet 3.0, © 2006 Princeton University.
           </p>
         </>
       }

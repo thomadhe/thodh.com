@@ -13,33 +13,45 @@ import { matKalorier } from "../data/mer-eller-mindre/mat-kalorier"
 import { norskeKommuner } from "../data/mer-eller-mindre/norske-kommuner"
 import { sangerStrommer } from "../data/mer-eller-mindre/sanger-strommer"
 import { serierImdb } from "../data/mer-eller-mindre/serier-imdb"
+import bilder from "../data/mer-eller-mindre/bilder.json"
 import { dagNummer, iRotasjon, stokk } from "./dag"
 
-export const kategorier: MerEllerMindreCategory[] = [
-  artisterLyttere,
-  sangerStrommer,
-  artisterAlder,
-  filmerImdb,
-  filmerInntekter,
-  serierImdb,
-  landBefolkning,
-  landAreal,
-  norskeKommuner,
-  avstandOslo,
-  hoyde,
-  dyrVekt,
-  matKalorier,
-  hvaKomForst,
+/**
+ * Same daily shape as More/Less: five fixed slots in a fixed order (people, streams, ratings, money,
+ * trivia). Slots with several categories rotate between them day by day.
+ */
+const PLASSER: MerEllerMindreCategory[][] = [
+  [artisterLyttere],
+  [sangerStrommer],
+  [filmerImdb, serierImdb],
+  [filmerInntekter],
+  [landBefolkning, dyrVekt, hoyde, matKalorier, hvaKomForst, landAreal, artisterAlder, norskeKommuner, avstandOslo],
 ]
 
-export const KATEGORIER_PER_DAG = 5
+export const kategorier: MerEllerMindreCategory[] = PLASSER.flat()
+
+export const KATEGORIER_PER_DAG = PLASSER.length
 export const RUNDER_PER_KATEGORI = 5
 /** Items reserved per category per day; extra room so every pair can meet the separation rule. */
 const VINDU = 16
 
-export type MelRunde = { a: MerEllerMindreItem; b: MerEllerMindreItem; /** 0 = a wins, 1 = b wins */ fasit: 0 | 1 }
+/** An item with its picture, when one was found (scripts/spill/hent-bilder.mjs). */
+export type MelItem = MerEllerMindreItem & { bilde?: string; kilde?: string }
 
-export type MelKategori = Omit<MerEllerMindreCategory, "items" | "separation"> & { runder: MelRunde[] }
+export type MelRunde = { a: MelItem; b: MelItem; /** 0 = a wins, 1 = b wins */ fasit: 0 | 1 }
+
+export type MelKategori = Omit<MerEllerMindreCategory, "items" | "separation"> & {
+  runder: MelRunde[]
+  /** Posters are portrait; everything else is shown square. */
+  bildeformat: "portrett" | "kvadrat"
+}
+
+const bildeKart = bilder as Record<string, { src: string; kilde?: string } | undefined>
+
+function medBilde(k: MerEllerMindreCategory, item: MerEllerMindreItem): MelItem {
+  const b = bildeKart[`${k.id}::${item.name}`]
+  return b ? { ...item, bilde: b.src, kilde: b.kilde } : item
+}
 
 function godtPar(k: MerEllerMindreCategory, a: MerEllerMindreItem, b: MerEllerMindreItem) {
   if (k.separation.kind === "difference") return Math.abs(a.value - b.value) >= k.separation.value
@@ -80,16 +92,13 @@ function lagRunder(k: MerEllerMindreCategory, dag: number): MelRunde[] {
 
 export function dagensMerEllerMindre(dato: string): MelKategori[] {
   const dag = dagNummer(dato)
-  // Categories rotate too: each one shows up before any comes back, five per day.
-  const valgte: MerEllerMindreCategory[] = []
-  for (let n = dag * KATEGORIER_PER_DAG; valgte.length < KATEGORIER_PER_DAG; n++) {
-    const k = iRotasjon(kategorier, n, "kategorier")
-    if (!valgte.includes(k)) valgte.push(k)
-  }
-  return valgte.map((k) => {
+  return PLASSER.map((plass, i) => {
+    const k = iRotasjon(plass, dag, `plass:${i}`)
     const { items: _items, separation: _sep, ...meta } = k
     void _items
     void _sep
-    return { ...meta, runder: lagRunder(k, dag) }
+    const runder = lagRunder(k, dag).map((r) => ({ ...r, a: medBilde(k, r.a), b: medBilde(k, r.b) }))
+    const bildeformat = k === filmerImdb || k === serierImdb || k === filmerInntekter ? "portrett" : "kvadrat"
+    return { ...meta, runder, bildeformat }
   })
 }

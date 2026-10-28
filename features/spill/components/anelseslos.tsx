@@ -6,13 +6,15 @@ import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
 type Gjetning = { ord: string; avstand: number; hint?: boolean }
+// v2: English words. Older saves (Norwegian words) fail the shape check and start fresh.
 type Tilstand = {
+  v: 2
   gjetninger: Gjetning[]
   fasit?: { ord: string; naermeste: string[] }
   resultat: Resultat
 }
 
-const tom = (): Tilstand => ({ gjetninger: [], resultat: { status: "pagar" } })
+const tom = (): Tilstand => ({ v: 2, gjetninger: [], resultat: { status: "pagar" } })
 
 function farge(avstand: number) {
   if (avstand === 1) return { bar: "bg-emerald-500", tekst: "text-emerald-950" }
@@ -199,14 +201,14 @@ export function Anelseslos({ dato, antall }: { dato: string; antall: number }) {
             ref={felt}
             value={tekst}
             onChange={(e) => setTekst(e.target.value)}
-            placeholder="Skriv et ord"
+            placeholder="Skriv et engelsk ord"
             autoFocus
             autoCapitalize="none"
             autoComplete="off"
             autoCorrect="off"
             spellCheck={false}
             enterKeyHint="send"
-            aria-label="Gjett et ord"
+            aria-label="Gjett et engelsk ord"
             className="h-12 min-w-0 flex-1 rounded-2xl border border-black/10 bg-white px-4 text-base text-neutral-950 shadow-sm outline-none transition placeholder:text-neutral-400 focus:border-neutral-900"
           />
           <Knapp type="submit" disabled={opptatt || !tekst.trim()} className="h-12 rounded-2xl">
@@ -266,16 +268,16 @@ export function Anelseslos({ dato, antall }: { dato: string; antall: number }) {
       ) : (
         <Kort className="px-6 py-10 text-center">
           <p className="text-sm leading-6 text-neutral-600">
-            Gjett et hvilket som helst ord. Ordene rangeres etter hvor like de er det hemmelige ordet i betydning –
-            ikke i stavemåte.
+            Gjett et hvilket som helst engelsk ord. Ordene rangeres etter hvor like de er det hemmelige ordet i
+            betydning – ikke i stavemåte.
           </p>
           <div className="mx-auto mt-5 flex max-w-xs flex-col gap-1.5 text-left">
-            <Rad g={{ ord: "eple", avstand: 1 }} antall={antall} />
-            <Rad g={{ ord: "frukt", avstand: 14 }} antall={antall} />
-            <Rad g={{ ord: "mat", avstand: 640 }} antall={antall} />
-            <Rad g={{ ord: "vann", avstand: 6400 }} antall={antall} />
+            <Rad g={{ ord: "apple", avstand: 1 }} antall={antall} />
+            <Rad g={{ ord: "fruit", avstand: 14 }} antall={antall} />
+            <Rad g={{ ord: "food", avstand: 640 }} antall={antall} />
+            <Rad g={{ ord: "water", avstand: 6400 }} antall={antall} />
           </div>
-          <p className="mt-4 font-mono text-[10px] text-neutral-400">Eksempel: hvis ordet var «eple»</p>
+          <p className="mt-4 font-mono text-[10px] text-neutral-400">Eksempel: hvis ordet var «apple»</p>
         </Kort>
       )}
     </div>

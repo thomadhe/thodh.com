@@ -18,9 +18,10 @@ export default async function Page({ searchParams }: PageProps<"/spill/mer-eller
       dato={dato}
       regler={
         <p>
-          Dagens fem kategorier trekkes fra {kategorier.length} mulige, med til sammen{" "}
-          {antall.toLocaleString("nb-NO")} oppføringer. Alle må brukes opp før noe går igjen. To alternativer vises bare
-          når forskjellen er stor nok til at avrundede tall ikke avgjør. Bruk 1 og 2 eller piltastene på tastaturet.
+          Fem kategorier hver dag i fast rekkefølge: Spotify-lyttere, Spotify-strømmer, IMDb-karakter, billettinntekter
+          og én trivia-kategori som veksler mellom flere temaer. Til sammen {antall.toLocaleString("nb-NO")} oppføringer
+          i {kategorier.length} kategorier, og alle må brukes opp før noe går igjen. To alternativer vises bare når
+          forskjellen er stor nok til at avrundede tall ikke avgjør. Bruk 1 og 2 eller piltastene på tastaturet.
         </p>
       }
     >

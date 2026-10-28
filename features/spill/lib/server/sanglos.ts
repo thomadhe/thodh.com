@@ -5,15 +5,21 @@ import { sanglosSanger } from "../../data/sanglos/sanger"
 import { dagNummer, iRotasjon } from "../dag"
 import type { SangKategori } from "../sanglos"
 
-const perKategori = new Map<SangKategori, SanglosSong[]>()
-for (const s of sanglosSanger) {
-  const liste = perKategori.get(s.category) ?? []
-  liste.push(s)
-  perKategori.set(s.category, liste)
+const perKategori: Record<SangKategori, SanglosSong[]> = {
+  alle: sanglosSanger,
+  rock: sanglosSanger.filter((s) => s.genre === "rock"),
+  hiphop: sanglosSanger.filter((s) => s.genre === "hiphop"),
 }
 
-export function dagensSang(dato: string, kategori: SangKategori) {
-  return iRotasjon(perKategori.get(kategori)!, dagNummer(dato), `sanglos:${kategori}`)
+export function dagensSang(dato: string, kategori: SangKategori): SanglosSong {
+  const dag = dagNummer(dato)
+  if (kategori !== "alle") return iRotasjon(perKategori[kategori], dag, `sanglos:${kategori}`)
+  // "Alle" draws from every song, but never repeats today's rock or hip hop song.
+  const opptatt = new Set([dagensSang(dato, "rock").id, dagensSang(dato, "hiphop").id])
+  for (let n = dag * 3; ; n++) {
+    const sang = iRotasjon(perKategori.alle, n, "sanglos:alle")
+    if (!opptatt.has(sang.id)) return sang
+  }
 }
 
 type Oppslag = { lyd: string; bilde?: string; lenke?: string; album?: string }

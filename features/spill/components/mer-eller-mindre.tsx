@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from "react"
 import { formaterDato } from "../lib/dag"
 import { formaterVerdi } from "../lib/format"
 import { useDagligTilstand, useResultater, type Resultat } from "../lib/lagring"
-import type { MelKategori, MelRunde } from "../lib/mer-eller-mindre"
+import type { MelItem, MelKategori, MelRunde } from "../lib/mer-eller-mindre"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
-type Tilstand = { svar: (0 | 1)[]; resultat: Resultat }
+// v2: fixed daily slots. Older saves belong to other rounds, fail the shape check and start fresh.
+type Tilstand = { v: 2; svar: (0 | 1)[]; resultat: Resultat }
 
-const tom = (): Tilstand => ({ svar: [], resultat: { status: "pagar" } })
+const tom = (): Tilstand => ({ v: 2, svar: [], resultat: { status: "pagar" } })
 const VIS_SVAR_MS = 1500
 
 function Teller({ verdi, format }: { verdi: number; format: MelKategori["format"] }) {
@@ -27,6 +28,32 @@ function Teller({ verdi, format }: { verdi: number; format: MelKategori["format"
     return () => cancelAnimationFrame(ramme)
   }, [verdi, format])
   return <>{formaterVerdi(format === "decimal" ? Math.round(vist * 10) / 10 : vist, format)}</>
+}
+
+function Bilde({ item, format }: { item: MelItem; format: MelKategori["bildeformat"] }) {
+  const [feilet, setFeilet] = useState(false)
+  const storrelse = format === "portrett" ? "aspect-[2/3] w-full max-w-36" : "aspect-square w-full max-w-40"
+  if (!item.bilde || feilet) {
+    return (
+      <span
+        className={`flex items-center justify-center rounded-2xl bg-neutral-50 text-5xl leading-none transition group-hover:scale-[1.02] ${storrelse}`}
+        aria-hidden="true"
+      >
+        {item.emoji}
+      </span>
+    )
+  }
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- remote pictures from several hosts, sized by CSS
+    <img
+      src={item.bilde}
+      alt=""
+      loading="eager"
+      referrerPolicy="no-referrer"
+      onError={() => setFeilet(true)}
+      className={`rounded-2xl bg-neutral-100 object-cover shadow-sm transition group-hover:scale-[1.02] ${storrelse}`}
+    />
+  )
 }
 
 function ValgKort({
@@ -58,7 +85,7 @@ function ValgKort({
       type="button"
       onClick={onVelg}
       disabled={avslort}
-      className={`group relative flex min-h-56 flex-col items-center justify-center rounded-3xl border-2 bg-white px-3 py-6 text-center transition duration-200 disabled:cursor-default ${ramme}`}
+      className={`group relative flex min-h-56 flex-col items-center justify-start rounded-3xl border-2 bg-white px-3 pt-5 pb-4 text-center transition duration-200 disabled:cursor-default ${ramme}`}
     >
       <span className="absolute top-3 left-3 hidden h-5 w-5 items-center justify-center rounded-md border border-black/10 font-mono text-[10px] text-neutral-400 sm:flex">
         {tast}
@@ -72,9 +99,7 @@ function ValgKort({
           {vinner ? "✓" : "✕"}
         </span>
       ) : null}
-      <span className="text-5xl leading-none transition group-hover:scale-105" aria-hidden="true">
-        {item.emoji}
-      </span>
+      <Bilde key={item.name} item={item} format={kategori.bildeformat} />
       <span className="mt-4 text-[15px] font-semibold leading-tight tracking-tight text-neutral-950">{item.name}</span>
       {item.detail ? <span className="mt-1 font-mono text-[10px] text-neutral-400">{item.detail}</span> : null}
       <span
@@ -137,9 +162,9 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
     oppdater((t) => {
       if (t.svar.length !== n) return t
       const svar = [...t.svar, valg]
-      if (svar.length < totalt) return { svar, resultat: { status: "pagar", etikett: `${svar.length}/${totalt} runder` } }
+      if (svar.length < totalt) return { v: 2, svar, resultat: { status: "pagar", etikett: `${svar.length}/${totalt} runder` } }
       const poeng = svar.filter((s, i) => s === runder[i].fasit).length
-      return { svar, resultat: { status: "ferdig", etikett: `${poeng}/${totalt}`, poeng } }
+      return { v: 2, svar, resultat: { status: "ferdig", etikett: `${poeng}/${totalt}`, poeng } }
     })
     setVisning(n)
     tidsur.current = setTimeout(() => setVisning(null), VIS_SVAR_MS)
@@ -227,6 +252,8 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
             </span>
           </div>
 
+          <Forhandslast runde={runder[aktiv + 1]} />
+
           <div className="flex h-11 items-center justify-center">
             {svart !== undefined ? (
               <button
@@ -244,9 +271,46 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
               </p>
             )}
           </div>
+          <Kreditering runde={runde} />
         </>
       )}
     </div>
+  )
+}
+
+/** Warms the browser cache so the next pair appears without a flash. */
+function Forhandslast({ runde }: { runde?: MelRunde }) {
+  useEffect(() => {
+    for (const item of runde ? [runde.a, runde.b] : []) if (item.bilde) new Image().src = item.bilde
+  }, [runde])
+  return null
+}
+
+const kildenavn = (url: string) => {
+  const vert = new URL(url).hostname
+  if (vert.includes("deezer")) return "Deezer"
+  if (vert.includes("tvmaze")) return "TVmaze"
+  if (vert.includes("commons")) return "Wikimedia Commons"
+  return "Wikipedia"
+}
+
+/** Every picture links to its source page, where author and licence are listed. */
+function Kreditering({ runde }: { runde: MelRunde }) {
+  const kilder = [runde.a, runde.b].filter((x) => x.bilde && x.kilde)
+  if (!kilder.length) return null
+  return (
+    <p className="text-center font-mono text-[9px] text-neutral-400">
+      Bilder:{" "}
+      {kilder.map((x, i) => (
+        <span key={x.name}>
+          {i > 0 ? " · " : null}
+          <a href={x.kilde} target="_blank" rel="noreferrer" className="underline decoration-neutral-300 hover:text-neutral-600">
+            {x.name}
+          </a>{" "}
+          ({kildenavn(x.kilde!)})
+        </span>
+      ))}
+    </p>
   )
 }
 

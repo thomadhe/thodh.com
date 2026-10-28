@@ -7,7 +7,7 @@ import { TRINN } from "@/features/spill/lib/sanglos"
 
 export const metadata: Metadata = {
   title: "Sangløs",
-  description: "Du kan denne sangen – men klarer du den på 0,1 sekund? Tre nye sanger hver dag.",
+  description: "Du kan denne sangen – men klarer du den på 0,13 sekunder? Tre nye sanger hver dag.",
 }
 
 const sanger = sanglosSanger
@@ -23,7 +23,7 @@ export default async function Page({ searchParams }: PageProps<"/spill/sanglos">
       regler={
         <>
           <p>
-            Tre sanger hver dag: norsk, internasjonalt og klassikere. Du får {TRINN.length} forsøk, og utdraget blir
+            Tre sanger hver dag: én fra alle sjangre, én rock og én hip hop. Du får {TRINN.length} forsøk, og utdraget blir
             lengre for hver feil eller hopp ({TRINN.map((t) => t.toLocaleString("nb-NO")).join(" → ")} sekunder). Gult
             betyr riktig artist, men feil sang. Velg blant {sanger.length} sanger i søket.
           </p>

@@ -31,90 +31,143 @@ body {
   background-size: 44px 44px;
 }
 
-/* thodhOS: the retro desktop on the front page. Generic 90s bevels, original artwork. */
-.os {
-  --os-flate: #c3c3bd;
-  --os-lys: #ffffff;
-  --os-skygge: #7d7d76;
-  --os-mork: #1b1b18;
-  --os-tittel: #1c3f8c;
-  --os-tittel-2: #3d8fd1;
-  font-family: Tahoma, Verdana, "Segoe UI", system-ui, sans-serif;
-  font-size: 13px;
-  color: #111;
-}
+@layer components {
+  /* thodhOS: the retro desktop on the front page. Generic 90s bevels, original artwork. */
+  .os {
+    --os-flate: #c3c3bd;
+    --os-lys: #ffffff;
+    --os-skygge: #7d7d76;
+    --os-mork: #1b1b18;
+    --os-tittel: #23206b;
+    --os-tittel-2: #d9607a;
+    font-family: Tahoma, Verdana, "Segoe UI", system-ui, sans-serif;
+    font-size: 13px;
+    color: #111;
+  }
 
-.os-skrivebord {
-  background-color: #1d7d78;
-  background-image:
-    radial-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px),
-    radial-gradient(circle at 70% 30%, rgb(255 255 255 / 0.08), transparent 55%);
-  background-size: 4px 4px, 100% 100%;
-}
+  .os-skrivebord {
+    /* Dusk over a dithered horizon: 98-era pixels, our own colours. */
+    background-color: #1d1c52;
+    background-image:
+      radial-gradient(rgb(255 255 255 / 0.07) 1px, transparent 1px),
+      radial-gradient(ellipse 60% 38% at 78% 112%, rgb(255 176 120 / 0.55), transparent 70%),
+      linear-gradient(180deg, #14134a 0%, #2e2275 38%, #6a3a8c 66%, #c75d7c 88%, #f08f6a 100%);
+    background-size: 3px 3px, 100% 100%, 100% 100%;
+  }
 
-.os-ut {
-  background: var(--os-flate);
-  box-shadow:
-    inset -1px -1px var(--os-mork),
-    inset 1px 1px var(--os-lys),
-    inset -2px -2px var(--os-skygge),
-    inset 2px 2px #e4e4de;
-}
+  .os-merke {
+    /* Huge outlined wordmark behind the icons. */
+    -webkit-text-stroke: 1px rgb(255 255 255 / 0.16);
+    color: transparent;
+    letter-spacing: -0.06em;
+  }
 
-.os-inn {
-  background: #fff;
-  box-shadow:
-    inset -1px -1px var(--os-lys),
-    inset 1px 1px var(--os-skygge),
-    inset -2px -2px #e4e4de,
-    inset 2px 2px var(--os-mork);
-}
+  @keyframes os-apne {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.97);
+    }
+  }
 
-.os-knapp {
-  background: var(--os-flate);
-  box-shadow:
-    inset -1px -1px var(--os-mork),
-    inset 1px 1px var(--os-lys),
-    inset -2px -2px var(--os-skygge),
-    inset 2px 2px #e4e4de;
-  padding: 4px 14px;
-  min-height: 26px;
-}
+  .os-apne {
+    animation: os-apne 140ms ease-out;
+  }
 
-.os-knapp:active,
-.os-knapp[aria-pressed="true"] {
-  box-shadow:
-    inset -1px -1px var(--os-lys),
-    inset 1px 1px var(--os-mork),
-    inset -2px -2px #e4e4de,
-    inset 2px 2px var(--os-skygge);
-}
+  @keyframes os-sky {
+    from {
+      transform: translateX(-30vw);
+    }
+    to {
+      transform: translateX(130vw);
+    }
+  }
 
-.os-knapp:focus-visible,
-.os-ikon:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -5px;
-}
+  .os-sky {
+    animation: os-sky linear infinite;
+  }
 
-.os-tittellinje {
-  background: linear-gradient(90deg, var(--os-tittel), var(--os-tittel-2));
-  color: #fff;
-}
+  @keyframes os-blink {
+    50% {
+      opacity: 0;
+    }
+  }
 
-.os-tittellinje[data-aktiv="false"] {
-  background: linear-gradient(90deg, #7f7f7a, #b4b4ae);
-  color: #e8e8e3;
-}
+  .os-blink {
+    animation: os-blink 1s steps(1) infinite;
+  }
 
-.os-ikon[data-valgt="true"] .os-ikon-tekst {
-  background: var(--os-tittel);
-  outline: 1px dotted #fff;
-}
+  @media (prefers-reduced-motion: reduce) {
+    .os-apne,
+    .os-sky,
+    .os-blink {
+      animation: none;
+    }
+  }
 
-.os-ikon[data-valgt="true"] .os-ikon-bilde {
-  filter: brightness(0.75) sepia(1) hue-rotate(180deg) saturate(3);
-}
+  .os-ut {
+    background: var(--os-flate);
+    box-shadow:
+      inset -1px -1px var(--os-mork),
+      inset 1px 1px var(--os-lys),
+      inset -2px -2px var(--os-skygge),
+      inset 2px 2px #e4e4de;
+  }
 
-.os-ikon-tekst {
-  text-shadow: 1px 1px 0 rgb(0 0 0 / 0.6);
+  .os-inn {
+    background: #fff;
+    box-shadow:
+      inset -1px -1px var(--os-lys),
+      inset 1px 1px var(--os-skygge),
+      inset -2px -2px #e4e4de,
+      inset 2px 2px var(--os-mork);
+  }
+
+  .os-knapp {
+    background: var(--os-flate);
+    box-shadow:
+      inset -1px -1px var(--os-mork),
+      inset 1px 1px var(--os-lys),
+      inset -2px -2px var(--os-skygge),
+      inset 2px 2px #e4e4de;
+    padding: 4px 14px;
+    min-height: 26px;
+  }
+
+  .os-knapp:active,
+  .os-knapp[aria-pressed="true"] {
+    box-shadow:
+      inset -1px -1px var(--os-lys),
+      inset 1px 1px var(--os-mork),
+      inset -2px -2px #e4e4de,
+      inset 2px 2px var(--os-skygge);
+  }
+
+  .os-knapp:focus-visible,
+  .os-ikon:focus-visible {
+    outline: 1px dotted #000;
+    outline-offset: -5px;
+  }
+
+  .os-tittellinje {
+    background: linear-gradient(90deg, var(--os-tittel), var(--os-tittel-2));
+    color: #fff;
+  }
+
+  .os-tittellinje[data-aktiv="false"] {
+    background: linear-gradient(90deg, #7f7f7a, #b4b4ae);
+    color: #e8e8e3;
+  }
+
+  .os-ikon[data-valgt="true"] .os-ikon-tekst {
+    background: var(--os-tittel);
+    outline: 1px dotted #fff;
+  }
+
+  .os-ikon[data-valgt="true"] .os-ikon-bilde {
+    filter: brightness(0.75) sepia(1) hue-rotate(180deg) saturate(3);
+  }
+
+  .os-ikon-tekst {
+    text-shadow: 1px 1px 0 rgb(0 0 0 / 0.6);
+  }
 }

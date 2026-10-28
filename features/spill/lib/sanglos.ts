@@ -1,16 +1,16 @@
 // Shared constants for Sangløs (safe for client and server).
 
-export type SangKategori = "norsk" | "internasjonal" | "klassiker"
+export type SangKategori = "alle" | "rock" | "hiphop"
 
 export const SANG_KATEGORIER: { id: SangKategori; navn: string }[] = [
-  { id: "norsk", navn: "Norsk" },
-  { id: "internasjonal", navn: "Internasjonalt" },
-  { id: "klassiker", navn: "Klassikere" },
+  { id: "alle", navn: "Alle" },
+  { id: "rock", navn: "Rock" },
+  { id: "hiphop", navn: "Hip hop" },
 ]
 
-/** Seconds of audio unlocked per attempt. */
-export const TRINN = [0.1, 0.5, 1, 3, 7, 15] as const
+/** Seconds of audio unlocked per attempt (same steps as Songless). */
+export const TRINN = [0.13, 0.53, 2, 8, 15] as const
 
 export function erSangKategori(x: unknown): x is SangKategori {
-  return x === "norsk" || x === "internasjonal" || x === "klassiker"
+  return x === "alle" || x === "rock" || x === "hiphop"
 }

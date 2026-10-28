@@ -14,7 +14,7 @@ type Tilstand = { runder: Record<SangKategori, Runde>; resultat: Resultat }
 
 const tomRunde = (): Runde => ({ forsok: [], status: "pagar" })
 const tom = (): Tilstand => ({
-  runder: { norsk: tomRunde(), internasjonal: tomRunde(), klassiker: tomRunde() },
+  runder: { alle: tomRunde(), rock: tomRunde(), hiphop: tomRunde() },
   resultat: { status: "pagar" },
 })
 
@@ -270,7 +270,7 @@ function SangRunde({
           </button>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold text-neutral-900">
-              {ferdig ? "Hele utdraget" : `${lengde.toLocaleString("nb-NO")} sekund${lengde === 1 ? "" : "er"}`}
+              {ferdig ? "Hele utdraget" : `${lengde.toLocaleString("nb-NO")} sekunder`}
             </p>
             <p className="font-mono text-[11px] text-neutral-400">
               {ferdig ? "30 sek forhåndslytting" : `Forsøk ${runde.forsok.length + 1} av ${TRINN.length}`}
@@ -445,7 +445,7 @@ function SangRunde({
 
 export function Sanglos({ dato, sanger }: { dato: string; sanger: SangValg[] }) {
   const { verdi, lastet, oppdater } = useDagligTilstand<Tilstand>("sanglos", dato, tom)
-  const [kategori, setKategori] = useState<SangKategori>("norsk")
+  const [kategori, setKategori] = useState<SangKategori>("alle")
 
   const oppdaterRunde = useCallback(
     (k: SangKategori) => (endring: (r: Runde) => Runde) =>
