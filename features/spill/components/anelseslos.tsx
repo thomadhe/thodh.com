@@ -16,28 +16,29 @@ type Tilstand = {
 
 const tom = (): Tilstand => ({ v: 2, gjetninger: [], resultat: { status: "pagar" } })
 
+// Lessgames-style rows: coloured bar, light text on top.
 function farge(avstand: number) {
-  if (avstand === 1) return { bar: "bg-emerald-500", tekst: "text-emerald-950" }
-  if (avstand <= 300) return { bar: "bg-emerald-400", tekst: "text-emerald-950" }
-  if (avstand <= 1500) return { bar: "bg-amber-400", tekst: "text-amber-950" }
-  return { bar: "bg-rose-400", tekst: "text-rose-950" }
+  if (avstand === 1) return "bg-emerald-500"
+  if (avstand <= 300) return "bg-emerald-600"
+  if (avstand <= 1500) return "bg-amber-600"
+  return "bg-rose-600"
 }
 
 function Rad({ g, antall, fremhevet }: { g: Gjetning; antall: number; fremhevet?: boolean }) {
   const andel = Math.max(0.03, 1 - Math.log(g.avstand) / Math.log(antall))
-  const f = farge(g.avstand)
+  const bar = farge(g.avstand)
   return (
     <li
       className={`relative flex h-11 items-center overflow-hidden rounded-xl bg-neutral-100 px-3.5 transition ${
         fremhevet ? "ring-2 ring-neutral-900" : ""
       }`}
     >
-      <span className={`absolute inset-y-0 left-0 ${f.bar} transition-[width] duration-500`} style={{ width: `${andel * 100}%` }} />
-      <span className={`relative flex-1 truncate text-[15px] font-medium ${f.tekst}`}>
+      <span className={`absolute inset-y-0 left-0 ${bar} transition-[width] duration-500`} style={{ width: `${andel * 100}%` }} />
+      <span className="relative flex-1 truncate text-[15px] font-medium text-neutral-950 [text-shadow:0_1px_1px_rgb(0_0_0/0.35)]">
         {g.ord}
         {g.hint ? <span className="ml-2 font-mono text-[10px] uppercase tracking-wider opacity-70">hint</span> : null}
       </span>
-      <span className="relative font-mono text-sm tabular-nums text-neutral-800">
+      <span className="relative font-mono text-sm tabular-nums text-neutral-950 [text-shadow:0_1px_1px_rgb(0_0_0/0.35)]">
         {g.avstand === 1 ? "🏆" : g.avstand.toLocaleString("nb-NO")}
       </span>
     </li>
@@ -160,7 +161,7 @@ export function Anelseslos({ dato, antall }: { dato: string; antall: number }) {
     oppdater((t) => (t.resultat.status === "pagar" ? { ...t, resultat: { status: "tapt", etikett: "Ga opp" } } : t))
   }
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/60" />
+  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   const delTekst = [
     `Anelsesløs · ${formaterDato(dato, "kort")}`,
@@ -209,7 +210,7 @@ export function Anelseslos({ dato, antall }: { dato: string; antall: number }) {
             spellCheck={false}
             enterKeyHint="send"
             aria-label="Gjett et engelsk ord"
-            className="h-12 min-w-0 flex-1 rounded-2xl border border-black/10 bg-white px-4 text-base text-neutral-950 shadow-sm outline-none transition placeholder:text-neutral-400 focus:border-neutral-900"
+            className="h-12 min-w-0 flex-1 rounded-2xl border border-black/10 bg-[var(--spill-flate)] px-4 text-base text-neutral-950 shadow-sm outline-none transition placeholder:text-neutral-400 focus:border-neutral-900"
           />
           <Knapp type="submit" disabled={opptatt || !tekst.trim()} className="h-12 rounded-2xl">
             Gjett

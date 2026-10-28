@@ -39,19 +39,30 @@ function sok(tekst: string) {
     .trim()
 }
 
-/** Maps seconds to a 0–1 position where every attempt step gets equal width. */
-function posisjon(t: number) {
-  let forrige = 0
-  for (let i = 0; i < TRINN.length; i++) {
-    if (t <= TRINN[i]) return (i + (t - forrige) / (TRINN[i] - forrige)) / TRINN.length
-    forrige = TRINN[i]
+const LENGST = TRINN[TRINN.length - 1]
+
+/** Whole seconds as m:ss. */
+function klokke(t: number) {
+  const s = Math.floor(t)
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`
+}
+
+/** Where audible sound starts: some previews open with a few seconds of silence or a slow fade-in. */
+function forsteLyd(b: AudioBuffer) {
+  const kanaler = Array.from({ length: b.numberOfChannels }, (_, i) => b.getChannelData(i))
+  const vindu = Math.max(1, Math.floor(b.sampleRate * 0.01))
+  for (let i = 0; i + vindu < b.length; i += vindu) {
+    let sum = 0
+    for (const k of kanaler) for (let j = i; j < i + vindu; j++) sum += k[j] * k[j]
+    if (Math.sqrt(sum / (vindu * kanaler.length)) > 0.02) return Math.max(0, i / b.sampleRate - 0.03)
   }
-  return 1
+  return 0
 }
 
 function useLydspiller(dato: string, kategori: SangKategori) {
   const ctx = useRef<AudioContext | null>(null)
   const lyd = useRef<AudioBuffer | null>(null)
+  const oppstart = useRef(0)
   const kilde = useRef<AudioBufferSourceNode | null>(null)
   const forsterker = useRef<GainNode | null>(null)
   const [status, setStatus] = useState<"klar" | "laster" | "spiller" | "feil">("klar")
@@ -129,15 +140,16 @@ function useLydspiller(dato: string, kategori: SangKategori) {
           const dekodet = await ctx.current.decodeAudioData(data)
           if (utdatert() || !ctx.current) return
           lyd.current = dekodet
+          oppstart.current = forsteLyd(dekodet)
         }
         const c = ctx.current
         if (!c || !forsterker.current) return
-        const varighet = Math.min(sekunder, lyd.current.duration)
+        const varighet = Math.min(sekunder, lyd.current.duration - oppstart.current)
         const k = c.createBufferSource()
         k.buffer = lyd.current
         k.connect(forsterker.current)
         const start = c.currentTime + 0.02
-        k.start(start, 0, varighet)
+        k.start(start, oppstart.current, varighet)
         kilde.current = k
         setStatus("spiller")
         const tikk = () => {
@@ -270,10 +282,10 @@ function SangRunde({
           </button>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold text-neutral-900">
-              {ferdig ? "Hele utdraget" : `${lengde.toLocaleString("nb-NO")} sekunder`}
+              {ferdig ? "Hele utdraget" : `Forsøk ${runde.forsok.length + 1} av ${TRINN.length}`}
             </p>
             <p className="font-mono text-[11px] text-neutral-400">
-              {ferdig ? "30 sek forhåndslytting" : `Forsøk ${runde.forsok.length + 1} av ${TRINN.length}`}
+              {ferdig ? "30 sek forhåndslytting" : runde.forsok.length ? "Litt mer av låta er låst opp" : "Trykk play og gjett låta"}
             </p>
           </div>
           <label className="flex items-center gap-2 text-neutral-400" title="Volum">
@@ -291,26 +303,26 @@ function SangRunde({
           </label>
         </div>
 
-        {/* Each attempt step gets equal width so 0.1 s is still visible. */}
-        <div className="relative mt-5 flex h-3 gap-0.5 overflow-hidden rounded-full">
-          {TRINN.map((t, i) => {
-            const opplast = ferdig || i <= runde.forsok.length
-            return <span key={t} className={`flex-1 ${opplast ? "bg-violet-200" : "bg-neutral-100"}`} />
-          })}
+        {/* Proportional to time, so the playhead moves at the same speed the whole way. */}
+        <div className="relative mt-5 h-3 overflow-hidden rounded-full bg-white/10">
           <span
-            className="absolute inset-y-0 left-0 bg-violet-600"
-            style={{ width: `${(ferdig ? spiller.tid / 30 : posisjon(spiller.tid)) * 100}%` }}
+            className="absolute inset-y-0 left-0 bg-violet-400/30"
+            style={{ width: `${(ferdig ? 1 : lengde / LENGST) * 100}%` }}
+          />
+          {!ferdig
+            ? TRINN.slice(0, -1).map((t) => (
+                <span key={t} className="absolute inset-y-0 w-0.5 bg-black/40" style={{ left: `${(t / LENGST) * 100}%` }} />
+              ))
+            : null}
+          <span
+            className="absolute inset-y-0 left-0 bg-violet-500"
+            style={{ width: `${Math.min(1, spiller.tid / (ferdig ? 30 : LENGST)) * 100}%` }}
           />
         </div>
-        {!ferdig ? (
-          <div className="mt-1.5 flex font-mono text-[9px] text-neutral-400">
-            {TRINN.map((t) => (
-              <span key={t} className="flex-1 text-right">
-                {t.toLocaleString("nb-NO")}s
-              </span>
-            ))}
-          </div>
-        ) : null}
+        <div className="mt-1.5 flex justify-between font-mono text-[10px] text-neutral-500 tabular-nums">
+          <span>{klokke(spiller.tid)}</span>
+          <span>{klokke(ferdig ? 30 : LENGST)}</span>
+        </div>
         {spiller.feil ? <p className="mt-3 text-xs text-rose-600">{spiller.feil}</p> : null}
       </Kort>
 
@@ -336,7 +348,7 @@ function SangRunde({
                 href={runde.fasit.lenke}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-1 inline-block font-mono text-[11px] text-violet-700 hover:underline"
+                className="mt-1 inline-block font-mono text-[11px] text-violet-400 hover:underline"
               >
                 Hør på Apple Music ↗
               </a>
@@ -371,13 +383,13 @@ function SangRunde({
             aria-expanded={treff.length > 0}
             aria-controls={`treff-${kategori}`}
             aria-label="Gjett sangen"
-            className="h-12 w-full rounded-2xl border border-black/10 bg-white px-4 text-base text-neutral-950 shadow-sm outline-none transition placeholder:text-neutral-400 focus:border-neutral-900"
+            className="h-12 w-full rounded-2xl border border-black/10 bg-[var(--spill-flate)] px-4 text-base text-neutral-950 shadow-sm outline-none transition placeholder:text-neutral-400 focus:border-neutral-900"
           />
           {treff.length ? (
             <ul
               id={`treff-${kategori}`}
               role="listbox"
-              className="absolute inset-x-0 top-full z-10 mt-1.5 overflow-hidden rounded-2xl border border-black/10 bg-white py-1 shadow-lg"
+              className="absolute inset-x-0 top-full z-10 mt-1.5 overflow-hidden rounded-2xl border border-black/10 bg-[var(--spill-flate)] py-1 shadow-lg"
             >
               {treff.map((s, i) => (
                 <li key={s.id} role="option" aria-selected={i === aktivt}>
@@ -405,7 +417,7 @@ function SangRunde({
               className="rounded-full px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-neutral-500 transition hover:bg-black/5 hover:text-neutral-900 disabled:opacity-40"
             >
               {runde.forsok.length + 1 < TRINN.length
-                ? <>Hopp over <span className="normal-case">(+{(TRINN[runde.forsok.length + 1] - TRINN[runde.forsok.length]).toLocaleString("nb-NO")} s)</span></>
+                ? "Hopp over"
                 : "Gi opp"}
             </button>
           </div>
@@ -464,7 +476,7 @@ export function Sanglos({ dato, sanger }: { dato: string; sanger: SangValg[] }) 
   )
   const oppdaterValgt = useMemo(() => oppdaterRunde(kategori), [oppdaterRunde, kategori])
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/60" />
+  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   const alleFerdige = SANG_KATEGORIER.every((k) => verdi.runder[k.id].status !== "pagar")
   const delTekst = [
@@ -496,7 +508,7 @@ export function Sanglos({ dato, sanger }: { dato: string; sanger: SangValg[] }) 
               aria-selected={kategori === id}
               onClick={() => setKategori(id)}
               className={`flex h-10 items-center justify-center gap-1.5 rounded-xl text-sm font-medium transition ${
-                kategori === id ? "bg-white text-neutral-950 shadow-sm" : "text-neutral-500 hover:text-neutral-800"
+                kategori === id ? "bg-[var(--spill-flate)] text-neutral-950 shadow-sm" : "text-neutral-500 hover:text-neutral-800"
               }`}
             >
               {navn}

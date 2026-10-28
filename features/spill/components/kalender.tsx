@@ -17,7 +17,7 @@ function maanedNavn(aar: number, maaned: number) {
 const stil: Record<Resultat["status"], string> = {
   vunnet: "bg-emerald-500 text-white hover:bg-emerald-600",
   tapt: "bg-rose-500 text-white hover:bg-rose-600",
-  ferdig: "bg-neutral-900 text-white hover:bg-neutral-700",
+  ferdig: "bg-neutral-900 text-neutral-50 hover:bg-neutral-700",
   pagar: "bg-amber-100 text-amber-900 ring-1 ring-inset ring-amber-300 hover:bg-amber-200",
 }
 

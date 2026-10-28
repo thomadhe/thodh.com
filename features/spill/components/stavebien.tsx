@@ -166,7 +166,7 @@ export function Stavebien({ dato, ord }: { dato: string; ord: StaveOrd[] }) {
     if (indeks < ord.length && igjen > 0) les(ord[indeks], "ord")
   }
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/60" />
+  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
   if (ferdig) return <Resultat dato={dato} ord={ord} svar={verdi.svar} />
 
   const svart = tilbakemelding !== null ? verdi.svar[tilbakemelding] : undefined
@@ -217,7 +217,7 @@ export function Stavebien({ dato, ord }: { dato: string; ord: StaveOrd[] }) {
               type="button"
               onClick={() => les(naa, "ord", true)}
               disabled={!harLyd("ord")}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-base transition hover:bg-neutral-50 disabled:opacity-50"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-[var(--spill-flate)] text-base transition hover:bg-neutral-50 disabled:opacity-50"
               aria-label="Hør ordet sakte"
               title="Sakte"
             >
@@ -241,7 +241,7 @@ export function Stavebien({ dato, ord }: { dato: string; ord: StaveOrd[] }) {
               type="button"
               onClick={() => setVist((s) => new Set(s).add(n))}
               className={`rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition ${
-                synlig(n) ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                synlig(n) ? "bg-neutral-900 text-neutral-50" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
               }`}
             >
               {etikett}
@@ -308,7 +308,7 @@ export function Stavebien({ dato, ord }: { dato: string; ord: StaveOrd[] }) {
             spellCheck={false}
             enterKeyHint="done"
             aria-label="Stav ordet"
-            className="h-12 min-w-0 flex-1 rounded-2xl border border-black/10 bg-white px-4 text-base tracking-wide text-neutral-950 shadow-sm outline-none transition placeholder:text-neutral-400 focus:border-neutral-900"
+            className="h-12 min-w-0 flex-1 rounded-2xl border border-black/10 bg-[var(--spill-flate)] px-4 text-base tracking-wide text-neutral-950 shadow-sm outline-none transition placeholder:text-neutral-400 focus:border-neutral-900"
           />
           <Knapp type="submit" disabled={!tekst.trim()} className="h-12 rounded-2xl">
             Stav

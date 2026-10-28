@@ -5,6 +5,7 @@ import { useState, type ReactNode } from "react"
 import { formaterDato, iDagOslo, leggTilDager, START_DATO } from "../lib/dag"
 import { finnSpill, type SpillId } from "../lib/spill"
 import { Kalender } from "./kalender"
+import { visningsskrift } from "./skrift"
 
 type Panel = "kalender" | "regler" | null
 
@@ -32,7 +33,7 @@ export function SpillRamme({
   const veksle = (p: Exclude<Panel, null>) => setPanel((n) => (n === p ? null : p))
 
   return (
-    <div className="page-grid min-h-dvh">
+    <div className={`spill-mork ${visningsskrift.variable} min-h-dvh`}>
       <div className="mx-auto flex min-h-dvh w-full max-w-lg flex-col px-4 sm:px-6">
         <header className="flex items-center justify-between gap-3 border-b border-black/5 py-4">
           <Link
@@ -47,7 +48,7 @@ export function SpillRamme({
               onClick={() => veksle("regler")}
               aria-expanded={panel === "regler"}
               className={`h-8 rounded-full px-3 font-mono text-[11px] uppercase tracking-widest transition ${
-                panel === "regler" ? "bg-neutral-900 text-white" : "text-neutral-500 hover:bg-black/5 hover:text-neutral-900"
+                panel === "regler" ? "bg-neutral-900 text-neutral-50" : "text-neutral-500 hover:bg-black/5 hover:text-neutral-900"
               }`}
             >
               Slik spiller du
@@ -57,7 +58,7 @@ export function SpillRamme({
               onClick={() => veksle("kalender")}
               aria-expanded={panel === "kalender"}
               className={`h-8 rounded-full px-3 font-mono text-[11px] uppercase tracking-widest transition ${
-                panel === "kalender" ? "bg-neutral-900 text-white" : "text-neutral-500 hover:bg-black/5 hover:text-neutral-900"
+                panel === "kalender" ? "bg-neutral-900 text-neutral-50" : "text-neutral-500 hover:bg-black/5 hover:text-neutral-900"
               }`}
             >
               Kalender
@@ -73,7 +74,7 @@ export function SpillRamme({
             {info.ikon}
           </span>
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl font-semibold tracking-tight text-neutral-950">{info.navn}</h1>
+            <h1 className="font-[family-name:var(--font-visning)] text-xl font-extrabold tracking-[-0.04em] text-neutral-950">{info.navn}</h1>
             <p className="mt-0.5 font-mono text-[11px] text-neutral-500">
               {storForbokstav(formaterDato(dato))}
               {erIDag ? " · i dag" : " · fra arkivet"}
@@ -102,7 +103,7 @@ export function SpillRamme({
         </div>
 
         {panel ? (
-          <div className="mt-4 rounded-3xl border border-black/5 bg-white p-5 shadow-sm">
+          <div className="mt-4 rounded-3xl border border-black/5 bg-[var(--spill-flate)] p-5 shadow-sm">
             {panel === "kalender" ? (
               <Kalender spillIder={[spillId]} href={info.href} valgt={dato} />
             ) : (
@@ -124,7 +125,7 @@ export function SpillRamme({
 }
 
 export function Kort({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`rounded-3xl border border-black/5 bg-white ${className}`}>{children}</div>
+  return <div className={`rounded-3xl border border-black/5 bg-[var(--spill-flate)] ${className}`}>{children}</div>
 }
 
 export function Knapp({
@@ -135,8 +136,8 @@ export function Knapp({
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primar" | "sekundar" }) {
   const v =
     variant === "primar"
-      ? "bg-neutral-950 text-white hover:bg-neutral-800 disabled:bg-neutral-300"
-      : "border border-black/10 bg-white text-neutral-800 hover:bg-neutral-50 disabled:text-neutral-300"
+      ? "bg-neutral-950 text-neutral-50 hover:bg-neutral-800 disabled:bg-neutral-300"
+      : "border border-black/10 bg-[var(--spill-flate)] text-neutral-800 hover:bg-neutral-50 disabled:text-neutral-300"
   return (
     <button
       type="button"

@@ -85,7 +85,7 @@ function ValgKort({
       type="button"
       onClick={onVelg}
       disabled={avslort}
-      className={`group relative flex min-h-56 flex-col items-center justify-start rounded-3xl border-2 bg-white px-3 pt-5 pb-4 text-center transition duration-200 disabled:cursor-default ${ramme}`}
+      className={`group relative flex min-h-56 flex-col items-center justify-start rounded-3xl border-2 bg-[var(--spill-flate)] px-3 pt-5 pb-4 text-center transition duration-200 disabled:cursor-default ${ramme}`}
     >
       <span className="absolute top-3 left-3 hidden h-5 w-5 items-center justify-center rounded-md border border-black/10 font-mono text-[10px] text-neutral-400 sm:flex">
         {tast}
@@ -197,7 +197,7 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
     return () => window.removeEventListener("keydown", ved)
   }, [])
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/60" />
+  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   if (ferdig) return <Resultater dato={dato} kategorier={kategorier} svar={verdi.svar} />
 
@@ -247,7 +247,7 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
               valgt={svart === 1}
               tast="2"
             />
-            <span className="pointer-events-none absolute top-1/2 left-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-black/5 bg-white font-mono text-[10px] uppercase text-neutral-500 shadow-sm">
+            <span className="pointer-events-none absolute top-1/2 left-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-black/5 bg-[var(--spill-flate)] font-mono text-[10px] uppercase text-neutral-500 shadow-sm">
               eller
             </span>
           </div>

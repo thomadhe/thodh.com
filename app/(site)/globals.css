@@ -31,6 +31,49 @@ body {
   background-size: 44px 44px;
 }
 
+/*
+ * Dark game pages (lessgames-style). The games are written with the default light palette; inside
+ * .spill-mork the neutral scale is flipped and soft tints become dark tints, while each game's
+ * accent colours stay as they are.
+ */
+.spill-mork {
+  --spill-flate: #26282c;
+  --color-black: #ffffff;
+  --color-neutral-950: #f4f4f5;
+  --color-neutral-900: #e9e9eb;
+  --color-neutral-800: #d6d6da;
+  --color-neutral-700: #c3c3c8;
+  --color-neutral-600: #a5a5ac;
+  --color-neutral-500: #8c8c94;
+  --color-neutral-400: #6e6e76;
+  --color-neutral-300: #4f5056;
+  --color-neutral-200: #3c3e43;
+  --color-neutral-100: #33353a;
+  --color-neutral-50: #2c2e33;
+  --color-emerald-50: #15342b;
+  --color-emerald-100: #1a4234;
+  --color-emerald-200: #1f5a44;
+  --color-emerald-700: #6ee7b7;
+  --color-emerald-800: #a7f3d0;
+  --color-emerald-900: #d1fae5;
+  --color-rose-50: #3a1c23;
+  --color-rose-100: #4a222b;
+  --color-rose-200: #6a2a37;
+  --color-rose-700: #fda4af;
+  --color-rose-800: #fecdd3;
+  --color-amber-50: #362c13;
+  --color-amber-100: #463916;
+  --color-amber-200: #5a481b;
+  --color-amber-900: #fde68a;
+  --color-violet-50: #262040;
+  --color-violet-100: #322a55;
+  background-color: #18191b;
+  background-image: radial-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px);
+  background-size: 22px 22px;
+  color: var(--color-neutral-950);
+  color-scheme: dark;
+}
+
 @layer components {
   /* thodhOS: the retro desktop on the front page. Generic 90s bevels, original artwork. */
   .os {

@@ -1,6 +1,5 @@
 "use client"
 
-import { BouncingApps } from "@/components/bouncing-apps"
 import { CONTACT_EMAIL, shippedProjects } from "@/lib/projects"
 import { Ikon } from "./ikoner"
 
@@ -54,14 +53,6 @@ export function Papirkurv() {
     <div className="flex h-full items-center gap-4 p-5 text-[12px] text-black">
       <Ikon navn="papirkurv" storrelse={40} className="shrink-0" />
       <p>Papirkurven er tom. Alle dårlige ideer ble shippet likevel.</p>
-    </div>
-  )
-}
-
-export function Lekeplass() {
-  return (
-    <div className="h-full bg-[#f4f4ef] p-2">
-      <BouncingApps />
     </div>
   )
 }

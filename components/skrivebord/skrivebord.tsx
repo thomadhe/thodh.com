@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "
 import { useAlleResultater } from "@/features/spill/lib/lagring"
 import { CONTACT_EMAIL } from "@/lib/projects"
 import { Ikon, type IkonNavn } from "./ikoner"
-import { Lekeplass, OmThodh, Papirkurv, Side } from "./innhold"
+import { OmThodh, Papirkurv, Side } from "./innhold"
 
 // thodh 98: the front page is a small desktop where games and apps are programs you open.
 // Internal pages open in framed windows that can be moved, resized, minimised and maximised.
@@ -30,8 +30,6 @@ const spillProgrammer: Program[] = [
 
 const appProgrammer: Program[] = [
   { id: "karriere", navn: "Karrierepiloten", mal: "https://karrierepiloten.com", logo: "/logos/karrierepiloten.jpg", b: 0, h: 0 },
-  { id: "lekeplass", navn: "Lekeplass", mal: "lekeplass", ikon: "ball", b: 480, h: 340 },
-  { id: "alle", navn: "Alle minigames", mal: "/spill", ikon: "spillmappe", b: 920, h: 740 },
 ]
 
 const systemProgrammer: Program[] = [
@@ -368,7 +366,6 @@ export function Skrivebord() {
   const innhold = (v: Vindu) => {
     if (v.mal === "om") return <OmThodh lukk={() => lukk(v.mal)} />
     if (v.mal === "papirkurv") return <Papirkurv />
-    if (v.mal === "lekeplass") return <Lekeplass />
     return <Side href={v.mal} aktiv={v.mal === aktivMal} />
   }
 
