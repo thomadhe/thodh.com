@@ -15,10 +15,11 @@ let modell: Modell | null = null
 
 function lastModell(): Modell {
   if (modell) return modell
-  const ord = readFileSync(path.join(MAPPE, "vocab.txt"), "utf8").split("\n")
+  // Tolerate CRLF in case a Windows checkout rewrote the line endings.
+  const ord = readFileSync(path.join(MAPPE, "vocab.txt"), "utf8").split(/\r?\n/)
   const indeks = new Map(ord.map((o, i) => [o, i]))
   const former = new Map<string, number>()
-  for (const linje of readFileSync(path.join(MAPPE, "forms.tsv"), "utf8").split("\n")) {
+  for (const linje of readFileSync(path.join(MAPPE, "forms.tsv"), "utf8").split(/\r?\n/)) {
     const tab = linje.indexOf("\t")
     if (tab > 0) former.set(linje.slice(0, tab), Number(linje.slice(tab + 1)))
   }

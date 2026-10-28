@@ -1,0 +1,2 @@
+# Word data for Anelsesløs is read byte-for-byte at runtime; never convert line endings.
+features/spill/data/anelseslos/* -text

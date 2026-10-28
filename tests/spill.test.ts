@@ -89,3 +89,10 @@ test("verdier formateres på norsk", () => {
   assert.match(formaterVerdi(2_400_000, "compact"), /^2,4 mill\.$/)
   assert.match(formaterVerdi(0.018, "compact"), /^0,018$/)
 })
+
+test("Anelsesløs: ordlisten og vektorene passer sammen og har ikke CRLF", async () => {
+  const { readFileSync } = await import("node:fs")
+  const ord = readFileSync("features/spill/data/anelseslos/vocab.txt", "utf8")
+  assert.ok(!ord.includes("\r"), "vocab.txt har fått Windows-linjeskift")
+  assert.equal(readFileSync("features/spill/data/anelseslos/vectors.bin").length, ord.split("\n").length * 300)
+})
