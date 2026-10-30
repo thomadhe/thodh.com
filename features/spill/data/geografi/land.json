@@ -9,7 +9,39 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 33.8,
-    "lng": 65.9
+    "lng": 65.9,
+    "suveren": true,
+    "flagg": "af",
+    "naboer": [
+      "CN",
+      "IR",
+      "PK",
+      "TJ",
+      "TM",
+      "UZ"
+    ],
+    "naboerSjo": [
+      "KG",
+      "IN",
+      "KZ"
+    ],
+    "befolkning": 43844111,
+    "befolkningAar": 2025,
+    "areal": 652230,
+    "valuta": {
+      "navn": "afghansk afghani",
+      "kode": "AFN"
+    },
+    "sprak": [
+      "dari",
+      "pashto"
+    ],
+    "hovedstadPos": [
+      34.5328,
+      69.1658
+    ],
+    "bnp": 417,
+    "bnpAar": 2024
   },
   {
     "id": "AL",
@@ -21,7 +53,40 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 41.1,
-    "lng": 20.1
+    "lng": 20.1,
+    "suveren": true,
+    "flagg": "al",
+    "naboer": [
+      "GR",
+      "ME",
+      "MK",
+      "XK"
+    ],
+    "naboerSjo": [
+      "RS",
+      "HR",
+      "IT",
+      "BA",
+      "BG",
+      "RO",
+      "HU"
+    ],
+    "befolkning": 2349580,
+    "befolkningAar": 2025,
+    "areal": 28748,
+    "valuta": {
+      "navn": "albansk lek",
+      "kode": "ALL"
+    },
+    "sprak": [
+      "albansk"
+    ],
+    "hovedstadPos": [
+      41.3283,
+      19.8181
+    ],
+    "bnp": 12998,
+    "bnpAar": 2025
   },
   {
     "id": "DZ",
@@ -36,7 +101,42 @@
     ],
     "kontinent": "Afrika",
     "lat": 28.1,
-    "lng": 2.6
+    "lng": 2.6,
+    "suveren": true,
+    "flagg": "dz",
+    "naboer": [
+      "EH",
+      "LY",
+      "MA",
+      "ML",
+      "MR",
+      "NE",
+      "TN"
+    ],
+    "naboerSjo": [
+      "ES",
+      "IT",
+      "GI",
+      "TD",
+      "FR"
+    ],
+    "befolkning": 47435312,
+    "befolkningAar": 2025,
+    "areal": 2381741,
+    "valuta": {
+      "navn": "algerisk dinar",
+      "kode": "DZD"
+    },
+    "sprak": [
+      "arabisk",
+      "berber"
+    ],
+    "hovedstadPos": [
+      36.7764,
+      3.0586
+    ],
+    "bnp": 6051,
+    "bnpAar": 2025
   },
   {
     "id": "AD",
@@ -48,7 +148,30 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 42.5,
-    "lng": 1.6
+    "lng": 1.6,
+    "suveren": true,
+    "flagg": "ad",
+    "naboer": [
+      "ES",
+      "FR"
+    ],
+    "naboerSjo": [],
+    "befolkning": 82904,
+    "befolkningAar": 2025,
+    "areal": 468,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "katalansk"
+    ],
+    "hovedstadPos": [
+      42.5072,
+      1.5222
+    ],
+    "bnp": 54292,
+    "bnpAar": 2025
   },
   {
     "id": "AO",
@@ -60,7 +183,36 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -12.3,
-    "lng": 17.5
+    "lng": 17.5,
+    "suveren": true,
+    "flagg": "ao",
+    "naboer": [
+      "CD",
+      "CG",
+      "NA",
+      "ZM"
+    ],
+    "naboerSjo": [
+      "BW",
+      "GA",
+      "ZW"
+    ],
+    "befolkning": 39040039,
+    "befolkningAar": 2025,
+    "areal": 1246700,
+    "valuta": {
+      "navn": "angolansk kwanza",
+      "kode": "AOA"
+    },
+    "sprak": [
+      "portugisisk"
+    ],
+    "hovedstadPos": [
+      -8.8383,
+      13.2344
+    ],
+    "bnp": 3129,
+    "bnpAar": 2025
   },
   {
     "id": "AG",
@@ -76,7 +228,35 @@
     ],
     "kontinent": "Nord-Amerika",
     "lat": 17.3,
-    "lng": -61.8
+    "lng": -61.8,
+    "suveren": true,
+    "flagg": "ag",
+    "naboer": [],
+    "naboerSjo": [
+      "MS",
+      "KN",
+      "GP",
+      "BQ",
+      "BL",
+      "MF",
+      "AI"
+    ],
+    "befolkning": 94209,
+    "befolkningAar": 2025,
+    "areal": 440,
+    "valuta": {
+      "navn": "østkaribisk dollar",
+      "kode": "XCD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      17.1211,
+      -61.8447
+    ],
+    "bnp": 24819,
+    "bnpAar": 2025
   },
   {
     "id": "AR",
@@ -88,7 +268,33 @@
     "hovedstadSvar": [],
     "kontinent": "Sør-Amerika",
     "lat": -34.7,
-    "lng": -64.8
+    "lng": -64.8,
+    "suveren": true,
+    "flagg": "ar",
+    "naboer": [
+      "BO",
+      "BR",
+      "CL",
+      "PY",
+      "UY"
+    ],
+    "naboerSjo": [],
+    "befolkning": 45851378,
+    "befolkningAar": 2025,
+    "areal": 2780400,
+    "valuta": {
+      "navn": "argentinsk peso",
+      "kode": "ARS"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      -34.5997,
+      -58.3819
+    ],
+    "bnp": 14898,
+    "bnpAar": 2025
   },
   {
     "id": "AM",
@@ -103,7 +309,36 @@
     ],
     "kontinent": "Asia",
     "lat": 40.3,
-    "lng": 44.9
+    "lng": 44.9,
+    "suveren": true,
+    "flagg": "am",
+    "naboer": [
+      "AZ",
+      "GE",
+      "IR",
+      "TR"
+    ],
+    "naboerSjo": [
+      "RU",
+      "IQ",
+      "SY"
+    ],
+    "befolkning": 3086700,
+    "befolkningAar": 2025,
+    "areal": 29743,
+    "valuta": {
+      "navn": "armensk dram",
+      "kode": "AMD"
+    },
+    "sprak": [
+      "armensk"
+    ],
+    "hovedstadPos": [
+      40.1814,
+      44.5144
+    ],
+    "bnp": 9474,
+    "bnpAar": 2025
   },
   {
     "id": "AZ",
@@ -117,7 +352,39 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 40.3,
-    "lng": 47.5
+    "lng": 47.5,
+    "suveren": true,
+    "flagg": "az",
+    "naboer": [
+      "AM",
+      "GE",
+      "IR",
+      "RU",
+      "TR"
+    ],
+    "naboerSjo": [
+      "TM",
+      "IQ",
+      "KZ",
+      "SY",
+      "UZ"
+    ],
+    "befolkning": 10246996,
+    "befolkningAar": 2025,
+    "areal": 86600,
+    "valuta": {
+      "navn": "aserbajdsjansk manat",
+      "kode": "AZN"
+    },
+    "sprak": [
+      "aserbajdsjansk"
+    ],
+    "hovedstadPos": [
+      40.3667,
+      49.8352
+    ],
+    "bnp": 7411,
+    "bnpAar": 2025
   },
   {
     "id": "AU",
@@ -129,7 +396,31 @@
     "hovedstadSvar": [],
     "kontinent": "Oseania",
     "lat": -25.8,
-    "lng": 134.3
+    "lng": 134.3,
+    "suveren": true,
+    "flagg": "au",
+    "naboer": [],
+    "naboerSjo": [
+      "PG",
+      "ID",
+      "TL"
+    ],
+    "befolkning": 27614411,
+    "befolkningAar": 2025,
+    "areal": 7692024,
+    "valuta": {
+      "navn": "australsk dollar",
+      "kode": "AUD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -35.2931,
+      149.1269
+    ],
+    "bnp": 65130,
+    "bnpAar": 2025
   },
   {
     "id": "BS",
@@ -143,7 +434,35 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 24.3,
-    "lng": -76.6
+    "lng": -76.6,
+    "suveren": true,
+    "flagg": "bs",
+    "naboer": [],
+    "naboerSjo": [
+      "TC",
+      "CU",
+      "US",
+      "HT",
+      "DO",
+      "KY",
+      "JM"
+    ],
+    "befolkning": 403033,
+    "befolkningAar": 2025,
+    "areal": 13878,
+    "valuta": {
+      "navn": "bahamansk dollar",
+      "kode": "BSD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      25.0781,
+      -77.3386
+    ],
+    "bnp": 39455,
+    "bnpAar": 2024
   },
   {
     "id": "BH",
@@ -155,7 +474,35 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 26,
-    "lng": 50.5
+    "lng": 50.5,
+    "suveren": true,
+    "flagg": "bh",
+    "naboer": [
+      "SA"
+    ],
+    "naboerSjo": [
+      "QA",
+      "AE",
+      "IR",
+      "KW",
+      "IQ"
+    ],
+    "befolkning": 1600366,
+    "befolkningAar": 2025,
+    "areal": 787,
+    "valuta": {
+      "navn": "bahrainsk dinar",
+      "kode": "BHD"
+    },
+    "sprak": [
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      26.2167,
+      50.5833
+    ],
+    "bnp": 30597,
+    "bnpAar": 2025
   },
   {
     "id": "BD",
@@ -169,7 +516,34 @@
     ],
     "kontinent": "Asia",
     "lat": 23.9,
-    "lng": 90.2
+    "lng": 90.2,
+    "suveren": true,
+    "flagg": "bd",
+    "naboer": [
+      "IN",
+      "MM"
+    ],
+    "naboerSjo": [
+      "NP",
+      "BT",
+      "CN"
+    ],
+    "befolkning": 175686899,
+    "befolkningAar": 2025,
+    "areal": 147570,
+    "valuta": {
+      "navn": "bangladeshisk taka",
+      "kode": "BDT"
+    },
+    "sprak": [
+      "bengali"
+    ],
+    "hovedstadPos": [
+      23.7289,
+      90.3944
+    ],
+    "bnp": 2597,
+    "bnpAar": 2025
   },
   {
     "id": "BB",
@@ -181,7 +555,35 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 13.2,
-    "lng": -59.6
+    "lng": -59.6,
+    "suveren": true,
+    "flagg": "bb",
+    "naboer": [],
+    "naboerSjo": [
+      "LC",
+      "VC",
+      "MQ",
+      "GD",
+      "TT",
+      "DM",
+      "GP"
+    ],
+    "befolkning": 282623,
+    "befolkningAar": 2025,
+    "areal": 431,
+    "valuta": {
+      "navn": "barbadisk dollar",
+      "kode": "BBD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      13.0975,
+      -59.6167
+    ],
+    "bnp": 28365,
+    "bnpAar": 2025
   },
   {
     "id": "BY",
@@ -197,7 +599,42 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 53.5,
-    "lng": 28
+    "lng": 28,
+    "suveren": true,
+    "flagg": "by",
+    "naboer": [
+      "LT",
+      "LV",
+      "PL",
+      "RU",
+      "UA"
+    ],
+    "naboerSjo": [
+      "EE",
+      "SK",
+      "MD",
+      "HU",
+      "RO",
+      "CZ",
+      "SE"
+    ],
+    "befolkning": 9085991,
+    "befolkningAar": 2025,
+    "areal": 207600,
+    "valuta": {
+      "navn": "hviterussisk rubel",
+      "kode": "BYN"
+    },
+    "sprak": [
+      "russisk",
+      "hviterussisk"
+    ],
+    "hovedstadPos": [
+      53.9022,
+      27.5618
+    ],
+    "bnp": 10279,
+    "bnpAar": 2025
   },
   {
     "id": "BE",
@@ -212,7 +649,41 @@
     ],
     "kontinent": "Europa",
     "lat": 50.6,
-    "lng": 4.6
+    "lng": 4.6,
+    "suveren": true,
+    "flagg": "be",
+    "naboer": [
+      "DE",
+      "FR",
+      "LU",
+      "NL"
+    ],
+    "naboerSjo": [
+      "GB",
+      "CH",
+      "AT",
+      "GG",
+      "LI",
+      "JE",
+      "IT"
+    ],
+    "befolkning": 11941781,
+    "befolkningAar": 2025,
+    "areal": 30528,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "nederlandsk",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      50.8467,
+      4.3517
+    ],
+    "bnp": 60750,
+    "bnpAar": 2025
   },
   {
     "id": "BZ",
@@ -224,7 +695,35 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 17.2,
-    "lng": -88.7
+    "lng": -88.7,
+    "suveren": true,
+    "flagg": "bz",
+    "naboer": [
+      "GT",
+      "MX"
+    ],
+    "naboerSjo": [
+      "HN",
+      "SV",
+      "NI"
+    ],
+    "befolkning": 422924,
+    "befolkningAar": 2025,
+    "areal": 22966,
+    "valuta": {
+      "navn": "belizisk dollar",
+      "kode": "BZD"
+    },
+    "sprak": [
+      "engelsk",
+      "spansk"
+    ],
+    "hovedstadPos": [
+      17.25,
+      -88.7675
+    ],
+    "bnp": 7865,
+    "bnpAar": 2025
   },
   {
     "id": "BJ",
@@ -238,7 +737,36 @@
     ],
     "kontinent": "Afrika",
     "lat": 9.6,
-    "lng": 2.3
+    "lng": 2.3,
+    "suveren": true,
+    "flagg": "bj",
+    "naboer": [
+      "BF",
+      "NE",
+      "NG",
+      "TG"
+    ],
+    "naboerSjo": [
+      "GH",
+      "ML",
+      "CI"
+    ],
+    "befolkning": 14814460,
+    "befolkningAar": 2025,
+    "areal": 114760,
+    "valuta": {
+      "navn": "vestafrikansk CFA-franc",
+      "kode": "XOF"
+    },
+    "sprak": [
+      "fransk"
+    ],
+    "hovedstadPos": [
+      6.4833,
+      2.6167
+    ],
+    "bnp": 1658,
+    "bnpAar": 2025
   },
   {
     "id": "BT",
@@ -252,7 +780,34 @@
     ],
     "kontinent": "Asia",
     "lat": 27.4,
-    "lng": 90.4
+    "lng": 90.4,
+    "suveren": true,
+    "flagg": "bt",
+    "naboer": [
+      "CN",
+      "IN"
+    ],
+    "naboerSjo": [
+      "BD",
+      "NP",
+      "MM"
+    ],
+    "befolkning": 796682,
+    "befolkningAar": 2025,
+    "areal": 38394,
+    "valuta": {
+      "navn": "bhutansk ngultrum",
+      "kode": "BTN"
+    },
+    "sprak": [
+      "dzongkha"
+    ],
+    "hovedstadPos": [
+      27.4714,
+      89.6337
+    ],
+    "bnp": 4493,
+    "bnpAar": 2025
   },
   {
     "id": "BO",
@@ -266,7 +821,34 @@
     ],
     "kontinent": "Sør-Amerika",
     "lat": -16.7,
-    "lng": -64.7
+    "lng": -64.7,
+    "suveren": true,
+    "flagg": "bo",
+    "naboer": [
+      "AR",
+      "BR",
+      "CL",
+      "PE",
+      "PY"
+    ],
+    "naboerSjo": [],
+    "befolkning": 12581843,
+    "befolkningAar": 2025,
+    "areal": 1098581,
+    "valuta": {
+      "navn": "boliviansk boliviano",
+      "kode": "BOB"
+    },
+    "sprak": [
+      "spansk",
+      "quechua"
+    ],
+    "hovedstadPos": [
+      -16.4958,
+      -68.1333
+    ],
+    "bnp": 5148,
+    "bnpAar": 2025
   },
   {
     "id": "BA",
@@ -283,7 +865,41 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 44.2,
-    "lng": 17.8
+    "lng": 17.8,
+    "suveren": true,
+    "flagg": "ba",
+    "naboer": [
+      "HR",
+      "ME",
+      "RS"
+    ],
+    "naboerSjo": [
+      "SI",
+      "HU",
+      "AL",
+      "XK",
+      "RO",
+      "IT",
+      "AT"
+    ],
+    "befolkning": 3140095,
+    "befolkningAar": 2025,
+    "areal": 51209,
+    "valuta": {
+      "navn": "konvertibel mark",
+      "kode": "BAM"
+    },
+    "sprak": [
+      "bosnisk",
+      "serbisk",
+      "kroatisk"
+    ],
+    "hovedstadPos": [
+      43.8564,
+      18.4131
+    ],
+    "bnp": 10382,
+    "bnpAar": 2025
   },
   {
     "id": "BW",
@@ -295,7 +911,38 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -22.2,
-    "lng": 23.8
+    "lng": 23.8,
+    "suveren": true,
+    "flagg": "bw",
+    "naboer": [
+      "NA",
+      "ZA",
+      "ZM",
+      "ZW"
+    ],
+    "naboerSjo": [
+      "AO",
+      "MZ",
+      "LS",
+      "SZ"
+    ],
+    "befolkning": 2562122,
+    "befolkningAar": 2025,
+    "areal": 581737,
+    "valuta": {
+      "navn": "botswansk pula",
+      "kode": "BWP"
+    },
+    "sprak": [
+      "tswana",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -24.6569,
+      25.9086
+    ],
+    "bnp": 7778,
+    "bnpAar": 2025
   },
   {
     "id": "BR",
@@ -307,7 +954,38 @@
     "hovedstadSvar": [],
     "kontinent": "Sør-Amerika",
     "lat": -10.6,
-    "lng": -53.2
+    "lng": -53.2,
+    "suveren": true,
+    "flagg": "br",
+    "naboer": [
+      "AR",
+      "BO",
+      "CO",
+      "GF",
+      "GY",
+      "PE",
+      "PY",
+      "SR",
+      "UY",
+      "VE"
+    ],
+    "naboerSjo": [],
+    "befolkning": 212812405,
+    "befolkningAar": 2025,
+    "areal": 8515767,
+    "valuta": {
+      "navn": "brasiliansk real",
+      "kode": "BRL"
+    },
+    "sprak": [
+      "portugisisk"
+    ],
+    "hovedstadPos": [
+      -15.7939,
+      -47.8828
+    ],
+    "bnp": 10713,
+    "bnpAar": 2025
   },
   {
     "id": "BN",
@@ -321,7 +999,29 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 4.5,
-    "lng": 114.7
+    "lng": 114.7,
+    "suveren": true,
+    "flagg": "bn",
+    "naboer": [
+      "MY"
+    ],
+    "naboerSjo": [],
+    "befolkning": 466330,
+    "befolkningAar": 2025,
+    "areal": 5765,
+    "valuta": {
+      "navn": "bruneisk dollar",
+      "kode": "BND"
+    },
+    "sprak": [
+      "malayisk"
+    ],
+    "hovedstadPos": [
+      4.9167,
+      114.9167
+    ],
+    "bnp": 32235,
+    "bnpAar": 2025
   },
   {
     "id": "BG",
@@ -333,7 +1033,41 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 42.8,
-    "lng": 25.2
+    "lng": 25.2,
+    "suveren": true,
+    "flagg": "bg",
+    "naboer": [
+      "GR",
+      "MK",
+      "RO",
+      "RS",
+      "TR"
+    ],
+    "naboerSjo": [
+      "XK",
+      "AL",
+      "UA",
+      "ME",
+      "MD",
+      "BA",
+      "HU"
+    ],
+    "befolkning": 6433302,
+    "befolkningAar": 2025,
+    "areal": 110994,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "bulgarsk"
+    ],
+    "hovedstadPos": [
+      42.6979,
+      23.3217
+    ],
+    "bnp": 20328,
+    "bnpAar": 2025
   },
   {
     "id": "BF",
@@ -347,7 +1081,40 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 12.3,
-    "lng": -1.8
+    "lng": -1.8,
+    "suveren": true,
+    "flagg": "bf",
+    "naboer": [
+      "BJ",
+      "CI",
+      "GH",
+      "ML",
+      "NE",
+      "TG"
+    ],
+    "naboerSjo": [
+      "NG",
+      "GN",
+      "MR",
+      "LR"
+    ],
+    "befolkning": 24074580,
+    "befolkningAar": 2025,
+    "areal": 274200,
+    "valuta": {
+      "navn": "vestafrikansk CFA-franc",
+      "kode": "XOF"
+    },
+    "sprak": [
+      "fransk",
+      "mossi"
+    ],
+    "hovedstadPos": [
+      12.3686,
+      -1.5275
+    ],
+    "bnp": 1148,
+    "bnpAar": 2025
   },
   {
     "id": "BI",
@@ -361,7 +1128,36 @@
     ],
     "kontinent": "Afrika",
     "lat": -3.4,
-    "lng": 29.9
+    "lng": 29.9,
+    "suveren": true,
+    "flagg": "bi",
+    "naboer": [
+      "CD",
+      "RW",
+      "TZ"
+    ],
+    "naboerSjo": [
+      "UG",
+      "KE",
+      "ZM"
+    ],
+    "befolkning": 14390003,
+    "befolkningAar": 2025,
+    "areal": 27834,
+    "valuta": {
+      "navn": "burundisk franc",
+      "kode": "BIF"
+    },
+    "sprak": [
+      "kirundi",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      -3.4283,
+      29.925
+    ],
+    "bnp": 234,
+    "bnpAar": 2025
   },
   {
     "id": "CA",
@@ -375,7 +1171,30 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 60.4,
-    "lng": -96.5
+    "lng": -96.5,
+    "suveren": true,
+    "flagg": "ca",
+    "naboer": [
+      "US"
+    ],
+    "naboerSjo": [],
+    "befolkning": 41651653,
+    "befolkningAar": 2025,
+    "areal": 9984670,
+    "valuta": {
+      "navn": "kanadisk dollar",
+      "kode": "CAD"
+    },
+    "sprak": [
+      "engelsk",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      45.4247,
+      -75.695
+    ],
+    "bnp": 55698,
+    "bnpAar": 2025
   },
   {
     "id": "CL",
@@ -387,7 +1206,31 @@
     "hovedstadSvar": [],
     "kontinent": "Sør-Amerika",
     "lat": -36.1,
-    "lng": -71
+    "lng": -71,
+    "suveren": true,
+    "flagg": "cl",
+    "naboer": [
+      "AR",
+      "BO",
+      "PE"
+    ],
+    "naboerSjo": [],
+    "befolkning": 19859921,
+    "befolkningAar": 2025,
+    "areal": 756102,
+    "valuta": {
+      "navn": "chilensk peso",
+      "kode": "CLP"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      -33.4375,
+      -70.65
+    ],
+    "bnp": 17995,
+    "bnpAar": 2025
   },
   {
     "id": "CO",
@@ -399,7 +1242,40 @@
     "hovedstadSvar": [],
     "kontinent": "Sør-Amerika",
     "lat": 3.9,
-    "lng": -73.1
+    "lng": -73.1,
+    "suveren": true,
+    "flagg": "co",
+    "naboer": [
+      "BR",
+      "EC",
+      "PA",
+      "PE",
+      "VE"
+    ],
+    "naboerSjo": [
+      "AW",
+      "NI",
+      "CW",
+      "HN",
+      "CR",
+      "BQ"
+    ],
+    "befolkning": 53425635,
+    "befolkningAar": 2025,
+    "areal": 1141748,
+    "valuta": {
+      "navn": "colombiansk peso",
+      "kode": "COP"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      4.6097,
+      -74.0817
+    ],
+    "bnp": 8562,
+    "bnpAar": 2025
   },
   {
     "id": "CR",
@@ -411,7 +1287,34 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 10,
-    "lng": -84.2
+    "lng": -84.2,
+    "suveren": true,
+    "flagg": "cr",
+    "naboer": [
+      "NI",
+      "PA"
+    ],
+    "naboerSjo": [
+      "HN",
+      "CO",
+      "SV"
+    ],
+    "befolkning": 5152950,
+    "befolkningAar": 2025,
+    "areal": 51100,
+    "valuta": {
+      "navn": "costaricansk colón",
+      "kode": "CRC"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      9.9327,
+      -84.0796
+    ],
+    "bnp": 19970,
+    "bnpAar": 2025
   },
   {
     "id": "CU",
@@ -428,7 +1331,35 @@
     ],
     "kontinent": "Nord-Amerika",
     "lat": 21.6,
-    "lng": -79
+    "lng": -79,
+    "suveren": true,
+    "flagg": "cu",
+    "naboer": [],
+    "naboerSjo": [
+      "BS",
+      "HT",
+      "KY",
+      "JM",
+      "US",
+      "MX",
+      "TC"
+    ],
+    "befolkning": 10937203,
+    "befolkningAar": 2025,
+    "areal": 109884,
+    "valuta": {
+      "navn": "cubansk peso",
+      "kode": "CUP"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      23.1367,
+      -82.3589
+    ],
+    "bnp": 9605,
+    "bnpAar": 2020
   },
   {
     "id": "DK",
@@ -442,7 +1373,38 @@
     ],
     "kontinent": "Europa",
     "lat": 56,
-    "lng": 10
+    "lng": 10,
+    "suveren": true,
+    "flagg": "dk",
+    "naboer": [
+      "DE",
+      "SE"
+    ],
+    "naboerSjo": [
+      "PL",
+      "NO",
+      "NL",
+      "RU",
+      "LT",
+      "LV",
+      "CZ"
+    ],
+    "befolkning": 6009169,
+    "befolkningAar": 2025,
+    "areal": 42925,
+    "valuta": {
+      "navn": "dansk krone",
+      "kode": "DKK"
+    },
+    "sprak": [
+      "dansk"
+    ],
+    "hovedstadPos": [
+      55.6761,
+      12.5689
+    ],
+    "bnp": 76970,
+    "bnpAar": 2025
   },
   {
     "id": "AE",
@@ -458,7 +1420,35 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 23.9,
-    "lng": 54.3
+    "lng": 54.3,
+    "suveren": true,
+    "flagg": "ae",
+    "naboer": [
+      "OM",
+      "SA"
+    ],
+    "naboerSjo": [
+      "QA",
+      "IR",
+      "BH",
+      "YE"
+    ],
+    "befolkning": 11513149,
+    "befolkningAar": 2025,
+    "areal": 83600,
+    "valuta": {
+      "navn": "emiratisk dirham",
+      "kode": "AED"
+    },
+    "sprak": [
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      24.4511,
+      54.3969
+    ],
+    "bnp": 50274,
+    "bnpAar": 2024
   },
   {
     "id": "CD",
@@ -478,7 +1468,46 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -2.9,
-    "lng": 23.6
+    "lng": 23.6,
+    "suveren": true,
+    "flagg": "cd",
+    "naboer": [
+      "AO",
+      "BI",
+      "CF",
+      "CG",
+      "RW",
+      "SS",
+      "TZ",
+      "UG",
+      "ZM"
+    ],
+    "naboerSjo": [
+      "GA",
+      "MZ",
+      "CM",
+      "ZW",
+      "MW",
+      "TD",
+      "KE"
+    ],
+    "befolkning": 112832473,
+    "befolkningAar": 2025,
+    "areal": 2344858,
+    "valuta": {
+      "navn": "kongolesisk franc",
+      "kode": "CDF"
+    },
+    "sprak": [
+      "fransk",
+      "lingala"
+    ],
+    "hovedstadPos": [
+      -4.3219,
+      15.3119
+    ],
+    "bnp": 807,
+    "bnpAar": 2025
   },
   {
     "id": "DO",
@@ -492,7 +1521,37 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 18.9,
-    "lng": -70.5
+    "lng": -70.5,
+    "suveren": true,
+    "flagg": "do",
+    "naboer": [
+      "HT"
+    ],
+    "naboerSjo": [
+      "PR",
+      "TC",
+      "BS",
+      "CU",
+      "VI",
+      "VG",
+      "JM"
+    ],
+    "befolkning": 11520487,
+    "befolkningAar": 2025,
+    "areal": 48671,
+    "valuta": {
+      "navn": "dominikansk peso",
+      "kode": "DOP"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      18.4625,
+      -69.9361
+    ],
+    "bnp": 11059,
+    "bnpAar": 2025
   },
   {
     "id": "CF",
@@ -507,7 +1566,40 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 6.6,
-    "lng": 20.5
+    "lng": 20.5,
+    "suveren": true,
+    "flagg": "cf",
+    "naboer": [
+      "CD",
+      "CG",
+      "CM",
+      "SD",
+      "SS",
+      "TD"
+    ],
+    "naboerSjo": [
+      "GA",
+      "NG",
+      "UG",
+      "GQ"
+    ],
+    "befolkning": 5513282,
+    "befolkningAar": 2025,
+    "areal": 622984,
+    "valuta": {
+      "navn": "sentralafrikansk CFA-franc",
+      "kode": "XAF"
+    },
+    "sprak": [
+      "sango",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      4.3733,
+      18.5628
+    ],
+    "bnp": 556,
+    "bnpAar": 2025
   },
   {
     "id": "DJ",
@@ -519,7 +1611,33 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 11.7,
-    "lng": 42.6
+    "lng": 42.6,
+    "suveren": true,
+    "flagg": "dj",
+    "naboer": [
+      "ER",
+      "ET",
+      "SO"
+    ],
+    "naboerSjo": [],
+    "befolkning": 1184076,
+    "befolkningAar": 2025,
+    "areal": 23200,
+    "valuta": {
+      "navn": "djiboutisk franc",
+      "kode": "DJF"
+    },
+    "sprak": [
+      "somali",
+      "arabisk",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      11.595,
+      43.1481
+    ],
+    "bnp": 3906,
+    "bnpAar": 2025
   },
   {
     "id": "DM",
@@ -531,7 +1649,35 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 15.4,
-    "lng": -61.4
+    "lng": -61.4,
+    "suveren": true,
+    "flagg": "dm",
+    "naboer": [],
+    "naboerSjo": [
+      "GP",
+      "MQ",
+      "LC",
+      "MS",
+      "AG",
+      "VC",
+      "KN"
+    ],
+    "befolkning": 65871,
+    "befolkningAar": 2025,
+    "areal": 751,
+    "valuta": {
+      "navn": "østkaribisk dollar",
+      "kode": "XCD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      15.3,
+      -61.3833
+    ],
+    "bnp": 10989,
+    "bnpAar": 2025
   },
   {
     "id": "EC",
@@ -543,7 +1689,30 @@
     "hovedstadSvar": [],
     "kontinent": "Sør-Amerika",
     "lat": -1.4,
-    "lng": -78.4
+    "lng": -78.4,
+    "suveren": true,
+    "flagg": "ec",
+    "naboer": [
+      "CO",
+      "PE"
+    ],
+    "naboerSjo": [],
+    "befolkning": 18289896,
+    "befolkningAar": 2025,
+    "areal": 256370,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      -0.22,
+      -78.5125
+    ],
+    "bnp": 7125,
+    "bnpAar": 2025
   },
   {
     "id": "EG",
@@ -557,7 +1726,40 @@
     ],
     "kontinent": "Afrika",
     "lat": 26.5,
-    "lng": 29.9
+    "lng": 29.9,
+    "suveren": true,
+    "flagg": "eg",
+    "naboer": [
+      "IL",
+      "LY",
+      "PS",
+      "SD"
+    ],
+    "naboerSjo": [
+      "SA",
+      "JO",
+      "LB",
+      "SY",
+      "TD",
+      "CY",
+      "GR"
+    ],
+    "befolkning": 118365995,
+    "befolkningAar": 2025,
+    "areal": 1002450,
+    "valuta": {
+      "navn": "egyptisk pund",
+      "kode": "EGP"
+    },
+    "sprak": [
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      30.0444,
+      31.2358
+    ],
+    "bnp": 3086,
+    "bnpAar": 2025
   },
   {
     "id": "GQ",
@@ -569,7 +1771,36 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 1.7,
-    "lng": 10.3
+    "lng": 10.3,
+    "suveren": true,
+    "flagg": "gq",
+    "naboer": [
+      "CM",
+      "GA"
+    ],
+    "naboerSjo": [
+      "NG",
+      "ST",
+      "CG",
+      "CF"
+    ],
+    "befolkning": 1938431,
+    "befolkningAar": 2025,
+    "areal": 28051,
+    "valuta": {
+      "navn": "sentralafrikansk CFA-franc",
+      "kode": "XAF"
+    },
+    "sprak": [
+      "spansk",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      3.75,
+      8.7833
+    ],
+    "bnp": 6615,
+    "bnpAar": 2025
   },
   {
     "id": "SV",
@@ -581,7 +1812,35 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 13.7,
-    "lng": -88.9
+    "lng": -88.9,
+    "suveren": true,
+    "flagg": "sv",
+    "naboer": [
+      "GT",
+      "HN"
+    ],
+    "naboerSjo": [
+      "NI",
+      "BZ",
+      "MX",
+      "CR"
+    ],
+    "befolkning": 6365503,
+    "befolkningAar": 2025,
+    "areal": 21041,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      13.6976,
+      -89.1912
+    ],
+    "bnp": 5767,
+    "bnpAar": 2025
   },
   {
     "id": "CI",
@@ -597,7 +1856,38 @@
     ],
     "kontinent": "Afrika",
     "lat": 7.6,
-    "lng": -5.6
+    "lng": -5.6,
+    "suveren": true,
+    "flagg": "ci",
+    "naboer": [
+      "BF",
+      "GH",
+      "GN",
+      "LR",
+      "ML"
+    ],
+    "naboerSjo": [
+      "SL",
+      "TG",
+      "BJ",
+      "SN"
+    ],
+    "befolkning": 32711547,
+    "befolkningAar": 2025,
+    "areal": 322463,
+    "valuta": {
+      "navn": "vestafrikansk CFA-franc",
+      "kode": "XOF"
+    },
+    "sprak": [
+      "fransk"
+    ],
+    "hovedstadPos": [
+      6.8161,
+      -5.2742
+    ],
+    "bnp": 3050,
+    "bnpAar": 2025
   },
   {
     "id": "ER",
@@ -609,7 +1899,36 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 15.4,
-    "lng": 38.9
+    "lng": 38.9,
+    "suveren": true,
+    "flagg": "er",
+    "naboer": [
+      "DJ",
+      "ET",
+      "SD"
+    ],
+    "naboerSjo": [
+      "YE",
+      "SO",
+      "SA",
+      "SS",
+      "EG"
+    ],
+    "befolkning": 3607003,
+    "befolkningAar": 2025,
+    "areal": 117600,
+    "valuta": {
+      "navn": "eritreisk nakfa",
+      "kode": "ERN"
+    },
+    "sprak": [
+      "tigrinja",
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      15.3333,
+      38.9167
+    ]
   },
   {
     "id": "EE",
@@ -621,7 +1940,37 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 58.7,
-    "lng": 25.5
+    "lng": 25.5,
+    "suveren": true,
+    "flagg": "ee",
+    "naboer": [
+      "LV",
+      "RU"
+    ],
+    "naboerSjo": [
+      "FI",
+      "AX",
+      "SE",
+      "LT",
+      "BY",
+      "PL"
+    ],
+    "befolkning": 1366475,
+    "befolkningAar": 2025,
+    "areal": 45335,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "estisk"
+    ],
+    "hovedstadPos": [
+      59.4372,
+      24.745
+    ],
+    "bnp": 34418,
+    "bnpAar": 2025
   },
   {
     "id": "SZ",
@@ -638,7 +1987,35 @@
     ],
     "kontinent": "Afrika",
     "lat": -26.6,
-    "lng": 31.5
+    "lng": 31.5,
+    "suveren": true,
+    "flagg": "sz",
+    "naboer": [
+      "MZ",
+      "ZA"
+    ],
+    "naboerSjo": [
+      "LS",
+      "ZW",
+      "BW"
+    ],
+    "befolkning": 1256174,
+    "befolkningAar": 2025,
+    "areal": 17364,
+    "valuta": {
+      "navn": "swazisk lilangeni",
+      "kode": "SZL"
+    },
+    "sprak": [
+      "swati",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -26.3167,
+      31.1333
+    ],
+    "bnp": 4108,
+    "bnpAar": 2025
   },
   {
     "id": "ET",
@@ -652,7 +2029,39 @@
     ],
     "kontinent": "Afrika",
     "lat": 8.6,
-    "lng": 39.6
+    "lng": 39.6,
+    "suveren": true,
+    "flagg": "et",
+    "naboer": [
+      "DJ",
+      "ER",
+      "KE",
+      "SD",
+      "SO",
+      "SS"
+    ],
+    "naboerSjo": [
+      "YE",
+      "UG",
+      "SA"
+    ],
+    "befolkning": 135472051,
+    "befolkningAar": 2025,
+    "areal": 1104300,
+    "valuta": {
+      "navn": "etiopisk birr",
+      "kode": "ETB"
+    },
+    "sprak": [
+      "amharisk",
+      "oromo"
+    ],
+    "hovedstadPos": [
+      9.0358,
+      38.7525
+    ],
+    "bnp": 933,
+    "bnpAar": 2025
   },
   {
     "id": "FJ",
@@ -664,7 +2073,33 @@
     "hovedstadSvar": [],
     "kontinent": "Oseania",
     "lat": -17.4,
-    "lng": 178.5
+    "lng": 178.5,
+    "suveren": true,
+    "flagg": "fj",
+    "naboer": [],
+    "naboerSjo": [
+      "WF",
+      "TO",
+      "NC",
+      "TV"
+    ],
+    "befolkning": 933154,
+    "befolkningAar": 2025,
+    "areal": 18274,
+    "valuta": {
+      "navn": "fijiansk dollar",
+      "kode": "FJD"
+    },
+    "sprak": [
+      "engelsk",
+      "fijiansk"
+    ],
+    "hovedstadPos": [
+      -18.1333,
+      178.4333
+    ],
+    "bnp": 6642,
+    "bnpAar": 2025
   },
   {
     "id": "PH",
@@ -676,7 +2111,34 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 11.7,
-    "lng": 122.9
+    "lng": 122.9,
+    "suveren": true,
+    "flagg": "ph",
+    "naboer": [],
+    "naboerSjo": [
+      "MY",
+      "ID",
+      "TW",
+      "BN",
+      "JP"
+    ],
+    "befolkning": 116786962,
+    "befolkningAar": 2025,
+    "areal": 342353,
+    "valuta": {
+      "navn": "filippinsk peso",
+      "kode": "PHP"
+    },
+    "sprak": [
+      "tagalog",
+      "cebuano"
+    ],
+    "hovedstadPos": [
+      14.5958,
+      120.9772
+    ],
+    "bnp": 4171,
+    "bnpAar": 2025
   },
   {
     "id": "FI",
@@ -692,7 +2154,38 @@
     ],
     "kontinent": "Europa",
     "lat": 64.2,
-    "lng": 26.2
+    "lng": 26.2,
+    "suveren": true,
+    "flagg": "fi",
+    "naboer": [
+      "NO",
+      "RU",
+      "SE"
+    ],
+    "naboerSjo": [
+      "AX",
+      "EE",
+      "LV",
+      "LT",
+      "BY"
+    ],
+    "befolkning": 5646436,
+    "befolkningAar": 2025,
+    "areal": 338424,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "finsk",
+      "svensk"
+    ],
+    "hovedstadPos": [
+      60.1708,
+      24.9375
+    ],
+    "bnp": 56149,
+    "bnpAar": 2025
   },
   {
     "id": "FR",
@@ -704,7 +2197,45 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 46.5,
-    "lng": 2.6
+    "lng": 2.6,
+    "suveren": true,
+    "flagg": "fr",
+    "naboer": [
+      "AD",
+      "BE",
+      "CH",
+      "DE",
+      "ES",
+      "GB",
+      "IT",
+      "LU",
+      "MC"
+    ],
+    "naboerSjo": [
+      "GG",
+      "JE",
+      "NL",
+      "LI",
+      "AT",
+      "VA",
+      "SM"
+    ],
+    "befolkning": 68720337,
+    "befolkningAar": 2025,
+    "areal": 551695,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "fransk"
+    ],
+    "hovedstadPos": [
+      48.8567,
+      2.3522
+    ],
+    "bnp": 48986,
+    "bnpAar": 2025
   },
   {
     "id": "GA",
@@ -716,7 +2247,37 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -0.6,
-    "lng": 11.8
+    "lng": 11.8,
+    "suveren": true,
+    "flagg": "ga",
+    "naboer": [
+      "CG",
+      "CM",
+      "GQ"
+    ],
+    "naboerSjo": [
+      "AO",
+      "CD",
+      "ST",
+      "CF",
+      "NG"
+    ],
+    "befolkning": 2593130,
+    "befolkningAar": 2025,
+    "areal": 267668,
+    "valuta": {
+      "navn": "sentralafrikansk CFA-franc",
+      "kode": "XAF"
+    },
+    "sprak": [
+      "fransk"
+    ],
+    "hovedstadPos": [
+      0.4078,
+      9.4403
+    ],
+    "bnp": 8263,
+    "bnpAar": 2025
   },
   {
     "id": "GM",
@@ -730,7 +2291,35 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 13.5,
-    "lng": -15.4
+    "lng": -15.4,
+    "suveren": true,
+    "flagg": "gm",
+    "naboer": [
+      "SN"
+    ],
+    "naboerSjo": [
+      "GW",
+      "GN",
+      "ML",
+      "MR",
+      "SL"
+    ],
+    "befolkning": 2822093,
+    "befolkningAar": 2025,
+    "areal": 11295,
+    "valuta": {
+      "navn": "gambisk dalasi",
+      "kode": "GMD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      13.4531,
+      -16.5775
+    ],
+    "bnp": 919,
+    "bnpAar": 2025
   },
   {
     "id": "GE",
@@ -744,7 +2333,39 @@
     ],
     "kontinent": "Asia",
     "lat": 42.2,
-    "lng": 43.5
+    "lng": 43.5,
+    "suveren": true,
+    "flagg": "ge",
+    "naboer": [
+      "AM",
+      "AZ",
+      "RU",
+      "TR"
+    ],
+    "naboerSjo": [
+      "IR",
+      "IQ",
+      "KZ",
+      "UA",
+      "SY",
+      "TM"
+    ],
+    "befolkning": 3935766,
+    "befolkningAar": 2025,
+    "areal": 69700,
+    "valuta": {
+      "navn": "georgisk lari",
+      "kode": "GEL"
+    },
+    "sprak": [
+      "georgisk"
+    ],
+    "hovedstadPos": [
+      41.7225,
+      44.7925
+    ],
+    "bnp": 9692,
+    "bnpAar": 2025
   },
   {
     "id": "GH",
@@ -756,7 +2377,37 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 7.9,
-    "lng": -1.2
+    "lng": -1.2,
+    "suveren": true,
+    "flagg": "gh",
+    "naboer": [
+      "BF",
+      "CI",
+      "TG"
+    ],
+    "naboerSjo": [
+      "BJ",
+      "NG",
+      "ML",
+      "NE",
+      "LR"
+    ],
+    "befolkning": 35064272,
+    "befolkningAar": 2025,
+    "areal": 238535,
+    "valuta": {
+      "navn": "ghanesisk cedi",
+      "kode": "GHS"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      5.556,
+      -0.1969
+    ],
+    "bnp": 3257,
+    "bnpAar": 2025
   },
   {
     "id": "GD",
@@ -770,7 +2421,35 @@
     ],
     "kontinent": "Nord-Amerika",
     "lat": 12.1,
-    "lng": -61.7
+    "lng": -61.7,
+    "suveren": true,
+    "flagg": "gd",
+    "naboer": [],
+    "naboerSjo": [
+      "VC",
+      "TT",
+      "VE",
+      "LC",
+      "BB",
+      "MQ",
+      "DM"
+    ],
+    "befolkning": 117303,
+    "befolkningAar": 2025,
+    "areal": 344,
+    "valuta": {
+      "navn": "østkaribisk dollar",
+      "kode": "XCD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      12.0525,
+      -61.7531
+    ],
+    "bnp": 12107,
+    "bnpAar": 2025
   },
   {
     "id": "GT",
@@ -785,7 +2464,32 @@
     ],
     "kontinent": "Nord-Amerika",
     "lat": 15.7,
-    "lng": -90.4
+    "lng": -90.4,
+    "suveren": true,
+    "flagg": "gt",
+    "naboer": [
+      "BZ",
+      "HN",
+      "MX",
+      "SV"
+    ],
+    "naboerSjo": [],
+    "befolkning": 18687881,
+    "befolkningAar": 2025,
+    "areal": 108889,
+    "valuta": {
+      "navn": "guatemalansk quetzal",
+      "kode": "GTQ"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      14.6417,
+      -90.5133
+    ],
+    "bnp": 6598,
+    "bnpAar": 2025
   },
   {
     "id": "GN",
@@ -797,7 +2501,38 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 10.4,
-    "lng": -10.9
+    "lng": -10.9,
+    "suveren": true,
+    "flagg": "gn",
+    "naboer": [
+      "CI",
+      "GW",
+      "LR",
+      "ML",
+      "SL",
+      "SN"
+    ],
+    "naboerSjo": [
+      "GM",
+      "MR",
+      "BF"
+    ],
+    "befolkning": 15099727,
+    "befolkningAar": 2025,
+    "areal": 245857,
+    "valuta": {
+      "navn": "guineansk franc",
+      "kode": "GNF"
+    },
+    "sprak": [
+      "fransk"
+    ],
+    "hovedstadPos": [
+      9.5092,
+      -13.7122
+    ],
+    "bnp": 1877,
+    "bnpAar": 2025
   },
   {
     "id": "GW",
@@ -809,7 +2544,35 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 12,
-    "lng": -14.9
+    "lng": -14.9,
+    "suveren": true,
+    "flagg": "gw",
+    "naboer": [
+      "GN",
+      "SN"
+    ],
+    "naboerSjo": [
+      "GM",
+      "ML",
+      "SL",
+      "MR"
+    ],
+    "befolkning": 2249515,
+    "befolkningAar": 2025,
+    "areal": 36125,
+    "valuta": {
+      "navn": "vestafrikansk CFA-franc",
+      "kode": "XOF"
+    },
+    "sprak": [
+      "portugisisk"
+    ],
+    "hovedstadPos": [
+      11.86,
+      -15.5833
+    ],
+    "bnp": 1124,
+    "bnpAar": 2025
   },
   {
     "id": "GY",
@@ -821,7 +2584,36 @@
     "hovedstadSvar": [],
     "kontinent": "Sør-Amerika",
     "lat": 4.8,
-    "lng": -59
+    "lng": -59,
+    "suveren": true,
+    "flagg": "gy",
+    "naboer": [
+      "BR",
+      "SR",
+      "VE"
+    ],
+    "naboerSjo": [
+      "TT",
+      "GF",
+      "GD",
+      "VC"
+    ],
+    "befolkning": 835986,
+    "befolkningAar": 2025,
+    "areal": 214970,
+    "valuta": {
+      "navn": "guyansk dollar",
+      "kode": "GYD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      6.8058,
+      -58.1508
+    ],
+    "bnp": 32414,
+    "bnpAar": 2025
   },
   {
     "id": "HT",
@@ -833,7 +2625,36 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 18.9,
-    "lng": -72.7
+    "lng": -72.7,
+    "suveren": true,
+    "flagg": "ht",
+    "naboer": [
+      "DO"
+    ],
+    "naboerSjo": [
+      "CU",
+      "BS",
+      "TC",
+      "JM",
+      "PR"
+    ],
+    "befolkning": 11906095,
+    "befolkningAar": 2025,
+    "areal": 27750,
+    "valuta": {
+      "navn": "haitisk gourde",
+      "kode": "HTG"
+    },
+    "sprak": [
+      "haitisk kreol",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      18.5469,
+      -72.3403
+    ],
+    "bnp": 2694,
+    "bnpAar": 2025
   },
   {
     "id": "GR",
@@ -848,7 +2669,40 @@
     ],
     "kontinent": "Europa",
     "lat": 39,
-    "lng": 23
+    "lng": 23,
+    "suveren": true,
+    "flagg": "gr",
+    "naboer": [
+      "AL",
+      "BG",
+      "MK",
+      "TR"
+    ],
+    "naboerSjo": [
+      "IT",
+      "XK",
+      "RS",
+      "ME",
+      "RO",
+      "LY",
+      "HR"
+    ],
+    "befolkning": 10413962,
+    "befolkningAar": 2025,
+    "areal": 131960,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "gresk"
+    ],
+    "hovedstadPos": [
+      37.9842,
+      23.7281
+    ],
+    "bnp": 26948,
+    "bnpAar": 2025
   },
   {
     "id": "HN",
@@ -860,7 +2714,38 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 14.8,
-    "lng": -86.6
+    "lng": -86.6,
+    "suveren": true,
+    "flagg": "hn",
+    "naboer": [
+      "GT",
+      "NI",
+      "SV"
+    ],
+    "naboerSjo": [
+      "BZ",
+      "MX",
+      "CR",
+      "CO",
+      "KY",
+      "CU"
+    ],
+    "befolkning": 11005850,
+    "befolkningAar": 2025,
+    "areal": 112492,
+    "valuta": {
+      "navn": "honduransk lempira",
+      "kode": "HNL"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      14.1058,
+      -87.2047
+    ],
+    "bnp": 3598,
+    "bnpAar": 2025
   },
   {
     "id": "IN",
@@ -875,7 +2760,42 @@
     ],
     "kontinent": "Asia",
     "lat": 22.8,
-    "lng": 79.5
+    "lng": 79.5,
+    "suveren": true,
+    "flagg": "in",
+    "naboer": [
+      "BD",
+      "BT",
+      "CN",
+      "MM",
+      "NP",
+      "PK"
+    ],
+    "naboerSjo": [
+      "LK",
+      "MV",
+      "ID",
+      "AF",
+      "TJ",
+      "TH"
+    ],
+    "befolkning": 1463865525,
+    "befolkningAar": 2025,
+    "areal": 3287263,
+    "valuta": {
+      "navn": "indisk rupi",
+      "kode": "INR"
+    },
+    "sprak": [
+      "hindi",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      28.6139,
+      77.2089
+    ],
+    "bnp": 2702,
+    "bnpAar": 2025
   },
   {
     "id": "ID",
@@ -889,7 +2809,39 @@
     ],
     "kontinent": "Asia",
     "lat": -2.3,
-    "lng": 117.2
+    "lng": 117.2,
+    "suveren": true,
+    "flagg": "id",
+    "naboer": [
+      "MY",
+      "PG",
+      "TL"
+    ],
+    "naboerSjo": [
+      "SG",
+      "BN",
+      "PH",
+      "AU",
+      "IN",
+      "PW",
+      "TH"
+    ],
+    "befolkning": 285721236,
+    "befolkningAar": 2025,
+    "areal": 1904570,
+    "valuta": {
+      "navn": "indonesisk rupiah",
+      "kode": "IDR"
+    },
+    "sprak": [
+      "indonesisk"
+    ],
+    "hovedstadPos": [
+      -6.1753,
+      106.8269
+    ],
+    "bnp": 5060,
+    "bnpAar": 2025
   },
   {
     "id": "IQ",
@@ -903,7 +2855,43 @@
     ],
     "kontinent": "Asia",
     "lat": 33,
-    "lng": 43.8
+    "lng": 43.8,
+    "suveren": true,
+    "flagg": "iq",
+    "naboer": [
+      "IR",
+      "JO",
+      "KW",
+      "SA",
+      "SY",
+      "TR"
+    ],
+    "naboerSjo": [
+      "AZ",
+      "LB",
+      "AM",
+      "IL",
+      "PS",
+      "GE",
+      "BH"
+    ],
+    "befolkning": 47020774,
+    "befolkningAar": 2025,
+    "areal": 437072,
+    "valuta": {
+      "navn": "irakisk dinar",
+      "kode": "IQD"
+    },
+    "sprak": [
+      "arabisk",
+      "kurdisk"
+    ],
+    "hovedstadPos": [
+      33.3153,
+      44.3661
+    ],
+    "bnp": 5410,
+    "bnpAar": 2025
   },
   {
     "id": "IR",
@@ -917,7 +2905,43 @@
     ],
     "kontinent": "Asia",
     "lat": 32.5,
-    "lng": 54.4
+    "lng": 54.4,
+    "suveren": true,
+    "flagg": "ir",
+    "naboer": [
+      "AF",
+      "AM",
+      "AZ",
+      "IQ",
+      "PK",
+      "TM",
+      "TR"
+    ],
+    "naboerSjo": [
+      "KW",
+      "OM",
+      "AE",
+      "SA",
+      "GE",
+      "RU",
+      "SY"
+    ],
+    "befolkning": 92417681,
+    "befolkningAar": 2025,
+    "areal": 1648195,
+    "valuta": {
+      "navn": "iransk rial",
+      "kode": "IRR"
+    },
+    "sprak": [
+      "persisk"
+    ],
+    "hovedstadPos": [
+      35.6889,
+      51.3897
+    ],
+    "bnp": 3924,
+    "bnpAar": 2025
   },
   {
     "id": "IE",
@@ -932,7 +2956,35 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 53.2,
-    "lng": -8.1
+    "lng": -8.1,
+    "suveren": true,
+    "flagg": "ie",
+    "naboer": [
+      "GB"
+    ],
+    "naboerSjo": [
+      "IM",
+      "GG",
+      "FR",
+      "JE"
+    ],
+    "befolkning": 5484367,
+    "befolkningAar": 2025,
+    "areal": 70273,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "engelsk",
+      "irsk"
+    ],
+    "hovedstadPos": [
+      53.3497,
+      -6.2603
+    ],
+    "bnp": 131592,
+    "bnpAar": 2025
   },
   {
     "id": "IS",
@@ -944,7 +2996,31 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 65,
-    "lng": -18.6
+    "lng": -18.6,
+    "suveren": true,
+    "flagg": "is",
+    "naboer": [],
+    "naboerSjo": [
+      "GL",
+      "FO",
+      "SJ"
+    ],
+    "befolkning": 392404,
+    "befolkningAar": 2025,
+    "areal": 103000,
+    "valuta": {
+      "navn": "islandsk krone",
+      "kode": "ISK"
+    },
+    "sprak": [
+      "islandsk"
+    ],
+    "hovedstadPos": [
+      64.1475,
+      -21.935
+    ],
+    "bnp": 98323,
+    "bnpAar": 2025
   },
   {
     "id": "IL",
@@ -958,7 +3034,39 @@
     ],
     "kontinent": "Asia",
     "lat": 31.5,
-    "lng": 35
+    "lng": 35,
+    "suveren": true,
+    "flagg": "il",
+    "naboer": [
+      "EG",
+      "JO",
+      "LB",
+      "PS",
+      "SY"
+    ],
+    "naboerSjo": [
+      "SA",
+      "CY",
+      "IQ",
+      "TR"
+    ],
+    "befolkning": 10122800,
+    "befolkningAar": 2025,
+    "areal": 20770,
+    "valuta": {
+      "navn": "israelsk shekel",
+      "kode": "ILS"
+    },
+    "sprak": [
+      "hebraisk",
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      31.7767,
+      35.2342
+    ],
+    "bnp": 60337,
+    "bnpAar": 2025
   },
   {
     "id": "IT",
@@ -974,7 +3082,42 @@
     ],
     "kontinent": "Europa",
     "lat": 42.7,
-    "lng": 12.2
+    "lng": 12.2,
+    "suveren": true,
+    "flagg": "it",
+    "naboer": [
+      "AT",
+      "CH",
+      "FR",
+      "SI",
+      "SM",
+      "VA"
+    ],
+    "naboerSjo": [
+      "MC",
+      "HR",
+      "DE",
+      "LI",
+      "AL",
+      "TN",
+      "MT"
+    ],
+    "befolkning": 58915656,
+    "befolkningAar": 2025,
+    "areal": 302068,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "italiensk"
+    ],
+    "hovedstadPos": [
+      41.8931,
+      12.4828
+    ],
+    "bnp": 43309,
+    "bnpAar": 2025
   },
   {
     "id": "JM",
@@ -986,7 +3129,33 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 18.2,
-    "lng": -77.3
+    "lng": -77.3,
+    "suveren": true,
+    "flagg": "jm",
+    "naboer": [],
+    "naboerSjo": [
+      "CU",
+      "HT",
+      "KY",
+      "BS",
+      "DO"
+    ],
+    "befolkning": 2837077,
+    "befolkningAar": 2025,
+    "areal": 10991,
+    "valuta": {
+      "navn": "jamaicansk dollar",
+      "kode": "JMD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      17.9714,
+      -76.7931
+    ],
+    "bnp": 8003,
+    "bnpAar": 2025
   },
   {
     "id": "JP",
@@ -998,7 +3167,34 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 37.5,
-    "lng": 137.7
+    "lng": 137.7,
+    "suveren": true,
+    "flagg": "jp",
+    "naboer": [],
+    "naboerSjo": [
+      "RU",
+      "KR",
+      "TW",
+      "CN",
+      "PH",
+      "KP"
+    ],
+    "befolkning": 123366734,
+    "befolkningAar": 2025,
+    "areal": 377972,
+    "valuta": {
+      "navn": "japansk yen",
+      "kode": "JPY"
+    },
+    "sprak": [
+      "japansk"
+    ],
+    "hovedstadPos": [
+      35.6894,
+      139.6917
+    ],
+    "bnp": 35951,
+    "bnpAar": 2025
   },
   {
     "id": "YE",
@@ -1012,7 +3208,37 @@
     ],
     "kontinent": "Asia",
     "lat": 15.9,
-    "lng": 47.6
+    "lng": 47.6,
+    "suveren": true,
+    "flagg": "ye",
+    "naboer": [
+      "OM",
+      "SA"
+    ],
+    "naboerSjo": [
+      "DJ",
+      "ER",
+      "SO",
+      "ET",
+      "AE",
+      "SD"
+    ],
+    "befolkning": 41773878,
+    "befolkningAar": 2025,
+    "areal": 527968,
+    "valuta": {
+      "navn": "jemenittisk rial",
+      "kode": "YER"
+    },
+    "sprak": [
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      15.35,
+      44.2
+    ],
+    "bnp": 634,
+    "bnpAar": 2018
   },
   {
     "id": "JO",
@@ -1024,7 +3250,38 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 31.2,
-    "lng": 36.8
+    "lng": 36.8,
+    "suveren": true,
+    "flagg": "jo",
+    "naboer": [
+      "IL",
+      "IQ",
+      "PS",
+      "SA",
+      "SY"
+    ],
+    "naboerSjo": [
+      "EG",
+      "LB",
+      "CY",
+      "TR"
+    ],
+    "befolkning": 11520684,
+    "befolkningAar": 2025,
+    "areal": 89341,
+    "valuta": {
+      "navn": "jordansk dinar",
+      "kode": "JOD"
+    },
+    "sprak": [
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      31.931,
+      35.9261
+    ],
+    "bnp": 5348,
+    "bnpAar": 2025
   },
   {
     "id": "KH",
@@ -1038,7 +3295,31 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 12.7,
-    "lng": 104.9
+    "lng": 104.9,
+    "suveren": true,
+    "flagg": "kh",
+    "naboer": [
+      "LA",
+      "TH",
+      "VN"
+    ],
+    "naboerSjo": [],
+    "befolkning": 17847982,
+    "befolkningAar": 2025,
+    "areal": 181035,
+    "valuta": {
+      "navn": "kambodsjansk riel",
+      "kode": "KHR"
+    },
+    "sprak": [
+      "khmer"
+    ],
+    "hovedstadPos": [
+      11.5696,
+      104.921
+    ],
+    "bnp": 2872,
+    "bnpAar": 2025
   },
   {
     "id": "CM",
@@ -1050,7 +3331,39 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 5.7,
-    "lng": 12.7
+    "lng": 12.7,
+    "suveren": true,
+    "flagg": "cm",
+    "naboer": [
+      "CF",
+      "CG",
+      "GA",
+      "GQ",
+      "NG",
+      "TD"
+    ],
+    "naboerSjo": [
+      "NE",
+      "CD",
+      "ST"
+    ],
+    "befolkning": 29879337,
+    "befolkningAar": 2025,
+    "areal": 475442,
+    "valuta": {
+      "navn": "sentralafrikansk CFA-franc",
+      "kode": "XAF"
+    },
+    "sprak": [
+      "fransk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      3.8578,
+      11.5181
+    ],
+    "bnp": 1972,
+    "bnpAar": 2025
   },
   {
     "id": "CV",
@@ -1064,7 +3377,31 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 16,
-    "lng": -24
+    "lng": -24,
+    "suveren": true,
+    "flagg": "cv",
+    "naboer": [],
+    "naboerSjo": [
+      "SN",
+      "MR",
+      "GM"
+    ],
+    "befolkning": 527326,
+    "befolkningAar": 2025,
+    "areal": 4033,
+    "valuta": {
+      "navn": "kapverdisk escudo",
+      "kode": "CVE"
+    },
+    "sprak": [
+      "portugisisk"
+    ],
+    "hovedstadPos": [
+      14.9177,
+      -23.5092
+    ],
+    "bnp": 5796,
+    "bnpAar": 2025
   },
   {
     "id": "KZ",
@@ -1081,7 +3418,42 @@
     ],
     "kontinent": "Asia",
     "lat": 48.4,
-    "lng": 67.2
+    "lng": 67.2,
+    "suveren": true,
+    "flagg": "kz",
+    "naboer": [
+      "CN",
+      "KG",
+      "RU",
+      "TM",
+      "UZ"
+    ],
+    "naboerSjo": [
+      "MN",
+      "TJ",
+      "AZ",
+      "AF",
+      "IR",
+      "GE",
+      "UA"
+    ],
+    "befolkning": 20843754,
+    "befolkningAar": 2025,
+    "areal": 2724900,
+    "valuta": {
+      "navn": "kasakhstansk tenge",
+      "kode": "KZT"
+    },
+    "sprak": [
+      "kasakhisk",
+      "russisk"
+    ],
+    "hovedstadPos": [
+      51.1333,
+      71.4333
+    ],
+    "bnp": 14692,
+    "bnpAar": 2025
   },
   {
     "id": "KE",
@@ -1093,7 +3465,38 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 0.6,
-    "lng": 37.8
+    "lng": 37.8,
+    "suveren": true,
+    "flagg": "ke",
+    "naboer": [
+      "ET",
+      "SO",
+      "SS",
+      "TZ",
+      "UG"
+    ],
+    "naboerSjo": [
+      "RW",
+      "CD",
+      "BI"
+    ],
+    "befolkning": 57532493,
+    "befolkningAar": 2025,
+    "areal": 581309,
+    "valuta": {
+      "navn": "kenyansk shilling",
+      "kode": "KES"
+    },
+    "sprak": [
+      "swahili",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -1.2864,
+      36.8172
+    ],
+    "bnp": 2363,
+    "bnpAar": 2025
   },
   {
     "id": "CN",
@@ -1111,7 +3514,52 @@
     ],
     "kontinent": "Asia",
     "lat": 36.7,
-    "lng": 103.4
+    "lng": 103.4,
+    "suveren": true,
+    "flagg": "cn",
+    "naboer": [
+      "AF",
+      "BT",
+      "HK",
+      "IN",
+      "KG",
+      "KP",
+      "KZ",
+      "LA",
+      "MM",
+      "MN",
+      "MO",
+      "NP",
+      "PK",
+      "RU",
+      "TJ",
+      "VN"
+    ],
+    "naboerSjo": [
+      "TW",
+      "BD",
+      "UZ",
+      "TH",
+      "KR",
+      "JP",
+      "KH"
+    ],
+    "befolkning": 1406585000,
+    "befolkningAar": 2025,
+    "areal": 9596961,
+    "valuta": {
+      "navn": "kinesisk yuan",
+      "kode": "CNY"
+    },
+    "sprak": [
+      "kinesisk (mandarin)"
+    ],
+    "hovedstadPos": [
+      39.904,
+      116.4075
+    ],
+    "bnp": 13862,
+    "bnpAar": 2025
   },
   {
     "id": "KG",
@@ -1128,7 +3576,37 @@
     ],
     "kontinent": "Asia",
     "lat": 41.5,
-    "lng": 74.5
+    "lng": 74.5,
+    "suveren": true,
+    "flagg": "kg",
+    "naboer": [
+      "CN",
+      "KZ",
+      "TJ",
+      "UZ"
+    ],
+    "naboerSjo": [
+      "AF",
+      "PK",
+      "TM"
+    ],
+    "befolkning": 7343064,
+    "befolkningAar": 2025,
+    "areal": 199951,
+    "valuta": {
+      "navn": "kirgisisk som",
+      "kode": "KGS"
+    },
+    "sprak": [
+      "kirgisisk",
+      "russisk"
+    ],
+    "hovedstadPos": [
+      42.8667,
+      74.5667
+    ],
+    "bnp": 3081,
+    "bnpAar": 2025
   },
   {
     "id": "KI",
@@ -1144,7 +3622,34 @@
     ],
     "kontinent": "Oseania",
     "lat": 1.9,
-    "lng": 173
+    "lng": 173,
+    "suveren": true,
+    "flagg": "ki",
+    "naboer": [],
+    "naboerSjo": [
+      "NR",
+      "MH",
+      "TV",
+      "CK",
+      "TK"
+    ],
+    "befolkning": 136488,
+    "befolkningAar": 2025,
+    "areal": 811,
+    "valuta": {
+      "navn": "australsk dollar",
+      "kode": "AUD"
+    },
+    "sprak": [
+      "engelsk",
+      "kiribatisk"
+    ],
+    "hovedstadPos": [
+      1.3333,
+      172.9667
+    ],
+    "bnp": 2559,
+    "bnpAar": 2025
   },
   {
     "id": "KM",
@@ -1156,7 +3661,36 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -11.9,
-    "lng": 43.7
+    "lng": 43.7,
+    "suveren": true,
+    "flagg": "km",
+    "naboer": [],
+    "naboerSjo": [
+      "YT",
+      "MZ",
+      "TF",
+      "TZ",
+      "SC",
+      "MG"
+    ],
+    "befolkning": 882847,
+    "befolkningAar": 2025,
+    "areal": 1870,
+    "valuta": {
+      "navn": "komorisk franc",
+      "kode": "KMF"
+    },
+    "sprak": [
+      "komorisk",
+      "arabisk",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      -11.7036,
+      43.2536
+    ],
+    "bnp": 2056,
+    "bnpAar": 2025
   },
   {
     "id": "XK",
@@ -1168,7 +3702,41 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 42.6,
-    "lng": 20.9
+    "lng": 20.9,
+    "suveren": true,
+    "flagg": "xk",
+    "naboer": [
+      "AL",
+      "ME",
+      "MK",
+      "RS"
+    ],
+    "naboerSjo": [
+      "BG",
+      "BA",
+      "GR",
+      "HR",
+      "RO",
+      "IT",
+      "HU"
+    ],
+    "befolkning": 1576876,
+    "befolkningAar": 2025,
+    "areal": 10908,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "albansk",
+      "serbisk"
+    ],
+    "hovedstadPos": [
+      42.6667,
+      21.1667
+    ],
+    "bnp": 7899,
+    "bnpAar": 2025
   },
   {
     "id": "HR",
@@ -1182,7 +3750,41 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 45.1,
-    "lng": 16.4
+    "lng": 16.4,
+    "suveren": true,
+    "flagg": "hr",
+    "naboer": [
+      "BA",
+      "HU",
+      "ME",
+      "RS",
+      "SI"
+    ],
+    "naboerSjo": [
+      "IT",
+      "AT",
+      "AL",
+      "RO",
+      "XK",
+      "SM",
+      "SK"
+    ],
+    "befolkning": 3876200,
+    "befolkningAar": 2025,
+    "areal": 56594,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "kroatisk"
+    ],
+    "hovedstadPos": [
+      45.8131,
+      15.9772
+    ],
+    "bnp": 27104,
+    "bnpAar": 2025
   },
   {
     "id": "KW",
@@ -1197,7 +3799,34 @@
     ],
     "kontinent": "Asia",
     "lat": 29.3,
-    "lng": 47.6
+    "lng": 47.6,
+    "suveren": true,
+    "flagg": "kw",
+    "naboer": [
+      "IQ",
+      "SA"
+    ],
+    "naboerSjo": [
+      "IR",
+      "BH",
+      "QA"
+    ],
+    "befolkning": 4865298,
+    "befolkningAar": 2025,
+    "areal": 17818,
+    "valuta": {
+      "navn": "kuwaitisk dinar",
+      "kode": "KWD"
+    },
+    "sprak": [
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      29.375,
+      47.98
+    ],
+    "bnp": 32312,
+    "bnpAar": 2025
   },
   {
     "id": "CY",
@@ -1212,7 +3841,36 @@
     ],
     "kontinent": "Europa",
     "lat": 35,
-    "lng": 33.2
+    "lng": 33.2,
+    "suveren": true,
+    "flagg": "cy",
+    "naboer": [],
+    "naboerSjo": [
+      "TR",
+      "SY",
+      "LB",
+      "IL",
+      "PS",
+      "JO",
+      "EG"
+    ],
+    "befolkning": 1370754,
+    "befolkningAar": 2025,
+    "areal": 9242,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "gresk",
+      "tyrkisk"
+    ],
+    "hovedstadPos": [
+      35.1725,
+      33.365
+    ],
+    "bnp": 41783,
+    "bnpAar": 2025
   },
   {
     "id": "LA",
@@ -1226,7 +3884,33 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 18.5,
-    "lng": 103.8
+    "lng": 103.8,
+    "suveren": true,
+    "flagg": "la",
+    "naboer": [
+      "CN",
+      "KH",
+      "MM",
+      "TH",
+      "VN"
+    ],
+    "naboerSjo": [],
+    "befolkning": 7873046,
+    "befolkningAar": 2025,
+    "areal": 236800,
+    "valuta": {
+      "navn": "laotisk kip",
+      "kode": "LAK"
+    },
+    "sprak": [
+      "lao"
+    ],
+    "hovedstadPos": [
+      17.98,
+      102.63
+    ],
+    "bnp": 2325,
+    "bnpAar": 2025
   },
   {
     "id": "LV",
@@ -1240,7 +3924,40 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 56.9,
-    "lng": 24.9
+    "lng": 24.9,
+    "suveren": true,
+    "flagg": "lv",
+    "naboer": [
+      "BY",
+      "EE",
+      "LT",
+      "RU"
+    ],
+    "naboerSjo": [
+      "SE",
+      "PL",
+      "FI",
+      "AX",
+      "DK",
+      "UA",
+      "DE"
+    ],
+    "befolkning": 1847785,
+    "befolkningAar": 2025,
+    "areal": 64559,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "latvisk"
+    ],
+    "hovedstadPos": [
+      56.9475,
+      24.1069
+    ],
+    "bnp": 26312,
+    "bnpAar": 2025
   },
   {
     "id": "LS",
@@ -1252,7 +3969,34 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -29.6,
-    "lng": 28.2
+    "lng": 28.2,
+    "suveren": true,
+    "flagg": "ls",
+    "naboer": [
+      "ZA"
+    ],
+    "naboerSjo": [
+      "SZ",
+      "MZ",
+      "BW"
+    ],
+    "befolkning": 2363325,
+    "befolkningAar": 2025,
+    "areal": 30355,
+    "valuta": {
+      "navn": "lesothisk loti",
+      "kode": "LSL"
+    },
+    "sprak": [
+      "sesotho",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -29.31,
+      27.48
+    ],
+    "bnp": 1089,
+    "bnpAar": 2025
   },
   {
     "id": "LB",
@@ -1264,7 +4008,39 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 33.9,
-    "lng": 35.9
+    "lng": 35.9,
+    "suveren": true,
+    "flagg": "lb",
+    "naboer": [
+      "IL",
+      "SY"
+    ],
+    "naboerSjo": [
+      "JO",
+      "PS",
+      "TR",
+      "CY",
+      "EG",
+      "IQ",
+      "SA"
+    ],
+    "befolkning": 5849421,
+    "befolkningAar": 2025,
+    "areal": 10452,
+    "valuta": {
+      "navn": "libanesisk pund",
+      "kode": "LBP"
+    },
+    "sprak": [
+      "arabisk",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      33.8869,
+      35.5131
+    ],
+    "bnp": 4473,
+    "bnpAar": 2024
   },
   {
     "id": "LR",
@@ -1276,7 +4052,36 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 6.5,
-    "lng": -9.3
+    "lng": -9.3,
+    "suveren": true,
+    "flagg": "lr",
+    "naboer": [
+      "CI",
+      "GN",
+      "SL"
+    ],
+    "naboerSjo": [
+      "ML",
+      "BF",
+      "SN",
+      "GH"
+    ],
+    "befolkning": 5731206,
+    "befolkningAar": 2025,
+    "areal": 111369,
+    "valuta": {
+      "navn": "liberiansk dollar",
+      "kode": "LRD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      6.3106,
+      -10.8047
+    ],
+    "bnp": 915,
+    "bnpAar": 2025
   },
   {
     "id": "LY",
@@ -1288,7 +4093,38 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 27,
-    "lng": 18.1
+    "lng": 18.1,
+    "suveren": true,
+    "flagg": "ly",
+    "naboer": [
+      "DZ",
+      "EG",
+      "NE",
+      "SD",
+      "TD",
+      "TN"
+    ],
+    "naboerSjo": [
+      "GR",
+      "IT",
+      "MT"
+    ],
+    "befolkning": 7458555,
+    "befolkningAar": 2025,
+    "areal": 1759540,
+    "valuta": {
+      "navn": "libysk dinar",
+      "kode": "LYD"
+    },
+    "sprak": [
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      32.8875,
+      13.1875
+    ],
+    "bnp": 6449,
+    "bnpAar": 2025
   },
   {
     "id": "LI",
@@ -1300,7 +4136,38 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 47.1,
-    "lng": 9.5
+    "lng": 9.5,
+    "suveren": true,
+    "flagg": "li",
+    "naboer": [
+      "AT",
+      "CH"
+    ],
+    "naboerSjo": [
+      "DE",
+      "IT",
+      "FR",
+      "SI",
+      "CZ",
+      "LU",
+      "HR"
+    ],
+    "befolkning": 41024,
+    "befolkningAar": 2025,
+    "areal": 160,
+    "valuta": {
+      "navn": "sveitsisk franc",
+      "kode": "CHF"
+    },
+    "sprak": [
+      "tysk"
+    ],
+    "hovedstadPos": [
+      47.1406,
+      9.5222
+    ],
+    "bnp": 220167,
+    "bnpAar": 2024
   },
   {
     "id": "LT",
@@ -1312,7 +4179,40 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 55.3,
-    "lng": 23.9
+    "lng": 23.9,
+    "suveren": true,
+    "flagg": "lt",
+    "naboer": [
+      "BY",
+      "LV",
+      "PL",
+      "RU"
+    ],
+    "naboerSjo": [
+      "EE",
+      "SE",
+      "UA",
+      "DK",
+      "FI",
+      "AX",
+      "DE"
+    ],
+    "befolkning": 2888774,
+    "befolkningAar": 2025,
+    "areal": 65300,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "litauisk"
+    ],
+    "hovedstadPos": [
+      54.6872,
+      25.28
+    ],
+    "bnp": 32959,
+    "bnpAar": 2025
   },
   {
     "id": "LU",
@@ -1329,7 +4229,41 @@
     ],
     "kontinent": "Europa",
     "lat": 49.8,
-    "lng": 6.1
+    "lng": 6.1,
+    "suveren": true,
+    "flagg": "lu",
+    "naboer": [
+      "BE",
+      "DE",
+      "FR"
+    ],
+    "naboerSjo": [
+      "NL",
+      "CH",
+      "AT",
+      "GB",
+      "LI",
+      "IT",
+      "CZ"
+    ],
+    "befolkning": 686970,
+    "befolkningAar": 2025,
+    "areal": 2586,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "luxembourgsk",
+      "fransk",
+      "tysk"
+    ],
+    "hovedstadPos": [
+      49.6114,
+      6.13
+    ],
+    "bnp": 147252,
+    "bnpAar": 2025
   },
   {
     "id": "MG",
@@ -1341,7 +4275,34 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -19.3,
-    "lng": 46.7
+    "lng": 46.7,
+    "suveren": true,
+    "flagg": "mg",
+    "naboer": [],
+    "naboerSjo": [
+      "TF",
+      "YT",
+      "SC",
+      "KM",
+      "MZ"
+    ],
+    "befolkning": 32740678,
+    "befolkningAar": 2025,
+    "areal": 587295,
+    "valuta": {
+      "navn": "madagassisk ariary",
+      "kode": "MGA"
+    },
+    "sprak": [
+      "malagassisk",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      -18.91,
+      47.525
+    ],
+    "bnp": 599,
+    "bnpAar": 2025
   },
   {
     "id": "MW",
@@ -1353,7 +4314,32 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -13.2,
-    "lng": 34.3
+    "lng": 34.3,
+    "suveren": true,
+    "flagg": "mw",
+    "naboer": [
+      "MZ",
+      "TZ",
+      "ZM"
+    ],
+    "naboerSjo": [],
+    "befolkning": 22216120,
+    "befolkningAar": 2025,
+    "areal": 118484,
+    "valuta": {
+      "navn": "malawisk kwacha",
+      "kode": "MWK"
+    },
+    "sprak": [
+      "chichewa",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -13.9864,
+      33.7681
+    ],
+    "bnp": 672,
+    "bnpAar": 2025
   },
   {
     "id": "MY",
@@ -1367,7 +4353,37 @@
     ],
     "kontinent": "Asia",
     "lat": 3.8,
-    "lng": 109.7
+    "lng": 109.7,
+    "suveren": true,
+    "flagg": "my",
+    "naboer": [
+      "BN",
+      "ID",
+      "SG",
+      "TH"
+    ],
+    "naboerSjo": [
+      "PH",
+      "VN",
+      "MM"
+    ],
+    "befolkning": 35977838,
+    "befolkningAar": 2025,
+    "areal": 330803,
+    "valuta": {
+      "navn": "malaysisk ringgit",
+      "kode": "MYR"
+    },
+    "sprak": [
+      "malayisk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      3.1478,
+      101.6953
+    ],
+    "bnp": 13125,
+    "bnpAar": 2025
   },
   {
     "id": "MV",
@@ -1379,7 +4395,31 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 3.7,
-    "lng": 73.5
+    "lng": 73.5,
+    "suveren": true,
+    "flagg": "mv",
+    "naboer": [],
+    "naboerSjo": [
+      "IN",
+      "IO",
+      "LK"
+    ],
+    "befolkning": 529676,
+    "befolkningAar": 2025,
+    "areal": 300,
+    "valuta": {
+      "navn": "maldivisk rufiyaa",
+      "kode": "MVR"
+    },
+    "sprak": [
+      "dhivehi"
+    ],
+    "hovedstadPos": [
+      4.175,
+      73.5083
+    ],
+    "bnp": 14615,
+    "bnpAar": 2025
   },
   {
     "id": "ML",
@@ -1391,7 +4431,44 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 17.3,
-    "lng": -3.6
+    "lng": -3.6,
+    "suveren": true,
+    "flagg": "ml",
+    "naboer": [
+      "BF",
+      "CI",
+      "DZ",
+      "GN",
+      "MR",
+      "NE",
+      "SN"
+    ],
+    "naboerSjo": [
+      "GM",
+      "GW",
+      "NG",
+      "SL",
+      "GH",
+      "EH",
+      "LR"
+    ],
+    "befolkning": 25198821,
+    "befolkningAar": 2025,
+    "areal": 1240192,
+    "valuta": {
+      "navn": "vestafrikansk CFA-franc",
+      "kode": "XOF"
+    },
+    "sprak": [
+      "fransk",
+      "bambara"
+    ],
+    "hovedstadPos": [
+      12.6458,
+      -7.9922
+    ],
+    "bnp": 1193,
+    "bnpAar": 2025
   },
   {
     "id": "MT",
@@ -1403,7 +4480,32 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 35.9,
-    "lng": 14.4
+    "lng": 14.4,
+    "suveren": true,
+    "flagg": "mt",
+    "naboer": [],
+    "naboerSjo": [
+      "IT",
+      "TN",
+      "LY"
+    ],
+    "befolkning": 579704,
+    "befolkningAar": 2025,
+    "areal": 316,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "maltesisk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      35.8978,
+      14.5125
+    ],
+    "bnp": 47907,
+    "bnpAar": 2025
   },
   {
     "id": "MA",
@@ -1415,7 +4517,37 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 29.8,
-    "lng": -8.7
+    "lng": -8.7,
+    "suveren": true,
+    "flagg": "ma",
+    "naboer": [
+      "DZ",
+      "EH",
+      "ES"
+    ],
+    "naboerSjo": [
+      "MR",
+      "GI",
+      "PT",
+      "ML"
+    ],
+    "befolkning": 38430770,
+    "befolkningAar": 2025,
+    "areal": 446550,
+    "valuta": {
+      "navn": "marokkansk dirham",
+      "kode": "MAD"
+    },
+    "sprak": [
+      "arabisk",
+      "berber"
+    ],
+    "hovedstadPos": [
+      34.0211,
+      -6.8414
+    ],
+    "bnp": 4672,
+    "bnpAar": 2025
   },
   {
     "id": "MH",
@@ -1427,7 +4559,32 @@
     "hovedstadSvar": [],
     "kontinent": "Oseania",
     "lat": 6.8,
-    "lng": 170.5
+    "lng": 170.5,
+    "suveren": true,
+    "flagg": "mh",
+    "naboer": [],
+    "naboerSjo": [
+      "KI",
+      "FM",
+      "NR"
+    ],
+    "befolkning": 36282,
+    "befolkningAar": 2025,
+    "areal": 181,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "marshallesisk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      7.0918,
+      171.3802
+    ],
+    "bnp": 8489,
+    "bnpAar": 2025
   },
   {
     "id": "MR",
@@ -1439,7 +4596,39 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 20.2,
-    "lng": -10.4
+    "lng": -10.4,
+    "suveren": true,
+    "flagg": "mr",
+    "naboer": [
+      "DZ",
+      "EH",
+      "ML",
+      "SN"
+    ],
+    "naboerSjo": [
+      "MA",
+      "GM",
+      "GN",
+      "GW",
+      "BF",
+      "ES"
+    ],
+    "befolkning": 5315065,
+    "befolkningAar": 2025,
+    "areal": 1030700,
+    "valuta": {
+      "navn": "mauritansk ouguiya",
+      "kode": "MRU"
+    },
+    "sprak": [
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      18.0858,
+      -15.9785
+    ],
+    "bnp": 2198,
+    "bnpAar": 2025
   },
   {
     "id": "MU",
@@ -1451,7 +4640,32 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -20.3,
-    "lng": 57.6
+    "lng": 57.6,
+    "suveren": true,
+    "flagg": "mu",
+    "naboer": [],
+    "naboerSjo": [
+      "RE",
+      "SC",
+      "TF"
+    ],
+    "befolkning": 1243741,
+    "befolkningAar": 2025,
+    "areal": 2040,
+    "valuta": {
+      "navn": "mauritisk rupi",
+      "kode": "MUR"
+    },
+    "sprak": [
+      "mauritisk kreol",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      -20.1619,
+      57.4989
+    ],
+    "bnp": 12991,
+    "bnpAar": 2025
   },
   {
     "id": "MX",
@@ -1467,7 +4681,36 @@
     ],
     "kontinent": "Nord-Amerika",
     "lat": 23.9,
-    "lng": -102.2
+    "lng": -102.2,
+    "suveren": true,
+    "flagg": "mx",
+    "naboer": [
+      "BZ",
+      "GT",
+      "US"
+    ],
+    "naboerSjo": [
+      "HN",
+      "CU",
+      "SV",
+      "NI"
+    ],
+    "befolkning": 131946900,
+    "befolkningAar": 2025,
+    "areal": 1964375,
+    "valuta": {
+      "navn": "meksikansk peso",
+      "kode": "MXN"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      19.3538,
+      -99.1359
+    ],
+    "bnp": 13889,
+    "bnpAar": 2025
   },
   {
     "id": "FM",
@@ -1483,7 +4726,31 @@
     "hovedstadSvar": [],
     "kontinent": "Oseania",
     "lat": 6.9,
-    "lng": 158.2
+    "lng": 158.2,
+    "suveren": true,
+    "flagg": "fm",
+    "naboer": [],
+    "naboerSjo": [
+      "PW",
+      "PG",
+      "MH"
+    ],
+    "befolkning": 113683,
+    "befolkningAar": 2025,
+    "areal": 702,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      6.9178,
+      158.185
+    ],
+    "bnp": 4414,
+    "bnpAar": 2025
   },
   {
     "id": "MD",
@@ -1500,7 +4767,38 @@
     ],
     "kontinent": "Europa",
     "lat": 47.2,
-    "lng": 28.5
+    "lng": 28.5,
+    "suveren": true,
+    "flagg": "md",
+    "naboer": [
+      "RO",
+      "UA"
+    ],
+    "naboerSjo": [
+      "BG",
+      "RU",
+      "HU",
+      "PL",
+      "SK",
+      "BY",
+      "TR"
+    ],
+    "befolkning": 2360527,
+    "befolkningAar": 2025,
+    "areal": 33846,
+    "valuta": {
+      "navn": "moldovsk leu",
+      "kode": "MDL"
+    },
+    "sprak": [
+      "rumensk"
+    ],
+    "hovedstadPos": [
+      47.0228,
+      28.8353
+    ],
+    "bnp": 8622,
+    "bnpAar": 2025
   },
   {
     "id": "MC",
@@ -1514,7 +4812,37 @@
     ],
     "kontinent": "Europa",
     "lat": 43.8,
-    "lng": 7.4
+    "lng": 7.4,
+    "suveren": true,
+    "flagg": "mc",
+    "naboer": [
+      "FR"
+    ],
+    "naboerSjo": [
+      "IT",
+      "CH",
+      "ES",
+      "SM",
+      "AT",
+      "LI",
+      "DE"
+    ],
+    "befolkning": 38341,
+    "befolkningAar": 2025,
+    "areal": 2.1,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "fransk"
+    ],
+    "hovedstadPos": [
+      43.7311,
+      7.42
+    ],
+    "bnp": 288002,
+    "bnpAar": 2024
   },
   {
     "id": "MN",
@@ -1528,7 +4856,30 @@
     ],
     "kontinent": "Asia",
     "lat": 47,
-    "lng": 103.1
+    "lng": 103.1,
+    "suveren": true,
+    "flagg": "mn",
+    "naboer": [
+      "CN",
+      "RU"
+    ],
+    "naboerSjo": [],
+    "befolkning": 3568978,
+    "befolkningAar": 2025,
+    "areal": 1564116,
+    "valuta": {
+      "navn": "mongolsk tugrik",
+      "kode": "MNT"
+    },
+    "sprak": [
+      "mongolsk"
+    ],
+    "hovedstadPos": [
+      47.9214,
+      106.9055
+    ],
+    "bnp": 7108,
+    "bnpAar": 2025
   },
   {
     "id": "ME",
@@ -1542,7 +4893,41 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 42.8,
-    "lng": 19.2
+    "lng": 19.2,
+    "suveren": true,
+    "flagg": "me",
+    "naboer": [
+      "AL",
+      "BA",
+      "HR",
+      "RS",
+      "XK"
+    ],
+    "naboerSjo": [
+      "MK",
+      "BG",
+      "IT",
+      "GR",
+      "RO",
+      "HU",
+      "SI"
+    ],
+    "befolkning": 623129,
+    "befolkningAar": 2025,
+    "areal": 13883,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "montenegrinsk"
+    ],
+    "hovedstadPos": [
+      42.4414,
+      19.2628
+    ],
+    "bnp": 14817,
+    "bnpAar": 2025
   },
   {
     "id": "MZ",
@@ -1554,7 +4939,43 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -17.2,
-    "lng": 35.6
+    "lng": 35.6,
+    "suveren": true,
+    "flagg": "mz",
+    "naboer": [
+      "MW",
+      "SZ",
+      "TZ",
+      "ZA",
+      "ZM",
+      "ZW"
+    ],
+    "naboerSjo": [
+      "CD",
+      "BW",
+      "TF",
+      "KM",
+      "LS",
+      "MG",
+      "YT"
+    ],
+    "befolkning": 35631653,
+    "befolkningAar": 2025,
+    "areal": 801590,
+    "valuta": {
+      "navn": "mosambikisk metical",
+      "kode": "MZN"
+    },
+    "sprak": [
+      "portugisisk",
+      "makhuwa"
+    ],
+    "hovedstadPos": [
+      -25.9689,
+      32.5733
+    ],
+    "bnp": 627,
+    "bnpAar": 2025
   },
   {
     "id": "MM",
@@ -1573,7 +4994,38 @@
     ],
     "kontinent": "Asia",
     "lat": 21.1,
-    "lng": 96.5
+    "lng": 96.5,
+    "suveren": true,
+    "flagg": "mm",
+    "naboer": [
+      "BD",
+      "CN",
+      "IN",
+      "LA",
+      "TH"
+    ],
+    "naboerSjo": [
+      "VN",
+      "BT",
+      "KH",
+      "MY"
+    ],
+    "befolkning": 54850648,
+    "befolkningAar": 2025,
+    "areal": 676578,
+    "valuta": {
+      "navn": "myanmarsk kyat",
+      "kode": "MMK"
+    },
+    "sprak": [
+      "burmesisk"
+    ],
+    "hovedstadPos": [
+      19.7475,
+      96.115
+    ],
+    "bnp": 1489,
+    "bnpAar": 2025
   },
   {
     "id": "NA",
@@ -1585,7 +5037,34 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -22.1,
-    "lng": 17.2
+    "lng": 17.2,
+    "suveren": true,
+    "flagg": "na",
+    "naboer": [
+      "AO",
+      "BW",
+      "ZA",
+      "ZM"
+    ],
+    "naboerSjo": [],
+    "befolkning": 3092816,
+    "befolkningAar": 2025,
+    "areal": 825615,
+    "valuta": {
+      "navn": "namibisk dollar",
+      "kode": "NAD"
+    },
+    "sprak": [
+      "oshiwambo",
+      "afrikaans",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -22.57,
+      17.0836
+    ],
+    "bnp": 4876,
+    "bnpAar": 2025
   },
   {
     "id": "NR",
@@ -1597,7 +5076,32 @@
     "hovedstadSvar": [],
     "kontinent": "Oseania",
     "lat": -0.5,
-    "lng": 166.9
+    "lng": 166.9,
+    "suveren": true,
+    "flagg": "nr",
+    "naboer": [],
+    "naboerSjo": [
+      "KI",
+      "MH",
+      "FM"
+    ],
+    "befolkning": 12025,
+    "befolkningAar": 2025,
+    "areal": 21,
+    "valuta": {
+      "navn": "australsk dollar",
+      "kode": "AUD"
+    },
+    "sprak": [
+      "nauruansk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -0.5477,
+      166.9209
+    ],
+    "bnp": 14640,
+    "bnpAar": 2025
   },
   {
     "id": "NL",
@@ -1616,7 +5120,38 @@
     ],
     "kontinent": "Europa",
     "lat": 52.3,
-    "lng": 5.6
+    "lng": 5.6,
+    "suveren": true,
+    "flagg": "nl",
+    "naboer": [
+      "BE",
+      "DE"
+    ],
+    "naboerSjo": [
+      "FR",
+      "LU",
+      "GB",
+      "DK",
+      "CH",
+      "CZ",
+      "GG"
+    ],
+    "befolkning": 18087633,
+    "befolkningAar": 2025,
+    "areal": 41850,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "nederlandsk"
+    ],
+    "hovedstadPos": [
+      52.3667,
+      4.8833
+    ],
+    "bnp": 73684,
+    "bnpAar": 2025
   },
   {
     "id": "NP",
@@ -1630,7 +5165,30 @@
     ],
     "kontinent": "Asia",
     "lat": 28.3,
-    "lng": 83.9
+    "lng": 83.9,
+    "suveren": true,
+    "flagg": "np",
+    "naboer": [
+      "CN",
+      "IN"
+    ],
+    "naboerSjo": [],
+    "befolkning": 29618118,
+    "befolkningAar": 2025,
+    "areal": 147181,
+    "valuta": {
+      "navn": "nepalesisk rupi",
+      "kode": "NPR"
+    },
+    "sprak": [
+      "nepali"
+    ],
+    "hovedstadPos": [
+      27.71,
+      85.32
+    ],
+    "bnp": 1536,
+    "bnpAar": 2025
   },
   {
     "id": "NZ",
@@ -1645,7 +5203,32 @@
     "hovedstadSvar": [],
     "kontinent": "Oseania",
     "lat": -41.7,
-    "lng": 172.9
+    "lng": 172.9,
+    "suveren": true,
+    "flagg": "nz",
+    "naboer": [],
+    "naboerSjo": [
+      "AU",
+      "NF",
+      "TO"
+    ],
+    "befolkning": 5324700,
+    "befolkningAar": 2025,
+    "areal": 268021,
+    "valuta": {
+      "navn": "newzealandsk dollar",
+      "kode": "NZD"
+    },
+    "sprak": [
+      "engelsk",
+      "maori"
+    ],
+    "hovedstadPos": [
+      -41.2889,
+      174.7772
+    ],
+    "bnp": 49591,
+    "bnpAar": 2025
   },
   {
     "id": "NI",
@@ -1657,7 +5240,37 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 12.8,
-    "lng": -85
+    "lng": -85,
+    "suveren": true,
+    "flagg": "ni",
+    "naboer": [
+      "CR",
+      "HN"
+    ],
+    "naboerSjo": [
+      "SV",
+      "CO",
+      "PA",
+      "GT",
+      "BZ",
+      "MX"
+    ],
+    "befolkning": 7007502,
+    "befolkningAar": 2025,
+    "areal": 130370,
+    "valuta": {
+      "navn": "nicaraguansk córdoba",
+      "kode": "NIO"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      12.1547,
+      -86.2737
+    ],
+    "bnp": 3173,
+    "bnpAar": 2025
   },
   {
     "id": "NE",
@@ -1669,7 +5282,40 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 17.4,
-    "lng": 9.3
+    "lng": 9.3,
+    "suveren": true,
+    "flagg": "ne",
+    "naboer": [
+      "BF",
+      "BJ",
+      "DZ",
+      "LY",
+      "ML",
+      "NG",
+      "TD"
+    ],
+    "naboerSjo": [
+      "CM",
+      "TG",
+      "GH"
+    ],
+    "befolkning": 27917831,
+    "befolkningAar": 2025,
+    "areal": 1267000,
+    "valuta": {
+      "navn": "vestafrikansk CFA-franc",
+      "kode": "XOF"
+    },
+    "sprak": [
+      "hausa",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      13.515,
+      2.1175
+    ],
+    "bnp": 775,
+    "bnpAar": 2025
   },
   {
     "id": "NG",
@@ -1681,7 +5327,42 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 9.6,
-    "lng": 8.1
+    "lng": 8.1,
+    "suveren": true,
+    "flagg": "ng",
+    "naboer": [
+      "BJ",
+      "CM",
+      "NE",
+      "TD"
+    ],
+    "naboerSjo": [
+      "GQ",
+      "TG",
+      "BF",
+      "GH",
+      "ML",
+      "ST",
+      "CF"
+    ],
+    "befolkning": 237527782,
+    "befolkningAar": 2025,
+    "areal": 923768,
+    "valuta": {
+      "navn": "nigeriansk naira",
+      "kode": "NGN"
+    },
+    "sprak": [
+      "engelsk",
+      "hausa",
+      "yoruba"
+    ],
+    "hovedstadPos": [
+      9.0556,
+      7.4914
+    ],
+    "bnp": 1224,
+    "bnpAar": 2025
   },
   {
     "id": "KP",
@@ -1695,7 +5376,29 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 40.1,
-    "lng": 127.2
+    "lng": 127.2,
+    "suveren": true,
+    "flagg": "kp",
+    "naboer": [
+      "CN",
+      "KR",
+      "RU"
+    ],
+    "naboerSjo": [],
+    "befolkning": 26571036,
+    "befolkningAar": 2025,
+    "areal": 120540,
+    "valuta": {
+      "navn": "nordkoreansk won",
+      "kode": "KPW"
+    },
+    "sprak": [
+      "koreansk"
+    ],
+    "hovedstadPos": [
+      39.0167,
+      125.7475
+    ]
   },
   {
     "id": "MK",
@@ -1710,7 +5413,41 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 41.6,
-    "lng": 21.7
+    "lng": 21.7,
+    "suveren": true,
+    "flagg": "mk",
+    "naboer": [
+      "AL",
+      "BG",
+      "GR",
+      "RS",
+      "XK"
+    ],
+    "naboerSjo": [
+      "ME",
+      "RO",
+      "HR",
+      "BA",
+      "IT",
+      "TR",
+      "HU"
+    ],
+    "befolkning": 1820909,
+    "befolkningAar": 2025,
+    "areal": 25713,
+    "valuta": {
+      "navn": "makedonsk denar",
+      "kode": "MKD"
+    },
+    "sprak": [
+      "makedonsk"
+    ],
+    "hovedstadPos": [
+      41.9961,
+      21.4317
+    ],
+    "bnp": 10490,
+    "bnpAar": 2025
   },
   {
     "id": "NO",
@@ -1724,7 +5461,38 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 64,
-    "lng": 12.3
+    "lng": 12.3,
+    "suveren": true,
+    "flagg": "no",
+    "naboer": [
+      "FI",
+      "RU",
+      "SE"
+    ],
+    "naboerSjo": [
+      "DK",
+      "GB",
+      "DE",
+      "AX",
+      "SJ",
+      "NL"
+    ],
+    "befolkning": 5610870,
+    "befolkningAar": 2025,
+    "areal": 385207,
+    "valuta": {
+      "navn": "norsk krone",
+      "kode": "NOK"
+    },
+    "sprak": [
+      "norsk"
+    ],
+    "hovedstadPos": [
+      59.9133,
+      10.7389
+    ],
+    "bnp": 94594,
+    "bnpAar": 2025
   },
   {
     "id": "OM",
@@ -1738,7 +5506,35 @@
     ],
     "kontinent": "Asia",
     "lat": 20.6,
-    "lng": 56.1
+    "lng": 56.1,
+    "suveren": true,
+    "flagg": "om",
+    "naboer": [
+      "AE",
+      "SA",
+      "YE"
+    ],
+    "naboerSjo": [
+      "IR",
+      "PK",
+      "QA"
+    ],
+    "befolkning": 5494691,
+    "befolkningAar": 2025,
+    "areal": 309500,
+    "valuta": {
+      "navn": "omansk rial",
+      "kode": "OMR"
+    },
+    "sprak": [
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      23.6139,
+      58.5922
+    ],
+    "bnp": 19947,
+    "bnpAar": 2025
   },
   {
     "id": "PK",
@@ -1750,7 +5546,40 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 29.9,
-    "lng": 69.2
+    "lng": 69.2,
+    "suveren": true,
+    "flagg": "pk",
+    "naboer": [
+      "AF",
+      "CN",
+      "IN",
+      "IR"
+    ],
+    "naboerSjo": [
+      "TJ",
+      "KG",
+      "UZ",
+      "OM",
+      "TM"
+    ],
+    "befolkning": 255219554,
+    "befolkningAar": 2025,
+    "areal": 881912,
+    "valuta": {
+      "navn": "pakistansk rupi",
+      "kode": "PKR"
+    },
+    "sprak": [
+      "urdu",
+      "punjabi",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      33.6989,
+      73.0369
+    ],
+    "bnp": 1596,
+    "bnpAar": 2025
   },
   {
     "id": "PW",
@@ -1764,7 +5593,32 @@
     ],
     "kontinent": "Oseania",
     "lat": 7.5,
-    "lng": 134.6
+    "lng": 134.6,
+    "suveren": true,
+    "flagg": "pw",
+    "naboer": [],
+    "naboerSjo": [
+      "ID",
+      "FM",
+      "PH"
+    ],
+    "befolkning": 17663,
+    "befolkningAar": 2025,
+    "areal": 460,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "palauisk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      7.5006,
+      134.6242
+    ],
+    "bnp": 19532,
+    "bnpAar": 2025
   },
   {
     "id": "PS",
@@ -1783,7 +5637,38 @@
     ],
     "kontinent": "Asia",
     "lat": 31.9,
-    "lng": 35.2
+    "lng": 35.2,
+    "suveren": true,
+    "flagg": "ps",
+    "naboer": [
+      "EG",
+      "IL",
+      "JO"
+    ],
+    "naboerSjo": [
+      "SY",
+      "LB",
+      "SA",
+      "CY",
+      "IQ",
+      "TR"
+    ],
+    "befolkning": 5413596,
+    "befolkningAar": 2025,
+    "areal": 6025,
+    "valuta": {
+      "navn": "israelsk shekel",
+      "kode": "ILS"
+    },
+    "sprak": [
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      31.8969,
+      35.2017
+    ],
+    "bnp": 3171,
+    "bnpAar": 2025
   },
   {
     "id": "PA",
@@ -1798,7 +5683,30 @@
     ],
     "kontinent": "Nord-Amerika",
     "lat": 8.5,
-    "lng": -80.1
+    "lng": -80.1,
+    "suveren": true,
+    "flagg": "pa",
+    "naboer": [
+      "CO",
+      "CR"
+    ],
+    "naboerSjo": [],
+    "befolkning": 4571189,
+    "befolkningAar": 2025,
+    "areal": 75320,
+    "valuta": {
+      "navn": "panamansk balboa",
+      "kode": "PAB"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      8.9711,
+      -79.5347
+    ],
+    "bnp": 19790,
+    "bnpAar": 2025
   },
   {
     "id": "PG",
@@ -1812,7 +5720,34 @@
     "hovedstadSvar": [],
     "kontinent": "Oseania",
     "lat": -6.5,
-    "lng": 145.2
+    "lng": 145.2,
+    "suveren": true,
+    "flagg": "pg",
+    "naboer": [
+      "ID"
+    ],
+    "naboerSjo": [
+      "AU",
+      "SB",
+      "FM"
+    ],
+    "befolkning": 10762817,
+    "befolkningAar": 2025,
+    "areal": 462840,
+    "valuta": {
+      "navn": "papuansk kina",
+      "kode": "PGK"
+    },
+    "sprak": [
+      "tok pisin",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -9.4789,
+      147.1494
+    ],
+    "bnp": 3020,
+    "bnpAar": 2025
   },
   {
     "id": "PY",
@@ -1824,7 +5759,32 @@
     "hovedstadSvar": [],
     "kontinent": "Sør-Amerika",
     "lat": -23.2,
-    "lng": -58.4
+    "lng": -58.4,
+    "suveren": true,
+    "flagg": "py",
+    "naboer": [
+      "AR",
+      "BO",
+      "BR"
+    ],
+    "naboerSjo": [],
+    "befolkning": 7013078,
+    "befolkningAar": 2025,
+    "areal": 406752,
+    "valuta": {
+      "navn": "paraguayansk guarani",
+      "kode": "PYG"
+    },
+    "sprak": [
+      "spansk",
+      "guarani"
+    ],
+    "hovedstadPos": [
+      -25.28,
+      -57.6344
+    ],
+    "bnp": 7027,
+    "bnpAar": 2025
   },
   {
     "id": "PE",
@@ -1836,7 +5796,34 @@
     "hovedstadSvar": [],
     "kontinent": "Sør-Amerika",
     "lat": -9.1,
-    "lng": -74.4
+    "lng": -74.4,
+    "suveren": true,
+    "flagg": "pe",
+    "naboer": [
+      "BO",
+      "BR",
+      "CL",
+      "CO",
+      "EC"
+    ],
+    "naboerSjo": [],
+    "befolkning": 34576665,
+    "befolkningAar": 2025,
+    "areal": 1285216,
+    "valuta": {
+      "navn": "peruansk sol",
+      "kode": "PEN"
+    },
+    "sprak": [
+      "spansk",
+      "quechua"
+    ],
+    "hovedstadPos": [
+      -12.06,
+      -77.0375
+    ],
+    "bnp": 9684,
+    "bnpAar": 2025
   },
   {
     "id": "PL",
@@ -1851,7 +5838,43 @@
     ],
     "kontinent": "Europa",
     "lat": 52.1,
-    "lng": 19.4
+    "lng": 19.4,
+    "suveren": true,
+    "flagg": "pl",
+    "naboer": [
+      "BY",
+      "CZ",
+      "DE",
+      "LT",
+      "RU",
+      "SK",
+      "UA"
+    ],
+    "naboerSjo": [
+      "HU",
+      "DK",
+      "RO",
+      "AT",
+      "SE",
+      "LV",
+      "MD"
+    ],
+    "befolkning": 36435861,
+    "befolkningAar": 2025,
+    "areal": 312683,
+    "valuta": {
+      "navn": "polsk złoty",
+      "kode": "PLN"
+    },
+    "sprak": [
+      "polsk"
+    ],
+    "hovedstadPos": [
+      52.23,
+      21.0111
+    ],
+    "bnp": 28420,
+    "bnpAar": 2025
   },
   {
     "id": "PT",
@@ -1865,7 +5888,33 @@
     ],
     "kontinent": "Europa",
     "lat": 39.7,
-    "lng": -8
+    "lng": -8,
+    "suveren": true,
+    "flagg": "pt",
+    "naboer": [
+      "ES"
+    ],
+    "naboerSjo": [
+      "MA",
+      "GI",
+      "FR"
+    ],
+    "befolkning": 10804871,
+    "befolkningAar": 2025,
+    "areal": 92225,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "portugisisk"
+    ],
+    "hovedstadPos": [
+      38.708,
+      -9.139
+    ],
+    "bnp": 32082,
+    "bnpAar": 2025
   },
   {
     "id": "QA",
@@ -1879,7 +5928,36 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 25.3,
-    "lng": 51.2
+    "lng": 51.2,
+    "suveren": true,
+    "flagg": "qa",
+    "naboer": [
+      "SA"
+    ],
+    "naboerSjo": [
+      "BH",
+      "AE",
+      "IR",
+      "KW",
+      "OM",
+      "IQ"
+    ],
+    "befolkning": 2972215,
+    "befolkningAar": 2025,
+    "areal": 11586,
+    "valuta": {
+      "navn": "qatarsk riyal",
+      "kode": "QAR"
+    },
+    "sprak": [
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      25.2861,
+      51.5294
+    ],
+    "bnp": 72525,
+    "bnpAar": 2025
   },
   {
     "id": "CG",
@@ -1895,7 +5973,34 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -0.8,
-    "lng": 15.2
+    "lng": 15.2,
+    "suveren": true,
+    "flagg": "cg",
+    "naboer": [
+      "AO",
+      "CD",
+      "CF",
+      "CM",
+      "GA"
+    ],
+    "naboerSjo": [],
+    "befolkning": 6484437,
+    "befolkningAar": 2025,
+    "areal": 342000,
+    "valuta": {
+      "navn": "sentralafrikansk CFA-franc",
+      "kode": "XAF"
+    },
+    "sprak": [
+      "fransk",
+      "lingala"
+    ],
+    "hovedstadPos": [
+      -4.2694,
+      15.2711
+    ],
+    "bnp": 2515,
+    "bnpAar": 2025
   },
   {
     "id": "RO",
@@ -1912,7 +6017,41 @@
     ],
     "kontinent": "Europa",
     "lat": 45.8,
-    "lng": 25
+    "lng": 25,
+    "suveren": true,
+    "flagg": "ro",
+    "naboer": [
+      "BG",
+      "HU",
+      "MD",
+      "RS",
+      "UA"
+    ],
+    "naboerSjo": [
+      "SK",
+      "PL",
+      "HR",
+      "BA",
+      "XK",
+      "MK",
+      "TR"
+    ],
+    "befolkning": 19020271,
+    "befolkningAar": 2025,
+    "areal": 238397,
+    "valuta": {
+      "navn": "rumensk leu",
+      "kode": "RON"
+    },
+    "sprak": [
+      "rumensk"
+    ],
+    "hovedstadPos": [
+      44.4134,
+      26.0978
+    ],
+    "bnp": 22538,
+    "bnpAar": 2025
   },
   {
     "id": "RU",
@@ -1930,7 +6069,50 @@
     ],
     "kontinent": "Europa",
     "lat": 66,
-    "lng": 95.6
+    "lng": 95.6,
+    "suveren": true,
+    "flagg": "ru",
+    "naboer": [
+      "AZ",
+      "BY",
+      "CN",
+      "EE",
+      "FI",
+      "GE",
+      "KP",
+      "KZ",
+      "LT",
+      "LV",
+      "MN",
+      "NO",
+      "PL",
+      "UA"
+    ],
+    "naboerSjo": [
+      "US",
+      "JP",
+      "SJ",
+      "AM",
+      "TR",
+      "IR",
+      "SE"
+    ],
+    "befolkning": 143513328,
+    "befolkningAar": 2025,
+    "areal": 17098242,
+    "valuta": {
+      "navn": "russisk rubel",
+      "kode": "RUB"
+    },
+    "sprak": [
+      "russisk"
+    ],
+    "hovedstadPos": [
+      55.7506,
+      37.6175
+    ],
+    "bnp": 17547,
+    "bnpAar": 2025
   },
   {
     "id": "RW",
@@ -1942,7 +6124,33 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -2,
-    "lng": 29.9
+    "lng": 29.9,
+    "suveren": true,
+    "flagg": "rw",
+    "naboer": [
+      "BI",
+      "CD",
+      "TZ",
+      "UG"
+    ],
+    "naboerSjo": [],
+    "befolkning": 14569341,
+    "befolkningAar": 2025,
+    "areal": 26338,
+    "valuta": {
+      "navn": "rwandisk franc",
+      "kode": "RWF"
+    },
+    "sprak": [
+      "kinyarwanda",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      -1.9525,
+      30.115
+    ],
+    "bnp": 1124,
+    "bnpAar": 2025
   },
   {
     "id": "KN",
@@ -1959,7 +6167,35 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 17.3,
-    "lng": -62.7
+    "lng": -62.7,
+    "suveren": true,
+    "flagg": "kn",
+    "naboer": [],
+    "naboerSjo": [
+      "BQ",
+      "AG",
+      "BL",
+      "MS",
+      "MF",
+      "SX",
+      "AI"
+    ],
+    "befolkning": 46922,
+    "befolkningAar": 2025,
+    "areal": 261,
+    "valuta": {
+      "navn": "østkaribisk dollar",
+      "kode": "XCD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      17.2983,
+      -62.7342
+    ],
+    "bnp": 25223,
+    "bnpAar": 2025
   },
   {
     "id": "LC",
@@ -1973,7 +6209,35 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 13.9,
-    "lng": -61
+    "lng": -61,
+    "suveren": true,
+    "flagg": "lc",
+    "naboer": [],
+    "naboerSjo": [
+      "VC",
+      "MQ",
+      "DM",
+      "BB",
+      "GD",
+      "GP",
+      "TT"
+    ],
+    "befolkning": 180149,
+    "befolkningAar": 2025,
+    "areal": 616,
+    "valuta": {
+      "navn": "østkaribisk dollar",
+      "kode": "XCD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      14.0108,
+      -60.9894
+    ],
+    "bnp": 14746,
+    "bnpAar": 2025
   },
   {
     "id": "VC",
@@ -1990,7 +6254,35 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 13.2,
-    "lng": -61.2
+    "lng": -61.2,
+    "suveren": true,
+    "flagg": "vc",
+    "naboer": [],
+    "naboerSjo": [
+      "GD",
+      "LC",
+      "MQ",
+      "BB",
+      "TT",
+      "DM",
+      "VE"
+    ],
+    "befolkning": 99924,
+    "befolkningAar": 2025,
+    "areal": 389,
+    "valuta": {
+      "navn": "østkaribisk dollar",
+      "kode": "XCD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      13.1553,
+      -61.2274
+    ],
+    "bnp": 12562,
+    "bnpAar": 2025
   },
   {
     "id": "SB",
@@ -2002,7 +6294,31 @@
     "hovedstadSvar": [],
     "kontinent": "Oseania",
     "lat": -8.9,
-    "lng": 159.6
+    "lng": 159.6,
+    "suveren": true,
+    "flagg": "sb",
+    "naboer": [],
+    "naboerSjo": [
+      "PG",
+      "VU",
+      "FM"
+    ],
+    "befolkning": 838645,
+    "befolkningAar": 2025,
+    "areal": 28446,
+    "valuta": {
+      "navn": "salomonsk dollar",
+      "kode": "SBD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -9.4333,
+      159.95
+    ],
+    "bnp": 2086,
+    "bnpAar": 2025
   },
   {
     "id": "WS",
@@ -2014,7 +6330,33 @@
     "hovedstadSvar": [],
     "kontinent": "Oseania",
     "lat": -13.8,
-    "lng": -172.2
+    "lng": -172.2,
+    "suveren": true,
+    "flagg": "ws",
+    "naboer": [],
+    "naboerSjo": [
+      "AS",
+      "WF",
+      "TO",
+      "TK"
+    ],
+    "befolkning": 219306,
+    "befolkningAar": 2025,
+    "areal": 2842,
+    "valuta": {
+      "navn": "samoansk tala",
+      "kode": "WST"
+    },
+    "sprak": [
+      "samoansk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -13.8333,
+      -171.8333
+    ],
+    "bnp": 5873,
+    "bnpAar": 2025
   },
   {
     "id": "SM",
@@ -2026,7 +6368,37 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 43.9,
-    "lng": 12.5
+    "lng": 12.5,
+    "suveren": true,
+    "flagg": "sm",
+    "naboer": [
+      "IT"
+    ],
+    "naboerSjo": [
+      "HR",
+      "SI",
+      "VA",
+      "FR",
+      "BA",
+      "AT",
+      "CH"
+    ],
+    "befolkning": 34109,
+    "befolkningAar": 2025,
+    "areal": 61,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "italiensk"
+    ],
+    "hovedstadPos": [
+      43.932,
+      12.4485
+    ],
+    "bnp": 59871,
+    "bnpAar": 2023
   },
   {
     "id": "ST",
@@ -2040,7 +6412,32 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 0.4,
-    "lng": 6.7
+    "lng": 6.7,
+    "suveren": true,
+    "flagg": "st",
+    "naboer": [],
+    "naboerSjo": [
+      "GQ",
+      "GA",
+      "CM",
+      "NG"
+    ],
+    "befolkning": 240254,
+    "befolkningAar": 2025,
+    "areal": 964,
+    "valuta": {
+      "navn": "saotomesisk dobra",
+      "kode": "STN"
+    },
+    "sprak": [
+      "portugisisk"
+    ],
+    "hovedstadPos": [
+      0.3375,
+      6.7283
+    ],
+    "bnp": 4084,
+    "bnpAar": 2025
   },
   {
     "id": "SA",
@@ -2056,7 +6453,44 @@
     ],
     "kontinent": "Asia",
     "lat": 24.1,
-    "lng": 44.7
+    "lng": 44.7,
+    "suveren": true,
+    "flagg": "sa",
+    "naboer": [
+      "AE",
+      "BH",
+      "IQ",
+      "JO",
+      "KW",
+      "OM",
+      "QA",
+      "YE"
+    ],
+    "naboerSjo": [
+      "EG",
+      "IL",
+      "SY",
+      "PS",
+      "IR",
+      "SD",
+      "ER"
+    ],
+    "befolkning": 36973555,
+    "befolkningAar": 2025,
+    "areal": 2149690,
+    "valuta": {
+      "navn": "saudiarabisk riyal",
+      "kode": "SAR"
+    },
+    "sprak": [
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      24.6383,
+      46.715
+    ],
+    "bnp": 34537,
+    "bnpAar": 2025
   },
   {
     "id": "SN",
@@ -2068,7 +6502,39 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 14.4,
-    "lng": -14.5
+    "lng": -14.5,
+    "suveren": true,
+    "flagg": "sn",
+    "naboer": [
+      "GM",
+      "GN",
+      "GW",
+      "ML",
+      "MR"
+    ],
+    "naboerSjo": [
+      "SL",
+      "CI",
+      "LR",
+      "EH"
+    ],
+    "befolkning": 18931966,
+    "befolkningAar": 2025,
+    "areal": 196722,
+    "valuta": {
+      "navn": "vestafrikansk CFA-franc",
+      "kode": "XOF"
+    },
+    "sprak": [
+      "fransk",
+      "wolof"
+    ],
+    "hovedstadPos": [
+      14.6726,
+      -17.432
+    ],
+    "bnp": 1955,
+    "bnpAar": 2025
   },
   {
     "id": "RS",
@@ -2082,7 +6548,44 @@
     ],
     "kontinent": "Europa",
     "lat": 44.2,
-    "lng": 20.8
+    "lng": 20.8,
+    "suveren": true,
+    "flagg": "rs",
+    "naboer": [
+      "BA",
+      "BG",
+      "HR",
+      "HU",
+      "ME",
+      "MK",
+      "RO",
+      "XK"
+    ],
+    "naboerSjo": [
+      "AL",
+      "GR",
+      "SK",
+      "SI",
+      "AT",
+      "UA",
+      "IT"
+    ],
+    "befolkning": 6549143,
+    "befolkningAar": 2025,
+    "areal": 88361,
+    "valuta": {
+      "navn": "serbisk dinar",
+      "kode": "RSD"
+    },
+    "sprak": [
+      "serbisk"
+    ],
+    "hovedstadPos": [
+      44.8178,
+      20.4569
+    ],
+    "bnp": 15262,
+    "bnpAar": 2025
   },
   {
     "id": "SC",
@@ -2094,7 +6597,35 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -4.7,
-    "lng": 55.5
+    "lng": 55.5,
+    "suveren": true,
+    "flagg": "sc",
+    "naboer": [],
+    "naboerSjo": [
+      "TF",
+      "MG",
+      "MU",
+      "KM",
+      "YT"
+    ],
+    "befolkning": 122730,
+    "befolkningAar": 2025,
+    "areal": 457,
+    "valuta": {
+      "navn": "seychellisk rupi",
+      "kode": "SCR"
+    },
+    "sprak": [
+      "seychellisk kreol",
+      "engelsk",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      -4.6236,
+      55.4544
+    ],
+    "bnp": 19449,
+    "bnpAar": 2025
   },
   {
     "id": "SL",
@@ -2106,7 +6637,37 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 8.6,
-    "lng": -11.8
+    "lng": -11.8,
+    "suveren": true,
+    "flagg": "sl",
+    "naboer": [
+      "GN",
+      "LR"
+    ],
+    "naboerSjo": [
+      "CI",
+      "ML",
+      "GW",
+      "SN",
+      "GM"
+    ],
+    "befolkning": 8819794,
+    "befolkningAar": 2025,
+    "areal": 71740,
+    "valuta": {
+      "navn": "sierraleonsk leone",
+      "kode": "SLE"
+    },
+    "sprak": [
+      "krio",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      8.4872,
+      -13.2356
+    ],
+    "bnp": 846,
+    "bnpAar": 2025
   },
   {
     "id": "SG",
@@ -2118,7 +6679,35 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 1.4,
-    "lng": 103.8
+    "lng": 103.8,
+    "suveren": true,
+    "flagg": "sg",
+    "naboer": [
+      "MY"
+    ],
+    "naboerSjo": [
+      "ID",
+      "TH",
+      "VN"
+    ],
+    "befolkning": 6111175,
+    "befolkningAar": 2025,
+    "areal": 719,
+    "valuta": {
+      "navn": "singaporsk dollar",
+      "kode": "SGD"
+    },
+    "sprak": [
+      "engelsk",
+      "kinesisk (mandarin)",
+      "malayisk"
+    ],
+    "hovedstadPos": [
+      1.3,
+      103.8
+    ],
+    "bnp": 98814,
+    "bnpAar": 2025
   },
   {
     "id": "SK",
@@ -2132,7 +6721,41 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 48.7,
-    "lng": 19.5
+    "lng": 19.5,
+    "suveren": true,
+    "flagg": "sk",
+    "naboer": [
+      "AT",
+      "CZ",
+      "HU",
+      "PL",
+      "UA"
+    ],
+    "naboerSjo": [
+      "RO",
+      "SI",
+      "HR",
+      "RS",
+      "DE",
+      "BY",
+      "BA"
+    ],
+    "befolkning": 5413813,
+    "befolkningAar": 2025,
+    "areal": 49034,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "slovakisk"
+    ],
+    "hovedstadPos": [
+      48.1517,
+      17.1093
+    ],
+    "bnp": 28544,
+    "bnpAar": 2025
   },
   {
     "id": "SI",
@@ -2144,7 +6767,40 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 46.1,
-    "lng": 14.8
+    "lng": 14.8,
+    "suveren": true,
+    "flagg": "si",
+    "naboer": [
+      "AT",
+      "HR",
+      "HU",
+      "IT"
+    ],
+    "naboerSjo": [
+      "BA",
+      "DE",
+      "SK",
+      "SM",
+      "CZ",
+      "RS",
+      "CH"
+    ],
+    "befolkning": 2130986,
+    "befolkningAar": 2025,
+    "areal": 20273,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "slovensk"
+    ],
+    "hovedstadPos": [
+      46.0514,
+      14.5061
+    ],
+    "bnp": 37376,
+    "bnpAar": 2025
   },
   {
     "id": "SO",
@@ -2158,7 +6814,36 @@
     ],
     "kontinent": "Afrika",
     "lat": 6.1,
-    "lng": 45.8
+    "lng": 45.8,
+    "suveren": true,
+    "flagg": "so",
+    "naboer": [
+      "DJ",
+      "ET",
+      "KE"
+    ],
+    "naboerSjo": [
+      "YE",
+      "ER",
+      "TZ"
+    ],
+    "befolkning": 19654739,
+    "befolkningAar": 2025,
+    "areal": 637657,
+    "valuta": {
+      "navn": "somalisk shilling",
+      "kode": "SOS"
+    },
+    "sprak": [
+      "somali",
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      2.0392,
+      45.3419
+    ],
+    "bnp": 661,
+    "bnpAar": 2025
   },
   {
     "id": "ES",
@@ -2170,7 +6855,40 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 40.4,
-    "lng": -3.5
+    "lng": -3.5,
+    "suveren": true,
+    "flagg": "es",
+    "naboer": [
+      "AD",
+      "FR",
+      "GI",
+      "MA",
+      "PT"
+    ],
+    "naboerSjo": [
+      "DZ",
+      "EH",
+      "MR",
+      "IT",
+      "MC",
+      "CH"
+    ],
+    "befolkning": 49355143,
+    "befolkningAar": 2025,
+    "areal": 505990,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      40.4169,
+      -3.7033
+    ],
+    "bnp": 38627,
+    "bnpAar": 2025
   },
   {
     "id": "LK",
@@ -2188,7 +6906,32 @@
     ],
     "kontinent": "Asia",
     "lat": 7.6,
-    "lng": 80.7
+    "lng": 80.7,
+    "suveren": true,
+    "flagg": "lk",
+    "naboer": [],
+    "naboerSjo": [
+      "IN",
+      "MV",
+      "MM"
+    ],
+    "befolkning": 21756000,
+    "befolkningAar": 2025,
+    "areal": 65610,
+    "valuta": {
+      "navn": "srilankisk rupi",
+      "kode": "LKR"
+    },
+    "sprak": [
+      "singalesisk",
+      "tamil"
+    ],
+    "hovedstadPos": [
+      6.9267,
+      79.8606
+    ],
+    "bnp": 5002,
+    "bnpAar": 2025
   },
   {
     "id": "GB",
@@ -2207,7 +6950,38 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 54,
-    "lng": -2.8
+    "lng": -2.8,
+    "suveren": true,
+    "flagg": "gb",
+    "naboer": [
+      "FR",
+      "IE"
+    ],
+    "naboerSjo": [
+      "IM",
+      "BE",
+      "GG",
+      "NL",
+      "JE",
+      "FO",
+      "DE"
+    ],
+    "befolkning": 69487000,
+    "befolkningAar": 2025,
+    "areal": 242900,
+    "valuta": {
+      "navn": "britisk pund",
+      "kode": "GBP"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      51.5072,
+      -0.1275
+    ],
+    "bnp": 57602,
+    "bnpAar": 2025
   },
   {
     "id": "SD",
@@ -2221,7 +6995,40 @@
     ],
     "kontinent": "Afrika",
     "lat": 16,
-    "lng": 29.9
+    "lng": 29.9,
+    "suveren": true,
+    "flagg": "sd",
+    "naboer": [
+      "CF",
+      "EG",
+      "ER",
+      "ET",
+      "LY",
+      "SS",
+      "TD"
+    ],
+    "naboerSjo": [
+      "SA",
+      "CD",
+      "YE"
+    ],
+    "befolkning": 51662147,
+    "befolkningAar": 2025,
+    "areal": 1878000,
+    "valuta": {
+      "navn": "sudansk pund",
+      "kode": "SDG"
+    },
+    "sprak": [
+      "arabisk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      15.6031,
+      32.5265
+    ],
+    "bnp": 1165,
+    "bnpAar": 2025
   },
   {
     "id": "SR",
@@ -2233,7 +7040,32 @@
     "hovedstadSvar": [],
     "kontinent": "Sør-Amerika",
     "lat": 4.1,
-    "lng": -55.9
+    "lng": -55.9,
+    "suveren": true,
+    "flagg": "sr",
+    "naboer": [
+      "BR",
+      "GF",
+      "GY"
+    ],
+    "naboerSjo": [],
+    "befolkning": 639850,
+    "befolkningAar": 2025,
+    "areal": 163820,
+    "valuta": {
+      "navn": "surinamsk dollar",
+      "kode": "SRD"
+    },
+    "sprak": [
+      "nederlandsk",
+      "sranan tongo"
+    ],
+    "hovedstadPos": [
+      5.8667,
+      -55.1667
+    ],
+    "bnp": 7070,
+    "bnpAar": 2025
   },
   {
     "id": "CH",
@@ -2250,7 +7082,43 @@
     ],
     "kontinent": "Europa",
     "lat": 46.8,
-    "lng": 8.2
+    "lng": 8.2,
+    "suveren": true,
+    "flagg": "ch",
+    "naboer": [
+      "AT",
+      "DE",
+      "FR",
+      "IT",
+      "LI"
+    ],
+    "naboerSjo": [
+      "SI",
+      "LU",
+      "MC",
+      "BE",
+      "HR",
+      "CZ",
+      "SM"
+    ],
+    "befolkning": 9092436,
+    "befolkningAar": 2025,
+    "areal": 41291,
+    "valuta": {
+      "navn": "sveitsisk franc",
+      "kode": "CHF"
+    },
+    "sprak": [
+      "tysk",
+      "fransk",
+      "italiensk"
+    ],
+    "hovedstadPos": [
+      46.948,
+      7.4474
+    ],
+    "bnp": 114769,
+    "bnpAar": 2025
   },
   {
     "id": "SE",
@@ -2262,7 +7130,39 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 62.4,
-    "lng": 16.3
+    "lng": 16.3,
+    "suveren": true,
+    "flagg": "se",
+    "naboer": [
+      "DK",
+      "FI",
+      "NO"
+    ],
+    "naboerSjo": [
+      "AX",
+      "DE",
+      "EE",
+      "LV",
+      "PL",
+      "LT",
+      "RU"
+    ],
+    "befolkning": 10596620,
+    "befolkningAar": 2025,
+    "areal": 450295,
+    "valuta": {
+      "navn": "svensk krone",
+      "kode": "SEK"
+    },
+    "sprak": [
+      "svensk"
+    ],
+    "hovedstadPos": [
+      59.3294,
+      18.0686
+    ],
+    "bnp": 63133,
+    "bnpAar": 2025
   },
   {
     "id": "SY",
@@ -2276,7 +7176,41 @@
     ],
     "kontinent": "Asia",
     "lat": 35,
-    "lng": 38.5
+    "lng": 38.5,
+    "suveren": true,
+    "flagg": "sy",
+    "naboer": [
+      "IL",
+      "IQ",
+      "JO",
+      "LB",
+      "TR"
+    ],
+    "naboerSjo": [
+      "PS",
+      "SA",
+      "CY",
+      "IR",
+      "EG",
+      "AZ",
+      "AM"
+    ],
+    "befolkning": 25620427,
+    "befolkningAar": 2025,
+    "areal": 185180,
+    "valuta": {
+      "navn": "syrisk pund",
+      "kode": "SYP"
+    },
+    "sprak": [
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      33.513,
+      36.292
+    ],
+    "bnp": 1057,
+    "bnpAar": 2022
   },
   {
     "id": "ZA",
@@ -2295,7 +7229,36 @@
     ],
     "kontinent": "Afrika",
     "lat": -29,
-    "lng": 25.2
+    "lng": 25.2,
+    "suveren": true,
+    "flagg": "za",
+    "naboer": [
+      "BW",
+      "LS",
+      "MZ",
+      "NA",
+      "SZ",
+      "ZW"
+    ],
+    "naboerSjo": [],
+    "befolkning": 64747319,
+    "befolkningAar": 2025,
+    "areal": 1221037,
+    "valuta": {
+      "navn": "sørafrikansk rand",
+      "kode": "ZAR"
+    },
+    "sprak": [
+      "zulu",
+      "xhosa",
+      "afrikaans"
+    ],
+    "hovedstadPos": [
+      -25.7464,
+      28.1881
+    ],
+    "bnp": 6598,
+    "bnpAar": 2025
   },
   {
     "id": "KR",
@@ -2310,7 +7273,33 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 36.4,
-    "lng": 127.8
+    "lng": 127.8,
+    "suveren": true,
+    "flagg": "kr",
+    "naboer": [
+      "KP"
+    ],
+    "naboerSjo": [
+      "JP",
+      "CN",
+      "RU"
+    ],
+    "befolkning": 51684564,
+    "befolkningAar": 2025,
+    "areal": 100295,
+    "valuta": {
+      "navn": "sørkoreansk won",
+      "kode": "KRW"
+    },
+    "sprak": [
+      "koreansk"
+    ],
+    "hovedstadPos": [
+      37.56,
+      126.99
+    ],
+    "bnp": 36227,
+    "bnpAar": 2025
   },
   {
     "id": "SS",
@@ -2322,7 +7311,33 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 7.3,
-    "lng": 30.3
+    "lng": 30.3,
+    "suveren": true,
+    "flagg": "ss",
+    "naboer": [
+      "CD",
+      "CF",
+      "ET",
+      "KE",
+      "SD",
+      "UG"
+    ],
+    "naboerSjo": [],
+    "befolkning": 12188788,
+    "befolkningAar": 2025,
+    "areal": 644329,
+    "valuta": {
+      "navn": "sørsudansk pund",
+      "kode": "SSP"
+    },
+    "sprak": [
+      "engelsk",
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      4.8539,
+      31.5825
+    ]
   },
   {
     "id": "TJ",
@@ -2338,7 +7353,38 @@
     ],
     "kontinent": "Asia",
     "lat": 38.5,
-    "lng": 71
+    "lng": 71,
+    "suveren": true,
+    "flagg": "tj",
+    "naboer": [
+      "AF",
+      "CN",
+      "KG",
+      "UZ"
+    ],
+    "naboerSjo": [
+      "PK",
+      "KZ",
+      "TM",
+      "IN"
+    ],
+    "befolkning": 10786734,
+    "befolkningAar": 2025,
+    "areal": 143100,
+    "valuta": {
+      "navn": "tadsjikisk somoni",
+      "kode": "TJS"
+    },
+    "sprak": [
+      "tadsjikisk",
+      "russisk"
+    ],
+    "hovedstadPos": [
+      38.5731,
+      68.7864
+    ],
+    "bnp": 1637,
+    "bnpAar": 2025
   },
   {
     "id": "TW",
@@ -2352,7 +7398,31 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 23.7,
-    "lng": 121
+    "lng": 121,
+    "suveren": true,
+    "flagg": "tw",
+    "naboer": [],
+    "naboerSjo": [
+      "CN",
+      "PH",
+      "JP",
+      "HK"
+    ],
+    "befolkning": 23262544,
+    "befolkningAar": 2026,
+    "areal": 36193,
+    "valuta": {
+      "navn": "taiwansk dollar",
+      "kode": "TWD"
+    },
+    "sprak": [
+      "kinesisk (mandarin)",
+      "taiwansk"
+    ],
+    "hovedstadPos": [
+      25.0375,
+      121.5625
+    ]
   },
   {
     "id": "TZ",
@@ -2366,7 +7436,37 @@
     ],
     "kontinent": "Afrika",
     "lat": -6.3,
-    "lng": 34.8
+    "lng": 34.8,
+    "suveren": true,
+    "flagg": "tz",
+    "naboer": [
+      "BI",
+      "CD",
+      "KE",
+      "MW",
+      "MZ",
+      "RW",
+      "UG",
+      "ZM"
+    ],
+    "naboerSjo": [],
+    "befolkning": 70545865,
+    "befolkningAar": 2025,
+    "areal": 945500,
+    "valuta": {
+      "navn": "tanzaniansk shilling",
+      "kode": "TZS"
+    },
+    "sprak": [
+      "swahili",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -6.1835,
+      35.746
+    ],
+    "bnp": 1319,
+    "bnpAar": 2025
   },
   {
     "id": "TH",
@@ -2378,7 +7478,37 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 15.1,
-    "lng": 101
+    "lng": 101,
+    "suveren": true,
+    "flagg": "th",
+    "naboer": [
+      "KH",
+      "LA",
+      "MM",
+      "MY"
+    ],
+    "naboerSjo": [
+      "VN",
+      "CN",
+      "ID",
+      "IN"
+    ],
+    "befolkning": 71619863,
+    "befolkningAar": 2025,
+    "areal": 513120,
+    "valuta": {
+      "navn": "thailandsk baht",
+      "kode": "THB"
+    },
+    "sprak": [
+      "thai"
+    ],
+    "hovedstadPos": [
+      13.75,
+      100.5167
+    ],
+    "bnp": 8057,
+    "bnpAar": 2025
   },
   {
     "id": "TG",
@@ -2390,7 +7520,37 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 8.5,
-    "lng": 1
+    "lng": 1,
+    "suveren": true,
+    "flagg": "tg",
+    "naboer": [
+      "BF",
+      "BJ",
+      "GH"
+    ],
+    "naboerSjo": [
+      "NG",
+      "NE",
+      "CI",
+      "ML"
+    ],
+    "befolkning": 8591626,
+    "befolkningAar": 2025,
+    "areal": 56785,
+    "valuta": {
+      "navn": "vestafrikansk CFA-franc",
+      "kode": "XOF"
+    },
+    "sprak": [
+      "fransk",
+      "ewe"
+    ],
+    "hovedstadPos": [
+      6.13,
+      1.2158
+    ],
+    "bnp": 1384,
+    "bnpAar": 2025
   },
   {
     "id": "TO",
@@ -2402,7 +7562,33 @@
     "hovedstadSvar": [],
     "kontinent": "Oseania",
     "lat": -20.4,
-    "lng": -174.8
+    "lng": -174.8,
+    "suveren": true,
+    "flagg": "to",
+    "naboer": [],
+    "naboerSjo": [
+      "WF",
+      "FJ",
+      "WS",
+      "NU"
+    ],
+    "befolkning": 103742,
+    "befolkningAar": 2025,
+    "areal": 749,
+    "valuta": {
+      "navn": "tongansk paʻanga",
+      "kode": "TOP"
+    },
+    "sprak": [
+      "tongansk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -21.1343,
+      -175.2018
+    ],
+    "bnp": 6547,
+    "bnpAar": 2025
   },
   {
     "id": "TT",
@@ -2416,7 +7602,35 @@
     "hovedstadSvar": [],
     "kontinent": "Nord-Amerika",
     "lat": 10.5,
-    "lng": -61.3
+    "lng": -61.3,
+    "suveren": true,
+    "flagg": "tt",
+    "naboer": [],
+    "naboerSjo": [
+      "VE",
+      "GD",
+      "VC",
+      "BB",
+      "GY",
+      "LC",
+      "MQ"
+    ],
+    "befolkning": 1367764,
+    "befolkningAar": 2025,
+    "areal": 5128,
+    "valuta": {
+      "navn": "trinidadisk dollar",
+      "kode": "TTD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      10.6667,
+      -61.5167
+    ],
+    "bnp": 18967,
+    "bnpAar": 2025
   },
   {
     "id": "TD",
@@ -2430,7 +7644,41 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 15.3,
-    "lng": 18.6
+    "lng": 18.6,
+    "suveren": true,
+    "flagg": "td",
+    "naboer": [
+      "CF",
+      "CM",
+      "LY",
+      "NE",
+      "NG",
+      "SD"
+    ],
+    "naboerSjo": [
+      "SS",
+      "EG",
+      "DZ",
+      "CD",
+      "CG"
+    ],
+    "befolkning": 21003705,
+    "befolkningAar": 2025,
+    "areal": 1284000,
+    "valuta": {
+      "navn": "sentralafrikansk CFA-franc",
+      "kode": "XAF"
+    },
+    "sprak": [
+      "fransk",
+      "arabisk"
+    ],
+    "hovedstadPos": [
+      12.11,
+      15.05
+    ],
+    "bnp": 1022,
+    "bnpAar": 2025
   },
   {
     "id": "CZ",
@@ -2448,7 +7696,40 @@
     ],
     "kontinent": "Europa",
     "lat": 49.7,
-    "lng": 15.3
+    "lng": 15.3,
+    "suveren": true,
+    "flagg": "cz",
+    "naboer": [
+      "AT",
+      "DE",
+      "PL",
+      "SK"
+    ],
+    "naboerSjo": [
+      "HU",
+      "SI",
+      "IT",
+      "HR",
+      "UA",
+      "CH",
+      "FR"
+    ],
+    "befolkning": 10886878,
+    "befolkningAar": 2025,
+    "areal": 78871,
+    "valuta": {
+      "navn": "tsjekkisk koruna",
+      "kode": "CZK"
+    },
+    "sprak": [
+      "tsjekkisk"
+    ],
+    "hovedstadPos": [
+      50.0875,
+      14.4214
+    ],
+    "bnp": 35917,
+    "bnpAar": 2025
   },
   {
     "id": "TN",
@@ -2460,7 +7741,35 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 34.1,
-    "lng": 9.6
+    "lng": 9.6,
+    "suveren": true,
+    "flagg": "tn",
+    "naboer": [
+      "DZ",
+      "LY"
+    ],
+    "naboerSjo": [
+      "IT",
+      "MT",
+      "FR"
+    ],
+    "befolkning": 12348573,
+    "befolkningAar": 2025,
+    "areal": 163610,
+    "valuta": {
+      "navn": "tunisisk dinar",
+      "kode": "TND"
+    },
+    "sprak": [
+      "arabisk",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      36.8008,
+      10.18
+    ],
+    "bnp": 4657,
+    "bnpAar": 2025
   },
   {
     "id": "TM",
@@ -2476,7 +7785,40 @@
     ],
     "kontinent": "Asia",
     "lat": 39.1,
-    "lng": 59.4
+    "lng": 59.4,
+    "suveren": true,
+    "flagg": "tm",
+    "naboer": [
+      "AF",
+      "IR",
+      "KZ",
+      "UZ"
+    ],
+    "naboerSjo": [
+      "TJ",
+      "AZ",
+      "KG",
+      "RU",
+      "PK",
+      "GE"
+    ],
+    "befolkning": 7618847,
+    "befolkningAar": 2025,
+    "areal": 491209,
+    "valuta": {
+      "navn": "turkmensk manat",
+      "kode": "TMT"
+    },
+    "sprak": [
+      "turkmensk",
+      "russisk"
+    ],
+    "hovedstadPos": [
+      37.95,
+      58.3833
+    ],
+    "bnp": 6540,
+    "bnpAar": 2025
   },
   {
     "id": "TV",
@@ -2488,7 +7830,32 @@
     "hovedstadSvar": [],
     "kontinent": "Oseania",
     "lat": -8.5,
-    "lng": 179.2
+    "lng": 179.2,
+    "suveren": true,
+    "flagg": "tv",
+    "naboer": [],
+    "naboerSjo": [
+      "KI",
+      "FJ",
+      "WF"
+    ],
+    "befolkning": 9492,
+    "befolkningAar": 2025,
+    "areal": 26,
+    "valuta": {
+      "navn": "australsk dollar",
+      "kode": "AUD"
+    },
+    "sprak": [
+      "tuvalsk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -8.5048,
+      179.1174
+    ],
+    "bnp": 6041,
+    "bnpAar": 2025
   },
   {
     "id": "TR",
@@ -2502,7 +7869,44 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 39.1,
-    "lng": 35.2
+    "lng": 35.2,
+    "suveren": true,
+    "flagg": "tr",
+    "naboer": [
+      "AM",
+      "AZ",
+      "BG",
+      "GE",
+      "GR",
+      "IQ",
+      "IR",
+      "SY"
+    ],
+    "naboerSjo": [
+      "CY",
+      "LB",
+      "RU",
+      "RO",
+      "MK",
+      "IL",
+      "RS"
+    ],
+    "befolkning": 85878556,
+    "befolkningAar": 2025,
+    "areal": 783562,
+    "valuta": {
+      "navn": "tyrkisk lire",
+      "kode": "TRY"
+    },
+    "sprak": [
+      "tyrkisk"
+    ],
+    "hovedstadPos": [
+      39.9358,
+      32.8387
+    ],
+    "bnp": 18599,
+    "bnpAar": 2025
   },
   {
     "id": "DE",
@@ -2516,7 +7920,45 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 51.1,
-    "lng": 10.4
+    "lng": 10.4,
+    "suveren": true,
+    "flagg": "de",
+    "naboer": [
+      "AT",
+      "BE",
+      "CH",
+      "CZ",
+      "DK",
+      "FR",
+      "LU",
+      "NL",
+      "PL"
+    ],
+    "naboerSjo": [
+      "LI",
+      "IT",
+      "SE",
+      "SI",
+      "HU",
+      "SK",
+      "HR"
+    ],
+    "befolkning": 83491249,
+    "befolkningAar": 2025,
+    "areal": 357170,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "tysk"
+    ],
+    "hovedstadPos": [
+      52.5167,
+      13.3833
+    ],
+    "bnp": 60496,
+    "bnpAar": 2025
   },
   {
     "id": "UG",
@@ -2528,7 +7970,39 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": 1.3,
-    "lng": 32.4
+    "lng": 32.4,
+    "suveren": true,
+    "flagg": "ug",
+    "naboer": [
+      "CD",
+      "KE",
+      "RW",
+      "SS",
+      "TZ"
+    ],
+    "naboerSjo": [
+      "BI",
+      "ET",
+      "CF"
+    ],
+    "befolkning": 51384894,
+    "befolkningAar": 2025,
+    "areal": 241550,
+    "valuta": {
+      "navn": "ugandisk shilling",
+      "kode": "UGX"
+    },
+    "sprak": [
+      "engelsk",
+      "swahili",
+      "luganda"
+    ],
+    "hovedstadPos": [
+      0.3136,
+      32.5811
+    ],
+    "bnp": 1206,
+    "bnpAar": 2025
   },
   {
     "id": "UA",
@@ -2543,7 +8017,44 @@
     ],
     "kontinent": "Europa",
     "lat": 49.2,
-    "lng": 31.3
+    "lng": 31.3,
+    "suveren": true,
+    "flagg": "ua",
+    "naboer": [
+      "BY",
+      "HU",
+      "MD",
+      "PL",
+      "RO",
+      "RU",
+      "SK"
+    ],
+    "naboerSjo": [
+      "BG",
+      "LT",
+      "CZ",
+      "RS",
+      "TR",
+      "HR",
+      "AT"
+    ],
+    "befolkning": 38980376,
+    "befolkningAar": 2025,
+    "areal": 603550,
+    "valuta": {
+      "navn": "ukrainsk hryvnja",
+      "kode": "UAH"
+    },
+    "sprak": [
+      "ukrainsk",
+      "russisk"
+    ],
+    "hovedstadPos": [
+      50.45,
+      30.5236
+    ],
+    "bnp": 5866,
+    "bnpAar": 2025
   },
   {
     "id": "HU",
@@ -2555,7 +8066,43 @@
     "hovedstadSvar": [],
     "kontinent": "Europa",
     "lat": 47.2,
-    "lng": 19.4
+    "lng": 19.4,
+    "suveren": true,
+    "flagg": "hu",
+    "naboer": [
+      "AT",
+      "HR",
+      "RO",
+      "RS",
+      "SI",
+      "SK",
+      "UA"
+    ],
+    "naboerSjo": [
+      "BA",
+      "CZ",
+      "PL",
+      "IT",
+      "DE",
+      "ME",
+      "BG"
+    ],
+    "befolkning": 9514251,
+    "befolkningAar": 2025,
+    "areal": 93028,
+    "valuta": {
+      "navn": "ungarsk forint",
+      "kode": "HUF"
+    },
+    "sprak": [
+      "ungarsk"
+    ],
+    "hovedstadPos": [
+      47.4983,
+      19.0408
+    ],
+    "bnp": 25907,
+    "bnpAar": 2025
   },
   {
     "id": "UY",
@@ -2567,7 +8114,30 @@
     "hovedstadSvar": [],
     "kontinent": "Sør-Amerika",
     "lat": -32.8,
-    "lng": -56
+    "lng": -56,
+    "suveren": true,
+    "flagg": "uy",
+    "naboer": [
+      "AR",
+      "BR"
+    ],
+    "naboerSjo": [],
+    "befolkning": 3384688,
+    "befolkningAar": 2025,
+    "areal": 176215,
+    "valuta": {
+      "navn": "uruguayansk peso",
+      "kode": "UYU"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      -34.9059,
+      -56.1913
+    ],
+    "bnp": 25216,
+    "bnpAar": 2025
   },
   {
     "id": "US",
@@ -2590,7 +8160,35 @@
     ],
     "kontinent": "Nord-Amerika",
     "lat": 39.9,
-    "lng": -98.8
+    "lng": -98.8,
+    "suveren": true,
+    "flagg": "us",
+    "naboer": [
+      "CA",
+      "MX"
+    ],
+    "naboerSjo": [
+      "RU",
+      "BS",
+      "CU"
+    ],
+    "befolkning": 341784857,
+    "befolkningAar": 2025,
+    "areal": 9826675,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "engelsk",
+      "spansk"
+    ],
+    "hovedstadPos": [
+      38.895,
+      -77.0367
+    ],
+    "bnp": 90027,
+    "bnpAar": 2025
   },
   {
     "id": "UZ",
@@ -2604,7 +8202,39 @@
     ],
     "kontinent": "Asia",
     "lat": 41.8,
-    "lng": 63.3
+    "lng": 63.3,
+    "suveren": true,
+    "flagg": "uz",
+    "naboer": [
+      "AF",
+      "KG",
+      "KZ",
+      "TJ",
+      "TM"
+    ],
+    "naboerSjo": [
+      "CN",
+      "PK",
+      "IR",
+      "AZ"
+    ],
+    "befolkning": 37053428,
+    "befolkningAar": 2025,
+    "areal": 448923,
+    "valuta": {
+      "navn": "usbekisk som",
+      "kode": "UZS"
+    },
+    "sprak": [
+      "usbekisk",
+      "russisk"
+    ],
+    "hovedstadPos": [
+      41.3111,
+      69.2797
+    ],
+    "bnp": 3968,
+    "bnpAar": 2025
   },
   {
     "id": "VU",
@@ -2616,7 +8246,33 @@
     "hovedstadSvar": [],
     "kontinent": "Oseania",
     "lat": -16.2,
-    "lng": 167.7
+    "lng": 167.7,
+    "suveren": true,
+    "flagg": "vu",
+    "naboer": [],
+    "naboerSjo": [
+      "SB",
+      "NC",
+      "FJ"
+    ],
+    "befolkning": 335169,
+    "befolkningAar": 2025,
+    "areal": 12189,
+    "valuta": {
+      "navn": "vanuatisk vatu",
+      "kode": "VUV"
+    },
+    "sprak": [
+      "bislama",
+      "engelsk",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      -17.7333,
+      168.3167
+    ],
+    "bnp": 4039,
+    "bnpAar": 2025
   },
   {
     "id": "VA",
@@ -2637,7 +8293,36 @@
     ],
     "kontinent": "Europa",
     "lat": 41.9,
-    "lng": 12.4
+    "lng": 12.4,
+    "suveren": true,
+    "flagg": "va",
+    "naboer": [
+      "IT"
+    ],
+    "naboerSjo": [
+      "SM",
+      "FR",
+      "HR",
+      "BA",
+      "SI",
+      "MC",
+      "ME"
+    ],
+    "befolkning": 882,
+    "befolkningAar": 2024,
+    "areal": 0.4,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "italiensk",
+      "latin"
+    ],
+    "hovedstadPos": [
+      41.904,
+      12.453
+    ]
   },
   {
     "id": "VE",
@@ -2649,7 +8334,39 @@
     "hovedstadSvar": [],
     "kontinent": "Sør-Amerika",
     "lat": 7.1,
-    "lng": -66.2
+    "lng": -66.2,
+    "suveren": true,
+    "flagg": "ve",
+    "naboer": [
+      "BR",
+      "CO",
+      "GY"
+    ],
+    "naboerSjo": [
+      "TT",
+      "AW",
+      "BQ",
+      "CW",
+      "GD",
+      "AG",
+      "MS"
+    ],
+    "befolkning": 28516896,
+    "befolkningAar": 2025,
+    "areal": 912050,
+    "valuta": {
+      "navn": "venezuelansk bolívar",
+      "kode": "VES"
+    },
+    "sprak": [
+      "spansk"
+    ],
+    "hovedstadPos": [
+      10.5061,
+      -66.9144
+    ],
+    "bnp": 3495,
+    "bnpAar": 2025
   },
   {
     "id": "VN",
@@ -2661,7 +8378,36 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": 16.5,
-    "lng": 106.3
+    "lng": 106.3,
+    "suveren": true,
+    "flagg": "vn",
+    "naboer": [
+      "CN",
+      "KH",
+      "LA"
+    ],
+    "naboerSjo": [
+      "TH",
+      "MM",
+      "MY",
+      "ID"
+    ],
+    "befolkning": 101598527,
+    "befolkningAar": 2025,
+    "areal": 331338,
+    "valuta": {
+      "navn": "vietnamesisk dong",
+      "kode": "VND"
+    },
+    "sprak": [
+      "vietnamesisk"
+    ],
+    "hovedstadPos": [
+      21.0245,
+      105.8412
+    ],
+    "bnp": 5066,
+    "bnpAar": 2025
   },
   {
     "id": "ZM",
@@ -2673,7 +8419,37 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -13.5,
-    "lng": 27.8
+    "lng": 27.8,
+    "suveren": true,
+    "flagg": "zm",
+    "naboer": [
+      "AO",
+      "BW",
+      "CD",
+      "MW",
+      "MZ",
+      "NA",
+      "TZ",
+      "ZW"
+    ],
+    "naboerSjo": [],
+    "befolkning": 21913874,
+    "befolkningAar": 2025,
+    "areal": 752612,
+    "valuta": {
+      "navn": "zambisk kwacha",
+      "kode": "ZMW"
+    },
+    "sprak": [
+      "engelsk",
+      "bemba"
+    ],
+    "hovedstadPos": [
+      -15.4167,
+      28.2833
+    ],
+    "bnp": 1318,
+    "bnpAar": 2025
   },
   {
     "id": "ZW",
@@ -2685,7 +8461,40 @@
     "hovedstadSvar": [],
     "kontinent": "Afrika",
     "lat": -19,
-    "lng": 29.9
+    "lng": 29.9,
+    "suveren": true,
+    "flagg": "zw",
+    "naboer": [
+      "BW",
+      "MZ",
+      "ZA",
+      "ZM"
+    ],
+    "naboerSjo": [
+      "NA",
+      "MW",
+      "AO",
+      "CD",
+      "SZ"
+    ],
+    "befolkning": 16950795,
+    "befolkningAar": 2025,
+    "areal": 390757,
+    "valuta": {
+      "navn": "zimbabwisk gull",
+      "kode": "ZWG"
+    },
+    "sprak": [
+      "shona",
+      "engelsk",
+      "ndebele"
+    ],
+    "hovedstadPos": [
+      -17.8292,
+      31.0522
+    ],
+    "bnp": 3021,
+    "bnpAar": 2025
   },
   {
     "id": "TL",
@@ -2699,7 +8508,34 @@
     "hovedstadSvar": [],
     "kontinent": "Asia",
     "lat": -8.8,
-    "lng": 125.8
+    "lng": 125.8,
+    "suveren": true,
+    "flagg": "tl",
+    "naboer": [
+      "ID"
+    ],
+    "naboerSjo": [
+      "AU",
+      "PW",
+      "PG"
+    ],
+    "befolkning": 1418517,
+    "befolkningAar": 2025,
+    "areal": 14874,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "tetum",
+      "portugisisk"
+    ],
+    "hovedstadPos": [
+      -8.5536,
+      125.5783
+    ],
+    "bnp": 1341,
+    "bnpAar": 2025
   },
   {
     "id": "AT",
@@ -2715,6 +8551,2094 @@
     ],
     "kontinent": "Europa",
     "lat": 47.6,
-    "lng": 14.1
+    "lng": 14.1,
+    "suveren": true,
+    "flagg": "at",
+    "naboer": [
+      "CH",
+      "CZ",
+      "DE",
+      "HU",
+      "IT",
+      "LI",
+      "SI",
+      "SK"
+    ],
+    "naboerSjo": [
+      "HR",
+      "PL",
+      "FR",
+      "BA",
+      "RS",
+      "SM",
+      "RO"
+    ],
+    "befolkning": 9208163,
+    "befolkningAar": 2025,
+    "areal": 83879,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "tysk"
+    ],
+    "hovedstadPos": [
+      48.2083,
+      16.3725
+    ],
+    "bnp": 62930,
+    "bnpAar": 2025
+  },
+  {
+    "id": "AS",
+    "navn": "Amerikansk Samoa",
+    "en": "American Samoa",
+    "svar": [
+      "Amerikanske Samoa"
+    ],
+    "hovedstad": "Pago Pago",
+    "hovedstadEn": "Pago Pago",
+    "hovedstadSvar": [
+      "Fagatogo"
+    ],
+    "kontinent": "Oseania",
+    "lat": -14.3,
+    "lng": -170.4,
+    "suveren": false,
+    "tilhorer": "US",
+    "flagg": "as",
+    "naboer": [],
+    "naboerSjo": [
+      "WS",
+      "TK",
+      "CK"
+    ],
+    "befolkning": 46029,
+    "befolkningAar": 2025,
+    "areal": 199,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "samoansk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -14.2794,
+      -170.7006
+    ],
+    "bnp": 18017,
+    "bnpAar": 2022
+  },
+  {
+    "id": "AI",
+    "navn": "Anguilla",
+    "en": "Anguilla",
+    "svar": [],
+    "hovedstad": "The Valley",
+    "hovedstadEn": "The Valley",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 18.2,
+    "lng": -63.1,
+    "suveren": false,
+    "tilhorer": "GB",
+    "liten": true,
+    "flagg": "ai",
+    "naboer": [],
+    "naboerSjo": [
+      "SX",
+      "MF",
+      "BL",
+      "BQ",
+      "VG",
+      "KN",
+      "VI"
+    ],
+    "befolkning": 19079,
+    "befolkningAar": 2023,
+    "areal": 91,
+    "valuta": {
+      "navn": "østkaribisk dollar",
+      "kode": "XCD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      18.2208,
+      -63.0517
+    ]
+  },
+  {
+    "id": "AW",
+    "navn": "Aruba",
+    "en": "Aruba",
+    "svar": [],
+    "hovedstad": "Oranjestad",
+    "hovedstadEn": "Oranjestad",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 12.5,
+    "lng": -70,
+    "suveren": false,
+    "tilhorer": "NL",
+    "flagg": "aw",
+    "naboer": [],
+    "naboerSjo": [
+      "VE",
+      "CW",
+      "CO",
+      "BQ"
+    ],
+    "befolkning": 108785,
+    "befolkningAar": 2025,
+    "areal": 180,
+    "valuta": {
+      "navn": "arubansk floryn",
+      "kode": "AWG"
+    },
+    "sprak": [
+      "papiamento",
+      "nederlandsk"
+    ],
+    "hovedstadPos": [
+      12.5186,
+      -70.0358
+    ],
+    "bnp": 38591,
+    "bnpAar": 2024
+  },
+  {
+    "id": "BM",
+    "navn": "Bermuda",
+    "en": "Bermuda",
+    "svar": [],
+    "hovedstad": "Hamilton",
+    "hovedstadEn": "Hamilton",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 32.3,
+    "lng": -64.8,
+    "suveren": false,
+    "tilhorer": "GB",
+    "flagg": "bm",
+    "naboer": [],
+    "naboerSjo": [
+      "US",
+      "CA",
+      "BS"
+    ],
+    "befolkning": 64555,
+    "befolkningAar": 2025,
+    "areal": 54,
+    "valuta": {
+      "navn": "bermudisk dollar",
+      "kode": "BMD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      32.295,
+      -64.7831
+    ],
+    "bnp": 142250,
+    "bnpAar": 2024
+  },
+  {
+    "id": "BV",
+    "navn": "Bouvetøya",
+    "en": "Bouvet Island",
+    "svar": [
+      "Bouvet"
+    ],
+    "hovedstad": "",
+    "hovedstadEn": "",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -54.4,
+    "lng": 3.4,
+    "suveren": false,
+    "tilhorer": "NO",
+    "liten": true,
+    "flagg": "bv",
+    "naboer": [],
+    "naboerSjo": [
+      "SH",
+      "GS"
+    ],
+    "befolkning": 0,
+    "areal": 49,
+    "valuta": null,
+    "sprak": []
+  },
+  {
+    "id": "IO",
+    "navn": "Britiske territorium i Indiahavet",
+    "en": "British Indian Ocean Territory",
+    "svar": [
+      "Det britiske territoriet i Indiahavet",
+      "Chagosøyene",
+      "Chagos",
+      "BIOT",
+      "Diego Garcia"
+    ],
+    "hovedstad": "",
+    "hovedstadEn": "",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": -7.1,
+    "lng": 72.3,
+    "suveren": false,
+    "tilhorer": "GB",
+    "liten": true,
+    "flagg": "io",
+    "naboer": [],
+    "naboerSjo": [
+      "MV",
+      "IN",
+      "LK"
+    ],
+    "befolkning": 3000,
+    "befolkningAar": 2018,
+    "areal": 60,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "engelsk"
+    ]
+  },
+  {
+    "id": "KY",
+    "navn": "Caymanøyene",
+    "en": "Cayman Islands",
+    "svar": [
+      "Cayman"
+    ],
+    "hovedstad": "George Town",
+    "hovedstadEn": "George Town",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 19.4,
+    "lng": -80.9,
+    "suveren": false,
+    "tilhorer": "GB",
+    "flagg": "ky",
+    "naboer": [],
+    "naboerSjo": [
+      "CU",
+      "JM",
+      "HN",
+      "BS"
+    ],
+    "befolkning": 75844,
+    "befolkningAar": 2025,
+    "areal": 264,
+    "valuta": {
+      "navn": "caymansk dollar",
+      "kode": "KYD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      19.2964,
+      -81.3817
+    ],
+    "bnp": 104293,
+    "bnpAar": 2024
+  },
+  {
+    "id": "CX",
+    "navn": "Christmasøya",
+    "en": "Christmas Island",
+    "svar": [],
+    "hovedstad": "Flying Fish Cove",
+    "hovedstadEn": "Flying Fish Cove",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": -10.5,
+    "lng": 105.7,
+    "suveren": false,
+    "tilhorer": "AU",
+    "liten": true,
+    "flagg": "cx",
+    "naboer": [],
+    "naboerSjo": [
+      "ID",
+      "CC",
+      "SG"
+    ],
+    "befolkning": 1692,
+    "befolkningAar": 2021,
+    "areal": 135,
+    "valuta": {
+      "navn": "australsk dollar",
+      "kode": "AUD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -10.4217,
+      105.6781
+    ]
+  },
+  {
+    "id": "CK",
+    "navn": "Cookøyene",
+    "en": "Cook Islands",
+    "svar": [],
+    "hovedstad": "Avarua",
+    "hovedstadEn": "Avarua",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -20.8,
+    "lng": -158.7,
+    "suveren": false,
+    "tilhorer": "NZ",
+    "liten": true,
+    "flagg": "ck",
+    "naboer": [],
+    "naboerSjo": [
+      "KI",
+      "AS",
+      "PF"
+    ],
+    "befolkning": 14222,
+    "befolkningAar": 2023,
+    "areal": 236,
+    "valuta": {
+      "navn": "newzealandsk dollar",
+      "kode": "NZD"
+    },
+    "sprak": [
+      "rarotongansk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -21.207,
+      -159.771
+    ]
+  },
+  {
+    "id": "CW",
+    "navn": "Curaçao",
+    "en": "Curacao",
+    "svar": [],
+    "hovedstad": "Willemstad",
+    "hovedstadEn": "Willemstad",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 12.2,
+    "lng": -69,
+    "suveren": false,
+    "tilhorer": "NL",
+    "flagg": "cw",
+    "naboer": [],
+    "naboerSjo": [
+      "BQ",
+      "VE",
+      "AW",
+      "CO"
+    ],
+    "befolkning": 156263,
+    "befolkningAar": 2025,
+    "areal": 444,
+    "valuta": {
+      "navn": "karibisk gylden",
+      "kode": "XCG"
+    },
+    "sprak": [
+      "papiamento",
+      "nederlandsk"
+    ],
+    "hovedstadPos": [
+      12.108,
+      -68.935
+    ],
+    "bnp": 22833,
+    "bnpAar": 2024
+  },
+  {
+    "id": "VI",
+    "navn": "De amerikanske Jomfruøyene",
+    "en": "U.S. Virgin Islands",
+    "svar": [
+      "Amerikanske Jomfruøyene",
+      "United States Virgin Islands",
+      "USVI"
+    ],
+    "hovedstad": "Charlotte Amalie",
+    "hovedstadEn": "Charlotte Amalie",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 18,
+    "lng": -64.8,
+    "suveren": false,
+    "tilhorer": "US",
+    "flagg": "vi",
+    "naboer": [],
+    "naboerSjo": [
+      "VG",
+      "PR",
+      "AI",
+      "BQ",
+      "SX",
+      "MF",
+      "BL"
+    ],
+    "befolkning": 103792,
+    "befolkningAar": 2025,
+    "areal": 347,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      18.35,
+      -64.95
+    ],
+    "bnp": 44321,
+    "bnpAar": 2022
+  },
+  {
+    "id": "VG",
+    "navn": "De britiske Jomfruøyene",
+    "en": "British Virgin Islands",
+    "svar": [
+      "Britiske Jomfruøyene",
+      "BVI"
+    ],
+    "hovedstad": "Road Town",
+    "hovedstadEn": "Road Town",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 18.5,
+    "lng": -64.5,
+    "suveren": false,
+    "tilhorer": "GB",
+    "liten": true,
+    "flagg": "vg",
+    "naboer": [],
+    "naboerSjo": [
+      "VI",
+      "PR",
+      "AI",
+      "SX",
+      "BQ",
+      "MF",
+      "BL"
+    ],
+    "befolkning": 39732,
+    "befolkningAar": 2025,
+    "areal": 151,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      18.4333,
+      -64.6167
+    ]
+  },
+  {
+    "id": "FK",
+    "navn": "Falklandsøyene",
+    "en": "Falkland Islands",
+    "svar": [
+      "Falkland",
+      "Malvinas",
+      "Falklandsøyene (Malvinas)"
+    ],
+    "hovedstad": "Stanley",
+    "hovedstadEn": "Stanley",
+    "hovedstadSvar": [
+      "Port Stanley"
+    ],
+    "kontinent": "Sør-Amerika",
+    "lat": -51.7,
+    "lng": -59.4,
+    "suveren": false,
+    "tilhorer": "GB",
+    "flagg": "fk",
+    "naboer": [],
+    "naboerSjo": [
+      "AR",
+      "CL",
+      "GS"
+    ],
+    "befolkning": 4550,
+    "befolkningAar": 2018,
+    "areal": 12173,
+    "valuta": {
+      "navn": "falklandspund",
+      "kode": "FKP"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -51.6939,
+      -57.8496
+    ]
+  },
+  {
+    "id": "GF",
+    "navn": "Fransk Guyana",
+    "en": "French Guiana",
+    "svar": [
+      "Guyane"
+    ],
+    "hovedstad": "Cayenne",
+    "hovedstadEn": "Cayenne",
+    "hovedstadSvar": [],
+    "kontinent": "Sør-Amerika",
+    "lat": 3.9,
+    "lng": -53.2,
+    "suveren": false,
+    "tilhorer": "FR",
+    "flagg": "gf",
+    "naboer": [
+      "BR",
+      "SR"
+    ],
+    "naboerSjo": [],
+    "befolkning": 293996,
+    "befolkningAar": 2023,
+    "areal": 83534,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "fransk"
+    ],
+    "hovedstadPos": [
+      4.9386,
+      -52.335
+    ]
+  },
+  {
+    "id": "PF",
+    "navn": "Fransk Polynesia",
+    "en": "French Polynesia",
+    "svar": [
+      "Tahiti",
+      "Polynésie française"
+    ],
+    "hovedstad": "Papeete",
+    "hovedstadEn": "Papeete",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -17.6,
+    "lng": -149.5,
+    "suveren": false,
+    "tilhorer": "FR",
+    "flagg": "pf",
+    "naboer": [],
+    "naboerSjo": [
+      "PN",
+      "CK",
+      "KI"
+    ],
+    "befolkning": 282465,
+    "befolkningAar": 2025,
+    "areal": 4167,
+    "valuta": {
+      "navn": "CFP-franc",
+      "kode": "XPF"
+    },
+    "sprak": [
+      "fransk",
+      "tahitisk"
+    ],
+    "hovedstadPos": [
+      -17.5397,
+      -149.5689
+    ],
+    "bnp": 22440,
+    "bnpAar": 2024
+  },
+  {
+    "id": "TF",
+    "navn": "Franske sørlige og antarktiske territorier",
+    "en": "French Southern Territories",
+    "svar": [
+      "Franske sørterritorier",
+      "TAAF",
+      "Kerguelen",
+      "Terres australes et antarctiques françaises",
+      "French Southern and Antarctic Lands"
+    ],
+    "hovedstad": "Port-aux-Français",
+    "hovedstadEn": "Port-aux-Francais",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -49.3,
+    "lng": 69.5,
+    "suveren": false,
+    "tilhorer": "FR",
+    "liten": true,
+    "flagg": "tf",
+    "naboer": [],
+    "naboerSjo": [
+      "MG",
+      "SC",
+      "YT",
+      "MZ",
+      "KM",
+      "HM"
+    ],
+    "befolkning": 196,
+    "befolkningAar": 2012,
+    "areal": 7747,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "fransk"
+    ],
+    "hovedstadPos": [
+      -49.35,
+      70.2167
+    ]
+  },
+  {
+    "id": "FO",
+    "navn": "Færøyene",
+    "en": "Faroe Islands",
+    "svar": [
+      "Færøerne",
+      "Faeroe Islands",
+      "Faroes"
+    ],
+    "hovedstad": "Tórshavn",
+    "hovedstadEn": "Tórshavn",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 62.1,
+    "lng": -6.9,
+    "suveren": false,
+    "tilhorer": "DK",
+    "flagg": "fo",
+    "naboer": [],
+    "naboerSjo": [
+      "GB",
+      "IS",
+      "NO"
+    ],
+    "befolkning": 54900,
+    "befolkningAar": 2025,
+    "areal": 1399,
+    "valuta": {
+      "navn": "dansk krone",
+      "kode": "DKK"
+    },
+    "sprak": [
+      "færøysk",
+      "dansk"
+    ],
+    "hovedstadPos": [
+      62.0098,
+      -6.7713
+    ],
+    "bnp": 74175,
+    "bnpAar": 2024
+  },
+  {
+    "id": "GI",
+    "navn": "Gibraltar",
+    "en": "Gibraltar",
+    "svar": [],
+    "hovedstad": "Gibraltar",
+    "hovedstadEn": "Gibraltar",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 36.1,
+    "lng": -5.3,
+    "suveren": false,
+    "tilhorer": "GB",
+    "liten": true,
+    "flagg": "gi",
+    "naboer": [
+      "ES"
+    ],
+    "naboerSjo": [
+      "MA",
+      "PT",
+      "DZ"
+    ],
+    "befolkning": 40126,
+    "befolkningAar": 2025,
+    "areal": 6.8,
+    "valuta": {
+      "navn": "gibraltarpund",
+      "kode": "GIP"
+    },
+    "sprak": [
+      "engelsk",
+      "spansk"
+    ],
+    "hovedstadPos": [
+      36.14,
+      -5.35
+    ]
+  },
+  {
+    "id": "GL",
+    "navn": "Grønland",
+    "en": "Greenland",
+    "svar": [
+      "Kalaallit Nunaat"
+    ],
+    "hovedstad": "Nuuk",
+    "hovedstadEn": "Nuuk",
+    "hovedstadSvar": [
+      "Godthåb"
+    ],
+    "kontinent": "Nord-Amerika",
+    "lat": 73.1,
+    "lng": -41.8,
+    "suveren": false,
+    "tilhorer": "DK",
+    "flagg": "gl",
+    "naboer": [],
+    "naboerSjo": [
+      "CA",
+      "IS",
+      "SJ"
+    ],
+    "befolkning": 56831,
+    "befolkningAar": 2025,
+    "areal": 2166086,
+    "valuta": {
+      "navn": "dansk krone",
+      "kode": "DKK"
+    },
+    "sprak": [
+      "grønlandsk",
+      "dansk"
+    ],
+    "hovedstadPos": [
+      64.175,
+      -51.7333
+    ],
+    "bnp": 58499,
+    "bnpAar": 2023
+  },
+  {
+    "id": "GP",
+    "navn": "Guadeloupe",
+    "en": "Guadeloupe",
+    "svar": [],
+    "hovedstad": "Basse-Terre",
+    "hovedstadEn": "Basse-Terre",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 16.2,
+    "lng": -61.5,
+    "suveren": false,
+    "tilhorer": "FR",
+    "flagg": "gp",
+    "naboer": [],
+    "naboerSjo": [
+      "DM",
+      "MS",
+      "AG",
+      "MQ",
+      "KN",
+      "BQ",
+      "VE"
+    ],
+    "befolkning": 384160,
+    "befolkningAar": 2023,
+    "areal": 1628,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "fransk"
+    ],
+    "hovedstadPos": [
+      15.9969,
+      -61.7328
+    ]
+  },
+  {
+    "id": "GU",
+    "navn": "Guam",
+    "en": "Guam",
+    "svar": [],
+    "hovedstad": "Hagåtña",
+    "hovedstadEn": "Hagatna",
+    "hovedstadSvar": [
+      "Agana"
+    ],
+    "kontinent": "Oseania",
+    "lat": 13.4,
+    "lng": 144.8,
+    "suveren": false,
+    "tilhorer": "US",
+    "flagg": "gu",
+    "naboer": [],
+    "naboerSjo": [
+      "MP",
+      "FM",
+      "PW"
+    ],
+    "befolkning": 168999,
+    "befolkningAar": 2025,
+    "areal": 544,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "engelsk",
+      "chamorro"
+    ],
+    "hovedstadPos": [
+      13.4833,
+      144.75
+    ],
+    "bnp": 41833,
+    "bnpAar": 2022
+  },
+  {
+    "id": "GG",
+    "navn": "Guernsey",
+    "en": "Guernsey",
+    "svar": [
+      "Bailiwick of Guernsey"
+    ],
+    "hovedstad": "Saint Peter Port",
+    "hovedstadEn": "Saint Peter Port",
+    "hovedstadSvar": [
+      "St. Peter Port"
+    ],
+    "kontinent": "Europa",
+    "lat": 49.5,
+    "lng": -2.5,
+    "suveren": false,
+    "tilhorer": "GB",
+    "liten": true,
+    "flagg": "gg",
+    "naboer": [],
+    "naboerSjo": [
+      "FR",
+      "JE",
+      "GB",
+      "BE",
+      "IE",
+      "NL"
+    ],
+    "befolkning": 67787,
+    "befolkningAar": 2024,
+    "areal": 78,
+    "valuta": {
+      "navn": "britisk pund",
+      "kode": "GBP"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      49.46,
+      -2.5519
+    ]
+  },
+  {
+    "id": "HM",
+    "navn": "Heard- og McDonaldøyene",
+    "en": "Heard Island and McDonald Islands",
+    "svar": [
+      "Heardøya",
+      "Heard Island",
+      "McDonaldøyene"
+    ],
+    "hovedstad": "",
+    "hovedstadEn": "",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -53.1,
+    "lng": 73.5,
+    "suveren": false,
+    "tilhorer": "AU",
+    "liten": true,
+    "flagg": "hm",
+    "naboer": [],
+    "naboerSjo": [
+      "TF"
+    ],
+    "befolkning": 2,
+    "befolkningAar": 2011,
+    "areal": 368,
+    "valuta": null,
+    "sprak": []
+  },
+  {
+    "id": "HK",
+    "navn": "Hongkong",
+    "en": "Hong Kong",
+    "svar": [],
+    "hovedstad": "Hongkong",
+    "hovedstadEn": "Hong Kong",
+    "hovedstadSvar": [
+      "Victoria"
+    ],
+    "kontinent": "Asia",
+    "lat": 22.4,
+    "lng": 114.1,
+    "suveren": false,
+    "tilhorer": "CN",
+    "flagg": "hk",
+    "naboer": [
+      "CN"
+    ],
+    "naboerSjo": [],
+    "befolkning": 7498900,
+    "befolkningAar": 2025,
+    "areal": 1104,
+    "valuta": {
+      "navn": "hongkong-dollar",
+      "kode": "HKD"
+    },
+    "sprak": [
+      "kantonesisk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      22.2793,
+      114.1628
+    ],
+    "bnp": 56983,
+    "bnpAar": 2025
+  },
+  {
+    "id": "IM",
+    "navn": "Isle of Man",
+    "en": "Isle of Man",
+    "svar": [
+      "Man"
+    ],
+    "hovedstad": "Douglas",
+    "hovedstadEn": "Douglas",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 54.2,
+    "lng": -4.5,
+    "suveren": false,
+    "tilhorer": "GB",
+    "flagg": "im",
+    "naboer": [],
+    "naboerSjo": [
+      "GB",
+      "IE",
+      "GG"
+    ],
+    "befolkning": 84118,
+    "befolkningAar": 2025,
+    "areal": 572,
+    "valuta": {
+      "navn": "britisk pund",
+      "kode": "GBP"
+    },
+    "sprak": [
+      "engelsk",
+      "manx"
+    ],
+    "hovedstadPos": [
+      54.15,
+      -4.4775
+    ],
+    "bnp": 90015,
+    "bnpAar": 2023
+  },
+  {
+    "id": "JE",
+    "navn": "Jersey",
+    "en": "Jersey",
+    "svar": [],
+    "hovedstad": "Saint Helier",
+    "hovedstadEn": "Saint Helier",
+    "hovedstadSvar": [
+      "St. Helier"
+    ],
+    "kontinent": "Europa",
+    "lat": 49.2,
+    "lng": -2.1,
+    "suveren": false,
+    "tilhorer": "GB",
+    "liten": true,
+    "flagg": "je",
+    "naboer": [],
+    "naboerSjo": [
+      "FR",
+      "GG",
+      "GB",
+      "BE",
+      "IE",
+      "NL"
+    ],
+    "befolkning": 103267,
+    "befolkningAar": 2021,
+    "areal": 116,
+    "valuta": {
+      "navn": "britisk pund",
+      "kode": "GBP"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      49.1858,
+      -2.11
+    ]
+  },
+  {
+    "id": "BQ",
+    "navn": "Karibisk Nederland",
+    "en": "Caribbean Netherlands",
+    "svar": [
+      "Bonaire",
+      "Bonaire, Sint Eustatius og Saba",
+      "BES-øyene",
+      "Bonaire Sint Eustatius and Saba"
+    ],
+    "hovedstad": "Kralendijk",
+    "hovedstadEn": "Kralendijk",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 12.2,
+    "lng": -68.3,
+    "suveren": false,
+    "tilhorer": "NL",
+    "flagg": "bq",
+    "naboer": [],
+    "naboerSjo": [
+      "KN",
+      "BL",
+      "CW",
+      "SX",
+      "MF",
+      "VE",
+      "AI"
+    ],
+    "befolkning": 29418,
+    "befolkningAar": 2023,
+    "areal": 322,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "nederlandsk",
+      "papiamento",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      12.1443,
+      -68.2655
+    ]
+  },
+  {
+    "id": "CC",
+    "navn": "Kokosøyene",
+    "en": "Cocos (Keeling) Islands",
+    "svar": [
+      "Cocos Islands",
+      "Keelingøyene",
+      "Cocosøyene"
+    ],
+    "hovedstad": "West Island",
+    "hovedstadEn": "West Island",
+    "hovedstadSvar": [
+      "Bantam"
+    ],
+    "kontinent": "Asia",
+    "lat": -12.2,
+    "lng": 96.9,
+    "suveren": false,
+    "tilhorer": "AU",
+    "liten": true,
+    "flagg": "cc",
+    "naboer": [],
+    "naboerSjo": [
+      "ID",
+      "CX",
+      "MY"
+    ],
+    "befolkning": 602,
+    "befolkningAar": 2021,
+    "areal": 14,
+    "valuta": {
+      "navn": "australsk dollar",
+      "kode": "AUD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -12.1869,
+      96.8283
+    ]
+  },
+  {
+    "id": "MO",
+    "navn": "Macao",
+    "en": "Macau",
+    "svar": [
+      "Makao"
+    ],
+    "hovedstad": "Macao",
+    "hovedstadEn": "Macau",
+    "hovedstadSvar": [
+      "Macau",
+      "Makao"
+    ],
+    "kontinent": "Asia",
+    "lat": 22.2,
+    "lng": 113.6,
+    "suveren": false,
+    "tilhorer": "CN",
+    "liten": true,
+    "flagg": "mo",
+    "naboer": [
+      "CN"
+    ],
+    "naboerSjo": [
+      "HK",
+      "TW",
+      "VN"
+    ],
+    "befolkning": 685900,
+    "befolkningAar": 2025,
+    "areal": 33,
+    "valuta": {
+      "navn": "macaosk pataca",
+      "kode": "MOP"
+    },
+    "sprak": [
+      "kantonesisk",
+      "portugisisk"
+    ],
+    "hovedstadPos": [
+      22.1933,
+      113.5394
+    ],
+    "bnp": 75902,
+    "bnpAar": 2025
+  },
+  {
+    "id": "MQ",
+    "navn": "Martinique",
+    "en": "Martinique",
+    "svar": [],
+    "hovedstad": "Fort-de-France",
+    "hovedstadEn": "Fort-de-France",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 14.7,
+    "lng": -61,
+    "suveren": false,
+    "tilhorer": "FR",
+    "flagg": "mq",
+    "naboer": [],
+    "naboerSjo": [
+      "DM",
+      "LC",
+      "GP",
+      "VC",
+      "BB",
+      "GD",
+      "MS"
+    ],
+    "befolkning": 360630,
+    "befolkningAar": 2023,
+    "areal": 1128,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "fransk"
+    ],
+    "hovedstadPos": [
+      14.6,
+      -61.0667
+    ]
+  },
+  {
+    "id": "YT",
+    "navn": "Mayotte",
+    "en": "Mayotte",
+    "svar": [],
+    "hovedstad": "Mamoudzou",
+    "hovedstadEn": "Mamoudzou",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -12.8,
+    "lng": 45.1,
+    "suveren": false,
+    "tilhorer": "FR",
+    "flagg": "yt",
+    "naboer": [],
+    "naboerSjo": [
+      "KM",
+      "TF",
+      "MG",
+      "SC",
+      "MZ"
+    ],
+    "befolkning": 320901,
+    "befolkningAar": 2024,
+    "areal": 374,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "fransk",
+      "shimaore"
+    ],
+    "hovedstadPos": [
+      -12.7814,
+      45.2317
+    ]
+  },
+  {
+    "id": "MS",
+    "navn": "Montserrat",
+    "en": "Montserrat",
+    "svar": [],
+    "hovedstad": "Brades",
+    "hovedstadEn": "Brades",
+    "hovedstadSvar": [
+      "Plymouth"
+    ],
+    "kontinent": "Nord-Amerika",
+    "lat": 16.7,
+    "lng": -62.2,
+    "suveren": false,
+    "tilhorer": "GB",
+    "liten": true,
+    "flagg": "ms",
+    "naboer": [],
+    "naboerSjo": [
+      "AG",
+      "GP",
+      "KN",
+      "BQ",
+      "DM",
+      "BL",
+      "MF"
+    ],
+    "befolkning": 5440,
+    "befolkningAar": 2023,
+    "areal": 102,
+    "valuta": {
+      "navn": "østkaribisk dollar",
+      "kode": "XCD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      16.7064,
+      -62.2158
+    ]
+  },
+  {
+    "id": "NU",
+    "navn": "Niue",
+    "en": "Niue",
+    "svar": [],
+    "hovedstad": "Alofi",
+    "hovedstadEn": "Alofi",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -19,
+    "lng": -169.9,
+    "suveren": false,
+    "tilhorer": "NZ",
+    "liten": true,
+    "flagg": "nu",
+    "naboer": [],
+    "naboerSjo": [
+      "TO",
+      "AS",
+      "WS"
+    ],
+    "befolkning": 1821,
+    "befolkningAar": 2025,
+    "areal": 260,
+    "valuta": {
+      "navn": "newzealandsk dollar",
+      "kode": "NZD"
+    },
+    "sprak": [
+      "niueansk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -19.056,
+      -169.921
+    ]
+  },
+  {
+    "id": "MP",
+    "navn": "Nord-Marianene",
+    "en": "Northern Mariana Islands",
+    "svar": [
+      "Nord-Mariana-øyene",
+      "Northern Marianas"
+    ],
+    "hovedstad": "Saipan",
+    "hovedstadEn": "Saipan",
+    "hovedstadSvar": [
+      "Capitol Hill"
+    ],
+    "kontinent": "Oseania",
+    "lat": 15.1,
+    "lng": 145.7,
+    "suveren": false,
+    "tilhorer": "US",
+    "flagg": "mp",
+    "naboer": [],
+    "naboerSjo": [
+      "GU",
+      "JP",
+      "FM"
+    ],
+    "befolkning": 43541,
+    "befolkningAar": 2025,
+    "areal": 464,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "chamorro",
+      "carolinsk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      15.2123,
+      145.7545
+    ],
+    "bnp": 23786,
+    "bnpAar": 2022
+  },
+  {
+    "id": "NF",
+    "navn": "Norfolkøya",
+    "en": "Norfolk Island",
+    "svar": [
+      "Norfolk"
+    ],
+    "hovedstad": "Kingston",
+    "hovedstadEn": "Kingston",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -29,
+    "lng": 168,
+    "suveren": false,
+    "tilhorer": "AU",
+    "liten": true,
+    "flagg": "nf",
+    "naboer": [],
+    "naboerSjo": [
+      "NZ",
+      "NC",
+      "AU"
+    ],
+    "befolkning": 1739,
+    "befolkningAar": 2021,
+    "areal": 35,
+    "valuta": {
+      "navn": "australsk dollar",
+      "kode": "AUD"
+    },
+    "sprak": [
+      "engelsk",
+      "norfuk"
+    ],
+    "hovedstadPos": [
+      -29.05,
+      167.9667
+    ]
+  },
+  {
+    "id": "NC",
+    "navn": "Ny-Caledonia",
+    "en": "New Caledonia",
+    "svar": [
+      "Nouvelle-Calédonie",
+      "Ny-Kaledonia"
+    ],
+    "hovedstad": "Nouméa",
+    "hovedstadEn": "Noumea",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -21.3,
+    "lng": 165.7,
+    "suveren": false,
+    "tilhorer": "FR",
+    "flagg": "nc",
+    "naboer": [],
+    "naboerSjo": [
+      "VU",
+      "FJ",
+      "NF"
+    ],
+    "befolkning": 295333,
+    "befolkningAar": 2025,
+    "areal": 18576,
+    "valuta": {
+      "navn": "CFP-franc",
+      "kode": "XPF"
+    },
+    "sprak": [
+      "fransk"
+    ],
+    "hovedstadPos": [
+      -22.2667,
+      166.45
+    ],
+    "bnp": 29213,
+    "bnpAar": 2024
+  },
+  {
+    "id": "PN",
+    "navn": "Pitcairnøyene",
+    "en": "Pitcairn Islands",
+    "svar": [
+      "Pitcairn",
+      "Pitcairn Island",
+      "Pitcairn, Henderson, Ducie og Oeno"
+    ],
+    "hovedstad": "Adamstown",
+    "hovedstadEn": "Adamstown",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -24.4,
+    "lng": -128.5,
+    "suveren": false,
+    "tilhorer": "GB",
+    "liten": true,
+    "flagg": "pn",
+    "naboer": [],
+    "naboerSjo": [
+      "PF",
+      "CL"
+    ],
+    "befolkning": 50,
+    "befolkningAar": 2019,
+    "areal": 47,
+    "valuta": {
+      "navn": "newzealandsk dollar",
+      "kode": "NZD"
+    },
+    "sprak": [
+      "engelsk",
+      "pitkernsk"
+    ],
+    "hovedstadPos": [
+      -25.0667,
+      -130.1
+    ]
+  },
+  {
+    "id": "PR",
+    "navn": "Puerto Rico",
+    "en": "Puerto Rico",
+    "svar": [],
+    "hovedstad": "San Juan",
+    "hovedstadEn": "San Juan",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 18.2,
+    "lng": -66.5,
+    "suveren": false,
+    "tilhorer": "US",
+    "flagg": "pr",
+    "naboer": [],
+    "naboerSjo": [
+      "VI",
+      "VG",
+      "DO",
+      "AI",
+      "BQ",
+      "SX",
+      "MF"
+    ],
+    "befolkning": 3184835,
+    "befolkningAar": 2025,
+    "areal": 8870,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "spansk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      18.4653,
+      -66.1167
+    ],
+    "bnp": 40620,
+    "bnpAar": 2025
+  },
+  {
+    "id": "RE",
+    "navn": "Réunion",
+    "en": "Reunion",
+    "svar": [
+      "La Réunion"
+    ],
+    "hovedstad": "Saint-Denis",
+    "hovedstadEn": "Saint-Denis",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -21.1,
+    "lng": 55.5,
+    "suveren": false,
+    "tilhorer": "FR",
+    "flagg": "re",
+    "naboer": [],
+    "naboerSjo": [
+      "MU",
+      "TF",
+      "MG"
+    ],
+    "befolkning": 889679,
+    "befolkningAar": 2023,
+    "areal": 2511,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "fransk",
+      "réunionkreolsk"
+    ],
+    "hovedstadPos": [
+      -20.8789,
+      55.4481
+    ]
+  },
+  {
+    "id": "SH",
+    "navn": "Saint Helena",
+    "en": "Saint Helena, Ascension and Tristan da Cunha",
+    "svar": [
+      "St. Helena",
+      "Ascension",
+      "Tristan da Cunha",
+      "Saint Helena, Ascension og Tristan da Cunha"
+    ],
+    "hovedstad": "Jamestown",
+    "hovedstadEn": "Jamestown",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -16,
+    "lng": -5.7,
+    "suveren": false,
+    "tilhorer": "GB",
+    "flagg": "sh",
+    "naboer": [],
+    "naboerSjo": [
+      "LR",
+      "CI",
+      "SL"
+    ],
+    "befolkning": 5633,
+    "befolkningAar": 2016,
+    "areal": 394,
+    "valuta": {
+      "navn": "sainthelensk pund",
+      "kode": "SHP"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      -15.9251,
+      -5.7179
+    ]
+  },
+  {
+    "id": "BL",
+    "navn": "Saint-Barthélemy",
+    "en": "Saint Barthelemy",
+    "svar": [
+      "St. Barthélemy",
+      "St. Barts",
+      "Saint-Barth"
+    ],
+    "hovedstad": "Gustavia",
+    "hovedstadEn": "Gustavia",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 17.9,
+    "lng": -62.8,
+    "suveren": false,
+    "tilhorer": "FR",
+    "liten": true,
+    "flagg": "bl",
+    "naboer": [],
+    "naboerSjo": [
+      "MF",
+      "SX",
+      "BQ",
+      "AI",
+      "KN",
+      "AG",
+      "MS"
+    ],
+    "befolkning": 10124,
+    "befolkningAar": 2018,
+    "areal": 21,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "fransk"
+    ],
+    "hovedstadPos": [
+      17.8986,
+      -62.8492
+    ]
+  },
+  {
+    "id": "MF",
+    "navn": "Saint-Martin",
+    "en": "Saint Martin",
+    "svar": [
+      "Saint Martin (fransk del)",
+      "St. Martin"
+    ],
+    "hovedstad": "Marigot",
+    "hovedstadEn": "Marigot",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 18.1,
+    "lng": -63.1,
+    "suveren": false,
+    "tilhorer": "FR",
+    "liten": true,
+    "flagg": "mf",
+    "naboer": [
+      "SX"
+    ],
+    "naboerSjo": [
+      "AI",
+      "BL",
+      "BQ",
+      "KN",
+      "AG",
+      "VG",
+      "VI"
+    ],
+    "befolkning": 24941,
+    "befolkningAar": 2025,
+    "areal": 53,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "fransk",
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      18.0667,
+      -63.0847
+    ],
+    "bnp": 21668,
+    "bnpAar": 2021
+  },
+  {
+    "id": "PM",
+    "navn": "Saint-Pierre og Miquelon",
+    "en": "Saint Pierre and Miquelon",
+    "svar": [
+      "St. Pierre og Miquelon",
+      "Saint-Pierre-et-Miquelon"
+    ],
+    "hovedstad": "Saint-Pierre",
+    "hovedstadEn": "Saint-Pierre",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 46.9,
+    "lng": -56.3,
+    "suveren": false,
+    "tilhorer": "FR",
+    "flagg": "pm",
+    "naboer": [],
+    "naboerSjo": [
+      "CA",
+      "US",
+      "GL"
+    ],
+    "befolkning": 5974,
+    "befolkningAar": 2019,
+    "areal": 242,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "fransk"
+    ],
+    "hovedstadPos": [
+      46.7778,
+      -56.1778
+    ]
+  },
+  {
+    "id": "SX",
+    "navn": "Sint Maarten",
+    "en": "Sint Maarten",
+    "svar": [
+      "Sint Maarten (nederlandsk del)",
+      "St. Maarten"
+    ],
+    "hovedstad": "Philipsburg",
+    "hovedstadEn": "Philipsburg",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 18,
+    "lng": -63.1,
+    "suveren": false,
+    "tilhorer": "NL",
+    "liten": true,
+    "flagg": "sx",
+    "naboer": [
+      "MF"
+    ],
+    "naboerSjo": [
+      "AI",
+      "BL",
+      "BQ",
+      "KN",
+      "VG",
+      "AG",
+      "VI"
+    ],
+    "befolkning": 43923,
+    "befolkningAar": 2025,
+    "areal": 34,
+    "valuta": {
+      "navn": "karibisk gylden",
+      "kode": "XCG"
+    },
+    "sprak": [
+      "engelsk",
+      "nederlandsk"
+    ],
+    "hovedstadPos": [
+      18.0242,
+      -63.0433
+    ],
+    "bnp": 42978,
+    "bnpAar": 2025
+  },
+  {
+    "id": "SJ",
+    "navn": "Svalbard",
+    "en": "Svalbard and Jan Mayen",
+    "svar": [
+      "Svalbard og Jan Mayen",
+      "Jan Mayen",
+      "Spitsbergen"
+    ],
+    "hovedstad": "Longyearbyen",
+    "hovedstadEn": "Longyearbyen",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 78.8,
+    "lng": 18.3,
+    "suveren": false,
+    "tilhorer": "NO",
+    "flagg": "sj",
+    "naboer": [],
+    "naboerSjo": [
+      "RU",
+      "NO",
+      "GL"
+    ],
+    "befolkning": 2905,
+    "befolkningAar": 2022,
+    "areal": 61399,
+    "valuta": {
+      "navn": "norsk krone",
+      "kode": "NOK"
+    },
+    "sprak": [
+      "norsk",
+      "russisk"
+    ],
+    "hovedstadPos": [
+      78.2232,
+      15.6469
+    ]
+  },
+  {
+    "id": "GS",
+    "navn": "Sør-Georgia og Sør-Sandwichøyene",
+    "en": "South Georgia and the South Sandwich Islands",
+    "svar": [
+      "Sør-Georgia",
+      "South Georgia",
+      "Sør-Sandwichøyene"
+    ],
+    "hovedstad": "King Edward Point",
+    "hovedstadEn": "King Edward Point",
+    "hovedstadSvar": [
+      "Grytviken"
+    ],
+    "kontinent": "Sør-Amerika",
+    "lat": -54.4,
+    "lng": -36.7,
+    "suveren": false,
+    "tilhorer": "GB",
+    "liten": true,
+    "flagg": "gs",
+    "naboer": [],
+    "naboerSjo": [
+      "FK",
+      "AR",
+      "CL"
+    ],
+    "befolkning": 35,
+    "befolkningAar": 2019,
+    "areal": 3903,
+    "valuta": {
+      "navn": "falklandspund",
+      "kode": "FKP"
+    },
+    "sprak": [],
+    "hovedstadPos": [
+      -54.2815,
+      -36.508
+    ]
+  },
+  {
+    "id": "TK",
+    "navn": "Tokelau",
+    "en": "Tokelau",
+    "svar": [],
+    "hovedstad": "",
+    "hovedstadEn": "",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -9,
+    "lng": -171.8,
+    "suveren": false,
+    "tilhorer": "NZ",
+    "liten": true,
+    "flagg": "tk",
+    "naboer": [],
+    "naboerSjo": [
+      "AS",
+      "KI",
+      "WS"
+    ],
+    "befolkning": 1499,
+    "befolkningAar": 2016,
+    "areal": 10,
+    "valuta": {
+      "navn": "newzealandsk dollar",
+      "kode": "NZD"
+    },
+    "sprak": [
+      "tokelauansk",
+      "engelsk"
+    ]
+  },
+  {
+    "id": "TC",
+    "navn": "Turks- og Caicosøyene",
+    "en": "Turks and Caicos Islands",
+    "svar": [
+      "Turks and Caicos",
+      "Turks- og Caicos"
+    ],
+    "hovedstad": "Cockburn Town",
+    "hovedstadEn": "Cockburn Town",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 21.8,
+    "lng": -71.9,
+    "suveren": false,
+    "tilhorer": "GB",
+    "flagg": "tc",
+    "naboer": [],
+    "naboerSjo": [
+      "BS",
+      "DO",
+      "HT",
+      "CU"
+    ],
+    "befolkning": 46855,
+    "befolkningAar": 2025,
+    "areal": 948,
+    "valuta": {
+      "navn": "amerikansk dollar",
+      "kode": "USD"
+    },
+    "sprak": [
+      "engelsk"
+    ],
+    "hovedstadPos": [
+      21.4603,
+      -71.1414
+    ],
+    "bnp": 37507,
+    "bnpAar": 2024
+  },
+  {
+    "id": "EH",
+    "navn": "Vest-Sahara",
+    "en": "Western Sahara",
+    "svar": [
+      "Sahrawi",
+      "Sahrawi Arab Democratic Republic"
+    ],
+    "hovedstad": "El Aaiún",
+    "hovedstadEn": "Laayoune",
+    "hovedstadSvar": [
+      "Laayoune",
+      "Al Ayoun"
+    ],
+    "kontinent": "Afrika",
+    "lat": 24.2,
+    "lng": -12.3,
+    "suveren": false,
+    "flagg": "eh",
+    "naboer": [
+      "DZ",
+      "MA",
+      "MR"
+    ],
+    "naboerSjo": [
+      "ML",
+      "ES",
+      "SN"
+    ],
+    "befolkning": 612000,
+    "befolkningAar": 2021,
+    "areal": 266000,
+    "valuta": {
+      "navn": "marokkansk dirham",
+      "kode": "MAD"
+    },
+    "sprak": [
+      "arabisk",
+      "spansk"
+    ],
+    "hovedstadPos": [
+      27.1536,
+      -13.2033
+    ]
+  },
+  {
+    "id": "WF",
+    "navn": "Wallis og Futuna",
+    "en": "Wallis and Futuna",
+    "svar": [
+      "Wallis"
+    ],
+    "hovedstad": "Mata-Utu",
+    "hovedstadEn": "Mata-Utu",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -13.7,
+    "lng": -177.1,
+    "suveren": false,
+    "tilhorer": "FR",
+    "liten": true,
+    "flagg": "wf",
+    "naboer": [],
+    "naboerSjo": [
+      "TO",
+      "FJ",
+      "WS"
+    ],
+    "befolkning": 11558,
+    "befolkningAar": 2018,
+    "areal": 142,
+    "valuta": {
+      "navn": "CFP-franc",
+      "kode": "XPF"
+    },
+    "sprak": [
+      "wallisisk",
+      "fransk"
+    ],
+    "hovedstadPos": [
+      -13.2827,
+      -176.1737
+    ]
+  },
+  {
+    "id": "AX",
+    "navn": "Åland",
+    "en": "Aland Islands",
+    "svar": [
+      "Ålandsøyene"
+    ],
+    "hovedstad": "Mariehamn",
+    "hovedstadEn": "Mariehamn",
+    "hovedstadSvar": [
+      "Maarianhamina"
+    ],
+    "kontinent": "Europa",
+    "lat": 60.2,
+    "lng": 20.1,
+    "suveren": false,
+    "tilhorer": "FI",
+    "flagg": "ax",
+    "naboer": [],
+    "naboerSjo": [
+      "FI",
+      "SE",
+      "EE",
+      "LV",
+      "RU",
+      "NO",
+      "LT"
+    ],
+    "befolkning": 30836,
+    "befolkningAar": 2025,
+    "areal": 1580,
+    "valuta": {
+      "navn": "euro",
+      "kode": "EUR"
+    },
+    "sprak": [
+      "svensk"
+    ],
+    "hovedstadPos": [
+      60.0986,
+      19.9444
+    ]
   }
 ]

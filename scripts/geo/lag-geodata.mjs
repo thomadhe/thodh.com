@@ -1,9 +1,14 @@
 // Rebuilds the geography game data in features/spill/data/geografi/:
-//   land.json   - the 197 quiz countries (names, answers, capitals, continent, centre)
-//   kart.json   - world map as precomputed SVG paths (Equal Earth, 1000 px wide)
-//   former.json - Worldle-style silhouettes (azimuthal equal-area, 200x200 box, 1:10m detail)
+//   land.json   - the 197 quiz countries first (suveren: true), then 51 territories (suveren: false):
+//                 names, answers, capitals, continent, centre, flag code, land/sea neighbours, population,
+//                 area, currency, languages, capital position, GDP per capita
+//   byer.json   - the 4 most populous cities per id (name, population, position)
+//   kart.json   - world map as precomputed SVG paths (Equal Earth, 1000 px wide), the 197 only
+//   former.json - Worldle-style silhouettes for all 248 (azimuthal equal-area, 200x200 box, 1:10m detail)
 //
-// Run: node scripts/geo/lag-geodata.mjs
+// Run: node scripts/geo/lag-geodata.mjs   (offline apart from the Natural Earth files, see below)
+// Statistics come from scripts/geo/kilder.json, a frozen snapshot made by scripts/geo/hent-kilder.mjs
+// (World Bank, Wikidata, GeoNames - sources listed there). Check the result with scripts/geo/sjekk-geodata.mjs.
 //
 // Sources and licences
 //   - Natural Earth 1:50m Admin 0 - Countries, via the `world-atlas` npm package
@@ -12,6 +17,14 @@
 //     (ne_10m_admin_0_countries.geojson, v5.1.2, public domain) from the nvkelso/natural-earth-vector
 //     mirror. The file is downloaded to %TEMP%/geo-10m/ on first run (or pass --ne10=<path>).
 //     It is projected with at most a 0.05 px Douglas-Peucker pass, so fjords and archipelagos stay.
+//   - Territories (omrade-data.mjs) and the land borders come from Natural Earth 1:10m Admin 0 - Map Units
+//     (ne_10m_admin_0_map_units.geojson, v5.1.2, same mirror and licence, cached next to the other file or pass
+//     --ne10-enheter=<path>): French overseas regions, Svalbard, Bonaire/Saba/Sint Eustatius and the like are
+//     separate units there, but part of the parent in the Countries file.
+//     Land neighbours (naboer) are units that share a border edge exactly (Natural Earth shares its border
+//     vertices), plus hand-checked corrections in ekstra-data.mjs. Sea neighbours (naboerSjo) are the closest
+//     other entries within 500 km coast to coast (extended up to 2500 km for remote islands until there are three).
+//   - Currency, languages: hand-written in ekstra-data.mjs. Flag codes: the lower-case id (flagcdn.com).
 //   - Tuvalu is missing from the 50m data (only used for kart.json): scripts/geo/tuvalu.geojson is extracted from
 //     Natural Earth 1:10m ne_10m_admin_0_countries (public domain, coordinates rounded to 4 decimals).
 //   - Country names, answers and capitals are hand-written facts in scripts/geo/land-data.mjs
@@ -32,6 +45,8 @@ import { geoArea, geoAzimuthalEqualArea, geoCentroid, geoContains, geoDistance, 
 import { feature, merge } from "topojson-client";
 import { presimplify, simplify, sphericalTriangleArea } from "topojson-simplify";
 import { ATLAS_NAVN, KONTINENT, LAND_RADER, SLAA_SAMMEN } from "./land-data.mjs";
+import { LITEN, OMRADE_RADER } from "./omrade-data.mjs";
+import { NABO_FJERN, NABO_LEGG_TIL, SPRAK_PER_ID, VALUTA, VALUTA_NAVN } from "./ekstra-data.mjs";
 
 const require = createRequire(import.meta.url);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -52,6 +67,15 @@ const FORM_MIN_OY_PX2 = 8;
 /** ...when their largest ring is smaller than this. */
 const FORM_SMAA_LAND_PX2 = 40;
 const NE10_URL = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_admin_0_countries.geojson";
+const NE10_ENHETER_URL = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_admin_0_map_units.geojson";
+/** Map units (GU_A3) folded into a quiz country when computing neighbours (same idea as NE10_SLAA_SAMMEN). */
+const ENHET_SLAA_SAMMEN = { SOL: "SO", CYN: "CY", CNM: "CY", ESB: "CY", WSB: "CY", KNX: "KR", KNZ: "KP", KAB: "KZ", NJM: "SJ" };
+/** Map units that share an ISO code with a country but are offshore/leased specks that must not count as neighbours. */
+const ENHET_IKKE_LAND = new Set(["BRI", "CLP", "CSI", "ATC", "JQI", "DQI", "FQI", "HQI", "WQI", "MQI", "BQI", "LQI", "KQI"]);
+const NABO_SJO_AVSTAND_KM = 500;
+const NABO_SJO_MAKS = 7;
+const NABO_SJO_MIN = 3;
+const NABO_SJO_UTVIDET_KM = 2500;
 /** 1:10m features (ADM0_A3) folded into a quiz country so it has no holes: Cyprus' sovereign bases and buffer zone, Baikonur, ... */
 const NE10_SLAA_SAMMEN = {
   SO: ["SOL"], // Somaliland
@@ -69,6 +93,11 @@ const SOR_GRENSE = -57;
 /** Silhouettes keep islands within this distance (km) of the already kept shape. */
 const STANDARD_AVSTAND_KM = 500;
 const AVSTAND_KM = {
+  PF: 60, // Tahiti with Moorea, Tetiaroa and Maiao; the rest of the archipelago would shrink Tahiti to a speck
+  CK: 230, // the southern group around Rarotonga
+  AS: 120, // Tutuila and the Manu'a Islands, not Swains Island and Rose Atoll
+  MP: 70, // Saipan, Tinian, Aguijan and Rota
+  NC: 200, // Grande Terre, the Loyalty Islands and the Isle of Pines
   KI: 300, // Kiritimati and neighbours; the full chain is invisible at 200 px
   FM: 300,
   MH: 300,
@@ -124,6 +153,14 @@ const rader = LAND_RADER.map(([id, navn, en, svar, hovedstad, hovedstadEn, hoved
 });
 if (rader.length !== 197) throw new Error(`Expected 197 countries, got ${rader.length}`);
 if (new Set(rader.map((r) => r.id)).size !== 197) throw new Error("Duplicate ids");
+
+const omradeRader = OMRADE_RADER.map(([id, navn, en, svar, hovedstad, hovedstadEn, hovedstadSvar, kont, tilhorer]) => {
+  if (!KONTINENT[kont]) throw new Error(`Unknown continent for ${id}`);
+  return { id, navn, en, svar, hovedstad, hovedstadEn, hovedstadSvar, kontinent: KONTINENT[kont], tilhorer };
+});
+const alleRader = [...rader, ...omradeRader];
+if (new Set(alleRader.map((r) => r.id)).size !== alleRader.length) throw new Error("Duplicate ids between countries and territories");
+for (const r of omradeRader) if (r.tilhorer && !rader.some((l) => l.id === r.tilhorer)) throw new Error(`${r.id} belongs to unknown ${r.tilhorer}`);
 
 /**
  * Per-id MultiPolygon coordinates (quiz countries) plus the background polygons, built from a
@@ -389,12 +426,12 @@ for (const rad of rader) {
 }
 
 // ---- 1:10m source ----------------------------------------------------------------------------------
-async function lesNe10() {
-  const arg = process.argv.find((a) => a.startsWith("--ne10="))?.slice("--ne10=".length);
-  const fil = arg ?? path.join(tmpdir(), "geo-10m", "dl", "ne_10m_admin_0_countries.geojson");
+async function lesNe10(url = NE10_URL, flagg = "--ne10=") {
+  const arg = process.argv.find((a) => a.startsWith(flagg))?.slice(flagg.length);
+  const fil = arg ?? path.join(tmpdir(), "geo-10m", "dl", url.split("/").pop());
   if (!existsSync(fil)) {
-    log(`Downloading ${NE10_URL}`);
-    const svar = await fetch(NE10_URL);
+    log(`Downloading ${url}`);
+    const svar = await fetch(url);
     if (!svar.ok) throw new Error(`Download failed: ${svar.status}`);
     mkdirSync(path.dirname(fil), { recursive: true });
     writeFileSync(fil, Buffer.from(await svar.arrayBuffer()));
@@ -482,6 +519,7 @@ function smeltSammen(multi) {
 
 /** Map a quiz country to its 1:10m features (ISO_A2_EH is also used by leased/offshore pieces of France, Brazil, ...). */
 const ne10Alle = await lesNe10();
+const ne10Enheter = await lesNe10(NE10_ENHETER_URL, "--ne10-enheter=");
 const ne10PerA3 = new Map(ne10Alle.map((f) => [f.properties.ADM0_A3, f]));
 const ne10Delmengder = new Set([...Object.values(NE10_SLAA_SAMMEN).flat(), ...NE10_IKKE_LAND]);
 function ne10Land(id) {
@@ -493,6 +531,13 @@ function ne10Land(id) {
     return f;
   });
   return [hoved[0], ...ekstra].flatMap((f) => rettViklingsretning(toMulti(f.geometry)));
+}
+
+/** A territory is one map unit (ISO_A2_EH) in the Map Units file. */
+function ne10Omrade(id) {
+  const enheter = ne10Enheter.filter((f) => f.properties.ISO_A2_EH === id && !ENHET_IKKE_LAND.has(f.properties.GU_A3));
+  if (enheter.length !== 1) throw new Error(`Expected one 1:10m map unit for ${id}, found ${enheter.length}`);
+  return rettViklingsretning(toMulti(enheter[0].geometry));
 }
 
 // ---- 1:10m silhouettes -----------------------------------------------------------------------------
@@ -548,12 +593,15 @@ function dp(punkter, eps) {
 const former = {};
 const formerStats = {};
 const droppet = {};
-for (const rad of rader) {
-  const { multi, parede } = smeltSammen(ne10Land(rad.id));
-  const { beholdt, droppet: bort } = velgForm(rad.id, multi, 200);
-  droppet[rad.id] = bort.map((b) => ({ areal: b.areal, c: b.c }));
+const formSentrum = {};
+
+/** Builds the path (and stats) for one id from its MultiPolygon coordinates. */
+function lagSilhuett(id, multi, parede) {
+  const { beholdt, droppet: bort } = velgForm(id, multi, 200);
+  droppet[id] = bort.map((b) => ({ areal: b.areal, c: b.c }));
 
   const [lng, lat] = geoCentroid({ type: "MultiPolygon", coordinates: beholdt });
+  formSentrum[id] = [lat, lng];
   const proj = geoAzimuthalEqualArea().rotate([-lng, -lat]).precision(0.1);
   const passe = (polygoner) =>
     proj.fitExtent(
@@ -605,12 +653,141 @@ for (const rad of rader) {
     x1 = Math.max(x1, boks.x1 / 100);
     y1 = Math.max(y1, boks.y1 / 100);
   }
-  if (deler.length === 0) throw new Error(`Silhouette for ${rad.id} is empty`);
-  former[rad.id] = deler.join("");
-  formerStats[rad.id] = { x0, y0, x1, y1, deler: deler.length, droppetDeler: beholdt.length - renset.length, parede };
+  if (deler.length === 0) throw new Error(`Silhouette for ${id} is empty`);
+  former[id] = deler.join("");
+  formerStats[id] = { x0, y0, x1, y1, deler: deler.length, droppetDeler: beholdt.length - renset.length, parede };
+}
+
+for (const rad of rader) {
+  const { multi, parede } = smeltSammen(ne10Land(rad.id));
+  lagSilhuett(rad.id, multi, parede);
+}
+for (const rad of omradeRader) lagSilhuett(rad.id, ne10Omrade(rad.id), 0);
+
+// ---- neighbours ----------------------------------------------------------------------------------------
+const alleIder = new Set(alleRader.map((r) => r.id));
+const enhetId = (p) => ENHET_SLAA_SAMMEN[p.GU_A3] ?? (!ENHET_IKKE_LAND.has(p.GU_A3) && alleIder.has(p.ISO_A2_EH) ? p.ISO_A2_EH : null);
+
+/** Land borders: two ids are neighbours when a border edge occurs in both (once forwards, once backwards). */
+function beregnLandnaboer() {
+  const nokkel = ([x, y]) => `${x === -180 ? 180 : x},${y}`;
+  const kanter = new Map();
+  for (const f of ne10Enheter) {
+    const id = enhetId(f.properties);
+    if (!id) continue;
+    for (const poly of toMulti(f.geometry)) {
+      for (const ring of poly) for (let i = 0; i + 1 < ring.length; i++) kanter.set(`${nokkel(ring[i])}>${nokkel(ring[i + 1])}`, id);
+    }
+  }
+  const nabo = new Map([...alleIder].map((id) => [id, new Set()]));
+  for (const [k, id] of kanter) {
+    const [a, b] = k.split(">");
+    const andre = kanter.get(`${b}>${a}`);
+    if (andre && andre !== id) {
+      nabo.get(id).add(andre);
+      nabo.get(andre).add(id);
+    }
+  }
+  for (const [a, b] of NABO_LEGG_TIL) {
+    if (!nabo.has(a) || !nabo.has(b)) throw new Error(`NABO_LEGG_TIL: unknown id in ${a}-${b}`);
+    nabo.get(a).add(b);
+    nabo.get(b).add(a);
+  }
+  for (const [a, b] of NABO_FJERN) {
+    nabo.get(a)?.delete(b);
+    nabo.get(b)?.delete(a);
+  }
+  return nabo;
+}
+const landnaboer = beregnLandnaboer();
+
+/** Shortest distance (km) between the coastlines of every pair of ids that are close to each other. */
+function kystAvstander() {
+  const xyz = ([lng, lat]) => {
+    const [la, lo] = [(lat * Math.PI) / 180, (lng * Math.PI) / 180];
+    return [RAD_KM * Math.cos(la) * Math.cos(lo), RAD_KM * Math.cos(la) * Math.sin(lo), RAD_KM * Math.sin(la)];
+  };
+  const pkt = [];
+  for (const f of ne10Enheter) {
+    const id = enhetId(f.properties);
+    if (!id) continue;
+    for (const poly of toMulti(f.geometry)) {
+      let forrige = null;
+      for (const c of poly[0]) {
+        const p = xyz(c);
+        if (!forrige || Math.hypot(p[0] - forrige[0], p[1] - forrige[1], p[2] - forrige[2]) >= 15) {
+          pkt.push({ id, p });
+          forrige = p;
+        }
+      }
+    }
+  }
+  const celle = NABO_SJO_AVSTAND_KM;
+  const rutenett = new Map();
+  const rutenokkel = (a, b, c) => `${a},${b},${c}`;
+  pkt.forEach((q, i) => {
+    const k = rutenokkel(...q.p.map((v) => Math.floor(v / celle)));
+    if (!rutenett.has(k)) rutenett.set(k, []);
+    rutenett.get(k).push(i);
+  });
+  const bue = (ch) => 2 * RAD_KM * Math.asin(ch / (2 * RAD_KM));
+  const best = new Map();
+  const sett = (a, b, d) => {
+    const k = a < b ? `${a}-${b}` : `${b}-${a}`;
+    if (!(best.get(k) <= d)) best.set(k, d);
+  };
+  for (const { id, p } of pkt) {
+    const [cx, cy, cz] = p.map((v) => Math.floor(v / celle));
+    for (let a = -1; a <= 1; a++)
+      for (let b = -1; b <= 1; b++)
+        for (let c = -1; c <= 1; c++) {
+          for (const j of rutenett.get(rutenokkel(cx + a, cy + b, cz + c)) ?? []) {
+            const q = pkt[j];
+            if (q.id === id) continue;
+            const ch = Math.hypot(p[0] - q.p[0], p[1] - q.p[1], p[2] - q.p[2]);
+            if (ch <= NABO_SJO_AVSTAND_KM) sett(id, q.id, bue(ch));
+          }
+        }
+  }
+  // Remote islands have nothing within 500 km, so look wider for them (brute force; they have few points).
+  const perId = new Map();
+  for (const q of pkt) (perId.get(q.id) ?? perId.set(q.id, []).get(q.id)).push(q);
+  const utvidet = new Map();
+  for (const [id, mine] of perId) {
+    const antall = [...best.keys()].filter((k) => k.split("-").includes(id)).length;
+    if (antall >= NABO_SJO_MIN) continue;
+    const prove = mine.filter((_, i) => i % Math.max(1, Math.ceil(mine.length / 400)) === 0);
+    const d = new Map();
+    for (const q of pkt) {
+      if (q.id === id) continue;
+      for (const m of prove) {
+        const ch = Math.hypot(m.p[0] - q.p[0], m.p[1] - q.p[1], m.p[2] - q.p[2]);
+        if (ch < NABO_SJO_UTVIDET_KM && !(d.get(q.id) <= ch)) d.set(q.id, ch);
+      }
+    }
+    utvidet.set(id, [...d].map(([andre, ch]) => [andre, bue(ch)]));
+  }
+  return { best, utvidet };
+}
+const kyst = kystAvstander();
+
+/** Closest entries across the sea that are not land neighbours, nearest first. */
+function sjoNaboer(id) {
+  const kandidater = new Map();
+  for (const [k, d] of kyst.best) {
+    const [a, b] = k.split("-");
+    if (a === id) kandidater.set(b, d);
+    else if (b === id) kandidater.set(a, d);
+  }
+  let liste = [...kandidater].filter(([andre]) => !landnaboer.get(id).has(andre)).sort((x, y) => x[1] - y[1]);
+  if (liste.length < NABO_SJO_MIN) {
+    liste = (kyst.utvidet.get(id) ?? []).filter(([andre]) => !landnaboer.get(id).has(andre)).sort((x, y) => x[1] - y[1]).slice(0, NABO_SJO_MIN);
+  }
+  return liste.slice(0, NABO_SJO_MAKS).map(([andre]) => andre);
 }
 
 // ---- land.json ---------------------------------------------------------------------------------
+const kilder = JSON.parse(readFileSync(path.join(ROOT, "scripts/geo/kilder.json"), "utf8"));
 const unik = (liste, ...utelatt) => {
   const sett = new Set(utelatt.map(norm));
   const ut = [];
@@ -623,33 +800,65 @@ const unik = (liste, ...utelatt) => {
   return ut;
 };
 
-const landListe = rader
-  .map((r) => ({
+const lagOppforing = (r, suveren) => {
+  const k = kilder.land[r.id];
+  if (!k) throw new Error(`kilder.json has no entry for ${r.id} - run hent-kilder.mjs`);
+  const kode = VALUTA[r.id];
+  if (kode === undefined) throw new Error(`No currency entry for ${r.id}`);
+  if (kode && !VALUTA_NAVN[kode]) throw new Error(`No Norwegian name for currency ${kode}`);
+  if (!SPRAK_PER_ID[r.id]) throw new Error(`No languages for ${r.id}`);
+  if (!k.befolkning || !k.areal) throw new Error(`Missing population/area for ${r.id}`);
+  const [lat, lng] = suveren ? sentrum[r.id] : [avrund(formSentrum[r.id][0]), avrund(formSentrum[r.id][1])];
+  const ut = {
     id: r.id,
     navn: r.navn,
     en: r.en,
     svar: unik(r.svar, r.navn, r.en),
     hovedstad: r.hovedstad,
     hovedstadEn: r.hovedstadEn,
-    hovedstadSvar: unik([r.hovedstadEn, ...r.hovedstadSvar], r.hovedstad),
+    hovedstadSvar: r.hovedstad ? unik([r.hovedstadEn, ...r.hovedstadSvar], r.hovedstad) : [],
     kontinent: r.kontinent,
-    lat: sentrum[r.id][0],
-    lng: sentrum[r.id][1],
-  }))
-  .sort((a, b) => a.navn.localeCompare(b.navn, "nb"));
+    lat,
+    lng,
+    suveren,
+  };
+  if (!suveren && r.tilhorer) ut.tilhorer = r.tilhorer;
+  if (!suveren && LITEN.has(r.id)) ut.liten = true;
+  ut.flagg = r.id.toLowerCase();
+  ut.naboer = [...landnaboer.get(r.id)].sort();
+  ut.naboerSjo = sjoNaboer(r.id);
+  ut.befolkning = k.befolkning.v;
+  if (k.befolkning.aar) ut.befolkningAar = k.befolkning.aar;
+  ut.areal = k.areal.v;
+  ut.valuta = kode ? { navn: VALUTA_NAVN[kode], kode } : null;
+  ut.sprak = SPRAK_PER_ID[r.id];
+  if (k.hovedstadPos) ut.hovedstadPos = k.hovedstadPos.pos;
+  if (k.bnp) {
+    ut.bnp = k.bnp.v;
+    ut.bnpAar = k.bnp.aar;
+  }
+  return ut;
+};
+const sorterNavn = (a, b) => a.navn.localeCompare(b.navn, "nb");
+const landListe = rader.map((r) => lagOppforing(r, true)).sort(sorterNavn);
+const omradeListe = omradeRader.map((r) => lagOppforing(r, false)).sort(sorterNavn);
+const alleListe = [...landListe, ...omradeListe];
+const byerListe = Object.fromEntries(alleListe.map((l) => [l.id, kilder.byer[l.id] ?? []]).sort(([a], [b]) => (a < b ? -1 : 1)));
 
 // ---- collisions ----------------------------------------------------------------------------------
-function sjekkKollisjoner(navn, hent) {
+function sjekkKollisjoner(navn, liste, hent, bareAdvarsel = () => false) {
   let feil = 0;
   for (const variant of [norm, grov]) {
     const tilLand = new Map();
-    for (const l of landListe) {
+    for (const l of liste) {
       for (const svar of hent(l)) {
         const n = variant(svar);
+        if (!n) continue;
         const finnes = tilLand.get(n);
         if (finnes && finnes !== l.id) {
-          feil++;
-          log(`KOLLISJON (${navn}, ${variant === norm ? "norm" : "grov"}): "${svar}" (${l.id}) = ${finnes}`);
+          const advarsel = bareAdvarsel(l.id, finnes);
+          if (!advarsel) feil++;
+          log(`${advarsel ? "Advarsel" : "KOLLISJON"} (${navn}, ${variant === norm ? "norm" : "grov"}): "${svar}" (${l.id}) = ${finnes}`);
         }
         tilLand.set(n, l.id);
       }
@@ -657,9 +866,12 @@ function sjekkKollisjoner(navn, hent) {
   }
   return feil;
 }
+// Country answers must be unique over all 248 entries. Capital answers only matter among the 197 (capital quiz);
+// a territory sharing a capital name with another entry (Kingston, George Town, ...) is only reported.
+const erSuveren = new Set(landListe.map((l) => l.id));
 const feil =
-  sjekkKollisjoner("land", (l) => [l.navn, l.en, ...l.svar]) +
-  sjekkKollisjoner("hovedstad", (l) => [l.hovedstad, l.hovedstadEn, ...l.hovedstadSvar]);
+  sjekkKollisjoner("land", alleListe, (l) => [l.navn, l.en, ...l.svar]) +
+  sjekkKollisjoner("hovedstad", alleListe, (l) => [l.hovedstad, l.hovedstadEn, ...l.hovedstadSvar], (a, b) => !(erSuveren.has(a) && erSuveren.has(b)));
 
 // ---- writing -------------------------------------------------------------------------------------
 mkdirSync(UT, { recursive: true });
@@ -669,7 +881,8 @@ const skriv = (fil, data, innrykk) => {
   log(`${fil}: ${(Buffer.byteLength(tekst) / 1024).toFixed(1)} KB`);
 };
 
-skriv("land.json", landListe, 2);
+skriv("land.json", alleListe, 2);
+skriv("byer.json", byerListe);
 skriv(
   "kart.json",
   { bredde: KART_BREDDE, hoyde: kartHoyde, land: kartLand, bakgrunn: bakgrunnDeler.join(""), punkter },
