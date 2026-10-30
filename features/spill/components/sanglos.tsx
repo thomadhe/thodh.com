@@ -7,7 +7,8 @@ import { SANG_KATEGORIER, TRINN, type SangKategori } from "../lib/sanglos"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
 export type SangValg = { id: string; title: string; artist: string }
-type Forsok = { id: string; sammeArtist: boolean } | null
+/** A guess; songs from the catalogue search keep their title and artist for display. */
+type Forsok = { id: string; sammeArtist: boolean; tittel?: string; artist?: string } | null
 type Fasit = { id: string; tittel: string; artist: string; aar: number; bilde?: string; lenke?: string }
 type Runde = { forsok: Forsok[]; status: "pagar" | "vunnet" | "tapt"; fasit?: Fasit }
 type Tilstand = { runder: Record<SangKategori, Runde>; resultat: Resultat }
@@ -28,6 +29,9 @@ async function spor<T>(body: unknown): Promise<T> {
   if (!svar.ok) throw new Error(data.melding ?? "Noe gikk galt.")
   return data as T
 }
+
+/** Same title and artist, ignoring versions ("- Radio Edit", "(feat. X)"). */
+const sangNokkel = (s: SangValg) => `${sok(s.title.split(/\s[-–]\s|\s?[([]/)[0])}|${sok(s.artist)}`
 
 function sok(tekst: string) {
   return tekst
@@ -198,17 +202,38 @@ function SangRunde({
   const ferdig = runde.status !== "pagar"
   const lengde = ferdig ? 30 : TRINN[Math.min(runde.forsok.length, TRINN.length - 1)]
 
+  const [katalog, setKatalog] = useState<{ q: string; treff: SangValg[] }>({ q: "", treff: [] })
+
+  // The whole iTunes catalogue is searched (debounced), so any song can be guessed.
+  useEffect(() => {
+    const q = sok(sporring)
+    if (q.length < 2) return
+    let aktiv = true
+    const t = setTimeout(() => {
+      spor<{ treff: SangValg[] }>({ type: "sok", q })
+        .then((s) => aktiv && setKatalog({ q, treff: s.treff }))
+        .catch(() => undefined)
+    }, 250)
+    return () => {
+      aktiv = false
+      clearTimeout(t)
+    }
+  }, [sporring])
+
   const treff = useMemo(() => {
     const q = sok(sporring)
     if (q.length < 2) return []
     const ord = q.split(" ")
-    return sanger
-      .filter((s) => {
-        const h = sok(`${s.title} ${s.artist}`)
-        return ord.every((o) => h.includes(o))
-      })
-      .slice(0, 8)
-  }, [sporring, sanger])
+    const lokale = sanger.filter((s) => {
+      const h = sok(`${s.title} ${s.artist}`)
+      return ord.every((o) => h.includes(o))
+    })
+    // Catalogue order first (no hint about which songs are in the daily list); the local list fills in
+    // while the search is loading or if it fails.
+    const fraKatalog = katalog.q === q ? katalog.treff : []
+    const sett = new Set(fraKatalog.map(sangNokkel))
+    return [...fraKatalog, ...lokale.filter((s) => !sett.has(sangNokkel(s)))].slice(0, 8)
+  }, [sporring, sanger, katalog])
 
   const hentFasit = useCallback(async () => {
     const f = await spor<Fasit>({ type: "fasit", dato, kategori }).catch(() => undefined)
@@ -238,12 +263,14 @@ function SangRunde({
           dato,
           kategori,
           sangId: forsok.id,
+          tittel: forsok.tittel,
+          artist: forsok.artist,
         }))
       }
       const n = runde.forsok.length
       oppdaterRunde((r) => {
         if (r.forsok.length !== n || r.status !== "pagar") return r
-        const alle = [...r.forsok, forsok ? { id: forsok.id, sammeArtist } : null]
+        const alle = [...r.forsok, forsok ? { ...forsok, sammeArtist } : null]
         return { ...r, forsok: alle, status: riktig ? "vunnet" : alle.length >= TRINN.length ? "tapt" : "pagar" }
       })
       setSporring("")
@@ -255,10 +282,11 @@ function SangRunde({
     }
   }
 
-  const velgTreff = (s: SangValg) => void registrer({ id: s.id, sammeArtist: false })
-  const navn = (id: string) => {
-    const s = sanger.find((x) => x.id === id)
-    return s ? `${s.title} – ${s.artist}` : id
+  const velgTreff = (s: SangValg) => void registrer({ id: s.id, sammeArtist: false, tittel: s.title, artist: s.artist })
+  const navn = (f: NonNullable<Forsok>) => {
+    if (f.tittel && f.artist) return `${f.tittel} – ${f.artist}`
+    const s = sanger.find((x) => x.id === f.id)
+    return s ? `${s.title} – ${s.artist}` : f.id
   }
 
   return (
@@ -408,7 +436,7 @@ function SangRunde({
           ) : null}
           <div className="mt-2 flex items-center justify-between px-1">
             <p className="font-mono text-[11px] text-neutral-500" role="status">
-              {melding ?? (sok(sporring).length >= 2 && !treff.length ? "Ingen treff i sanglisten." : "")}
+              {melding ?? (sok(sporring).length >= 2 && !treff.length ? "Ingen treff." : "")}
             </p>
             <button
               type="button"
@@ -442,7 +470,7 @@ function SangRunde({
             <li key={i} className={`flex h-10 items-center gap-3 rounded-xl border px-3.5 text-sm ${stil}`}>
               <span className="font-mono text-[10px]">{i + 1}</span>
               <span className="min-w-0 flex-1 truncate">
-                {!brukt ? "" : f === null ? "Hoppet over" : navn(f.id)}
+                {!brukt ? "" : f === null ? "Hoppet over" : navn(f)}
               </span>
               {brukt && f ? (
                 <span className="font-mono text-[10px] uppercase">{vinner ? "✓" : f.sammeArtist ? "Riktig artist" : "✕"}</span>
