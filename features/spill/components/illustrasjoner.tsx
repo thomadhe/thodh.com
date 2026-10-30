@@ -141,6 +141,19 @@ function Tilkoblinger() {
   )
 }
 
+function Havet() {
+  const poeng = [92, 40, 100, 15, 70, 0, 85, 55, 100]
+  return (
+    <div className="grid w-36 grid-cols-3 gap-1" aria-hidden="true">
+      {poeng.map((p, i) => (
+        <span key={i} className={`flex h-9 items-center justify-center rounded-md font-mono text-xs font-bold ${p >= 70 ? "bg-emerald-400 text-neutral-950" : p >= 40 ? "bg-amber-300 text-neutral-950" : "bg-black/40 text-white/60"}`}>
+          {p}
+        </span>
+      ))}
+    </div>
+  )
+}
+
 export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   "mer-eller-mindre": MerEllerMindre,
   anelseslos: Anelseslos,
@@ -152,4 +165,5 @@ export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   emovi: Emovi,
   rusle: Rusle,
   tilkoblinger: Tilkoblinger,
+  havet: Havet,
 }

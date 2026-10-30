@@ -23,6 +23,7 @@ export type IkonNavn =
   | "film"
   | "sti"
   | "grupper"
+  | "bolge"
 
 const omriss = "#111"
 
@@ -198,6 +199,14 @@ const tegninger: Record<IkonNavn, React.ReactNode> = {
       <rect x="17" y="17" width="8" height="4" rx="1" fill="#71717a" />
       <rect x="7" y="22" width="8" height="3" rx="1" fill="#71717a" />
       <rect x="17" y="22" width="8" height="3" rx="1" fill="#e879f9" />
+    </>
+  ),
+  bolge: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
+      <path d="M6 13c3-3 5 3 8 0s5 3 8 0 3-2 4-1" fill="none" stroke="#60a5fa" strokeWidth="2.5" />
+      <path d="M6 19c3-3 5 3 8 0s5 3 8 0 3-2 4-1" fill="none" stroke="#2563eb" strokeWidth="2.5" />
+      <path d="M6 25c3-3 5 3 8 0s5 3 8 0" fill="none" stroke="#1d4ed8" strokeWidth="2.5" />
     </>
   ),
 }

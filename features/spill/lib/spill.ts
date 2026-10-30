@@ -1,5 +1,5 @@
 /** Daily games: one puzzle per day, with calendar and stored results. */
-export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas" | "soket" | "emovi" | "rusle" | "tilkoblinger"
+export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas" | "soket" | "emovi" | "rusle" | "tilkoblinger" | "havet"
 /** Free-play quizzes without a daily puzzle. */
 export type QuizId = "verdens-land" | "hovedsteder"
 
@@ -104,6 +104,15 @@ export const spill: Spill[] = [
     regel: "Finn fire grupper med fire land som har noe til felles. Fire feil, og det er over.",
     ikon: "▤",
     farge: "bg-fuchsia-500 text-white",
+  },
+  {
+    id: "havet",
+    navn: "Havet",
+    href: "/spill/havet",
+    kort: "Ni land, ni kategorier. Hvor passer de best?",
+    regel: "Plasser hvert land i en kategori. Hver kategori brukes én gang, og du kan ikke angre.",
+    ikon: "≋",
+    farge: "bg-blue-600 text-white",
   },
 ]
 
