@@ -21,23 +21,53 @@ function km(n: number) {
   return `${Math.round(n).toLocaleString("nb-NO")} km`
 }
 
+/**
+ * Clueless-style bar: how full and how green the row is. Most guesses land between 50 and 100 %, so that
+ * range is stretched: ≤ 50 % is a red stub, ~75 % orange, ~90 % yellow, 97 %+ green.
+ */
+function styrke(p: number) {
+  return Math.min(1, Math.max(0, (p - 50) / 50)) ** 1.5
+}
+
+/** Hue anchors (proximity %, hue): red far away, orange around 85 %, green for neighbours (97 %+). */
+const FARGEANKRE: [number, number][] = [
+  [60, 4],
+  [75, 16],
+  [85, 30],
+  [92, 44],
+  [96, 90],
+  [98, 140],
+]
+
+function fargetone(p: number) {
+  if (p <= FARGEANKRE[0][0]) return FARGEANKRE[0][1]
+  for (let i = 1; i < FARGEANKRE.length; i++) {
+    const [p1, h1] = FARGEANKRE[i]
+    const [p0, h0] = FARGEANKRE[i - 1]
+    if (p <= p1) return h0 + ((p - p0) / (p1 - p0)) * (h1 - h0)
+  }
+  return FARGEANKRE.at(-1)![1]
+}
+
 function Rad({ gjett, fasit }: { gjett: Land; fasit: Land }) {
   const riktig = gjett.id === fasit.id
   const d = avstand(gjett, fasit)
   const p = riktig ? 100 : naerhet(d)
+  const s = riktig ? 1 : styrke(p)
+  const farge = `hsl(${fargetone(p)} 62% 42%)`
   return (
-    <li className="grid h-11 grid-cols-[1fr_auto_auto_3.5rem] items-center gap-3 rounded-xl bg-neutral-100 px-3.5 text-sm">
-      <span className="truncate font-medium text-neutral-950">{gjett.navn}</span>
-      <span className="font-mono text-xs tabular-nums text-neutral-600">{riktig ? "" : km(d)}</span>
-      <span className="flex w-5 justify-center text-neutral-700">
-        {riktig ? "🎉" : <ArrowUp className="h-4 w-4" style={{ transform: `rotate(${retning(gjett, fasit)}deg)` }} />}
-      </span>
+    <li className="relative h-11 overflow-hidden rounded-xl bg-neutral-100 text-sm">
       <span
-        className={`rounded-md py-1 text-center font-mono text-xs font-semibold tabular-nums ${
-          riktig ? "bg-emerald-500 text-white" : p >= 90 ? "bg-amber-600 text-white" : "bg-neutral-200 text-neutral-700"
-        }`}
-      >
-        {p} %
+        className="absolute inset-y-0 left-0 transition-[width] duration-700 ease-out"
+        style={{ width: `${6 + 94 * s}%`, background: farge }}
+      />
+      <span className="relative grid h-full grid-cols-[1fr_auto_auto_3rem] items-center gap-3 px-3.5 text-neutral-950 [text-shadow:0_1px_1px_rgb(0_0_0/0.35)]">
+        <span className="truncate font-medium">{gjett.navn}</span>
+        <span className="font-mono text-xs tabular-nums">{riktig ? "" : km(d)}</span>
+        <span className="flex w-5 justify-center">
+          {riktig ? "🎉" : <ArrowUp className="h-4 w-4" style={{ transform: `rotate(${retning(gjett, fasit)}deg)` }} />}
+        </span>
+        <span className="text-right font-mono text-xs font-semibold tabular-nums">{p} %</span>
       </span>
     </li>
   )
