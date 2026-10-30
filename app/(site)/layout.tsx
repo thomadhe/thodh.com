@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -30,6 +31,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full bg-background font-sans text-foreground">
         {children}
+        {/* Cookie-free visitor counts (Vercel Web Analytics), to see how many play each day. */}
+        <Analytics />
       </body>
     </html>
   );
