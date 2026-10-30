@@ -68,7 +68,7 @@ function renderClocks() {
   }
   $('#turn-timer').textContent = formatClock(values.deadline);
   $('#timer-state').textContent = state.status === 'finished' ? 'Ferdig' : state.startedAt === null ? 'Pause' : colorName(state.turn);
-  $('#clock-increment').textContent = `+ ${state.settings.players[state.turn].increment} sek / trekk`;
+  $('#clock-increment').textContent = state.settings.players[state.turn].increment ? `+${state.settings.players[state.turn].increment} s / trekk` : '';
   const duration = state.settings.players[state.turn].deadline * 1000;
   $('#timer-progress').style.width = `${duration ? Math.min(100, values.deadline / duration * 100) : 100}%`;
   $('.clock-panel').classList.toggle('urgent', values.deadline !== null && values.deadline <= 10000 && state.status === 'playing');
@@ -116,13 +116,13 @@ function render() {
   $('#invite-panel').hidden = !(mode === 'online' && state.status === 'waiting' && room?.inviteToken);
   if (room?.inviteToken) $('#invite-link').value = `${location.origin}${location.pathname}#room=${room.id}&invite=${room.inviteToken}`;
   $('#move-count').textContent = `${state.moves.length} trekk`;
-  $('#history').innerHTML = state.moves.length ? Array.from({ length: Math.ceil(state.moves.length / 2) }, (_, i) => `<div class="move-row"><span class="move-number">${i + 1}.</span><span>${state.moves[2 * i].san.replace('#', '')}</span><span>${(state.moves[2 * i + 1]?.san ?? '—').replace('#', '')}</span></div>`).join('') : '<p class="empty-history">Kvelden starter med første trekk.</p>';
+  $('#history').innerHTML = state.moves.length ? Array.from({ length: Math.ceil(state.moves.length / 2) }, (_, i) => `<div class="move-row"><span class="move-number">${i + 1}.</span><span>${state.moves[2 * i].san.replace('#', '')}</span><span>${(state.moves[2 * i + 1]?.san ?? '—').replace('#', '')}</span></div>`).join('') : '<p class="empty-history">Ingen trekk ennå.</p>';
   $('#history').scrollTop = $('#history').scrollHeight;
   const training = state.settings.variant === 'training';
   $('#variant-label').textContent = training ? 'EN AKTIV RUNDE' : 'EN LITEN VRI';
   $('#variant-icon').textContent = training ? '💪' : '😈';
   $('#variant-title').textContent = training ? 'En brikke mindre. En øvelse mer.' : 'En brikke mindre. Et plagg mindre.';
-  $('#variant-description').textContent = training ? Object.entries(state.settings.exercises).filter(([, reps]) => reps).map(([name, reps]) => `${reps} ${name}`).join(' · ') : 'Mister du en brikke? Ta av ett plagg!';
+  $('#variant-description').textContent = training ? Object.entries(state.settings.exercises).filter(([, reps]) => reps).map(([name, reps]) => `${reps} ${name}`).join(' · ') : 'Vinneren får massasje.';
   $('#variant-prize').textContent = training ? 'Sjakk for hodet. Bevegelse for kroppen.' : 'Vinneren? Massasjetid.';
   renderClocks();
   syncNotice();
@@ -220,7 +220,7 @@ $('#resign').addEventListener('click', () => { $('#resign-dialog').classList.tog
 $('#resign-cancel').addEventListener('click', () => $('#resign-dialog').close());
 $('#resign-confirm').addEventListener('click', () => { $('#resign-dialog').close(); perform({ type: 'resign' }); });
 
-$('#player-settings').innerHTML = ['w', 'b'].map(color => `<section class="time-player"><h3>${colorName(color)}</h3>${[['total', 'Tid for hele partiet'], ['increment', 'Tillegg per trekk'], ['deadline', 'Egen frist per trekk']].map(([key, label]) => `<label>${label}<span class="input-with-unit"><input id="${color}-${key}" aria-label="${colorName(color)}: ${label}" type="number" min="0" step="any" value="${key === 'deadline' ? 60 : 0}" required /><select id="${color}-${key}-unit" aria-label="Enhet for ${colorName(color).toLowerCase()}: ${label.toLowerCase()}"><option value="1">sekunder</option><option value="60">minutter</option></select></span></label>`).join('')}</section>`).join('');
+$('#player-settings').innerHTML = ['w', 'b'].map(color => `<section class="time-player"><h3>${colorName(color)}</h3>${[['total', 'Partitid'], ['increment', 'Tillegg per trekk'], ['deadline', 'Trekkfrist']].map(([key, label]) => `<label>${label}<span class="input-with-unit"><input id="${color}-${key}" aria-label="${colorName(color)}: ${label}" type="number" min="0" step="any" value="${key === 'deadline' ? 60 : 0}" required /><select id="${color}-${key}-unit" aria-label="Enhet for ${colorName(color).toLowerCase()}: ${label.toLowerCase()}"><option value="1">sek</option><option value="60">min</option></select></span></label>`).join('')}</section>`).join('');
 function loadSettingsForm(settings) {
   $('#variant').value = settings.variant;
   for (const color of ['w', 'b']) for (const key of ['total', 'increment', 'deadline']) {
@@ -228,6 +228,8 @@ function loadSettingsForm(settings) {
     $(`#${color}-${key}-unit`).value = '1';
   }
   for (const name of ['burpees', 'pushups', 'squats']) $(`#reps-${name}`).value = settings.exercises[name];
+  const { total, increment } = settings.players.w;
+  for (const b of document.querySelectorAll('[data-preset]')) b.setAttribute('aria-pressed', String(b.dataset.preset === `${total},${increment}`));
   refreshSetup();
 }
 function readSettingsForm() {
@@ -241,7 +243,7 @@ function refreshSetup() {
   $('#exercise-settings').hidden = $('#variant').value !== 'training';
   $('#host-color-field').hidden = $('#play-mode').value !== 'online';
   $('#start-game').textContent = $('#play-mode').value === 'online' ? 'Opprett invitasjonslenke' : 'Start parti';
-  $('#setup-note').textContent = state.status === 'playing' ? (mode === 'online' ? 'Dette starter et nytt parti. Det pågående nettspillet fortsetter til en spiller gir opp eller tiden går ut.' : 'Et nytt parti erstatter det pågående spillet.') : '';
+  $('#setup-note').textContent = state.status === 'playing' ? (mode === 'online' ? 'Nettpartiet som pågår, fortsetter.' : 'Partiet som pågår, avsluttes.') : '';
 }
 function openSetup() {
   if (mode === 'local' && state.startedAt !== null) {
@@ -257,6 +259,7 @@ $('#play-mode').addEventListener('change', refreshSetup);
 $('.presets').addEventListener('click', event => {
   const button = event.target.closest('[data-preset]'); if (!button) return;
   const [total, increment] = button.dataset.preset.split(',');
+  for (const b of document.querySelectorAll('[data-preset]')) b.setAttribute('aria-pressed', String(b === button));
   for (const color of ['w', 'b']) { $(`#${color}-total`).value = total; $(`#${color}-total-unit`).value = '1'; $(`#${color}-increment`).value = increment; $(`#${color}-increment-unit`).value = '1'; }
 });
 $('#setup-form').addEventListener('submit', async event => {

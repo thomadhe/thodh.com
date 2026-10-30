@@ -50,7 +50,11 @@ function sammeForm(x: unknown, mal: unknown): boolean {
 
 function harSammeForm(lagret: unknown, mal: object) {
   const status = (lagret as { resultat?: { status?: unknown } } | null)?.resultat?.status
-  return sammeForm(lagret, mal) && ["pagar", "vunnet", "tapt", "ferdig"].includes(status as string)
+  // A version field must match exactly; the shape check alone only compares types.
+  const versjon = (x: unknown) => (x as { v?: unknown } | null)?.v
+  return (
+    sammeForm(lagret, mal) && versjon(lagret) === versjon(mal) && ["pagar", "vunnet", "tapt", "ferdig"].includes(status as string)
+  )
 }
 
 /** Game state persisted for one date. `startverdi` must be stable for a given date. */

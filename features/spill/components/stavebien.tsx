@@ -11,9 +11,9 @@ import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 /** A day's word plus URLs of its pre-recorded audio, when generated. */
 export type StaveOrd = StavebienWord & { lyd?: Partial<Record<LydDel, string>> }
 
-// v2: five words per day. Older saves (ten words) fail the shape check and start fresh.
-type Tilstand = { v: 2; svar: string[]; resultat: Resultat }
-const tom = (): Tilstand => ({ v: 2, svar: [], resultat: { status: "pagar" } })
+// v3: English words. Older saves (Norwegian words) are dropped by the version check.
+type Tilstand = { v: 3; svar: string[]; resultat: Resultat }
+const tom = (): Tilstand => ({ v: 3, svar: [], resultat: { status: "pagar" } })
 
 function abonnerStemmer(varsle: () => void) {
   if (!("speechSynthesis" in window)) return () => {}
@@ -21,23 +21,24 @@ function abonnerStemmer(varsle: () => void) {
   return () => speechSynthesis.removeEventListener("voiceschanged", varsle)
 }
 
-function finnNorskStemme() {
+/** Fallback voice when a clip is missing: the most natural English voice the browser has. */
+function finnStemme() {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return undefined
-  const stemmer = speechSynthesis.getVoices().filter((v) => /^(nb|no|nn)(-|_|$)/i.test(v.lang))
+  const stemmer = speechSynthesis.getVoices().filter((v) => /^en(-|_|$)/i.test(v.lang))
   // Neural voices (Edge "Natural", Google, Apple premium) sound far less robotic than the old desktop ones.
   const poeng = (v: SpeechSynthesisVoice) =>
-    (/natural|neural|online|premium|enhanced|google/i.test(v.name) ? 2 : 0) + (/^nn/i.test(v.lang) ? 0 : 1)
+    (/natural|neural|online|premium|enhanced|google/i.test(v.name) ? 2 : 0) + (/^en[-_]US/i.test(v.lang) ? 1 : 0)
   return stemmer.sort((a, b) => poeng(b) - poeng(a))[0]
 }
 
-/** "ja" / "nei" / "laster" — whether a Norwegian voice is installed. */
-function useNorskStemme() {
+/** "ja" / "nei" / "laster" — whether an English voice is installed. */
+function useStemme() {
   return useSyncExternalStore(
     abonnerStemmer,
     () => {
       if (!("speechSynthesis" in window)) return "nei"
       if (speechSynthesis.getVoices().length === 0) return "laster"
-      return finnNorskStemme() ? "ja" : "nei"
+      return finnStemme() ? "ja" : "nei"
     },
     () => "laster",
   )
@@ -50,26 +51,24 @@ function stoppLyd() {
   if (typeof window !== "undefined" && "speechSynthesis" in window) speechSynthesis.cancel()
 }
 
-function si(tekst: string, sakte = false) {
-  const stemme = finnNorskStemme()
+function si(tekst: string) {
+  const stemme = finnStemme()
   if (!stemme) return
   stoppLyd()
   const u = new SpeechSynthesisUtterance(tekst)
   u.voice = stemme
   u.lang = stemme.lang
-  u.rate = sakte ? 0.6 : 0.9
+  u.rate = 0.9
   speechSynthesis.speak(u)
 }
 
 /** Plays the recorded clip when there is one, otherwise falls back to the browser's voice. */
-function les(o: StaveOrd, del: LydDel, sakte = false) {
+function les(o: StaveOrd, del: LydDel) {
   const url = o.lyd?.[del]
-  if (!url) return si(lydTekst(o, del), sakte)
+  if (!url) return si(lydTekst(o, del))
   stoppLyd()
   spiller = new Audio(url)
-  spiller.playbackRate = sakte ? 0.65 : 1
-  spiller.preservesPitch = true
-  spiller.play().catch(() => si(lydTekst(o, del), sakte))
+  spiller.play().catch(() => si(lydTekst(o, del)))
 }
 
 function LesKnapp({ onClick, etikett }: { onClick: () => void; etikett: string }) {
@@ -113,7 +112,7 @@ function Sammenlign({ svar, fasit }: { svar: string; fasit: string }) {
 
 export function Stavebien({ dato, ord }: { dato: string; ord: StaveOrd[] }) {
   const { verdi, lastet, oppdater } = useDagligTilstand<Tilstand>("stavebien", dato, tom)
-  const stemme = useNorskStemme()
+  const stemme = useStemme()
   const [tekst, setTekst] = useState("")
   const [vist, setVist] = useState<Set<"definisjon" | "setning" | "opprinnelse">>(new Set())
   const [tilbakemelding, setTilbakemelding] = useState<number | null>(null)
@@ -148,7 +147,7 @@ export function Stavebien({ dato, ord }: { dato: string; ord: StaveOrd[] }) {
       const feil = alle.length - riktige
       const slutt = alle.length >= ord.length || feil >= LIV
       return {
-        v: 2,
+        v: 3,
         svar: alle,
         resultat: slutt
           ? { status: riktige === ord.length ? "vunnet" : "ferdig", etikett: `${riktige}/${ord.length}`, poeng: riktige }
@@ -199,11 +198,10 @@ export function Stavebien({ dato, ord }: { dato: string; ord: StaveOrd[] }) {
 
         {utenStemme ? (
           <p className="mx-auto mt-4 max-w-sm rounded-2xl bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-900">
-            Fant ingen norsk stemme i nettleseren, så du får definisjon og eksempel i stedet. På Windows kan du legge til
-            «Norsk bokmål» under Innstillinger → Tid og språk → Tale.
+            Ingen engelsk stemme i nettleseren. Bruk definisjon og eksempel.
           </p>
         ) : (
-          <div className="mt-5 flex items-center justify-center gap-2">
+          <div className="mt-5 flex items-center justify-center">
             <button
               type="button"
               onClick={() => les(naa, "ord")}
@@ -212,16 +210,6 @@ export function Stavebien({ dato, ord }: { dato: string; ord: StaveOrd[] }) {
               aria-label="Hør ordet"
             >
               🔊
-            </button>
-            <button
-              type="button"
-              onClick={() => les(naa, "ord", true)}
-              disabled={!harLyd("ord")}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-[var(--spill-flate)] text-base transition hover:bg-neutral-50 disabled:opacity-50"
-              aria-label="Hør ordet sakte"
-              title="Sakte"
-            >
-              🐢
             </button>
           </div>
         )}
@@ -340,7 +328,7 @@ function Resultat({ dato, ord, svar }: { dato: string; ord: StavebienWord[]; sva
           <span className="text-2xl text-neutral-400">/{ord.length}</span>
         </p>
         <p className="mt-2 text-sm text-neutral-500">
-          {riktige === ord.length ? "Feilfritt! Du er dagens bie. 🐝" : riktige >= 7 ? "Sterkt stavet." : "Ordene ble vanskelige."}
+          {riktige === ord.length ? "Feilfritt! Du er dagens bie. 🐝" : riktige >= 4 ? "Sterkt stavet." : "Ordene ble vanskelige."}
         </p>
         <div className="mt-6 grid grid-cols-2 gap-3 text-left">
           <div className="rounded-2xl bg-neutral-50 p-3">

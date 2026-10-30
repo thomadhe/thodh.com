@@ -3,7 +3,6 @@ import { Sanglos } from "@/features/spill/components/sanglos"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
 import { sanglosSanger } from "@/features/spill/data/sanglos/sanger"
 import { velgDato } from "@/features/spill/lib/dag"
-import { TRINN } from "@/features/spill/lib/sanglos"
 
 export const metadata: Metadata = {
   title: "Sangløs",
@@ -22,14 +21,8 @@ export default async function Page({ searchParams }: PageProps<"/spill/sanglos">
       dato={dato}
       regler={
         <>
-          <p>
-            Tre sanger hver dag: én fra alle sjangre, én rock og én hip hop. Du får {TRINN.length} forsøk, og utdraget blir
-            lengre for hver feil eller hopp ({TRINN.map((t) => t.toLocaleString("nb-NO")).join(" → ")} sekunder). Gult
-            betyr riktig artist, men feil sang. Velg blant {sanger.length} sanger i søket.
-          </p>
-          <p className="font-mono text-[11px] text-neutral-400">
-            Lydklippene er 30 sekunders forhåndslytting fra Apple Music og spilles direkte fra Apple.
-          </p>
+          <p>Tre låter hver dag: Alle, Rock og Hip hop. Gult betyr riktig artist, feil låt.</p>
+          <p className="font-mono text-[11px] text-neutral-400">Klipp: forhåndslytting fra Apple Music.</p>
         </>
       }
     >

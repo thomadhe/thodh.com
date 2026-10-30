@@ -77,30 +77,25 @@ body {
 @layer components {
   /* thodhOS: the retro desktop on the front page. Generic 90s bevels, original artwork. */
   .os {
-    --os-flate: #c3c3bd;
+    --os-flate: #c0c0c0;
     --os-lys: #ffffff;
-    --os-skygge: #7d7d76;
-    --os-mork: #1b1b18;
-    --os-tittel: #23206b;
-    --os-tittel-2: #d9607a;
+    --os-skygge: #808080;
+    --os-mork: #0a0a0a;
+    --os-tittel: #000080;
+    --os-tittel-2: #1084d0;
     font-family: Tahoma, Verdana, "Segoe UI", system-ui, sans-serif;
     font-size: 13px;
     color: #111;
   }
 
   .os-skrivebord {
-    /* Dusk over a dithered horizon: 98-era pixels, our own colours. */
-    background-color: #1d1c52;
-    background-image:
-      radial-gradient(rgb(255 255 255 / 0.07) 1px, transparent 1px),
-      radial-gradient(ellipse 60% 38% at 78% 112%, rgb(255 176 120 / 0.55), transparent 70%),
-      linear-gradient(180deg, #14134a 0%, #2e2275 38%, #6a3a8c 66%, #c75d7c 88%, #f08f6a 100%);
-    background-size: 3px 3px, 100% 100%, 100% 100%;
+    /* The classic teal desktop. */
+    background-color: #008080;
   }
 
   .os-merke {
     /* Huge outlined wordmark behind the icons. */
-    -webkit-text-stroke: 1px rgb(255 255 255 / 0.16);
+    -webkit-text-stroke: 1px rgb(255 255 255 / 0.14);
     color: transparent;
     letter-spacing: -0.06em;
   }
@@ -116,19 +111,6 @@ body {
     animation: os-apne 140ms ease-out;
   }
 
-  @keyframes os-sky {
-    from {
-      transform: translateX(-30vw);
-    }
-    to {
-      transform: translateX(130vw);
-    }
-  }
-
-  .os-sky {
-    animation: os-sky linear infinite;
-  }
-
   @keyframes os-blink {
     50% {
       opacity: 0;
@@ -141,7 +123,6 @@ body {
 
   @media (prefers-reduced-motion: reduce) {
     .os-apne,
-    .os-sky,
     .os-blink {
       animation: none;
     }
@@ -153,7 +134,7 @@ body {
       inset -1px -1px var(--os-mork),
       inset 1px 1px var(--os-lys),
       inset -2px -2px var(--os-skygge),
-      inset 2px 2px #e4e4de;
+      inset 2px 2px #dfdfdf;
   }
 
   .os-inn {
@@ -161,7 +142,7 @@ body {
     box-shadow:
       inset -1px -1px var(--os-lys),
       inset 1px 1px var(--os-skygge),
-      inset -2px -2px #e4e4de,
+      inset -2px -2px #dfdfdf,
       inset 2px 2px var(--os-mork);
   }
 
@@ -171,7 +152,7 @@ body {
       inset -1px -1px var(--os-mork),
       inset 1px 1px var(--os-lys),
       inset -2px -2px var(--os-skygge),
-      inset 2px 2px #e4e4de;
+      inset 2px 2px #dfdfdf;
     padding: 4px 14px;
     min-height: 26px;
   }
@@ -181,7 +162,7 @@ body {
     box-shadow:
       inset -1px -1px var(--os-lys),
       inset 1px 1px var(--os-mork),
-      inset -2px -2px #e4e4de,
+      inset -2px -2px #dfdfdf,
       inset 2px 2px var(--os-skygge);
   }
 

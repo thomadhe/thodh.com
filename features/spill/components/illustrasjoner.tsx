@@ -37,7 +37,7 @@ function Stavebien() {
         <Volume2 className="h-8 w-8" strokeWidth={2.5} />
       </span>
       <span className="-ml-3 flex h-12 items-center gap-2 bg-black/40 pr-6 pl-6 font-mono text-2xl text-white [clip-path:polygon(0_0,88%_0,100%_50%,88%_100%,0_100%)]">
-        {["Æ", "Ø", "Å"].map((t) => (
+        {["A", "B", "C"].map((t) => (
           <span key={t} className="border-b-2 border-white/80 leading-7">
             {t}
           </span>
@@ -64,9 +64,21 @@ function Sanglos() {
   )
 }
 
+function Omriss() {
+  return (
+    <svg viewBox="0 0 120 80" className="h-20 w-auto" aria-hidden="true">
+      <path
+        d="M38 8l14 6 9-4 12 7 15-2 6 12-6 9 9 11-8 13-13 2-6 9-12-4-11 5-7-11-12-3 3-14-9-10 8-12Z"
+        className="fill-sky-400"
+      />
+    </svg>
+  )
+}
+
 export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   "mer-eller-mindre": MerEllerMindre,
   anelseslos: Anelseslos,
   stavebien: Stavebien,
   sanglos: Sanglos,
+  omriss: Omriss,
 }

@@ -1,7 +1,10 @@
-export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos"
+/** Daily games: one puzzle per day, with calendar and stored results. */
+export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss"
+/** Free-play quizzes without a daily puzzle. */
+export type QuizId = "verdens-land" | "hovedsteder"
 
-export type Spill = {
-  id: SpillId
+export type Spill<Id extends string = SpillId> = {
+  id: Id
   navn: string
   href: string
   kort: string
@@ -16,8 +19,8 @@ export const spill: Spill[] = [
     id: "mer-eller-mindre",
     navn: "Mer eller mindre",
     href: "/spill/mer-eller-mindre",
-    kort: "Hva er størst? Ikke tenk for lenge.",
-    regel: "Velg det alternativet som har mest. Fem kategorier, fem runder i hver.",
+    kort: "Hva er størst?",
+    regel: "Velg den som har mest. Fem kategorier, fem runder.",
     ikon: "⇅",
     farge: "bg-emerald-600 text-white",
   },
@@ -25,8 +28,8 @@ export const spill: Spill[] = [
     id: "anelseslos",
     navn: "Anelsesløs",
     href: "/spill/anelseslos",
-    kort: "Finn det hemmelige engelske ordet. Hver gjetning bringer deg nærmere.",
-    regel: "Skriv et engelsk ord. Tallet viser hvor langt unna betydningen er det hemmelige ordet – 1 er riktig.",
+    kort: "Finn det hemmelige ordet.",
+    regel: "Gjett engelske ord. Tallet viser hvor nær du er – 1 er riktig.",
     ikon: "?",
     farge: "bg-amber-500 text-neutral-950",
   },
@@ -34,22 +37,52 @@ export const spill: Spill[] = [
     id: "stavebien",
     navn: "Stavebien",
     href: "/spill/stavebien",
-    kort: "Hør ordet og stav det riktig. Det blir vanskeligere.",
-    regel: "Lytt til ordet og skriv det. Fem ord, ett fra hvert nivå, og tre liv.",
-    ikon: "Æ",
+    kort: "Hør ordet. Stav det.",
+    regel: "Fem engelske ord, fra lett til vanskelig. Tre liv.",
+    ikon: "Aa",
     farge: "bg-yellow-300 text-neutral-950",
   },
   {
     id: "sanglos",
     navn: "Sangløs",
     href: "/spill/sanglos",
-    kort: "Du kan denne sangen – men klarer du den på 0,13 sekunder?",
-    regel: "Lytt til et lite utdrag og gjett sangen. Hver feil eller hopp låser opp mer av låta.",
+    kort: "Kjenner du låta på 0,13 sekunder?",
+    regel: "Gjett låta. Hver feil gir deg litt mer av den.",
     ikon: "♪",
     farge: "bg-violet-600 text-white",
   },
+  {
+    id: "omriss",
+    navn: "Omriss",
+    href: "/spill/omriss",
+    kort: "Hvilket land er dette?",
+    regel: "Gjett landet ut fra formen. Seks forsøk, med avstand og retning som hint.",
+    ikon: "◆",
+    farge: "bg-sky-500 text-neutral-950",
+  },
 ]
 
-export function finnSpill(id: SpillId) {
-  return spill.find((s) => s.id === id)!
+export const quizer: Spill<QuizId>[] = [
+  {
+    id: "verdens-land",
+    navn: "Verdens land",
+    href: "/spill/verdens-land",
+    kort: "Hvor mange av verdens 197 land klarer du?",
+    regel: "Skriv land. 15 minutter.",
+    ikon: "◍",
+    farge: "bg-cyan-400 text-neutral-950",
+  },
+  {
+    id: "hovedsteder",
+    navn: "Hovedsteder",
+    href: "/spill/hovedsteder",
+    kort: "Hovedstaden i alle verdens land.",
+    regel: "Skriv hovedsteder. 15 minutter.",
+    ikon: "★",
+    farge: "bg-fuchsia-400 text-neutral-950",
+  },
+]
+
+export function finnSpill(id: SpillId | QuizId): Spill<SpillId | QuizId> {
+  return [...spill, ...quizer].find((s) => s.id === id)!
 }

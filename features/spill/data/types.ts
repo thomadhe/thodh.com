@@ -34,17 +34,17 @@ export type MerEllerMindreCategory = {
 }
 
 export type StavebienWord = {
-  /** Correct Bokmål spelling, lowercase unless a proper noun. */
+  /** Correct American English spelling, lowercase. */
   word: string
   /** 1 (easy) to 5 (very hard). */
   level: 1 | 2 | 3 | 4 | 5
-  /** Short original Norwegian definition that does not contain the word itself. */
+  /** Short original English definition that does not contain the word itself. */
   definition: string
-  /** Original example sentence. Use "___" where the word appears. */
+  /** Original English example sentence. Use "___" where the word appears. */
   sentence: string
-  /** Short origin note, e.g. "Fra fransk". */
+  /** Short origin note, e.g. "From French". */
   origin: string
-  /** Common accepted alternative Bokmål spellings, if any. */
+  /** Accepted alternative spellings, mainly British ("colour" for "color"), if any. */
   alternatives?: string[]
 }
 

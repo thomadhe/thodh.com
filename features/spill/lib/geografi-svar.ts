@@ -1,0 +1,84 @@
+import { land, type Land } from "./geografi"
+
+/** Lowercase a–z only, so "Côte d'Ivoire" → "cotedivoire" and "Sør-Sudan" = "Sor-Sudan" → "sorsudan". */
+export function normaliser(s: string) {
+  return s
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/æ/g, "ae")
+    .replace(/ø/g, "o")
+    .replace(/[^a-z]/g, "")
+}
+
+function oppslag(navn: (l: Land) => string[]) {
+  const kart = new Map<string, string[]>()
+  for (const l of land) {
+    for (const n of navn(l)) {
+      const k = normaliser(n)
+      if (!k) continue
+      const ider = kart.get(k) ?? []
+      if (!ider.includes(l.id)) kart.set(k, [...ider, l.id])
+    }
+  }
+  return kart
+}
+
+export type QuizModus = "land" | "hovedsteder"
+
+const svarKart: Record<QuizModus, Map<string, string[]>> = {
+  land: oppslag((l) => [l.navn, l.en, ...l.svar]),
+  hovedsteder: oppslag((l) => [l.hovedstad, l.hovedstadEn, ...l.hovedstadSvar]),
+}
+
+/** Country ids an answer matches exactly (after normalising). Empty when nothing matches. */
+export function finnSvar(modus: QuizModus, tekst: string): string[] {
+  return svarKart[modus].get(normaliser(tekst)) ?? []
+}
+
+export const landEtterId = new Map(land.map((l) => [l.id, l]))
+
+/** Autocomplete for the Omriss guess field: names starting with (then containing) the text. */
+export function forslag(tekst: string, maks = 6): Land[] {
+  const t = normaliser(tekst)
+  if (!t) return []
+  const navn = (l: Land) => [l.navn, l.en, ...l.svar].map(normaliser)
+  const start = land.filter((l) => navn(l).some((n) => n.startsWith(t)))
+  const inni = land.filter((l) => !start.includes(l) && navn(l).some((n) => n.includes(t)))
+  return [...start, ...inni].slice(0, maks)
+}
+
+/**
+ * Omriss sends the client a key instead of the answer, so it is not in plain sight in the page.
+ * (Anyone determined can still hash all 197 countries; this only spares casual spoilers.)
+ */
+export function omrissNokkel(id: string, dato: string) {
+  let h = 0x811c9dc5
+  for (const c of `omriss:${dato}:${id}`) h = Math.imul(h ^ c.charCodeAt(0), 0x01000193)
+  return (h >>> 0).toString(36)
+}
+
+const R = 6371
+
+/** Great-circle distance in km between two countries' centres. */
+export function avstand(a: Land, b: Land) {
+  const rad = Math.PI / 180
+  const dLat = (b.lat - a.lat) * rad
+  const dLng = (b.lng - a.lng) * rad
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) ** 2
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)))
+}
+
+/** Initial compass bearing (degrees, 0 = north) from a towards b. */
+export function retning(a: Land, b: Land) {
+  const rad = Math.PI / 180
+  const y = Math.sin((b.lng - a.lng) * rad) * Math.cos(b.lat * rad)
+  const x =
+    Math.cos(a.lat * rad) * Math.sin(b.lat * rad) - Math.sin(a.lat * rad) * Math.cos(b.lat * rad) * Math.cos((b.lng - a.lng) * rad)
+  return ((Math.atan2(y, x) / rad) + 360) % 360
+}
+
+/** 100 % = same place, 0 % = the other side of the planet. */
+export function naerhet(km: number) {
+  return Math.max(0, Math.round(100 * (1 - km / 20015)))
+}

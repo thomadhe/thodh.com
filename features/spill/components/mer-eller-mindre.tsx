@@ -7,10 +7,10 @@ import { useDagligTilstand, useResultater, type Resultat } from "../lib/lagring"
 import type { MelItem, MelKategori, MelRunde } from "../lib/mer-eller-mindre"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
-// v2: fixed daily slots. Older saves belong to other rounds, fail the shape check and start fresh.
-type Tilstand = { v: 2; svar: (0 | 1)[]; resultat: Resultat }
+// v3: new daily slots and chained rounds. Older saves belong to other rounds and start fresh.
+type Tilstand = { v: 3; svar: (0 | 1)[]; resultat: Resultat }
 
-const tom = (): Tilstand => ({ v: 2, svar: [], resultat: { status: "pagar" } })
+const tom = (): Tilstand => ({ v: 3, svar: [], resultat: { status: "pagar" } })
 const VIS_SVAR_MS = 1500
 
 function Teller({ verdi, format }: { verdi: number; format: MelKategori["format"] }) {
@@ -64,6 +64,7 @@ function ValgKort({
   vinner,
   valgt,
   tast,
+  kjent = false,
 }: {
   item: MelRunde["a"]
   kategori: MelKategori
@@ -72,6 +73,8 @@ function ValgKort({
   vinner: boolean
   valgt: boolean
   tast: string
+  /** The left card carries over from the previous round, so its value is already known. */
+  kjent?: boolean
 }) {
   const ramme = !avslort
     ? "border-black/5 hover:-translate-y-0.5 hover:border-black/15 hover:shadow-md"
@@ -104,12 +107,12 @@ function ValgKort({
       {item.detail ? <span className="mt-1 font-mono text-[10px] text-neutral-400">{item.detail}</span> : null}
       <span
         className={`mt-4 min-h-12 text-lg font-semibold tabular-nums tracking-tight transition ${
-          avslort ? (vinner ? "text-emerald-700" : "text-neutral-700") : "text-transparent"
+          avslort ? (vinner ? "text-emerald-700" : "text-neutral-700") : kjent ? "text-neutral-700" : "text-transparent"
         }`}
       >
-        {avslort ? (
+        {avslort || kjent ? (
           <>
-            <Teller verdi={item.value} format={kategori.format} />
+            {kjent ? formaterVerdi(item.value, kategori.format) : <Teller verdi={item.value} format={kategori.format} />}
             {kategori.unit ? <span className="block text-[11px] font-normal text-neutral-500">{kategori.unit}</span> : null}
           </>
         ) : (
@@ -162,9 +165,9 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
     oppdater((t) => {
       if (t.svar.length !== n) return t
       const svar = [...t.svar, valg]
-      if (svar.length < totalt) return { v: 2, svar, resultat: { status: "pagar", etikett: `${svar.length}/${totalt} runder` } }
+      if (svar.length < totalt) return { v: 3, svar, resultat: { status: "pagar", etikett: `${svar.length}/${totalt} runder` } }
       const poeng = svar.filter((s, i) => s === runder[i].fasit).length
-      return { v: 2, svar, resultat: { status: "ferdig", etikett: `${poeng}/${totalt}`, poeng } }
+      return { v: 3, svar, resultat: { status: "ferdig", etikett: `${poeng}/${totalt}`, poeng } }
     })
     setVisning(n)
     tidsur.current = setTimeout(() => setVisning(null), VIS_SVAR_MS)
@@ -237,6 +240,7 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
               vinner={runde.fasit === 0}
               valgt={svart === 0}
               tast="1"
+              kjent
             />
             <ValgKort
               item={runde.b}

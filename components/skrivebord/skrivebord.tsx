@@ -1,44 +1,60 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react"
 import { useAlleResultater } from "@/features/spill/lib/lagring"
+import type { SpillId } from "@/features/spill/lib/spill"
 import { CONTACT_EMAIL } from "@/lib/projects"
 import { Ikon, type IkonNavn } from "./ikoner"
-import { OmThodh, Papirkurv, Side } from "./innhold"
+import { OmThodh, Papirkurv } from "./innhold"
 
 // thodh 98: the front page is a small desktop where games and apps are programs you open.
-// Internal pages open in framed windows that can be moved, resized, minimised and maximised.
+// Games and pages open full screen; only the little system dialogs are movable windows.
 
 type Program = {
   id: string
   navn: string
-  /** Internal path (opens in a window), https URL (new tab) or a built-in window id. */
+  /** Internal path (full page), https URL (new tab) or a built-in window id. */
   mal: string
   ikon?: IkonNavn
   logo?: string
-  b: number
-  h: number
+  b?: number
+  h?: number
+  /** Daily game whose status shows in the "I dag" gadget. */
+  spill?: SpillId
 }
 
+const dagligeProgrammer: Program[] = [
+  { id: "mel", navn: "Mer eller mindre", mal: "/spill/mer-eller-mindre", ikon: "mel", spill: "mer-eller-mindre" },
+  { id: "anelse", navn: "Anelsesløs", mal: "/spill/anelseslos", ikon: "anelse", spill: "anelseslos" },
+  { id: "bie", navn: "Stavebien", mal: "/spill/stavebien", ikon: "bie", spill: "stavebien" },
+  { id: "note", navn: "Sangløs", mal: "/spill/sanglos", ikon: "note", spill: "sanglos" },
+  { id: "omriss", navn: "Omriss", mal: "/spill/omriss", ikon: "form", spill: "omriss" },
+]
+
 const spillProgrammer: Program[] = [
-  { id: "mel", navn: "Mer eller mindre", mal: "/spill/mer-eller-mindre", ikon: "mel", b: 520, h: 760 },
-  { id: "anelse", navn: "Anelsesløs", mal: "/spill/anelseslos", ikon: "anelse", b: 520, h: 760 },
-  { id: "bie", navn: "Stavebien", mal: "/spill/stavebien", ikon: "bie", b: 520, h: 760 },
-  { id: "note", navn: "Sangløs", mal: "/spill/sanglos", ikon: "note", b: 520, h: 760 },
-  { id: "sjakk", navn: "Sjakk for 2", mal: "/sjakk", logo: "/sjakk/favicon.svg", b: 980, h: 720 },
+  { id: "land", navn: "Verdens land", mal: "/spill/verdens-land", ikon: "jord" },
+  { id: "hovedsteder", navn: "Hovedsteder", mal: "/spill/hovedsteder", ikon: "stjerne" },
+  { id: "sjakk", navn: "Sjakk for 2", mal: "/sjakk", logo: "/sjakk/favicon.svg" },
 ]
 
 const appProgrammer: Program[] = [
-  { id: "karriere", navn: "Karrierepiloten", mal: "https://karrierepiloten.com", logo: "/logos/karrierepiloten.jpg", b: 0, h: 0 },
+  { id: "karriere", navn: "Karrierepiloten", mal: "https://karrierepiloten.com", logo: "/logos/karrierepiloten.jpg" },
 ]
 
 const systemProgrammer: Program[] = [
   { id: "papirkurv", navn: "Papirkurv", mal: "papirkurv", ikon: "papirkurv", b: 340, h: 170 },
   { id: "om", navn: "Om thodh.com", mal: "om", ikon: "datamaskin", b: 420, h: 330 },
-  { id: "konto", navn: "Konto", mal: "/konto", ikon: "person", b: 520, h: 640 },
+  { id: "konto", navn: "Konto", mal: "/konto", ikon: "person" },
 ]
 
-const alleProgrammer = [...spillProgrammer, ...appProgrammer, ...systemProgrammer]
+const alleProgrammer = [...dagligeProgrammer, ...spillProgrammer, ...appProgrammer, ...systemProgrammer]
+
+const grupper: (readonly [string, Program[]])[] = [
+  ["Daglig", dagligeProgrammer],
+  ["Spill", spillProgrammer],
+  ["Apper", appProgrammer],
+]
 
 type Vindu = { mal: string; x: number; y: number; b: number; h: number; z: number; min: boolean; maks: boolean }
 
@@ -196,42 +212,34 @@ const status: Record<string, [string, string]> = {
   pagar: ["…", "bg-[#f0c64a] text-black"],
 }
 
-const spillId: Record<string, "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos"> = {
-  mel: "mer-eller-mindre",
-  anelse: "anelseslos",
-  bie: "stavebien",
-  note: "sanglos",
-}
-
 /** Desktop gadget with today's games, their status and the time left until new ones. */
 function DagensSpill({ apne }: { apne: (mal: string) => void }) {
   const resultater = useAlleResultater()
   const dato = useIDag()
   const nedtelling = useNedtelling()
-  const spill = spillProgrammer.filter((p) => spillId[p.id])
+  const spill = dagligeProgrammer
   const ferdige = spill.filter((p) => {
-    const r = resultater[spillId[p.id]]?.[dato]
+    const r = resultater[p.spill!]?.[dato]
     return r && r.status !== "pagar"
   }).length
   return (
-    <aside className="os-ut os-apne w-64 p-[3px]" aria-label="Dagens spill">
+    <aside className="os-ut os-apne w-60 p-[3px]" aria-label="Dagens spill">
       <div className="os-tittellinje flex h-6 items-center gap-1.5 px-1.5 text-[12px] font-bold" data-aktiv="true">
-        <Ikon navn="spillmappe" storrelse={16} />
-        Dagens spill
+        <Ikon navn="spillmappe" storrelse={16} />I dag
         <span className="ml-auto font-normal opacity-80">
           {ferdige}/{spill.length}
         </span>
       </div>
       <ul className="os-inn mt-[3px] divide-y divide-neutral-200">
         {spill.map((p) => {
-          const r = resultater[spillId[p.id]]?.[dato]
-          const [merke, stil] = r ? status[r.status] : ["Ny", "bg-[#23206b] text-white"]
+          const r = resultater[p.spill!]?.[dato]
+          const [merke, stil] = r ? status[r.status] : ["Ny", "bg-[var(--os-tittel)] text-white"]
           return (
             <li key={p.id}>
               <button
                 type="button"
                 onClick={() => apne(p.mal)}
-                className="flex w-full items-center gap-2 px-2 py-1.5 text-left text-[12px] hover:bg-[#23206b] hover:text-white"
+                className="flex w-full items-center gap-2 px-2 py-1.5 text-left text-[12px] hover:bg-[var(--os-tittel)] hover:text-white"
               >
                 <ProgramIkon p={p} storrelse={20} />
                 <span className="flex-1">{p.navn}</span>
@@ -243,41 +251,16 @@ function DagensSpill({ apne }: { apne: (mal: string) => void }) {
         })}
       </ul>
       <p className="px-1.5 pt-1.5 pb-0.5 text-[11px] text-neutral-700" suppressHydrationWarning>
-        {nedtelling ? <>Nye spill om {nedtelling}</> : " "}
+        {nedtelling ? <>Nye om {nedtelling}</> : " "}
       </p>
     </aside>
-  )
-}
-
-/** Slow pixel clouds drifting across the dusk. Pure decoration. */
-function Skyer() {
-  const skyer = [
-    { top: "14%", varighet: 140, forsinkelse: -20, skala: 1 },
-    { top: "31%", varighet: 190, forsinkelse: -120, skala: 0.7 },
-    { top: "52%", varighet: 160, forsinkelse: -70, skala: 1.3 },
-  ]
-  return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden opacity-25">
-      {skyer.map((s, i) => (
-        <div
-          key={i}
-          className="os-sky absolute left-0"
-          style={{ top: s.top, animationDuration: `${s.varighet}s`, animationDelay: `${s.forsinkelse}s` }}
-        >
-          <div style={{ transform: `scale(${s.skala})` }}>
-            <div className="ml-6 h-3 w-10 bg-white" />
-            <div className="ml-2 h-3 w-20 bg-white" />
-            <div className="h-3 w-28 bg-white" />
-          </div>
-        </div>
-      ))}
-    </div>
   )
 }
 
 // ---- desktop ----
 
 export function Skrivebord() {
+  const router = useRouter()
   const liten = useLiten()
   const klokke = useKlokke()
   const [vinduer, setVinduer] = useState<Vindu[]>([])
@@ -302,6 +285,12 @@ export function Skrivebord() {
       window.open(mal, mal.startsWith("mailto:") ? "_self" : "_blank", "noopener")
       return
     }
+    if (mal.startsWith("/")) {
+      // Games get the whole screen. Chess is a static page outside the Next router.
+      if (mal.startsWith("/sjakk")) window.location.assign(mal)
+      else router.push(mal)
+      return
+    }
     const z = nesteZ.current++
     setVinduer((vs) => {
       if (vs.some((v) => v.mal === mal)) return vs.map((v) => (v.mal === mal ? { ...v, z, min: false } : v))
@@ -314,7 +303,7 @@ export function Skrivebord() {
       const y = Math.max(8, Math.min((rom.height - h) / 3 + n * 26, rom.height - h - 8))
       return [...vs, { mal, x, y, b, h, z, min: false, maks: false }]
     })
-  }, [])
+  }, [router])
 
   const endre = (mal: string, endring: Partial<Vindu>) =>
     setVinduer((vs) => vs.map((v) => (v.mal === mal ? { ...v, ...endring } : v)))
@@ -363,11 +352,7 @@ export function Skrivebord() {
     return [p?.navn ?? mal, p ? <ProgramIkon p={p} storrelse={16} /> : <Ikon navn="nett" storrelse={16} />]
   }
 
-  const innhold = (v: Vindu) => {
-    if (v.mal === "om") return <OmThodh lukk={() => lukk(v.mal)} />
-    if (v.mal === "papirkurv") return <Papirkurv />
-    return <Side href={v.mal} aktiv={v.mal === aktivMal} />
-  }
+  const innhold = (v: Vindu) => (v.mal === "om" ? <OmThodh lukk={() => lukk(v.mal)} /> : <Papirkurv />)
 
   const ikon = (p: Program) => (
     <SkrivebordIkon key={p.id} p={p} valgt={valgt === p.id} velg={() => setValgt(p.id)} apne={() => apne(p.mal)} />
@@ -376,7 +361,6 @@ export function Skrivebord() {
   return (
     <div className="os os-skrivebord fixed inset-0 overflow-hidden text-black select-none">
       <h1 className="sr-only">thodh.com – spill og apper</h1>
-      <Skyer />
       <p
         aria-hidden="true"
         className="os-merke pointer-events-none absolute right-[-0.04em] bottom-[30px] text-[clamp(6rem,22vw,20rem)] leading-none font-black"
@@ -396,13 +380,10 @@ export function Skrivebord() {
         }}
       >
         <nav aria-label="Programmer" className="pointer-events-none absolute inset-0 flex flex-col gap-3 p-2 sm:flex-row sm:gap-1">
-          {[
-            ["Spill", spillProgrammer],
-            ["Apper", appProgrammer],
-          ].map(([tittel, liste]) => (
-            <div key={tittel as string} className="pointer-events-auto flex flex-col">
-              <p className="mb-0.5 px-2 font-mono text-[10px] tracking-[0.25em] text-white/50 uppercase">{tittel as string}</p>
-              <div className="grid grid-cols-4 gap-y-1 sm:grid-cols-1">{(liste as Program[]).map(ikon)}</div>
+          {grupper.map(([tittel, liste]) => (
+            <div key={tittel} className="pointer-events-auto flex flex-col">
+              <p className="mb-0.5 px-2 text-[10px] tracking-[0.2em] text-white/70 uppercase">{tittel}</p>
+              <div className="grid grid-cols-4 gap-y-1 sm:grid-cols-1">{liste.map(ikon)}</div>
             </div>
           ))}
         </nav>
@@ -455,26 +436,22 @@ export function Skrivebord() {
 
       {start ? (
         <div className="os-ut os-apne absolute bottom-[38px] left-0.5 z-[10000] flex w-64 p-[3px]" role="menu">
-          <div className="flex w-7 items-end justify-center bg-gradient-to-t from-[#23206b] to-[#d9607a] pb-2">
+          <div className="flex w-7 items-end justify-center bg-gradient-to-t from-[var(--os-tittel)] to-[var(--os-tittel-2)] pb-2">
             <span className="rotate-180 text-[15px] font-bold tracking-wide text-white [writing-mode:vertical-rl]">
               thodh<span className="font-normal">98</span>
             </span>
           </div>
           <div className="flex-1 py-1">
-            {[
-              ["Spill", spillProgrammer],
-              ["Apper", appProgrammer],
-              ["", systemProgrammer.filter((p) => p.id !== "papirkurv")],
-            ].map(([tittel, liste], i) => (
+            {[...grupper, ["", systemProgrammer.filter((p) => p.id !== "papirkurv")] as const].map(([tittel, liste], i) => (
               <div key={i} className={i ? "mt-1 border-t border-[var(--os-skygge)] pt-1 shadow-[inset_0_1px_#fff]" : ""}>
-                {tittel ? <p className="px-2 pt-0.5 text-[10px] tracking-widest text-neutral-600 uppercase">{tittel as string}</p> : null}
-                {(liste as Program[]).map((p) => (
+                {tittel ? <p className="px-2 pt-0.5 text-[10px] tracking-widest text-neutral-600 uppercase">{tittel}</p> : null}
+                {liste.map((p) => (
                   <button
                     key={p.id}
                     type="button"
                     role="menuitem"
                     onClick={() => apne(p.mal)}
-                    className="flex w-full items-center gap-2.5 px-2 py-1 text-left text-[12px] hover:bg-[#23206b] hover:text-white focus:bg-[#23206b] focus:text-white focus:outline-none"
+                    className="flex w-full items-center gap-2.5 px-2 py-1 text-left text-[12px] hover:bg-[var(--os-tittel)] hover:text-white focus:bg-[var(--os-tittel)] focus:text-white focus:outline-none"
                   >
                     <ProgramIkon p={p} storrelse={20} />
                     {p.navn}
@@ -498,7 +475,7 @@ export function Skrivebord() {
           <span className="grid h-4 w-4 grid-cols-2 gap-px" aria-hidden="true">
             <span className="bg-[#d9607a]" />
             <span className="bg-[#f0c64a]" />
-            <span className="bg-[#23206b]" />
+            <span className="bg-[#000080]" />
             <span className="bg-[#2f9e5b]" />
           </span>
           Start

@@ -6,7 +6,7 @@ import { velgDato } from "@/features/spill/lib/dag"
 
 export const metadata: Metadata = {
   title: "Daglige minigames",
-  description: "Fire små daglige spill: Mer eller mindre, Anelsesløs, Stavebien og Sangløs.",
+  description: "Små daglige spill: Mer eller mindre, Anelsesløs, Stavebien, Sangløs og Omriss.",
 }
 
 export default async function Page({ searchParams }: PageProps<"/spill">) {
@@ -28,7 +28,7 @@ export default async function Page({ searchParams }: PageProps<"/spill">) {
           </h1>
           <SpillOversikt key={dato} dato={dato} />
           <p className="text-center font-mono text-[11px] leading-6 text-neutral-500">
-            Nye spill hver natt kl. 00 norsk tid. Gikk du glipp av en dag? Trykk på datoen.
+            Nye spill hver natt.
           </p>
         </main>
       </div>

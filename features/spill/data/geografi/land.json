@@ -1,0 +1,2720 @@
+[
+  {
+    "id": "AF",
+    "navn": "Afghanistan",
+    "en": "Afghanistan",
+    "svar": [],
+    "hovedstad": "Kabul",
+    "hovedstadEn": "Kabul",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 33.8,
+    "lng": 65.9
+  },
+  {
+    "id": "AL",
+    "navn": "Albania",
+    "en": "Albania",
+    "svar": [],
+    "hovedstad": "Tirana",
+    "hovedstadEn": "Tirana",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 41.1,
+    "lng": 20.1
+  },
+  {
+    "id": "DZ",
+    "navn": "Algerie",
+    "en": "Algeria",
+    "svar": [],
+    "hovedstad": "Alger",
+    "hovedstadEn": "Algiers",
+    "hovedstadSvar": [
+      "Algiers",
+      "Algier"
+    ],
+    "kontinent": "Afrika",
+    "lat": 28.1,
+    "lng": 2.6
+  },
+  {
+    "id": "AD",
+    "navn": "Andorra",
+    "en": "Andorra",
+    "svar": [],
+    "hovedstad": "Andorra la Vella",
+    "hovedstadEn": "Andorra la Vella",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 42.5,
+    "lng": 1.6
+  },
+  {
+    "id": "AO",
+    "navn": "Angola",
+    "en": "Angola",
+    "svar": [],
+    "hovedstad": "Luanda",
+    "hovedstadEn": "Luanda",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -12.3,
+    "lng": 17.5
+  },
+  {
+    "id": "AG",
+    "navn": "Antigua og Barbuda",
+    "en": "Antigua and Barbuda",
+    "svar": [
+      "Antigua"
+    ],
+    "hovedstad": "St. John's",
+    "hovedstadEn": "Saint John's",
+    "hovedstadSvar": [
+      "Saint John's"
+    ],
+    "kontinent": "Nord-Amerika",
+    "lat": 17.3,
+    "lng": -61.8
+  },
+  {
+    "id": "AR",
+    "navn": "Argentina",
+    "en": "Argentina",
+    "svar": [],
+    "hovedstad": "Buenos Aires",
+    "hovedstadEn": "Buenos Aires",
+    "hovedstadSvar": [],
+    "kontinent": "Sør-Amerika",
+    "lat": -34.7,
+    "lng": -64.8
+  },
+  {
+    "id": "AM",
+    "navn": "Armenia",
+    "en": "Armenia",
+    "svar": [],
+    "hovedstad": "Jerevan",
+    "hovedstadEn": "Yerevan",
+    "hovedstadSvar": [
+      "Yerevan",
+      "Erevan"
+    ],
+    "kontinent": "Asia",
+    "lat": 40.3,
+    "lng": 44.9
+  },
+  {
+    "id": "AZ",
+    "navn": "Aserbajdsjan",
+    "en": "Azerbaijan",
+    "svar": [
+      "Azerbajdsjan"
+    ],
+    "hovedstad": "Baku",
+    "hovedstadEn": "Baku",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 40.3,
+    "lng": 47.5
+  },
+  {
+    "id": "AU",
+    "navn": "Australia",
+    "en": "Australia",
+    "svar": [],
+    "hovedstad": "Canberra",
+    "hovedstadEn": "Canberra",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -25.8,
+    "lng": 134.3
+  },
+  {
+    "id": "BS",
+    "navn": "Bahamas",
+    "en": "Bahamas",
+    "svar": [
+      "The Bahamas"
+    ],
+    "hovedstad": "Nassau",
+    "hovedstadEn": "Nassau",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 24.3,
+    "lng": -76.6
+  },
+  {
+    "id": "BH",
+    "navn": "Bahrain",
+    "en": "Bahrain",
+    "svar": [],
+    "hovedstad": "Manama",
+    "hovedstadEn": "Manama",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 26,
+    "lng": 50.5
+  },
+  {
+    "id": "BD",
+    "navn": "Bangladesh",
+    "en": "Bangladesh",
+    "svar": [],
+    "hovedstad": "Dhaka",
+    "hovedstadEn": "Dhaka",
+    "hovedstadSvar": [
+      "Dacca"
+    ],
+    "kontinent": "Asia",
+    "lat": 23.9,
+    "lng": 90.2
+  },
+  {
+    "id": "BB",
+    "navn": "Barbados",
+    "en": "Barbados",
+    "svar": [],
+    "hovedstad": "Bridgetown",
+    "hovedstadEn": "Bridgetown",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 13.2,
+    "lng": -59.6
+  },
+  {
+    "id": "BY",
+    "navn": "Belarus",
+    "en": "Belarus",
+    "svar": [
+      "Hviterussland",
+      "Byelorussia",
+      "Belorussia"
+    ],
+    "hovedstad": "Minsk",
+    "hovedstadEn": "Minsk",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 53.5,
+    "lng": 28
+  },
+  {
+    "id": "BE",
+    "navn": "Belgia",
+    "en": "Belgium",
+    "svar": [],
+    "hovedstad": "Brussel",
+    "hovedstadEn": "Brussels",
+    "hovedstadSvar": [
+      "Brussels",
+      "Bruxelles"
+    ],
+    "kontinent": "Europa",
+    "lat": 50.6,
+    "lng": 4.6
+  },
+  {
+    "id": "BZ",
+    "navn": "Belize",
+    "en": "Belize",
+    "svar": [],
+    "hovedstad": "Belmopan",
+    "hovedstadEn": "Belmopan",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 17.2,
+    "lng": -88.7
+  },
+  {
+    "id": "BJ",
+    "navn": "Benin",
+    "en": "Benin",
+    "svar": [],
+    "hovedstad": "Porto-Novo",
+    "hovedstadEn": "Porto-Novo",
+    "hovedstadSvar": [
+      "Cotonou"
+    ],
+    "kontinent": "Afrika",
+    "lat": 9.6,
+    "lng": 2.3
+  },
+  {
+    "id": "BT",
+    "navn": "Bhutan",
+    "en": "Bhutan",
+    "svar": [],
+    "hovedstad": "Thimphu",
+    "hovedstadEn": "Thimphu",
+    "hovedstadSvar": [
+      "Thimpu"
+    ],
+    "kontinent": "Asia",
+    "lat": 27.4,
+    "lng": 90.4
+  },
+  {
+    "id": "BO",
+    "navn": "Bolivia",
+    "en": "Bolivia",
+    "svar": [],
+    "hovedstad": "La Paz",
+    "hovedstadEn": "La Paz",
+    "hovedstadSvar": [
+      "Sucre"
+    ],
+    "kontinent": "Sør-Amerika",
+    "lat": -16.7,
+    "lng": -64.7
+  },
+  {
+    "id": "BA",
+    "navn": "Bosnia-Hercegovina",
+    "en": "Bosnia and Herzegovina",
+    "svar": [
+      "Bosnia",
+      "Bosnia og Hercegovina",
+      "Bosnia og Herzegovina",
+      "Bosnia-Herzegovina"
+    ],
+    "hovedstad": "Sarajevo",
+    "hovedstadEn": "Sarajevo",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 44.2,
+    "lng": 17.8
+  },
+  {
+    "id": "BW",
+    "navn": "Botswana",
+    "en": "Botswana",
+    "svar": [],
+    "hovedstad": "Gaborone",
+    "hovedstadEn": "Gaborone",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -22.2,
+    "lng": 23.8
+  },
+  {
+    "id": "BR",
+    "navn": "Brasil",
+    "en": "Brazil",
+    "svar": [],
+    "hovedstad": "Brasília",
+    "hovedstadEn": "Brasilia",
+    "hovedstadSvar": [],
+    "kontinent": "Sør-Amerika",
+    "lat": -10.6,
+    "lng": -53.2
+  },
+  {
+    "id": "BN",
+    "navn": "Brunei",
+    "en": "Brunei",
+    "svar": [
+      "Brunei Darussalam"
+    ],
+    "hovedstad": "Bandar Seri Begawan",
+    "hovedstadEn": "Bandar Seri Begawan",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 4.5,
+    "lng": 114.7
+  },
+  {
+    "id": "BG",
+    "navn": "Bulgaria",
+    "en": "Bulgaria",
+    "svar": [],
+    "hovedstad": "Sofia",
+    "hovedstadEn": "Sofia",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 42.8,
+    "lng": 25.2
+  },
+  {
+    "id": "BF",
+    "navn": "Burkina Faso",
+    "en": "Burkina Faso",
+    "svar": [
+      "Burkina"
+    ],
+    "hovedstad": "Ouagadougou",
+    "hovedstadEn": "Ouagadougou",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 12.3,
+    "lng": -1.8
+  },
+  {
+    "id": "BI",
+    "navn": "Burundi",
+    "en": "Burundi",
+    "svar": [],
+    "hovedstad": "Gitega",
+    "hovedstadEn": "Gitega",
+    "hovedstadSvar": [
+      "Bujumbura"
+    ],
+    "kontinent": "Afrika",
+    "lat": -3.4,
+    "lng": 29.9
+  },
+  {
+    "id": "CA",
+    "navn": "Canada",
+    "en": "Canada",
+    "svar": [
+      "Kanada"
+    ],
+    "hovedstad": "Ottawa",
+    "hovedstadEn": "Ottawa",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 60.4,
+    "lng": -96.5
+  },
+  {
+    "id": "CL",
+    "navn": "Chile",
+    "en": "Chile",
+    "svar": [],
+    "hovedstad": "Santiago",
+    "hovedstadEn": "Santiago",
+    "hovedstadSvar": [],
+    "kontinent": "Sør-Amerika",
+    "lat": -36.1,
+    "lng": -71
+  },
+  {
+    "id": "CO",
+    "navn": "Colombia",
+    "en": "Colombia",
+    "svar": [],
+    "hovedstad": "Bogotá",
+    "hovedstadEn": "Bogota",
+    "hovedstadSvar": [],
+    "kontinent": "Sør-Amerika",
+    "lat": 3.9,
+    "lng": -73.1
+  },
+  {
+    "id": "CR",
+    "navn": "Costa Rica",
+    "en": "Costa Rica",
+    "svar": [],
+    "hovedstad": "San José",
+    "hovedstadEn": "San Jose",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 10,
+    "lng": -84.2
+  },
+  {
+    "id": "CU",
+    "navn": "Cuba",
+    "en": "Cuba",
+    "svar": [
+      "Kuba"
+    ],
+    "hovedstad": "Havanna",
+    "hovedstadEn": "Havana",
+    "hovedstadSvar": [
+      "Havana",
+      "La Habana"
+    ],
+    "kontinent": "Nord-Amerika",
+    "lat": 21.6,
+    "lng": -79
+  },
+  {
+    "id": "DK",
+    "navn": "Danmark",
+    "en": "Denmark",
+    "svar": [],
+    "hovedstad": "København",
+    "hovedstadEn": "Copenhagen",
+    "hovedstadSvar": [
+      "Copenhagen"
+    ],
+    "kontinent": "Europa",
+    "lat": 56,
+    "lng": 10
+  },
+  {
+    "id": "AE",
+    "navn": "De forente arabiske emirater",
+    "en": "United Arab Emirates",
+    "svar": [
+      "UAE",
+      "Forente arabiske emirater",
+      "Emiratene"
+    ],
+    "hovedstad": "Abu Dhabi",
+    "hovedstadEn": "Abu Dhabi",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 23.9,
+    "lng": 54.3
+  },
+  {
+    "id": "CD",
+    "navn": "Den demokratiske republikken Kongo",
+    "en": "Democratic Republic of the Congo",
+    "svar": [
+      "DR Kongo",
+      "DR Congo",
+      "DRC",
+      "Kongo-Kinshasa",
+      "Congo-Kinshasa",
+      "Zaire",
+      "Den demokratiske republikk Kongo"
+    ],
+    "hovedstad": "Kinshasa",
+    "hovedstadEn": "Kinshasa",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -2.9,
+    "lng": 23.6
+  },
+  {
+    "id": "DO",
+    "navn": "Den dominikanske republikk",
+    "en": "Dominican Republic",
+    "svar": [
+      "Dominikanske republikk"
+    ],
+    "hovedstad": "Santo Domingo",
+    "hovedstadEn": "Santo Domingo",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 18.9,
+    "lng": -70.5
+  },
+  {
+    "id": "CF",
+    "navn": "Den sentralafrikanske republikk",
+    "en": "Central African Republic",
+    "svar": [
+      "Sentralafrikanske republikk",
+      "CAR"
+    ],
+    "hovedstad": "Bangui",
+    "hovedstadEn": "Bangui",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 6.6,
+    "lng": 20.5
+  },
+  {
+    "id": "DJ",
+    "navn": "Djibouti",
+    "en": "Djibouti",
+    "svar": [],
+    "hovedstad": "Djibouti",
+    "hovedstadEn": "Djibouti",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 11.7,
+    "lng": 42.6
+  },
+  {
+    "id": "DM",
+    "navn": "Dominica",
+    "en": "Dominica",
+    "svar": [],
+    "hovedstad": "Roseau",
+    "hovedstadEn": "Roseau",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 15.4,
+    "lng": -61.4
+  },
+  {
+    "id": "EC",
+    "navn": "Ecuador",
+    "en": "Ecuador",
+    "svar": [],
+    "hovedstad": "Quito",
+    "hovedstadEn": "Quito",
+    "hovedstadSvar": [],
+    "kontinent": "Sør-Amerika",
+    "lat": -1.4,
+    "lng": -78.4
+  },
+  {
+    "id": "EG",
+    "navn": "Egypt",
+    "en": "Egypt",
+    "svar": [],
+    "hovedstad": "Kairo",
+    "hovedstadEn": "Cairo",
+    "hovedstadSvar": [
+      "Cairo"
+    ],
+    "kontinent": "Afrika",
+    "lat": 26.5,
+    "lng": 29.9
+  },
+  {
+    "id": "GQ",
+    "navn": "Ekvatorial-Guinea",
+    "en": "Equatorial Guinea",
+    "svar": [],
+    "hovedstad": "Malabo",
+    "hovedstadEn": "Malabo",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 1.7,
+    "lng": 10.3
+  },
+  {
+    "id": "SV",
+    "navn": "El Salvador",
+    "en": "El Salvador",
+    "svar": [],
+    "hovedstad": "San Salvador",
+    "hovedstadEn": "San Salvador",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 13.7,
+    "lng": -88.9
+  },
+  {
+    "id": "CI",
+    "navn": "Elfenbenskysten",
+    "en": "Ivory Coast",
+    "svar": [
+      "Côte d'Ivoire"
+    ],
+    "hovedstad": "Yamoussoukro",
+    "hovedstadEn": "Yamoussoukro",
+    "hovedstadSvar": [
+      "Abidjan"
+    ],
+    "kontinent": "Afrika",
+    "lat": 7.6,
+    "lng": -5.6
+  },
+  {
+    "id": "ER",
+    "navn": "Eritrea",
+    "en": "Eritrea",
+    "svar": [],
+    "hovedstad": "Asmara",
+    "hovedstadEn": "Asmara",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 15.4,
+    "lng": 38.9
+  },
+  {
+    "id": "EE",
+    "navn": "Estland",
+    "en": "Estonia",
+    "svar": [],
+    "hovedstad": "Tallinn",
+    "hovedstadEn": "Tallinn",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 58.7,
+    "lng": 25.5
+  },
+  {
+    "id": "SZ",
+    "navn": "Eswatini",
+    "en": "Eswatini",
+    "svar": [
+      "Swaziland",
+      "Swasiland"
+    ],
+    "hovedstad": "Mbabane",
+    "hovedstadEn": "Mbabane",
+    "hovedstadSvar": [
+      "Lobamba"
+    ],
+    "kontinent": "Afrika",
+    "lat": -26.6,
+    "lng": 31.5
+  },
+  {
+    "id": "ET",
+    "navn": "Etiopia",
+    "en": "Ethiopia",
+    "svar": [],
+    "hovedstad": "Addis Abeba",
+    "hovedstadEn": "Addis Ababa",
+    "hovedstadSvar": [
+      "Addis Ababa"
+    ],
+    "kontinent": "Afrika",
+    "lat": 8.6,
+    "lng": 39.6
+  },
+  {
+    "id": "FJ",
+    "navn": "Fiji",
+    "en": "Fiji",
+    "svar": [],
+    "hovedstad": "Suva",
+    "hovedstadEn": "Suva",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -17.4,
+    "lng": 178.5
+  },
+  {
+    "id": "PH",
+    "navn": "Filippinene",
+    "en": "Philippines",
+    "svar": [],
+    "hovedstad": "Manila",
+    "hovedstadEn": "Manila",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 11.7,
+    "lng": 122.9
+  },
+  {
+    "id": "FI",
+    "navn": "Finland",
+    "en": "Finland",
+    "svar": [
+      "Suomi"
+    ],
+    "hovedstad": "Helsinki",
+    "hovedstadEn": "Helsinki",
+    "hovedstadSvar": [
+      "Helsingfors"
+    ],
+    "kontinent": "Europa",
+    "lat": 64.2,
+    "lng": 26.2
+  },
+  {
+    "id": "FR",
+    "navn": "Frankrike",
+    "en": "France",
+    "svar": [],
+    "hovedstad": "Paris",
+    "hovedstadEn": "Paris",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 46.5,
+    "lng": 2.6
+  },
+  {
+    "id": "GA",
+    "navn": "Gabon",
+    "en": "Gabon",
+    "svar": [],
+    "hovedstad": "Libreville",
+    "hovedstadEn": "Libreville",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -0.6,
+    "lng": 11.8
+  },
+  {
+    "id": "GM",
+    "navn": "Gambia",
+    "en": "Gambia",
+    "svar": [
+      "The Gambia"
+    ],
+    "hovedstad": "Banjul",
+    "hovedstadEn": "Banjul",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 13.5,
+    "lng": -15.4
+  },
+  {
+    "id": "GE",
+    "navn": "Georgia",
+    "en": "Georgia",
+    "svar": [],
+    "hovedstad": "Tbilisi",
+    "hovedstadEn": "Tbilisi",
+    "hovedstadSvar": [
+      "Tiflis"
+    ],
+    "kontinent": "Asia",
+    "lat": 42.2,
+    "lng": 43.5
+  },
+  {
+    "id": "GH",
+    "navn": "Ghana",
+    "en": "Ghana",
+    "svar": [],
+    "hovedstad": "Accra",
+    "hovedstadEn": "Accra",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 7.9,
+    "lng": -1.2
+  },
+  {
+    "id": "GD",
+    "navn": "Grenada",
+    "en": "Grenada",
+    "svar": [],
+    "hovedstad": "St. George's",
+    "hovedstadEn": "Saint George's",
+    "hovedstadSvar": [
+      "Saint George's"
+    ],
+    "kontinent": "Nord-Amerika",
+    "lat": 12.1,
+    "lng": -61.7
+  },
+  {
+    "id": "GT",
+    "navn": "Guatemala",
+    "en": "Guatemala",
+    "svar": [],
+    "hovedstad": "Guatemala by",
+    "hovedstadEn": "Guatemala City",
+    "hovedstadSvar": [
+      "Guatemala City",
+      "Guatemala"
+    ],
+    "kontinent": "Nord-Amerika",
+    "lat": 15.7,
+    "lng": -90.4
+  },
+  {
+    "id": "GN",
+    "navn": "Guinea",
+    "en": "Guinea",
+    "svar": [],
+    "hovedstad": "Conakry",
+    "hovedstadEn": "Conakry",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 10.4,
+    "lng": -10.9
+  },
+  {
+    "id": "GW",
+    "navn": "Guinea-Bissau",
+    "en": "Guinea-Bissau",
+    "svar": [],
+    "hovedstad": "Bissau",
+    "hovedstadEn": "Bissau",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 12,
+    "lng": -14.9
+  },
+  {
+    "id": "GY",
+    "navn": "Guyana",
+    "en": "Guyana",
+    "svar": [],
+    "hovedstad": "Georgetown",
+    "hovedstadEn": "Georgetown",
+    "hovedstadSvar": [],
+    "kontinent": "Sør-Amerika",
+    "lat": 4.8,
+    "lng": -59
+  },
+  {
+    "id": "HT",
+    "navn": "Haiti",
+    "en": "Haiti",
+    "svar": [],
+    "hovedstad": "Port-au-Prince",
+    "hovedstadEn": "Port-au-Prince",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 18.9,
+    "lng": -72.7
+  },
+  {
+    "id": "GR",
+    "navn": "Hellas",
+    "en": "Greece",
+    "svar": [],
+    "hovedstad": "Aten",
+    "hovedstadEn": "Athens",
+    "hovedstadSvar": [
+      "Athens",
+      "Athen"
+    ],
+    "kontinent": "Europa",
+    "lat": 39,
+    "lng": 23
+  },
+  {
+    "id": "HN",
+    "navn": "Honduras",
+    "en": "Honduras",
+    "svar": [],
+    "hovedstad": "Tegucigalpa",
+    "hovedstadEn": "Tegucigalpa",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 14.8,
+    "lng": -86.6
+  },
+  {
+    "id": "IN",
+    "navn": "India",
+    "en": "India",
+    "svar": [],
+    "hovedstad": "New Delhi",
+    "hovedstadEn": "New Delhi",
+    "hovedstadSvar": [
+      "Delhi",
+      "Ny Delhi"
+    ],
+    "kontinent": "Asia",
+    "lat": 22.8,
+    "lng": 79.5
+  },
+  {
+    "id": "ID",
+    "navn": "Indonesia",
+    "en": "Indonesia",
+    "svar": [],
+    "hovedstad": "Jakarta",
+    "hovedstadEn": "Jakarta",
+    "hovedstadSvar": [
+      "Nusantara"
+    ],
+    "kontinent": "Asia",
+    "lat": -2.3,
+    "lng": 117.2
+  },
+  {
+    "id": "IQ",
+    "navn": "Irak",
+    "en": "Iraq",
+    "svar": [],
+    "hovedstad": "Bagdad",
+    "hovedstadEn": "Baghdad",
+    "hovedstadSvar": [
+      "Baghdad"
+    ],
+    "kontinent": "Asia",
+    "lat": 33,
+    "lng": 43.8
+  },
+  {
+    "id": "IR",
+    "navn": "Iran",
+    "en": "Iran",
+    "svar": [],
+    "hovedstad": "Teheran",
+    "hovedstadEn": "Tehran",
+    "hovedstadSvar": [
+      "Tehran"
+    ],
+    "kontinent": "Asia",
+    "lat": 32.5,
+    "lng": 54.4
+  },
+  {
+    "id": "IE",
+    "navn": "Irland",
+    "en": "Ireland",
+    "svar": [
+      "Eire",
+      "Republikken Irland"
+    ],
+    "hovedstad": "Dublin",
+    "hovedstadEn": "Dublin",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 53.2,
+    "lng": -8.1
+  },
+  {
+    "id": "IS",
+    "navn": "Island",
+    "en": "Iceland",
+    "svar": [],
+    "hovedstad": "Reykjavik",
+    "hovedstadEn": "Reykjavik",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 65,
+    "lng": -18.6
+  },
+  {
+    "id": "IL",
+    "navn": "Israel",
+    "en": "Israel",
+    "svar": [],
+    "hovedstad": "Jerusalem",
+    "hovedstadEn": "Jerusalem",
+    "hovedstadSvar": [
+      "Tel Aviv"
+    ],
+    "kontinent": "Asia",
+    "lat": 31.5,
+    "lng": 35
+  },
+  {
+    "id": "IT",
+    "navn": "Italia",
+    "en": "Italy",
+    "svar": [
+      "Italien"
+    ],
+    "hovedstad": "Roma",
+    "hovedstadEn": "Rome",
+    "hovedstadSvar": [
+      "Rome"
+    ],
+    "kontinent": "Europa",
+    "lat": 42.7,
+    "lng": 12.2
+  },
+  {
+    "id": "JM",
+    "navn": "Jamaica",
+    "en": "Jamaica",
+    "svar": [],
+    "hovedstad": "Kingston",
+    "hovedstadEn": "Kingston",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 18.2,
+    "lng": -77.3
+  },
+  {
+    "id": "JP",
+    "navn": "Japan",
+    "en": "Japan",
+    "svar": [],
+    "hovedstad": "Tokyo",
+    "hovedstadEn": "Tokyo",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 37.5,
+    "lng": 137.7
+  },
+  {
+    "id": "YE",
+    "navn": "Jemen",
+    "en": "Yemen",
+    "svar": [],
+    "hovedstad": "Sanaa",
+    "hovedstadEn": "Sanaa",
+    "hovedstadSvar": [
+      "Aden"
+    ],
+    "kontinent": "Asia",
+    "lat": 15.9,
+    "lng": 47.6
+  },
+  {
+    "id": "JO",
+    "navn": "Jordan",
+    "en": "Jordan",
+    "svar": [],
+    "hovedstad": "Amman",
+    "hovedstadEn": "Amman",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 31.2,
+    "lng": 36.8
+  },
+  {
+    "id": "KH",
+    "navn": "Kambodsja",
+    "en": "Cambodia",
+    "svar": [
+      "Kampuchea"
+    ],
+    "hovedstad": "Phnom Penh",
+    "hovedstadEn": "Phnom Penh",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 12.7,
+    "lng": 104.9
+  },
+  {
+    "id": "CM",
+    "navn": "Kamerun",
+    "en": "Cameroon",
+    "svar": [],
+    "hovedstad": "Yaoundé",
+    "hovedstadEn": "Yaounde",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 5.7,
+    "lng": 12.7
+  },
+  {
+    "id": "CV",
+    "navn": "Kapp Verde",
+    "en": "Cape Verde",
+    "svar": [
+      "Cabo Verde"
+    ],
+    "hovedstad": "Praia",
+    "hovedstadEn": "Praia",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 16,
+    "lng": -24
+  },
+  {
+    "id": "KZ",
+    "navn": "Kasakhstan",
+    "en": "Kazakhstan",
+    "svar": [
+      "Kasakstan"
+    ],
+    "hovedstad": "Astana",
+    "hovedstadEn": "Astana",
+    "hovedstadSvar": [
+      "Nur-Sultan",
+      "Akmola"
+    ],
+    "kontinent": "Asia",
+    "lat": 48.4,
+    "lng": 67.2
+  },
+  {
+    "id": "KE",
+    "navn": "Kenya",
+    "en": "Kenya",
+    "svar": [],
+    "hovedstad": "Nairobi",
+    "hovedstadEn": "Nairobi",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 0.6,
+    "lng": 37.8
+  },
+  {
+    "id": "CN",
+    "navn": "Kina",
+    "en": "China",
+    "svar": [
+      "Folkerepublikken Kina",
+      "People's Republic of China",
+      "PRC"
+    ],
+    "hovedstad": "Beijing",
+    "hovedstadEn": "Beijing",
+    "hovedstadSvar": [
+      "Peking"
+    ],
+    "kontinent": "Asia",
+    "lat": 36.7,
+    "lng": 103.4
+  },
+  {
+    "id": "KG",
+    "navn": "Kirgisistan",
+    "en": "Kyrgyzstan",
+    "svar": [
+      "Kirgisia",
+      "Kyrgyz Republic"
+    ],
+    "hovedstad": "Bisjkek",
+    "hovedstadEn": "Bishkek",
+    "hovedstadSvar": [
+      "Bishkek"
+    ],
+    "kontinent": "Asia",
+    "lat": 41.5,
+    "lng": 74.5
+  },
+  {
+    "id": "KI",
+    "navn": "Kiribati",
+    "en": "Kiribati",
+    "svar": [],
+    "hovedstad": "Tarawa",
+    "hovedstadEn": "Tarawa",
+    "hovedstadSvar": [
+      "South Tarawa",
+      "Sør-Tarawa",
+      "Bairiki"
+    ],
+    "kontinent": "Oseania",
+    "lat": 1.9,
+    "lng": 173
+  },
+  {
+    "id": "KM",
+    "navn": "Komorene",
+    "en": "Comoros",
+    "svar": [],
+    "hovedstad": "Moroni",
+    "hovedstadEn": "Moroni",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -11.9,
+    "lng": 43.7
+  },
+  {
+    "id": "XK",
+    "navn": "Kosovo",
+    "en": "Kosovo",
+    "svar": [],
+    "hovedstad": "Pristina",
+    "hovedstadEn": "Pristina",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 42.6,
+    "lng": 20.9
+  },
+  {
+    "id": "HR",
+    "navn": "Kroatia",
+    "en": "Croatia",
+    "svar": [
+      "Hrvatska"
+    ],
+    "hovedstad": "Zagreb",
+    "hovedstadEn": "Zagreb",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 45.1,
+    "lng": 16.4
+  },
+  {
+    "id": "KW",
+    "navn": "Kuwait",
+    "en": "Kuwait",
+    "svar": [],
+    "hovedstad": "Kuwait by",
+    "hovedstadEn": "Kuwait City",
+    "hovedstadSvar": [
+      "Kuwait City",
+      "Kuwait"
+    ],
+    "kontinent": "Asia",
+    "lat": 29.3,
+    "lng": 47.6
+  },
+  {
+    "id": "CY",
+    "navn": "Kypros",
+    "en": "Cyprus",
+    "svar": [],
+    "hovedstad": "Nikosia",
+    "hovedstadEn": "Nicosia",
+    "hovedstadSvar": [
+      "Nicosia",
+      "Lefkosia"
+    ],
+    "kontinent": "Europa",
+    "lat": 35,
+    "lng": 33.2
+  },
+  {
+    "id": "LA",
+    "navn": "Laos",
+    "en": "Laos",
+    "svar": [
+      "Lao"
+    ],
+    "hovedstad": "Vientiane",
+    "hovedstadEn": "Vientiane",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 18.5,
+    "lng": 103.8
+  },
+  {
+    "id": "LV",
+    "navn": "Latvia",
+    "en": "Latvia",
+    "svar": [
+      "Lettland"
+    ],
+    "hovedstad": "Riga",
+    "hovedstadEn": "Riga",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 56.9,
+    "lng": 24.9
+  },
+  {
+    "id": "LS",
+    "navn": "Lesotho",
+    "en": "Lesotho",
+    "svar": [],
+    "hovedstad": "Maseru",
+    "hovedstadEn": "Maseru",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -29.6,
+    "lng": 28.2
+  },
+  {
+    "id": "LB",
+    "navn": "Libanon",
+    "en": "Lebanon",
+    "svar": [],
+    "hovedstad": "Beirut",
+    "hovedstadEn": "Beirut",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 33.9,
+    "lng": 35.9
+  },
+  {
+    "id": "LR",
+    "navn": "Liberia",
+    "en": "Liberia",
+    "svar": [],
+    "hovedstad": "Monrovia",
+    "hovedstadEn": "Monrovia",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 6.5,
+    "lng": -9.3
+  },
+  {
+    "id": "LY",
+    "navn": "Libya",
+    "en": "Libya",
+    "svar": [],
+    "hovedstad": "Tripoli",
+    "hovedstadEn": "Tripoli",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 27,
+    "lng": 18.1
+  },
+  {
+    "id": "LI",
+    "navn": "Liechtenstein",
+    "en": "Liechtenstein",
+    "svar": [],
+    "hovedstad": "Vaduz",
+    "hovedstadEn": "Vaduz",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 47.1,
+    "lng": 9.5
+  },
+  {
+    "id": "LT",
+    "navn": "Litauen",
+    "en": "Lithuania",
+    "svar": [],
+    "hovedstad": "Vilnius",
+    "hovedstadEn": "Vilnius",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 55.3,
+    "lng": 23.9
+  },
+  {
+    "id": "LU",
+    "navn": "Luxembourg",
+    "en": "Luxembourg",
+    "svar": [
+      "Luxemburg"
+    ],
+    "hovedstad": "Luxembourg",
+    "hovedstadEn": "Luxembourg",
+    "hovedstadSvar": [
+      "Luxemburg",
+      "Luxembourg by"
+    ],
+    "kontinent": "Europa",
+    "lat": 49.8,
+    "lng": 6.1
+  },
+  {
+    "id": "MG",
+    "navn": "Madagaskar",
+    "en": "Madagascar",
+    "svar": [],
+    "hovedstad": "Antananarivo",
+    "hovedstadEn": "Antananarivo",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -19.3,
+    "lng": 46.7
+  },
+  {
+    "id": "MW",
+    "navn": "Malawi",
+    "en": "Malawi",
+    "svar": [],
+    "hovedstad": "Lilongwe",
+    "hovedstadEn": "Lilongwe",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -13.2,
+    "lng": 34.3
+  },
+  {
+    "id": "MY",
+    "navn": "Malaysia",
+    "en": "Malaysia",
+    "svar": [],
+    "hovedstad": "Kuala Lumpur",
+    "hovedstadEn": "Kuala Lumpur",
+    "hovedstadSvar": [
+      "Putrajaya"
+    ],
+    "kontinent": "Asia",
+    "lat": 3.8,
+    "lng": 109.7
+  },
+  {
+    "id": "MV",
+    "navn": "Maldivene",
+    "en": "Maldives",
+    "svar": [],
+    "hovedstad": "Malé",
+    "hovedstadEn": "Male",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 3.7,
+    "lng": 73.5
+  },
+  {
+    "id": "ML",
+    "navn": "Mali",
+    "en": "Mali",
+    "svar": [],
+    "hovedstad": "Bamako",
+    "hovedstadEn": "Bamako",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 17.3,
+    "lng": -3.6
+  },
+  {
+    "id": "MT",
+    "navn": "Malta",
+    "en": "Malta",
+    "svar": [],
+    "hovedstad": "Valletta",
+    "hovedstadEn": "Valletta",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 35.9,
+    "lng": 14.4
+  },
+  {
+    "id": "MA",
+    "navn": "Marokko",
+    "en": "Morocco",
+    "svar": [],
+    "hovedstad": "Rabat",
+    "hovedstadEn": "Rabat",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 29.8,
+    "lng": -8.7
+  },
+  {
+    "id": "MH",
+    "navn": "Marshalløyene",
+    "en": "Marshall Islands",
+    "svar": [],
+    "hovedstad": "Majuro",
+    "hovedstadEn": "Majuro",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": 6.8,
+    "lng": 170.5
+  },
+  {
+    "id": "MR",
+    "navn": "Mauritania",
+    "en": "Mauritania",
+    "svar": [],
+    "hovedstad": "Nouakchott",
+    "hovedstadEn": "Nouakchott",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 20.2,
+    "lng": -10.4
+  },
+  {
+    "id": "MU",
+    "navn": "Mauritius",
+    "en": "Mauritius",
+    "svar": [],
+    "hovedstad": "Port Louis",
+    "hovedstadEn": "Port Louis",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -20.3,
+    "lng": 57.6
+  },
+  {
+    "id": "MX",
+    "navn": "Mexico",
+    "en": "Mexico",
+    "svar": [],
+    "hovedstad": "Mexico by",
+    "hovedstadEn": "Mexico City",
+    "hovedstadSvar": [
+      "Mexico City",
+      "Mexico",
+      "Ciudad de México"
+    ],
+    "kontinent": "Nord-Amerika",
+    "lat": 23.9,
+    "lng": -102.2
+  },
+  {
+    "id": "FM",
+    "navn": "Mikronesiaføderasjonen",
+    "en": "Micronesia",
+    "svar": [
+      "Mikronesia",
+      "Federated States of Micronesia",
+      "Føderasjonen Mikronesia"
+    ],
+    "hovedstad": "Palikir",
+    "hovedstadEn": "Palikir",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": 6.9,
+    "lng": 158.2
+  },
+  {
+    "id": "MD",
+    "navn": "Moldova",
+    "en": "Moldova",
+    "svar": [
+      "Moldavia"
+    ],
+    "hovedstad": "Chișinău",
+    "hovedstadEn": "Chisinau",
+    "hovedstadSvar": [
+      "Kisjinev",
+      "Kishinev"
+    ],
+    "kontinent": "Europa",
+    "lat": 47.2,
+    "lng": 28.5
+  },
+  {
+    "id": "MC",
+    "navn": "Monaco",
+    "en": "Monaco",
+    "svar": [],
+    "hovedstad": "Monaco",
+    "hovedstadEn": "Monaco",
+    "hovedstadSvar": [
+      "Monaco-Ville"
+    ],
+    "kontinent": "Europa",
+    "lat": 43.8,
+    "lng": 7.4
+  },
+  {
+    "id": "MN",
+    "navn": "Mongolia",
+    "en": "Mongolia",
+    "svar": [],
+    "hovedstad": "Ulan Bator",
+    "hovedstadEn": "Ulaanbaatar",
+    "hovedstadSvar": [
+      "Ulaanbaatar"
+    ],
+    "kontinent": "Asia",
+    "lat": 47,
+    "lng": 103.1
+  },
+  {
+    "id": "ME",
+    "navn": "Montenegro",
+    "en": "Montenegro",
+    "svar": [
+      "Crna Gora"
+    ],
+    "hovedstad": "Podgorica",
+    "hovedstadEn": "Podgorica",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 42.8,
+    "lng": 19.2
+  },
+  {
+    "id": "MZ",
+    "navn": "Mosambik",
+    "en": "Mozambique",
+    "svar": [],
+    "hovedstad": "Maputo",
+    "hovedstadEn": "Maputo",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -17.2,
+    "lng": 35.6
+  },
+  {
+    "id": "MM",
+    "navn": "Myanmar",
+    "en": "Myanmar",
+    "svar": [
+      "Burma",
+      "Birma"
+    ],
+    "hovedstad": "Naypyidaw",
+    "hovedstadEn": "Naypyidaw",
+    "hovedstadSvar": [
+      "Nay Pyi Taw",
+      "Rangoon",
+      "Yangon"
+    ],
+    "kontinent": "Asia",
+    "lat": 21.1,
+    "lng": 96.5
+  },
+  {
+    "id": "NA",
+    "navn": "Namibia",
+    "en": "Namibia",
+    "svar": [],
+    "hovedstad": "Windhoek",
+    "hovedstadEn": "Windhoek",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -22.1,
+    "lng": 17.2
+  },
+  {
+    "id": "NR",
+    "navn": "Nauru",
+    "en": "Nauru",
+    "svar": [],
+    "hovedstad": "Yaren",
+    "hovedstadEn": "Yaren",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -0.5,
+    "lng": 166.9
+  },
+  {
+    "id": "NL",
+    "navn": "Nederland",
+    "en": "Netherlands",
+    "svar": [
+      "Holland",
+      "The Netherlands",
+      "Nederlandene"
+    ],
+    "hovedstad": "Amsterdam",
+    "hovedstadEn": "Amsterdam",
+    "hovedstadSvar": [
+      "Den Haag",
+      "The Hague"
+    ],
+    "kontinent": "Europa",
+    "lat": 52.3,
+    "lng": 5.6
+  },
+  {
+    "id": "NP",
+    "navn": "Nepal",
+    "en": "Nepal",
+    "svar": [],
+    "hovedstad": "Katmandu",
+    "hovedstadEn": "Kathmandu",
+    "hovedstadSvar": [
+      "Kathmandu"
+    ],
+    "kontinent": "Asia",
+    "lat": 28.3,
+    "lng": 83.9
+  },
+  {
+    "id": "NZ",
+    "navn": "New Zealand",
+    "en": "New Zealand",
+    "svar": [
+      "Ny-Zealand",
+      "Aotearoa"
+    ],
+    "hovedstad": "Wellington",
+    "hovedstadEn": "Wellington",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -41.7,
+    "lng": 172.9
+  },
+  {
+    "id": "NI",
+    "navn": "Nicaragua",
+    "en": "Nicaragua",
+    "svar": [],
+    "hovedstad": "Managua",
+    "hovedstadEn": "Managua",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 12.8,
+    "lng": -85
+  },
+  {
+    "id": "NE",
+    "navn": "Niger",
+    "en": "Niger",
+    "svar": [],
+    "hovedstad": "Niamey",
+    "hovedstadEn": "Niamey",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 17.4,
+    "lng": 9.3
+  },
+  {
+    "id": "NG",
+    "navn": "Nigeria",
+    "en": "Nigeria",
+    "svar": [],
+    "hovedstad": "Abuja",
+    "hovedstadEn": "Abuja",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 9.6,
+    "lng": 8.1
+  },
+  {
+    "id": "KP",
+    "navn": "Nord-Korea",
+    "en": "North Korea",
+    "svar": [
+      "DPRK"
+    ],
+    "hovedstad": "Pyongyang",
+    "hovedstadEn": "Pyongyang",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 40.1,
+    "lng": 127.2
+  },
+  {
+    "id": "MK",
+    "navn": "Nord-Makedonia",
+    "en": "North Macedonia",
+    "svar": [
+      "Makedonia",
+      "Macedonia"
+    ],
+    "hovedstad": "Skopje",
+    "hovedstadEn": "Skopje",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 41.6,
+    "lng": 21.7
+  },
+  {
+    "id": "NO",
+    "navn": "Norge",
+    "en": "Norway",
+    "svar": [
+      "Noreg"
+    ],
+    "hovedstad": "Oslo",
+    "hovedstadEn": "Oslo",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 64,
+    "lng": 12.3
+  },
+  {
+    "id": "OM",
+    "navn": "Oman",
+    "en": "Oman",
+    "svar": [],
+    "hovedstad": "Muskat",
+    "hovedstadEn": "Muscat",
+    "hovedstadSvar": [
+      "Muscat"
+    ],
+    "kontinent": "Asia",
+    "lat": 20.6,
+    "lng": 56.1
+  },
+  {
+    "id": "PK",
+    "navn": "Pakistan",
+    "en": "Pakistan",
+    "svar": [],
+    "hovedstad": "Islamabad",
+    "hovedstadEn": "Islamabad",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 29.9,
+    "lng": 69.2
+  },
+  {
+    "id": "PW",
+    "navn": "Palau",
+    "en": "Palau",
+    "svar": [],
+    "hovedstad": "Ngerulmud",
+    "hovedstadEn": "Ngerulmud",
+    "hovedstadSvar": [
+      "Melekeok"
+    ],
+    "kontinent": "Oseania",
+    "lat": 7.5,
+    "lng": 134.6
+  },
+  {
+    "id": "PS",
+    "navn": "Palestina",
+    "en": "Palestine",
+    "svar": [
+      "State of Palestine",
+      "Staten Palestina"
+    ],
+    "hovedstad": "Ramallah",
+    "hovedstadEn": "Ramallah",
+    "hovedstadSvar": [
+      "Øst-Jerusalem",
+      "East Jerusalem",
+      "Al-Quds"
+    ],
+    "kontinent": "Asia",
+    "lat": 31.9,
+    "lng": 35.2
+  },
+  {
+    "id": "PA",
+    "navn": "Panama",
+    "en": "Panama",
+    "svar": [],
+    "hovedstad": "Panama by",
+    "hovedstadEn": "Panama City",
+    "hovedstadSvar": [
+      "Panama City",
+      "Panama"
+    ],
+    "kontinent": "Nord-Amerika",
+    "lat": 8.5,
+    "lng": -80.1
+  },
+  {
+    "id": "PG",
+    "navn": "Papua Ny-Guinea",
+    "en": "Papua New Guinea",
+    "svar": [
+      "PNG"
+    ],
+    "hovedstad": "Port Moresby",
+    "hovedstadEn": "Port Moresby",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -6.5,
+    "lng": 145.2
+  },
+  {
+    "id": "PY",
+    "navn": "Paraguay",
+    "en": "Paraguay",
+    "svar": [],
+    "hovedstad": "Asunción",
+    "hovedstadEn": "Asuncion",
+    "hovedstadSvar": [],
+    "kontinent": "Sør-Amerika",
+    "lat": -23.2,
+    "lng": -58.4
+  },
+  {
+    "id": "PE",
+    "navn": "Peru",
+    "en": "Peru",
+    "svar": [],
+    "hovedstad": "Lima",
+    "hovedstadEn": "Lima",
+    "hovedstadSvar": [],
+    "kontinent": "Sør-Amerika",
+    "lat": -9.1,
+    "lng": -74.4
+  },
+  {
+    "id": "PL",
+    "navn": "Polen",
+    "en": "Poland",
+    "svar": [],
+    "hovedstad": "Warszawa",
+    "hovedstadEn": "Warsaw",
+    "hovedstadSvar": [
+      "Warsaw",
+      "Varsjava"
+    ],
+    "kontinent": "Europa",
+    "lat": 52.1,
+    "lng": 19.4
+  },
+  {
+    "id": "PT",
+    "navn": "Portugal",
+    "en": "Portugal",
+    "svar": [],
+    "hovedstad": "Lisboa",
+    "hovedstadEn": "Lisbon",
+    "hovedstadSvar": [
+      "Lisbon"
+    ],
+    "kontinent": "Europa",
+    "lat": 39.7,
+    "lng": -8
+  },
+  {
+    "id": "QA",
+    "navn": "Qatar",
+    "en": "Qatar",
+    "svar": [
+      "Katar"
+    ],
+    "hovedstad": "Doha",
+    "hovedstadEn": "Doha",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 25.3,
+    "lng": 51.2
+  },
+  {
+    "id": "CG",
+    "navn": "Republikken Kongo",
+    "en": "Republic of the Congo",
+    "svar": [
+      "Kongo-Brazzaville",
+      "Congo-Brazzaville",
+      "Republic of Congo"
+    ],
+    "hovedstad": "Brazzaville",
+    "hovedstadEn": "Brazzaville",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -0.8,
+    "lng": 15.2
+  },
+  {
+    "id": "RO",
+    "navn": "Romania",
+    "en": "Romania",
+    "svar": [
+      "Rumenia"
+    ],
+    "hovedstad": "București",
+    "hovedstadEn": "Bucharest",
+    "hovedstadSvar": [
+      "Bucharest",
+      "Bukarest"
+    ],
+    "kontinent": "Europa",
+    "lat": 45.8,
+    "lng": 25
+  },
+  {
+    "id": "RU",
+    "navn": "Russland",
+    "en": "Russia",
+    "svar": [
+      "Russian Federation",
+      "Den russiske føderasjon",
+      "Russiske føderasjon"
+    ],
+    "hovedstad": "Moskva",
+    "hovedstadEn": "Moscow",
+    "hovedstadSvar": [
+      "Moscow"
+    ],
+    "kontinent": "Europa",
+    "lat": 66,
+    "lng": 95.6
+  },
+  {
+    "id": "RW",
+    "navn": "Rwanda",
+    "en": "Rwanda",
+    "svar": [],
+    "hovedstad": "Kigali",
+    "hovedstadEn": "Kigali",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -2,
+    "lng": 29.9
+  },
+  {
+    "id": "KN",
+    "navn": "Saint Kitts og Nevis",
+    "en": "Saint Kitts and Nevis",
+    "svar": [
+      "St. Kitts og Nevis",
+      "St. Kitts and Nevis",
+      "Saint Kitts",
+      "St. Kitts"
+    ],
+    "hovedstad": "Basseterre",
+    "hovedstadEn": "Basseterre",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 17.3,
+    "lng": -62.7
+  },
+  {
+    "id": "LC",
+    "navn": "Saint Lucia",
+    "en": "Saint Lucia",
+    "svar": [
+      "St. Lucia"
+    ],
+    "hovedstad": "Castries",
+    "hovedstadEn": "Castries",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 13.9,
+    "lng": -61
+  },
+  {
+    "id": "VC",
+    "navn": "Saint Vincent og Grenadinene",
+    "en": "Saint Vincent and the Grenadines",
+    "svar": [
+      "St. Vincent og Grenadinene",
+      "St. Vincent and the Grenadines",
+      "Saint Vincent",
+      "St. Vincent"
+    ],
+    "hovedstad": "Kingstown",
+    "hovedstadEn": "Kingstown",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 13.2,
+    "lng": -61.2
+  },
+  {
+    "id": "SB",
+    "navn": "Salomonøyene",
+    "en": "Solomon Islands",
+    "svar": [],
+    "hovedstad": "Honiara",
+    "hovedstadEn": "Honiara",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -8.9,
+    "lng": 159.6
+  },
+  {
+    "id": "WS",
+    "navn": "Samoa",
+    "en": "Samoa",
+    "svar": [],
+    "hovedstad": "Apia",
+    "hovedstadEn": "Apia",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -13.8,
+    "lng": -172.2
+  },
+  {
+    "id": "SM",
+    "navn": "San Marino",
+    "en": "San Marino",
+    "svar": [],
+    "hovedstad": "San Marino",
+    "hovedstadEn": "San Marino",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 43.9,
+    "lng": 12.5
+  },
+  {
+    "id": "ST",
+    "navn": "São Tomé og Príncipe",
+    "en": "Sao Tome and Principe",
+    "svar": [
+      "São Tomé"
+    ],
+    "hovedstad": "São Tomé",
+    "hovedstadEn": "Sao Tome",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 0.4,
+    "lng": 6.7
+  },
+  {
+    "id": "SA",
+    "navn": "Saudi-Arabia",
+    "en": "Saudi Arabia",
+    "svar": [
+      "Saudi"
+    ],
+    "hovedstad": "Riyadh",
+    "hovedstadEn": "Riyadh",
+    "hovedstadSvar": [
+      "Riyad"
+    ],
+    "kontinent": "Asia",
+    "lat": 24.1,
+    "lng": 44.7
+  },
+  {
+    "id": "SN",
+    "navn": "Senegal",
+    "en": "Senegal",
+    "svar": [],
+    "hovedstad": "Dakar",
+    "hovedstadEn": "Dakar",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 14.4,
+    "lng": -14.5
+  },
+  {
+    "id": "RS",
+    "navn": "Serbia",
+    "en": "Serbia",
+    "svar": [],
+    "hovedstad": "Beograd",
+    "hovedstadEn": "Belgrade",
+    "hovedstadSvar": [
+      "Belgrade"
+    ],
+    "kontinent": "Europa",
+    "lat": 44.2,
+    "lng": 20.8
+  },
+  {
+    "id": "SC",
+    "navn": "Seychellene",
+    "en": "Seychelles",
+    "svar": [],
+    "hovedstad": "Victoria",
+    "hovedstadEn": "Victoria",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -4.7,
+    "lng": 55.5
+  },
+  {
+    "id": "SL",
+    "navn": "Sierra Leone",
+    "en": "Sierra Leone",
+    "svar": [],
+    "hovedstad": "Freetown",
+    "hovedstadEn": "Freetown",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 8.6,
+    "lng": -11.8
+  },
+  {
+    "id": "SG",
+    "navn": "Singapore",
+    "en": "Singapore",
+    "svar": [],
+    "hovedstad": "Singapore",
+    "hovedstadEn": "Singapore",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 1.4,
+    "lng": 103.8
+  },
+  {
+    "id": "SK",
+    "navn": "Slovakia",
+    "en": "Slovakia",
+    "svar": [
+      "Slovak Republic"
+    ],
+    "hovedstad": "Bratislava",
+    "hovedstadEn": "Bratislava",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 48.7,
+    "lng": 19.5
+  },
+  {
+    "id": "SI",
+    "navn": "Slovenia",
+    "en": "Slovenia",
+    "svar": [],
+    "hovedstad": "Ljubljana",
+    "hovedstadEn": "Ljubljana",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 46.1,
+    "lng": 14.8
+  },
+  {
+    "id": "SO",
+    "navn": "Somalia",
+    "en": "Somalia",
+    "svar": [],
+    "hovedstad": "Mogadishu",
+    "hovedstadEn": "Mogadishu",
+    "hovedstadSvar": [
+      "Mogadiscio"
+    ],
+    "kontinent": "Afrika",
+    "lat": 6.1,
+    "lng": 45.8
+  },
+  {
+    "id": "ES",
+    "navn": "Spania",
+    "en": "Spain",
+    "svar": [],
+    "hovedstad": "Madrid",
+    "hovedstadEn": "Madrid",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 40.4,
+    "lng": -3.5
+  },
+  {
+    "id": "LK",
+    "navn": "Sri Lanka",
+    "en": "Sri Lanka",
+    "svar": [
+      "Ceylon"
+    ],
+    "hovedstad": "Colombo",
+    "hovedstadEn": "Colombo",
+    "hovedstadSvar": [
+      "Sri Jayawardenepura Kotte",
+      "Sri Jayawardenapura Kotte",
+      "Kotte"
+    ],
+    "kontinent": "Asia",
+    "lat": 7.6,
+    "lng": 80.7
+  },
+  {
+    "id": "GB",
+    "navn": "Storbritannia",
+    "en": "United Kingdom",
+    "svar": [
+      "UK",
+      "Great Britain",
+      "Britain",
+      "Storbritannia og Nord-Irland",
+      "Det forente kongerike",
+      "Forente kongerike"
+    ],
+    "hovedstad": "London",
+    "hovedstadEn": "London",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 54,
+    "lng": -2.8
+  },
+  {
+    "id": "SD",
+    "navn": "Sudan",
+    "en": "Sudan",
+    "svar": [],
+    "hovedstad": "Khartoum",
+    "hovedstadEn": "Khartoum",
+    "hovedstadSvar": [
+      "Khartum"
+    ],
+    "kontinent": "Afrika",
+    "lat": 16,
+    "lng": 29.9
+  },
+  {
+    "id": "SR",
+    "navn": "Surinam",
+    "en": "Suriname",
+    "svar": [],
+    "hovedstad": "Paramaribo",
+    "hovedstadEn": "Paramaribo",
+    "hovedstadSvar": [],
+    "kontinent": "Sør-Amerika",
+    "lat": 4.1,
+    "lng": -55.9
+  },
+  {
+    "id": "CH",
+    "navn": "Sveits",
+    "en": "Switzerland",
+    "svar": [
+      "Schweiz",
+      "Swiss"
+    ],
+    "hovedstad": "Bern",
+    "hovedstadEn": "Bern",
+    "hovedstadSvar": [
+      "Berne"
+    ],
+    "kontinent": "Europa",
+    "lat": 46.8,
+    "lng": 8.2
+  },
+  {
+    "id": "SE",
+    "navn": "Sverige",
+    "en": "Sweden",
+    "svar": [],
+    "hovedstad": "Stockholm",
+    "hovedstadEn": "Stockholm",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 62.4,
+    "lng": 16.3
+  },
+  {
+    "id": "SY",
+    "navn": "Syria",
+    "en": "Syria",
+    "svar": [],
+    "hovedstad": "Damaskus",
+    "hovedstadEn": "Damascus",
+    "hovedstadSvar": [
+      "Damascus"
+    ],
+    "kontinent": "Asia",
+    "lat": 35,
+    "lng": 38.5
+  },
+  {
+    "id": "ZA",
+    "navn": "Sør-Afrika",
+    "en": "South Africa",
+    "svar": [
+      "Republikken Sør-Afrika",
+      "RSA"
+    ],
+    "hovedstad": "Pretoria",
+    "hovedstadEn": "Pretoria",
+    "hovedstadSvar": [
+      "Cape Town",
+      "Kapstaden",
+      "Bloemfontein"
+    ],
+    "kontinent": "Afrika",
+    "lat": -29,
+    "lng": 25.2
+  },
+  {
+    "id": "KR",
+    "navn": "Sør-Korea",
+    "en": "South Korea",
+    "svar": [
+      "Republikken Korea",
+      "Republic of Korea"
+    ],
+    "hovedstad": "Seoul",
+    "hovedstadEn": "Seoul",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 36.4,
+    "lng": 127.8
+  },
+  {
+    "id": "SS",
+    "navn": "Sør-Sudan",
+    "en": "South Sudan",
+    "svar": [],
+    "hovedstad": "Juba",
+    "hovedstadEn": "Juba",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 7.3,
+    "lng": 30.3
+  },
+  {
+    "id": "TJ",
+    "navn": "Tadsjikistan",
+    "en": "Tajikistan",
+    "svar": [
+      "Tadsjikia"
+    ],
+    "hovedstad": "Dusjanbe",
+    "hovedstadEn": "Dushanbe",
+    "hovedstadSvar": [
+      "Dushanbe"
+    ],
+    "kontinent": "Asia",
+    "lat": 38.5,
+    "lng": 71
+  },
+  {
+    "id": "TW",
+    "navn": "Taiwan",
+    "en": "Taiwan",
+    "svar": [
+      "Republic of China"
+    ],
+    "hovedstad": "Taipei",
+    "hovedstadEn": "Taipei",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 23.7,
+    "lng": 121
+  },
+  {
+    "id": "TZ",
+    "navn": "Tanzania",
+    "en": "Tanzania",
+    "svar": [],
+    "hovedstad": "Dodoma",
+    "hovedstadEn": "Dodoma",
+    "hovedstadSvar": [
+      "Dar es Salaam"
+    ],
+    "kontinent": "Afrika",
+    "lat": -6.3,
+    "lng": 34.8
+  },
+  {
+    "id": "TH",
+    "navn": "Thailand",
+    "en": "Thailand",
+    "svar": [],
+    "hovedstad": "Bangkok",
+    "hovedstadEn": "Bangkok",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 15.1,
+    "lng": 101
+  },
+  {
+    "id": "TG",
+    "navn": "Togo",
+    "en": "Togo",
+    "svar": [],
+    "hovedstad": "Lomé",
+    "hovedstadEn": "Lome",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 8.5,
+    "lng": 1
+  },
+  {
+    "id": "TO",
+    "navn": "Tonga",
+    "en": "Tonga",
+    "svar": [],
+    "hovedstad": "Nuku'alofa",
+    "hovedstadEn": "Nuku'alofa",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -20.4,
+    "lng": -174.8
+  },
+  {
+    "id": "TT",
+    "navn": "Trinidad og Tobago",
+    "en": "Trinidad and Tobago",
+    "svar": [
+      "Trinidad"
+    ],
+    "hovedstad": "Port of Spain",
+    "hovedstadEn": "Port of Spain",
+    "hovedstadSvar": [],
+    "kontinent": "Nord-Amerika",
+    "lat": 10.5,
+    "lng": -61.3
+  },
+  {
+    "id": "TD",
+    "navn": "Tsjad",
+    "en": "Chad",
+    "svar": [
+      "Tchad"
+    ],
+    "hovedstad": "N'Djamena",
+    "hovedstadEn": "N'Djamena",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 15.3,
+    "lng": 18.6
+  },
+  {
+    "id": "CZ",
+    "navn": "Tsjekkia",
+    "en": "Czechia",
+    "svar": [
+      "Czech Republic",
+      "Den tsjekkiske republikk",
+      "Tsjekkisk republikk"
+    ],
+    "hovedstad": "Praha",
+    "hovedstadEn": "Prague",
+    "hovedstadSvar": [
+      "Prague"
+    ],
+    "kontinent": "Europa",
+    "lat": 49.7,
+    "lng": 15.3
+  },
+  {
+    "id": "TN",
+    "navn": "Tunisia",
+    "en": "Tunisia",
+    "svar": [],
+    "hovedstad": "Tunis",
+    "hovedstadEn": "Tunis",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 34.1,
+    "lng": 9.6
+  },
+  {
+    "id": "TM",
+    "navn": "Turkmenistan",
+    "en": "Turkmenistan",
+    "svar": [],
+    "hovedstad": "Asjkhabad",
+    "hovedstadEn": "Ashgabat",
+    "hovedstadSvar": [
+      "Ashgabat",
+      "Ashkhabad",
+      "Asjgabat"
+    ],
+    "kontinent": "Asia",
+    "lat": 39.1,
+    "lng": 59.4
+  },
+  {
+    "id": "TV",
+    "navn": "Tuvalu",
+    "en": "Tuvalu",
+    "svar": [],
+    "hovedstad": "Funafuti",
+    "hovedstadEn": "Funafuti",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -8.5,
+    "lng": 179.2
+  },
+  {
+    "id": "TR",
+    "navn": "Tyrkia",
+    "en": "Turkey",
+    "svar": [
+      "Türkiye"
+    ],
+    "hovedstad": "Ankara",
+    "hovedstadEn": "Ankara",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 39.1,
+    "lng": 35.2
+  },
+  {
+    "id": "DE",
+    "navn": "Tyskland",
+    "en": "Germany",
+    "svar": [
+      "Deutschland"
+    ],
+    "hovedstad": "Berlin",
+    "hovedstadEn": "Berlin",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 51.1,
+    "lng": 10.4
+  },
+  {
+    "id": "UG",
+    "navn": "Uganda",
+    "en": "Uganda",
+    "svar": [],
+    "hovedstad": "Kampala",
+    "hovedstadEn": "Kampala",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": 1.3,
+    "lng": 32.4
+  },
+  {
+    "id": "UA",
+    "navn": "Ukraina",
+    "en": "Ukraine",
+    "svar": [],
+    "hovedstad": "Kyiv",
+    "hovedstadEn": "Kyiv",
+    "hovedstadSvar": [
+      "Kiev",
+      "Kijev"
+    ],
+    "kontinent": "Europa",
+    "lat": 49.2,
+    "lng": 31.3
+  },
+  {
+    "id": "HU",
+    "navn": "Ungarn",
+    "en": "Hungary",
+    "svar": [],
+    "hovedstad": "Budapest",
+    "hovedstadEn": "Budapest",
+    "hovedstadSvar": [],
+    "kontinent": "Europa",
+    "lat": 47.2,
+    "lng": 19.4
+  },
+  {
+    "id": "UY",
+    "navn": "Uruguay",
+    "en": "Uruguay",
+    "svar": [],
+    "hovedstad": "Montevideo",
+    "hovedstadEn": "Montevideo",
+    "hovedstadSvar": [],
+    "kontinent": "Sør-Amerika",
+    "lat": -32.8,
+    "lng": -56
+  },
+  {
+    "id": "US",
+    "navn": "USA",
+    "en": "United States",
+    "svar": [
+      "US",
+      "United States of America",
+      "America",
+      "Amerika",
+      "De forente stater",
+      "Forente stater",
+      "De forente stater av Amerika",
+      "Amerikas forente stater"
+    ],
+    "hovedstad": "Washington D.C.",
+    "hovedstadEn": "Washington, D.C.",
+    "hovedstadSvar": [
+      "Washington"
+    ],
+    "kontinent": "Nord-Amerika",
+    "lat": 39.9,
+    "lng": -98.8
+  },
+  {
+    "id": "UZ",
+    "navn": "Usbekistan",
+    "en": "Uzbekistan",
+    "svar": [],
+    "hovedstad": "Tasjkent",
+    "hovedstadEn": "Tashkent",
+    "hovedstadSvar": [
+      "Tashkent"
+    ],
+    "kontinent": "Asia",
+    "lat": 41.8,
+    "lng": 63.3
+  },
+  {
+    "id": "VU",
+    "navn": "Vanuatu",
+    "en": "Vanuatu",
+    "svar": [],
+    "hovedstad": "Port Vila",
+    "hovedstadEn": "Port Vila",
+    "hovedstadSvar": [],
+    "kontinent": "Oseania",
+    "lat": -16.2,
+    "lng": 167.7
+  },
+  {
+    "id": "VA",
+    "navn": "Vatikanstaten",
+    "en": "Vatican City",
+    "svar": [
+      "Vatikanet",
+      "Vatican",
+      "Holy See",
+      "Den hellige stol"
+    ],
+    "hovedstad": "Vatikanstaten",
+    "hovedstadEn": "Vatican City",
+    "hovedstadSvar": [
+      "Vatican City",
+      "Vatikanet",
+      "Vatican"
+    ],
+    "kontinent": "Europa",
+    "lat": 41.9,
+    "lng": 12.4
+  },
+  {
+    "id": "VE",
+    "navn": "Venezuela",
+    "en": "Venezuela",
+    "svar": [],
+    "hovedstad": "Caracas",
+    "hovedstadEn": "Caracas",
+    "hovedstadSvar": [],
+    "kontinent": "Sør-Amerika",
+    "lat": 7.1,
+    "lng": -66.2
+  },
+  {
+    "id": "VN",
+    "navn": "Vietnam",
+    "en": "Vietnam",
+    "svar": [],
+    "hovedstad": "Hanoi",
+    "hovedstadEn": "Hanoi",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": 16.5,
+    "lng": 106.3
+  },
+  {
+    "id": "ZM",
+    "navn": "Zambia",
+    "en": "Zambia",
+    "svar": [],
+    "hovedstad": "Lusaka",
+    "hovedstadEn": "Lusaka",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -13.5,
+    "lng": 27.8
+  },
+  {
+    "id": "ZW",
+    "navn": "Zimbabwe",
+    "en": "Zimbabwe",
+    "svar": [],
+    "hovedstad": "Harare",
+    "hovedstadEn": "Harare",
+    "hovedstadSvar": [],
+    "kontinent": "Afrika",
+    "lat": -19,
+    "lng": 29.9
+  },
+  {
+    "id": "TL",
+    "navn": "Øst-Timor",
+    "en": "Timor-Leste",
+    "svar": [
+      "East Timor"
+    ],
+    "hovedstad": "Dili",
+    "hovedstadEn": "Dili",
+    "hovedstadSvar": [],
+    "kontinent": "Asia",
+    "lat": -8.8,
+    "lng": 125.8
+  },
+  {
+    "id": "AT",
+    "navn": "Østerrike",
+    "en": "Austria",
+    "svar": [
+      "Österreich"
+    ],
+    "hovedstad": "Wien",
+    "hovedstadEn": "Vienna",
+    "hovedstadSvar": [
+      "Vienna"
+    ],
+    "kontinent": "Europa",
+    "lat": 47.6,
+    "lng": 14.1
+  }
+]

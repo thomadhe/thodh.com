@@ -1,31 +1,40 @@
 import type { MerEllerMindreCategory, MerEllerMindreItem } from "../data/types"
-import { artisterAlder } from "../data/mer-eller-mindre/artister-alder"
 import { artisterLyttere } from "../data/mer-eller-mindre/artister-lyttere"
+import { artisterLytterNorden } from "../data/mer-eller-mindre/artister-lyttere-norden"
 import { avstandOslo } from "../data/mer-eller-mindre/avstand-oslo"
 import { dyrVekt } from "../data/mer-eller-mindre/dyr-vekt"
 import { filmerImdb } from "../data/mer-eller-mindre/filmer-imdb"
-import { filmerInntekter } from "../data/mer-eller-mindre/filmer-inntekter"
 import { hoyde } from "../data/mer-eller-mindre/hoyde"
+import { hvaVeierMest } from "../data/mer-eller-mindre/hva-veier-mest"
 import { hvaKomForst } from "../data/mer-eller-mindre/hva-kom-forst"
 import { landAreal } from "../data/mer-eller-mindre/land-areal"
 import { landBefolkning } from "../data/mer-eller-mindre/land-befolkning"
+import { kuriositeter } from "../data/mer-eller-mindre/kuriositeter"
+import { levealder } from "../data/mer-eller-mindre/levealder"
 import { matKalorier } from "../data/mer-eller-mindre/mat-kalorier"
 import { norskeKommuner } from "../data/mer-eller-mindre/norske-kommuner"
+import { oppkjop } from "../data/mer-eller-mindre/oppkjop"
+import { overgangssummer } from "../data/mer-eller-mindre/overgangssummer"
+import { priserNorge } from "../data/mer-eller-mindre/priser-norge"
+import { ran } from "../data/mer-eller-mindre/ran"
 import { sangerStrommer } from "../data/mer-eller-mindre/sanger-strommer"
+import { sangerStrommerNorden } from "../data/mer-eller-mindre/sanger-strommer-norden"
 import { serierImdb } from "../data/mer-eller-mindre/serier-imdb"
+import { toppfart } from "../data/mer-eller-mindre/toppfart"
 import bilder from "../data/mer-eller-mindre/bilder.json"
 import { dagNummer, iRotasjon, stokk } from "./dag"
 
 /**
- * Same daily shape as More/Less: five fixed slots in a fixed order (people, streams, ratings, money,
- * trivia). Slots with several categories rotate between them day by day.
+ * Five fixed slots in a fixed order (music, film and TV, prices, countries, trivia). Slots with several
+ * categories rotate between them day by day. The music slot keeps Nordic artists and songs in their own
+ * categories so they never meet global superstars.
  */
 const PLASSER: MerEllerMindreCategory[][] = [
-  [artisterLyttere],
-  [sangerStrommer],
+  [artisterLyttere, sangerStrommer, artisterLytterNorden, sangerStrommerNorden],
   [filmerImdb, serierImdb],
-  [filmerInntekter],
-  [landBefolkning, dyrVekt, hoyde, matKalorier, hvaKomForst, landAreal, artisterAlder, norskeKommuner, avstandOslo],
+  [kuriositeter, ran, oppkjop, overgangssummer, priserNorge],
+  [landBefolkning, landAreal],
+  [dyrVekt, hoyde, matKalorier, hvaKomForst, norskeKommuner, avstandOslo, toppfart, hvaVeierMest, levealder],
 ]
 
 export const kategorier: MerEllerMindreCategory[] = PLASSER.flat()
@@ -59,35 +68,39 @@ function godtPar(k: MerEllerMindreCategory, a: MerEllerMindreItem, b: MerEllerMi
   return lav > 0 && hoy / lav >= k.separation.value
 }
 
-/** Picks 5 well-separated pairs from the category's rotation window for this day. */
+/** Greedy chain where every neighbour pair is far enough apart; tries each start until one is long enough. */
+function byggKjede(k: MerEllerMindreCategory, kandidater: MerEllerMindreItem[]) {
+  const lengde = RUNDER_PER_KATEGORI + 1
+  let beste: MerEllerMindreItem[] = []
+  for (let s = 0; s < kandidater.length && beste.length < lengde; s++) {
+    const igjen = kandidater.filter((_, i) => i !== s)
+    const kjede = [kandidater[s]]
+    while (kjede.length < lengde) {
+      const j = igjen.findIndex((x) => godtPar(k, kjede.at(-1)!, x))
+      if (j < 0) break
+      kjede.push(igjen.splice(j, 1)[0])
+    }
+    if (kjede.length > beste.length) beste = kjede
+  }
+  return beste
+}
+
+/**
+ * Like More/less: six items in a chain, so the right card of one round is the left card of the next
+ * (and its value is already known). Built from the category's rotation window for this day.
+ */
 function lagRunder(k: MerEllerMindreCategory, dag: number): MelRunde[] {
   const vindu = Array.from({ length: Math.min(VINDU, k.items.length) }, (_, i) => iRotasjon(k.items, dag * VINDU + i, k.id))
   // A window can straddle two shuffles; drop the rare repeat.
   const ledige = vindu.filter((x, i) => vindu.findIndex((y) => y.name === x.name) === i)
-  const runder: MelRunde[] = []
-  while (runder.length < RUNDER_PER_KATEGORI && ledige.length > 1) {
-    const a = ledige.shift()!
-    const j = ledige.findIndex((b) => b.name !== a.name && godtPar(k, a, b))
-    if (j < 0) continue
-    const [b] = ledige.splice(j, 1)
+  let kjede = byggKjede(k, ledige)
+  // Fallback for rare unlucky windows: the whole category in a date-seeded order.
+  if (kjede.length <= RUNDER_PER_KATEGORI) kjede = byggKjede(k, stokk(k.items, `${k.id}:reserve:${dag}`))
+  return kjede.slice(1).map((b, i) => {
+    const a = kjede[i]
     const aVinner = k.winner === "higher" ? a.value > b.value : a.value < b.value
-    runder.push({ a, b, fasit: aVinner ? 0 : 1 })
-  }
-  // Fallback for rare unlucky windows: scan the whole category with a date-seeded order.
-  if (runder.length < RUNDER_PER_KATEGORI) {
-    const brukt = new Set(runder.flatMap((r) => [r.a.name, r.b.name]))
-    const resten = stokk(k.items, `${k.id}:reserve:${dag}`).filter((x) => !brukt.has(x.name))
-    for (let i = 0; i < resten.length && runder.length < RUNDER_PER_KATEGORI; i++) {
-      const a = resten[i]
-      if (brukt.has(a.name)) continue
-      const b = resten.slice(i + 1).find((x) => !brukt.has(x.name) && godtPar(k, a, x))
-      if (!b) continue
-      brukt.add(a.name).add(b.name)
-      const aVinner = k.winner === "higher" ? a.value > b.value : a.value < b.value
-      runder.push({ a, b, fasit: aVinner ? 0 : 1 })
-    }
-  }
-  return runder
+    return { a, b, fasit: aVinner ? 0 : 1 }
+  })
 }
 
 export function dagensMerEllerMindre(dato: string): MelKategori[] {
@@ -98,7 +111,7 @@ export function dagensMerEllerMindre(dato: string): MelKategori[] {
     void _items
     void _sep
     const runder = lagRunder(k, dag).map((r) => ({ ...r, a: medBilde(k, r.a), b: medBilde(k, r.b) }))
-    const bildeformat = k === filmerImdb || k === serierImdb || k === filmerInntekter ? "portrett" : "kvadrat"
+    const bildeformat = k === filmerImdb || k === serierImdb ? "portrett" : "kvadrat"
     return { ...meta, runder, bildeformat }
   })
 }

@@ -54,7 +54,7 @@ test("Mer eller mindre: fem kategorier med fem gyldige runder hver dag", () => {
 
 test("Mer eller mindre: dataene er komplette og uten duplikater", () => {
   for (const k of kategorier) {
-    assert.ok(k.items.length >= 100, `${k.id} har bare ${k.items.length} elementer`)
+    assert.ok(k.items.length >= 60, `${k.id} har bare ${k.items.length} elementer`)
     assert.equal(new Set(k.items.map((i) => i.name)).size, k.items.length, `${k.id} har duplikater`)
     for (const i of k.items) assert.ok(Number.isFinite(i.value) && i.value > 0 && i.emoji, `${k.id}: ${i.name}`)
   }

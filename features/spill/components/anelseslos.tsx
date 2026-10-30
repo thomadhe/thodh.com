@@ -6,15 +6,15 @@ import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
 type Gjetning = { ord: string; avstand: number; hint?: boolean }
-// v2: English words. Older saves (Norwegian words) fail the shape check and start fresh.
+// v3: new similarity model. Older saves hold ranks from the old model and start fresh.
 type Tilstand = {
-  v: 2
+  v: 3
   gjetninger: Gjetning[]
   fasit?: { ord: string; naermeste: string[] }
   resultat: Resultat
 }
 
-const tom = (): Tilstand => ({ v: 2, gjetninger: [], resultat: { status: "pagar" } })
+const tom = (): Tilstand => ({ v: 3, gjetninger: [], resultat: { status: "pagar" } })
 
 // Lessgames-style rows: coloured bar, light text on top.
 function farge(avstand: number) {
@@ -24,8 +24,13 @@ function farge(avstand: number) {
   return "bg-rose-600"
 }
 
+/** Bar length: close words fill almost the whole row (#6 ≈ 95 %), the long tail shrinks fast. */
+function andelFor(avstand: number, antall: number) {
+  return Math.max(0.04, 1 - (Math.log(avstand) / Math.log(antall)) ** 1.8)
+}
+
 function Rad({ g, antall, fremhevet }: { g: Gjetning; antall: number; fremhevet?: boolean }) {
-  const andel = Math.max(0.03, 1 - Math.log(g.avstand) / Math.log(antall))
+  const andel = andelFor(g.avstand, antall)
   const bar = farge(g.avstand)
   return (
     <li
@@ -267,18 +272,15 @@ export function Anelseslos({ dato, antall }: { dato: string; antall: number }) {
           ))}
         </ul>
       ) : (
-        <Kort className="px-6 py-10 text-center">
-          <p className="text-sm leading-6 text-neutral-600">
-            Gjett et hvilket som helst engelsk ord. Ordene rangeres etter hvor like de er det hemmelige ordet i
-            betydning – ikke i stavemåte.
-          </p>
+        <Kort className="px-6 py-8 text-center">
+          <p className="text-sm text-neutral-600">Jo nærmere i betydning, jo lavere tall.</p>
           <div className="mx-auto mt-5 flex max-w-xs flex-col gap-1.5 text-left">
             <Rad g={{ ord: "apple", avstand: 1 }} antall={antall} />
-            <Rad g={{ ord: "fruit", avstand: 14 }} antall={antall} />
-            <Rad g={{ ord: "food", avstand: 640 }} antall={antall} />
-            <Rad g={{ ord: "water", avstand: 6400 }} antall={antall} />
+            <Rad g={{ ord: "fruit", avstand: 4 }} antall={antall} />
+            <Rad g={{ ord: "food", avstand: 120 }} antall={antall} />
+            <Rad g={{ ord: "car", avstand: 6400 }} antall={antall} />
           </div>
-          <p className="mt-4 font-mono text-[10px] text-neutral-400">Eksempel: hvis ordet var «apple»</p>
+          <p className="mt-3 font-mono text-[10px] text-neutral-400">Hvis ordet var «apple»</p>
         </Kort>
       )}
     </div>

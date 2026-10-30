@@ -15,6 +15,9 @@ export type IkonNavn =
   | "anelse"
   | "bie"
   | "note"
+  | "jord"
+  | "form"
+  | "stjerne"
 
 const omriss = "#111"
 
@@ -126,6 +129,25 @@ const tegninger: Record<IkonNavn, React.ReactNode> = {
       <path d="M13 22V9l10-2v13" fill="none" stroke="#a78bfa" strokeWidth="2.5" />
       <circle cx="11" cy="22" r="3" fill="#a78bfa" />
       <circle cx="21" cy="20" r="3" fill="#a78bfa" />
+    </>
+  ),
+  jord: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
+      <circle cx="16" cy="16" r="9.5" fill="#22d3ee" />
+      <path d="M10 10h5v3h-2v4h-4l-1.5-3ZM17 15h5l2 3-2 5h-3l-1-4ZM18 8h4l1 2h-4Z" fill="#0e7490" />
+    </>
+  ),
+  form: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
+      <path d="M9 9l5-2 3 3 5-1 1 5-2 3 2 4-4 4-3-2-4 1-2-4-3-1 1-5Z" fill="#38bdf8" />
+    </>
+  ),
+  stjerne: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
+      <path d="M16 6l2.6 6.4 6.9.5-5.3 4.4 1.7 6.7L16 20.3 10.1 24l1.7-6.7-5.3-4.4 6.9-.5Z" fill="#e879f9" />
     </>
   ),
 }

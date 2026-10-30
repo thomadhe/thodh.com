@@ -1,118 +1,101 @@
 "use client"
 
+import { ArrowLeft, CalendarDays, ChevronLeft, ChevronRight, CircleHelp } from "lucide-react"
 import Link from "next/link"
 import { useState, type ReactNode } from "react"
 import { formaterDato, iDagOslo, leggTilDager, START_DATO } from "../lib/dag"
-import { finnSpill, type SpillId } from "../lib/spill"
+import { finnSpill, type QuizId, type SpillId } from "../lib/spill"
 import { Kalender } from "./kalender"
 import { visningsskrift } from "./skrift"
 
 type Panel = "kalender" | "regler" | null
 
-const storForbokstav = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
+const ikonKnapp =
+  "flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition hover:bg-black/5 hover:text-neutral-900 aria-expanded:bg-neutral-900 aria-expanded:text-neutral-50"
 
+/**
+ * Page chrome shared by the games: back to the desktop, title, and (for daily games) day switching
+ * and the calendar. Quizzes without a daily puzzle leave out `dato`.
+ */
 export function SpillRamme({
   spillId,
   dato,
   children,
   regler,
+  bred = false,
 }: {
-  spillId: SpillId
-  dato: string
+  spillId: SpillId | QuizId
+  dato?: string
   children: ReactNode
   /** Extra how-to content under the one-line rule. */
   regler?: ReactNode
+  /** Wider column for map games. */
+  bred?: boolean
 }) {
   const info = finnSpill(spillId)
   const [panel, setPanel] = useState<Panel>(null)
   const iDag = iDagOslo()
-  const erIDag = dato === iDag
-  const forrige = leggTilDager(dato, -1)
-  const neste = leggTilDager(dato, 1)
   const lenke = (d: string) => (d === iDag ? info.href : `${info.href}?dato=${d}`)
   const veksle = (p: Exclude<Panel, null>) => setPanel((n) => (n === p ? null : p))
 
   return (
     <div className={`spill-mork ${visningsskrift.variable} min-h-dvh`}>
-      <div className="mx-auto flex min-h-dvh w-full max-w-lg flex-col px-4 sm:px-6">
-        <header className="flex items-center justify-between gap-3 border-b border-black/5 py-4">
-          <Link
-            href="/spill"
-            className="font-mono text-[11px] uppercase tracking-widest text-neutral-500 transition-colors hover:text-neutral-900"
-          >
-            ← Minigames
+      <div className={`mx-auto flex min-h-dvh w-full flex-col px-4 sm:px-6 ${bred ? "max-w-5xl" : "max-w-lg"}`}>
+        <header className="flex items-center gap-2 pt-4">
+          <Link href="/" className={ikonKnapp} aria-label="Til skrivebordet">
+            <ArrowLeft className="h-4 w-4" />
           </Link>
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => veksle("regler")}
-              aria-expanded={panel === "regler"}
-              className={`h-8 rounded-full px-3 font-mono text-[11px] uppercase tracking-widest transition ${
-                panel === "regler" ? "bg-neutral-900 text-neutral-50" : "text-neutral-500 hover:bg-black/5 hover:text-neutral-900"
-              }`}
-            >
-              Slik spiller du
-            </button>
-            <button
-              type="button"
-              onClick={() => veksle("kalender")}
-              aria-expanded={panel === "kalender"}
-              className={`h-8 rounded-full px-3 font-mono text-[11px] uppercase tracking-widest transition ${
-                panel === "kalender" ? "bg-neutral-900 text-neutral-50" : "text-neutral-500 hover:bg-black/5 hover:text-neutral-900"
-              }`}
-            >
-              Kalender
-            </button>
-          </div>
-        </header>
-
-        <div className="flex items-center gap-3 pt-6">
           <span
             aria-hidden="true"
-            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-lg font-semibold ${info.farge}`}
+            className={`ml-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-sm font-semibold ${info.farge}`}
           >
             {info.ikon}
           </span>
-          <div className="min-w-0 flex-1">
-            <h1 className="font-[family-name:var(--font-visning)] text-xl font-extrabold tracking-[-0.04em] text-neutral-950">{info.navn}</h1>
-            <p className="mt-0.5 font-mono text-[11px] text-neutral-500">
-              {storForbokstav(formaterDato(dato))}
-              {erIDag ? " · i dag" : " · fra arkivet"}
-            </p>
-          </div>
-          <nav className="flex items-center gap-1" aria-label="Bytt dag">
-            {dato > START_DATO ? (
-              <Link
-                href={lenke(forrige)}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-500 transition hover:bg-black/5 hover:text-neutral-900"
-                aria-label="Forrige dag"
+          <h1 className="min-w-0 flex-1 truncate font-[family-name:var(--font-visning)] text-lg font-extrabold tracking-[-0.04em] text-neutral-950">
+            {info.navn}
+          </h1>
+          {dato ? (
+            <nav className="flex items-center" aria-label="Bytt dag">
+              {dato > START_DATO ? (
+                <Link href={lenke(leggTilDager(dato, -1))} className={ikonKnapp} aria-label="Forrige dag">
+                  <ChevronLeft className="h-4 w-4" />
+                </Link>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => veksle("kalender")}
+                aria-expanded={panel === "kalender"}
+                className="flex h-9 items-center gap-1.5 rounded-full px-2.5 font-mono text-[11px] text-neutral-500 transition hover:bg-black/5 hover:text-neutral-900 aria-expanded:bg-neutral-900 aria-expanded:text-neutral-50"
               >
-                ‹
-              </Link>
-            ) : null}
-            {!erIDag ? (
-              <Link
-                href={lenke(neste)}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-500 transition hover:bg-black/5 hover:text-neutral-900"
-                aria-label="Neste dag"
-              >
-                ›
-              </Link>
-            ) : null}
-          </nav>
-        </div>
+                <CalendarDays className="h-4 w-4" />
+                <span className="max-sm:sr-only">{dato === iDag ? "I dag" : formaterDato(dato).replace(/^\S+ /, "")}</span>
+              </button>
+              {dato !== iDag ? (
+                <Link href={lenke(leggTilDager(dato, 1))} className={ikonKnapp} aria-label="Neste dag">
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              ) : null}
+            </nav>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => veksle("regler")}
+            aria-expanded={panel === "regler"}
+            aria-label="Slik spiller du"
+            className={ikonKnapp}
+          >
+            <CircleHelp className="h-4 w-4" />
+          </button>
+        </header>
 
         {panel ? (
           <div className="mt-4 rounded-3xl border border-black/5 bg-[var(--spill-flate)] p-5 shadow-sm">
-            {panel === "kalender" ? (
-              <Kalender spillIder={[spillId]} href={info.href} valgt={dato} />
+            {panel === "kalender" && dato ? (
+              <Kalender spillIder={[spillId as SpillId]} href={info.href} valgt={dato} />
             ) : (
               <div className="space-y-3 text-sm leading-6 text-neutral-600">
                 <p className="text-neutral-900">{info.regel}</p>
                 {regler}
-                <p className="font-mono text-[11px] text-neutral-400">
-                  Nytt spill hver dag ved midnatt. Bruk kalenderen for å spille dager du har gått glipp av.
-                </p>
               </div>
             )}
           </div>
