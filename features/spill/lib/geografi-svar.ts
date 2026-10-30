@@ -80,11 +80,13 @@ export function forslag(tekst: string, maks = 6): Land[] {
  * Omriss sends the client a key instead of the answer, so it is not in plain sight in the page.
  * (Anyone determined can still hash all 197 countries; this only spares casual spoilers.)
  */
-export function omrissNokkel(id: string, dato: string) {
+export function skjultNokkel(spill: string, id: string, dato: string) {
   let h = 0x811c9dc5
-  for (const c of `omriss:${dato}:${id}`) h = Math.imul(h ^ c.charCodeAt(0), 0x01000193)
+  for (const c of `${spill}:${dato}:${id}`) h = Math.imul(h ^ c.charCodeAt(0), 0x01000193)
   return (h >>> 0).toString(36)
 }
+
+export const omrissNokkel = (id: string, dato: string) => skjultNokkel("omriss", id, dato)
 
 const R = 6371
 

@@ -30,6 +30,7 @@ const dagligeProgrammer: Program[] = [
   { id: "bie", navn: "Stavebien", mal: "/spill/stavebien", ikon: "bie", spill: "stavebien" },
   { id: "note", navn: "Sangløs", mal: "/spill/sanglos", ikon: "note", spill: "sanglos" },
   { id: "omriss", navn: "Omriss", mal: "/spill/omriss", ikon: "form", spill: "omriss" },
+  { id: "canvas", navn: "Canvas", mal: "/spill/canvas", ikon: "flagg", spill: "canvas" },
 ]
 
 const spillProgrammer: Program[] = [

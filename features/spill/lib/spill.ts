@@ -1,5 +1,5 @@
 /** Daily games: one puzzle per day, with calendar and stored results. */
-export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss"
+export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas"
 /** Free-play quizzes without a daily puzzle. */
 export type QuizId = "verdens-land" | "hovedsteder"
 
@@ -59,6 +59,15 @@ export const spill: Spill[] = [
     regel: "Gjett landet ut fra formen. Seks forsøk, med avstand og retning som hint.",
     ikon: "◆",
     farge: "bg-sky-500 text-neutral-950",
+  },
+  {
+    id: "canvas",
+    navn: "Canvas",
+    href: "/spill/canvas",
+    kort: "Hvilket flagg skjuler seg bak rutene?",
+    regel: "Åpne én rute om gangen og gjett landet. Jo færre ruter du trenger, jo bedre.",
+    ikon: "▦",
+    farge: "bg-rose-500 text-white",
   },
 ]
 

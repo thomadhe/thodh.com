@@ -18,6 +18,7 @@ export type IkonNavn =
   | "jord"
   | "form"
   | "stjerne"
+  | "flagg"
 
 const omriss = "#111"
 
@@ -148,6 +149,16 @@ const tegninger: Record<IkonNavn, React.ReactNode> = {
     <>
       <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
       <path d="M16 6l2.6 6.4 6.9.5-5.3 4.4 1.7 6.7L16 20.3 10.1 24l1.7-6.7-5.3-4.4 6.9-.5Z" fill="#e879f9" />
+    </>
+  ),
+  flagg: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
+      <rect x="7" y="9" width="18" height="14" fill="#f43f5e" />
+      <rect x="7" y="14" width="18" height="4" fill="#fff" />
+      <rect x="11" y="9" width="4" height="14" fill="#fff" />
+      <rect x="16" y="9" width="9" height="5" fill="#1f2937" opacity=".85" />
+      <rect x="7" y="18" width="4" height="5" fill="#1f2937" opacity=".85" />
     </>
   ),
 }

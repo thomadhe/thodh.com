@@ -75,10 +75,25 @@ function Omriss() {
   )
 }
 
+function Canvas() {
+  const apne = new Set([1, 6, 8])
+  return (
+    <div className="grid w-40 grid-cols-4 grid-rows-3 gap-1 overflow-hidden rounded-lg" aria-hidden="true">
+      {Array.from({ length: 12 }, (_, i) => (
+        <span
+          key={i}
+          className={`h-7 ${apne.has(i) ? (i === 6 ? "bg-white" : "bg-rose-500") : "bg-black/40"}`}
+        />
+      ))}
+    </div>
+  )
+}
+
 export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   "mer-eller-mindre": MerEllerMindre,
   anelseslos: Anelseslos,
   stavebien: Stavebien,
   sanglos: Sanglos,
   omriss: Omriss,
+  canvas: Canvas,
 }
