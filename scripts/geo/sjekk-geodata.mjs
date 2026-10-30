@@ -132,6 +132,14 @@ for (const [id, d] of Object.entries(former)) {
   const w = b.x1 - b.x0;
   const h = b.y1 - b.y0;
   formStats[id] = { w, h };
+  // Inverted or broken outlines: the biggest ring must carry the net winding, and fill must not flood the box.
+  const areal = ringer.map(signert);
+  const netto = areal.reduce((a, b) => a + b, 0);
+  const storst = areal.reduce((m, a) => (Math.abs(a) > Math.abs(m) ? a : m), 0);
+  if (Math.sign(storst) !== Math.sign(netto)) feil.push(`${id}: største ring og samlet fyll har motsatt retning`);
+  if (Math.abs(netto) > 0.98 * w * h) feil.push(`${id}: fyller hele boksen (${Math.abs(netto).toFixed(0)} px2)`);
+  if (Math.abs(netto) < 0.001 * 184 * 184) varsler.push(`${id}: nesten tom silhuett (${Math.abs(netto).toFixed(2)} px2)`);
+  for (const ring of ringer) if (ring.some(([x, y]) => !Number.isFinite(x) || !Number.isFinite(y))) feil.push(`${id}: ugyldig koordinat`);
   if (b.x0 < 7.9 || b.y0 < 7.9 || b.x1 > 192.1 || b.y1 > 192.1) feil.push(`${id}: silhuett utenfor 8 px-margin (${b.x0.toFixed(1)},${b.y0.toFixed(1)} - ${b.x1.toFixed(1)},${b.y1.toFixed(1)})`);
   if (Math.max(w, h) < 183 || Math.max(w, h) > 184.3) varsler.push(`${id}: største side ${Math.max(w, h).toFixed(1)} px`);
   if (Math.abs((b.x0 + b.x1) / 2 - 100) > 1 || Math.abs((b.y0 + b.y1) / 2 - 100) > 1) varsler.push(`${id}: ikke sentrert (${((b.x0 + b.x1) / 2).toFixed(1)}, ${((b.y0 + b.y1) / 2).toFixed(1)})`);
@@ -175,5 +183,20 @@ writeFileSync(
   `<!doctype html><meta charset="utf-8"><title>Former</title><style>body{font:12px system-ui;margin:12px}figure{display:inline-block;margin:6px}</style>
 <h1>20 tilfeldige</h1>${tilfeldig.map(celle).join("")}<h1>Utsatte tilfeller</h1>${ekstra.map(celle).join("")}`,
 );
-console.log(`Sjekksider: ${path.join(ut, "kart.html")}, ${path.join(ut, "former.html")}`);
+
+// Large, outline-only view of the countries where 1:10m detail matters most (fjords, archipelagos).
+const detaljland = ["NO", "CL", "ID", "GR", "HR", "PH", "JP", "DK", "GB", "CA"].map((id) => land.find((l) => l.id === id));
+const stor = (l) =>
+  `<figure><svg viewBox="0 0 200 200" width="420" height="420" style="background:#fff;border:1px solid #ccc"><path d="${former[l.id]}" fill="#223" stroke="#223" stroke-width=".15"/></svg><figcaption>${l.id} ${esc(l.navn)} (${(former[l.id].length / 1024).toFixed(1)} KB)</figcaption></figure>`;
+writeFileSync(
+  path.join(ut, "former-10m.html"),
+  `<!doctype html><meta charset="utf-8"><title>Former 1:10m</title><style>body{font:12px system-ui;margin:12px}figure{display:inline-block;margin:6px}</style>
+<h1>1:10m-silhuetter (${(readFileSync(path.join(DATA, "former.json")).length / 1024 / 1024).toFixed(2)} MB totalt)</h1>${detaljland.map(stor).join("")}`,
+);
+writeFileSync(
+  path.join(ut, "former-alle.html"),
+  `<!doctype html><meta charset="utf-8"><title>Alle former</title><style>body{font:11px system-ui;margin:8px}figure{display:inline-block;margin:3px}</style>
+${land.map(celle).join("")}`,
+);
+console.log(`Sjekksider: ${["kart.html", "former.html", "former-10m.html", "former-alle.html"].map((f) => path.join(ut, f)).join(", ")}`);
 if (feil.length) process.exitCode = 1;

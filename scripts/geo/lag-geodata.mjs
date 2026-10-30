@@ -1,14 +1,18 @@
 // Rebuilds the geography game data in features/spill/data/geografi/:
 //   land.json   - the 197 quiz countries (names, answers, capitals, continent, centre)
 //   kart.json   - world map as precomputed SVG paths (Equal Earth, 1000 px wide)
-//   former.json - Worldle-style silhouettes (azimuthal equal-area, 200x200 box)
+//   former.json - Worldle-style silhouettes (azimuthal equal-area, 200x200 box, 1:10m detail)
 //
 // Run: node scripts/geo/lag-geodata.mjs
 //
 // Sources and licences
 //   - Natural Earth 1:50m Admin 0 - Countries, via the `world-atlas` npm package
 //     (countries-50m.json, ISC licence for the package; Natural Earth data is public domain).
-//   - Tuvalu is missing from the 50m data: scripts/geo/tuvalu.geojson is extracted from
+//   - Silhouettes (former.json) use the full Natural Earth 1:10m Admin 0 - Countries
+//     (ne_10m_admin_0_countries.geojson, v5.1.2, public domain) from the nvkelso/natural-earth-vector
+//     mirror. The file is downloaded to %TEMP%/geo-10m/ on first run (or pass --ne10=<path>).
+//     It is projected with at most a 0.05 px Douglas-Peucker pass, so fjords and archipelagos stay.
+//   - Tuvalu is missing from the 50m data (only used for kart.json): scripts/geo/tuvalu.geojson is extracted from
 //     Natural Earth 1:10m ne_10m_admin_0_countries (public domain, coordinates rounded to 4 decimals).
 //   - Country names, answers and capitals are hand-written facts in scripts/geo/land-data.mjs
 //     (Norwegian names follow Språkrådet's recommendations).
@@ -20,10 +24,11 @@
 // Somalia, Cyprus, China and Finland so those countries have no holes.
 
 import { createRequire } from "node:module";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { geoArea, geoAzimuthalEqualArea, geoCentroid, geoDistance, geoEqualEarth, geoPath } from "d3-geo";
+import { geoArea, geoAzimuthalEqualArea, geoCentroid, geoContains, geoDistance, geoEqualEarth, geoPath } from "d3-geo";
 import { feature, merge } from "topojson-client";
 import { presimplify, simplify, sphericalTriangleArea } from "topojson-simplify";
 import { ATLAS_NAVN, KONTINENT, LAND_RADER, SLAA_SAMMEN } from "./land-data.mjs";
@@ -36,8 +41,27 @@ const UT = path.join(ROOT, "features/spill/data/geografi");
 const KART_BREDDE = 1000;
 /** Visvalingam weight (steradians) for the world map; ~0.02 px^2 at 1000 px width. */
 const KART_MIN_VEKT = 5e-7;
-/** Visvalingam weight (px^2 in the 200x200 box) for silhouettes. */
-const FORM_MIN_VEKT = 0.04;
+/** Silhouettes: Douglas-Peucker tolerance (px in the 200x200 box) on the 1:10m rings. */
+const FORM_TOLERANSE_PX = 0.05;
+/** Silhouettes: islands (and lakes/holes) smaller than this many px^2 are dust and dropped. */
+const FORM_MIN_AREAL_PX2 = 0.3;
+/** Countries made only of specks (Maldives, Tuvalu, ...) keep rings down to this size instead. */
+const FORM_MIN_AREAL_SMAA_PX2 = 0.02;
+/** ...and every ring is drawn at least this big (px^2), otherwise the country would be blank. */
+const FORM_MIN_OY_PX2 = 8;
+/** ...when their largest ring is smaller than this. */
+const FORM_SMAA_LAND_PX2 = 40;
+const NE10_URL = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_admin_0_countries.geojson";
+/** 1:10m features (ADM0_A3) folded into a quiz country so it has no holes: Cyprus' sovereign bases and buffer zone, Baikonur, ... */
+const NE10_SLAA_SAMMEN = {
+  SO: ["SOL"], // Somaliland
+  CY: ["CYN", "CNM", "ESB", "WSB"], // N. Cyprus, U.N. buffer zone, Dhekelia, Akrotiri
+  CN: ["HKG", "MAC"],
+  FI: ["ALD"],
+  KZ: ["KAB"], // Baikonur cosmodrome, leased to Russia
+};
+/** 1:10m features that share a quiz country's ISO_A2_EH (offshore/leased pieces) but are not the country itself. */
+const NE10_IKKE_LAND = ["BRI", "CLP", "IOA", "CSI", "ATC"];
 const FORM_BOKS = 200;
 const FORM_MARG = 8;
 /** Polygons south of this latitude (South Sandwich Is. etc.) are not drawn. */
@@ -168,11 +192,11 @@ function projiserRinger(projeksjon, multi) {
   return samler.ringer;
 }
 
-/** Remove consecutive duplicates after rounding to tenths; returns null if fewer than 3 points remain. */
-function tilTideler(ring, dx = 0, dy = 0) {
+/** Round to 1/`skala` px and remove consecutive duplicates; returns null if fewer than 3 points remain. */
+function tilHeltall(ring, dx = 0, dy = 0, skala = 10) {
   const ut = [];
   for (const [x, y] of ring) {
-    const p = [Math.round((x + dx) * 10), Math.round((y + dy) * 10)];
+    const p = [Math.round((x + dx) * skala), Math.round((y + dy) * skala)];
     const forrige = ut[ut.length - 1];
     if (!forrige || forrige[0] !== p[0] || forrige[1] !== p[1]) ut.push(p);
   }
@@ -180,22 +204,24 @@ function tilTideler(ring, dx = 0, dy = 0) {
   return ut.length >= 3 ? ut : null;
 }
 
-function tall(tideler) {
-  const neg = tideler < 0;
-  const abs = Math.abs(tideler);
-  const hel = Math.floor(abs / 10);
-  const frac = abs % 10;
-  const s = (hel === 0 ? "" : String(hel)) + (frac === 0 ? "" : `.${frac}`);
+/** Integer in 1/`skala` px (10 or 100) as the shortest SVG number: 15 -> "1.5", 5 -> ".5", 0 -> "0". */
+function tall(heltall, skala = 10) {
+  const neg = heltall < 0;
+  const abs = Math.abs(heltall);
+  const hel = Math.floor(abs / skala);
+  const frac = abs % skala;
+  const desimaler = String(skala).length - 1;
+  const s = (hel === 0 ? "" : String(hel)) + (frac === 0 ? "" : `.${String(frac).padStart(desimaler, "0").replace(/0+$/, "")}`);
   return neg ? `-${s || "0"}` : s || "0";
 }
 
 /** Absolute start point, then relative line segments (cheap to store, valid SVG path data). */
-function ringTilPath(punkter) {
-  let d = `M${tall(punkter[0][0])} ${tall(punkter[0][1])}l`;
+function ringTilPath(punkter, skala = 10) {
+  let d = `M${tall(punkter[0][0], skala)} ${tall(punkter[0][1], skala)}l`;
   let forrige = "";
   for (let i = 1; i < punkter.length; i++) {
-    const dx = tall(punkter[i][0] - punkter[i - 1][0]);
-    const dy = tall(punkter[i][1] - punkter[i - 1][1]);
+    const dx = tall(punkter[i][0] - punkter[i - 1][0], skala);
+    const dy = tall(punkter[i][1] - punkter[i - 1][1], skala);
     // A leading minus doubles as separator; otherwise a space is needed after the previous digit.
     const a = dx.startsWith("-") || forrige === "" ? dx : ` ${dx}`;
     const b = dy.startsWith("-") ? dy : ` ${dy}`;
@@ -263,7 +289,7 @@ for (const rad of rader) {
   let x1 = -Infinity;
   let y1 = -Infinity;
   for (const ring of ringer) {
-    const t = tilTideler(ring, 0, -minY);
+    const t = tilHeltall(ring, 0, -minY);
     if (!t) continue;
     const boks = ringBoks(t);
     if (boks.x1 - boks.x0 > 6000) brede.push([rad.id, (boks.x1 - boks.x0) / 10]);
@@ -289,7 +315,7 @@ for (const rad of rader) {
 
 const bakgrunnDeler = [];
 for (const ring of bakgrunnRinger) {
-  const t = tilTideler(ring, 0, -minY);
+  const t = tilHeltall(ring, 0, -minY);
   if (t) bakgrunnDeler.push(ringTilPath(t));
 }
 
@@ -314,9 +340,9 @@ function prov(ring, maks) {
 }
 
 /** Keep the largest polygon plus everything chained to it within `grenseKm`. */
-function velgDeler(multi, grenseKm) {
+function velgDeler(multi, grenseKm, maksProver = 48) {
   const info = multi.map((poly) => {
-    const prover = prov(poly[0], 48);
+    const prover = prov(poly[0], maksProver);
     const c = polySentrum(poly);
     let r = 0;
     for (const p of prover) r = Math.max(r, geoDistance(c, p));
@@ -347,67 +373,241 @@ function velgDeler(multi, grenseKm) {
   return { beholdt: med.map((m) => m.poly), droppet: gjenstar };
 }
 
-/** Run Visvalingam on projected rings with topojson-simplify (planar triangle area in px^2). */
-function forenkleRinger(ringer, minVekt) {
-  const topologi = {
-    type: "Topology",
-    objects: {},
-    arcs: ringer.map((ring) => [...ring, ring[0]].map(([x, y]) => [x, y])),
-  };
-  const ut = simplify(presimplify(topologi), minVekt);
-  return ut.arcs.map((arc) => arc.slice(0, -1));
+/** Selection rules shared by the 50m centre points and the 1:10m silhouettes. */
+function velgForm(id, multi, maksProver) {
+  const kandidater = utenSor(multi).filter((poly) => !SKJAER[id]?.(polySentrum(poly)));
+  return velgDeler(kandidater, AVSTAND_KM[id] ?? STANDARD_AVSTAND_KM, maksProver);
 }
 
-const formerStats = {};
-const former = {};
+// Centre points in land.json come from the 1:50m selection, so they do not move with the silhouettes.
 const sentrum = {};
-const droppet = {};
 for (const rad of rader) {
-  const grense = AVSTAND_KM[rad.id] ?? STANDARD_AVSTAND_KM;
-  const kandidater = utenSor(rå.land.get(rad.id)).filter((poly) => !SKJAER[rad.id]?.(polySentrum(poly)));
-  const { beholdt, droppet: bort } = velgDeler(kandidater, grense);
-  droppet[rad.id] = bort.map((b) => ({ areal: b.areal, c: b.c }));
-
+  const { beholdt } = velgForm(rad.id, rå.land.get(rad.id), 48);
   const [lng, lat] = geoCentroid({ type: "MultiPolygon", coordinates: beholdt });
   const [senterLat, senterLng] = SENTRUM[rad.id] ?? [lat, lng];
   sentrum[rad.id] = [avrund(senterLat), avrund(senterLng)];
+}
 
+// ---- 1:10m source ----------------------------------------------------------------------------------
+async function lesNe10() {
+  const arg = process.argv.find((a) => a.startsWith("--ne10="))?.slice("--ne10=".length);
+  const fil = arg ?? path.join(tmpdir(), "geo-10m", "dl", "ne_10m_admin_0_countries.geojson");
+  if (!existsSync(fil)) {
+    log(`Downloading ${NE10_URL}`);
+    const svar = await fetch(NE10_URL);
+    if (!svar.ok) throw new Error(`Download failed: ${svar.status}`);
+    mkdirSync(path.dirname(fil), { recursive: true });
+    writeFileSync(fil, Buffer.from(await svar.arrayBuffer()));
+  }
+  return JSON.parse(readFileSync(fil, "utf8")).features;
+}
+
+/**
+ * Edge-matched dissolve: directed edges that also occur reversed (shared borders, or the two halves of
+ * a polygon cut at the antimeridian) are removed and the rest is chained into new rings. Natural Earth
+ * neighbours share their border vertices exactly, so no geometry library is needed. Orientation is kept:
+ * an exterior ring encloses less than a hemisphere, a hole more.
+ */
+function smeltSammen(multi) {
+  const nokkel = ([x, y]) => `${x === -180 ? 180 : x},${y}`;
+  const kanter = new Map();
+  multi.forEach((poly, pi) => {
+    for (const ring of poly) for (let i = 0; i + 1 < ring.length; i++) kanter.set(`${nokkel(ring[i])}>${nokkel(ring[i + 1])}`, pi);
+  });
+  const forelder = multi.map((_, i) => i);
+  const rot = (i) => {
+    while (forelder[i] !== i) i = forelder[i] = forelder[forelder[i]];
+    return i;
+  };
+  const beroert = new Set();
+  let parede = 0;
+  for (const [k, pi] of kanter) {
+    const [a, b] = k.split(">");
+    const tvilling = kanter.get(`${b}>${a}`);
+    if (tvilling === undefined) continue;
+    parede++;
+    beroert.add(pi);
+    forelder[rot(pi)] = rot(tvilling);
+  }
+  if (!parede) return { multi, parede };
+
+  const grupper = new Map();
+  for (const pi of beroert) {
+    const r = rot(pi);
+    if (!grupper.has(r)) grupper.set(r, []);
+    grupper.get(r).push(pi);
+  }
+  const ut = multi.filter((_, pi) => !beroert.has(pi));
+  for (const medlemmer of grupper.values()) {
+    const fraStart = new Map();
+    const kanterUt = [];
+    for (const pi of medlemmer) {
+      for (const ring of multi[pi]) {
+        for (let i = 0; i + 1 < ring.length; i++) {
+          if (kanter.has(`${nokkel(ring[i + 1])}>${nokkel(ring[i])}`)) continue;
+          const kant = { a: ring[i], b: ring[i + 1], brukt: false };
+          kanterUt.push(kant);
+          const k = nokkel(kant.a);
+          if (!fraStart.has(k)) fraStart.set(k, []);
+          fraStart.get(k).push(kant);
+        }
+      }
+    }
+    const eksteriorer = [];
+    const hull = [];
+    for (const start of kanterUt) {
+      if (start.brukt) continue;
+      const ring = [];
+      let kant = start;
+      while (kant) {
+        kant.brukt = true;
+        ring.push(kant.a);
+        if (nokkel(kant.b) === nokkel(start.a)) break;
+        kant = fraStart.get(nokkel(kant.b))?.find((k) => !k.brukt);
+        if (!kant) throw new Error("Dissolve left an open ring");
+      }
+      ring.push(ring[0]);
+      (geoArea({ type: "Polygon", coordinates: [ring] }) > 2 * Math.PI ? hull : eksteriorer).push(ring);
+    }
+    const polygoner = eksteriorer.map((e) => [e]);
+    for (const h of hull) {
+      const eier = polygoner.find((p) => h.slice(0, 8).some((punkt) => geoContains({ type: "Polygon", coordinates: [p[0]] }, punkt)));
+      if (!eier) throw new Error("Dissolve produced a hole without an exterior");
+      eier.push(h);
+    }
+    ut.push(...polygoner);
+  }
+  return { multi: ut, parede };
+}
+
+/** Map a quiz country to its 1:10m features (ISO_A2_EH is also used by leased/offshore pieces of France, Brazil, ...). */
+const ne10Alle = await lesNe10();
+const ne10PerA3 = new Map(ne10Alle.map((f) => [f.properties.ADM0_A3, f]));
+const ne10Delmengder = new Set([...Object.values(NE10_SLAA_SAMMEN).flat(), ...NE10_IKKE_LAND]);
+function ne10Land(id) {
+  const hoved = ne10Alle.filter((f) => f.properties.ISO_A2_EH === id && !ne10Delmengder.has(f.properties.ADM0_A3));
+  if (hoved.length !== 1) throw new Error(`Expected one 1:10m feature for ${id}, found ${hoved.length}`);
+  const ekstra = (NE10_SLAA_SAMMEN[id] ?? []).map((a3) => {
+    const f = ne10PerA3.get(a3);
+    if (!f) throw new Error(`1:10m has no ${a3} (for ${id})`);
+    return f;
+  });
+  return [hoved[0], ...ekstra].flatMap((f) => rettViklingsretning(toMulti(f.geometry)));
+}
+
+// ---- 1:10m silhouettes -----------------------------------------------------------------------------
+/** Spherical area (steradians) of one ring, whether it is an exterior or a hole. */
+function ringSr(ring) {
+  const a = geoArea({ type: "Polygon", coordinates: [ring] });
+  return a > 2 * Math.PI ? 4 * Math.PI - a : a;
+}
+
+/** Douglas-Peucker on a closed ring (no repeated end point); every dropped point is within `eps` of the result. */
+function dp(punkter, eps) {
+  const n = punkter.length;
+  if (n <= 4) return punkter;
+  const p = (i) => punkter[i % n];
+  const avstand = (q, a, b) => {
+    const dx = b[0] - a[0];
+    const dy = b[1] - a[1];
+    const len2 = dx * dx + dy * dy;
+    const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((q[0] - a[0]) * dx + (q[1] - a[1]) * dy) / len2));
+    return Math.hypot(q[0] - (a[0] + t * dx), q[1] - (a[1] + t * dy));
+  };
+  let fjernest = 1;
+  let maks = -1;
+  for (let i = 1; i < n; i++) {
+    const d = Math.hypot(punkter[i][0] - punkter[0][0], punkter[i][1] - punkter[0][1]);
+    if (d > maks) {
+      maks = d;
+      fjernest = i;
+    }
+  }
+  const behold = new Uint8Array(n + 1);
+  behold[0] = behold[fjernest] = 1;
+  const stabel = [[0, fjernest], [fjernest, n]];
+  while (stabel.length) {
+    const [fra, til] = stabel.pop();
+    let storst = -1;
+    let ved = -1;
+    for (let i = fra + 1; i < til; i++) {
+      const d = avstand(p(i), p(fra), p(til));
+      if (d > storst) {
+        storst = d;
+        ved = i;
+      }
+    }
+    if (storst > eps) {
+      behold[ved] = 1;
+      stabel.push([fra, ved], [ved, til]);
+    }
+  }
+  return punkter.filter((_, i) => behold[i]);
+}
+
+const former = {};
+const formerStats = {};
+const droppet = {};
+for (const rad of rader) {
+  const { multi, parede } = smeltSammen(ne10Land(rad.id));
+  const { beholdt, droppet: bort } = velgForm(rad.id, multi, 200);
+  droppet[rad.id] = bort.map((b) => ({ areal: b.areal, c: b.c }));
+
+  const [lng, lat] = geoCentroid({ type: "MultiPolygon", coordinates: beholdt });
   const proj = geoAzimuthalEqualArea().rotate([-lng, -lat]).precision(0.1);
-  proj.fitExtent(
-    [
-      [FORM_MARG, FORM_MARG],
-      [FORM_BOKS - FORM_MARG, FORM_BOKS - FORM_MARG],
-    ],
-    { type: "MultiPolygon", coordinates: beholdt },
-  );
-  const ringer = forenkleRinger(projiserRinger(proj, beholdt), FORM_MIN_VEKT);
+  const passe = (polygoner) =>
+    proj.fitExtent(
+      [
+        [FORM_MARG, FORM_MARG],
+        [FORM_BOKS - FORM_MARG, FORM_BOKS - FORM_MARG],
+      ],
+      { type: "MultiPolygon", coordinates: polygoner },
+    ).scale();
+
+  // Pass 1: size every ring in px^2 and drop dust (islands and lakes), then refit to what is left.
+  const k = passe(beholdt);
+  const px2 = (ring) => ringSr(ring) * k * k;
+  const storst = Math.max(...beholdt.map((poly) => px2(poly[0])));
+  const minAreal = storst < FORM_SMAA_LAND_PX2 ? FORM_MIN_AREAL_SMAA_PX2 : FORM_MIN_AREAL_PX2;
+  const renset = beholdt
+    .filter((poly) => px2(poly[0]) >= minAreal)
+    .map((poly) => [poly[0], ...poly.slice(1).filter((hull) => px2(hull) >= minAreal)]);
+  passe(renset);
 
   const deler = [];
-  const kunSmaa = !ringer.some((ring) => {
-    const t = tilTideler(ring);
-    if (!t) return false;
-    const b = ringBoks(t);
-    return b.x1 - b.x0 >= 30 || b.y1 - b.y0 >= 30;
-  });
   let x0 = Infinity;
   let y0 = Infinity;
   let x1 = -Infinity;
   let y1 = -Infinity;
+  let ringer = projiserRinger(proj, renset);
+  if (minAreal === FORM_MIN_AREAL_SMAA_PX2) {
+    // Atoll and island nations (Maldives, Marshall Islands, ...) are invisible at true size in 200 px:
+    // grow every speck about its centre to a minimum size, then refit the lot to the padded box.
+    ringer = ringer.map((ring) => {
+      const b = ringBoks(ring);
+      const [cx, cy] = [(b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2];
+      const f = Math.max(1, Math.sqrt(FORM_MIN_OY_PX2 / Math.max(ringAreal(ring), 1e-6)));
+      return f === 1 ? ring : ring.map(([x, y]) => [cx + (x - cx) * f, cy + (y - cy) * f]);
+    });
+    const b = ringBoks(ringer.flat());
+    const f = (FORM_BOKS - 2 * FORM_MARG) / Math.max(b.x1 - b.x0, b.y1 - b.y0);
+    const [cx, cy] = [(b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2];
+    ringer = ringer.map((ring) => ring.map(([x, y]) => [FORM_BOKS / 2 + (x - cx) * f, FORM_BOKS / 2 + (y - cy) * f]));
+  }
   for (const ring of ringer) {
-    const t = tilTideler(ring);
+    const eps = Math.min(FORM_TOLERANSE_PX, 0.15 * Math.sqrt(ringAreal(ring)));
+    const t = tilHeltall(dp(ring, eps), 0, 0, 100);
     if (!t) continue;
     const boks = ringBoks(t);
-    // Specks below 0.5 px add bytes but are invisible at 200 px (unless the whole country is specks).
-    if (!kunSmaa && boks.x1 - boks.x0 < 5 && boks.y1 - boks.y0 < 5) continue;
-    deler.push(ringTilPath(t));
-    x0 = Math.min(x0, boks.x0 / 10);
-    y0 = Math.min(y0, boks.y0 / 10);
-    x1 = Math.max(x1, boks.x1 / 10);
-    y1 = Math.max(y1, boks.y1 / 10);
+    deler.push(ringTilPath(t, 100));
+    x0 = Math.min(x0, boks.x0 / 100);
+    y0 = Math.min(y0, boks.y0 / 100);
+    x1 = Math.max(x1, boks.x1 / 100);
+    y1 = Math.max(y1, boks.y1 / 100);
   }
   if (deler.length === 0) throw new Error(`Silhouette for ${rad.id} is empty`);
   former[rad.id] = deler.join("");
-  formerStats[rad.id] = { x0, y0, x1, y1, deler: deler.length };
+  formerStats[rad.id] = { x0, y0, x1, y1, deler: deler.length, droppetDeler: beholdt.length - renset.length, parede };
 }
 
 // ---- land.json ---------------------------------------------------------------------------------
@@ -487,6 +687,13 @@ if (process.argv.includes("--detaljer")) {
     if (d.length) {
       const stor = d.reduce((m, x) => Math.max(m, x.areal), 0);
       log(`  ${rad.id}: ${d.length} deler, største ${(stor * RAD_KM * RAD_KM).toFixed(0)} km2`);
+    }
+  }
+  log("\nSilhuetter (bytes, ringer, støvøyer droppet, sammensmeltede kanter):");
+  for (const id of Object.keys(former).sort((a, b) => former[b].length - former[a].length)) {
+    const st = formerStats[id];
+    if (former[id].length > 40000 || st.parede || st.droppetDeler > 50) {
+      log(`  ${id} ${former[id].length} B, ${st.deler} ringer, ${st.droppetDeler} droppet, ${st.parede} kanter`);
     }
   }
   log("\nKart-areal (px2) / bredde x høyde:");
