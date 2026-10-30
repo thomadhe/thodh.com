@@ -3,11 +3,11 @@ import "server-only"
 // Secret words for Anelsesløs (English, common concrete nouns). Server-only so the answers never
 // reach the browser bundle.
 export const hemmeligeOrd = [
-  "dog", "cat", "horse", "cow", "sheep", "pig", "goat", "rabbit", "mouse", "rat", "wolf", "bear", "deer",
-  "eagle", "owl", "crow", "duck", "goose", "chicken", "turkey", "parrot", "penguin", "swan", "pigeon", "fish",
+  "dog", "cat", "horse", "cow", "sheep", "pig", "goat", "rabbit", "hamster", "rat", "wolf", "bear", "deer",
+  "eagle", "owl", "crow", "duck", "goose", "chicken", "koala", "parrot", "penguin", "swan", "pigeon", "fish",
   "salmon", "shark", "whale", "dolphin", "octopus", "crab", "lobster", "shrimp", "frog", "snake", "turtle",
   "lizard", "crocodile", "lion", "tiger", "elephant", "giraffe", "zebra", "monkey", "gorilla", "kangaroo",
-  "camel", "squirrel", "bat", "bee", "ant", "spider", "butterfly", "mosquito", "worm", "snail", "apple",
+  "camel", "squirrel", "panda", "bee", "ant", "spider", "butterfly", "mosquito", "worm", "snail", "apple",
   "pear", "banana", "orange", "lemon", "cherry", "grape", "strawberry", "peach", "plum", "pineapple", "melon",
   "watermelon", "coconut", "tomato", "potato", "carrot", "onion", "garlic", "cabbage", "lettuce", "pepper",
   "corn", "bean", "rice", "pasta", "bread", "cheese", "butter", "milk", "egg", "meat", "sausage", "bacon",

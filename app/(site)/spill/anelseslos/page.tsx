@@ -22,8 +22,9 @@ export default async function Page({ searchParams }: PageProps<"/spill/anelseslo
             Grønt er veldig nært, gult nært, oransje lunkent og rødt langt unna. Bøyde former som «dogs» regnes som «dog». Et hint gir et ord omtrent dobbelt så nært som ditt beste.
           </p>
           <p className="font-mono text-[11px] text-neutral-400">
-            Likhet beregnet med GloVe-ordvektorer (Pennington, Socher &amp; Manning 2014, PDDL 1.0). Ordutvalg med
-            WordNet 3.0, © 2006 Princeton University.
+            Likhet beregnet med et ensemble av GloVe-ordvektorer (Pennington, Socher &amp; Manning 2014, PDDL 1.0),
+            mxbai-embed-large-v1 (Mixedbread, Apache 2.0) og Qwen3-Embedding-0.6B (Qwen-teamet, Alibaba, Apache 2.0).
+            Ordutvalg med WordNet 3.0, © 2006 Princeton University.
           </p>
         </>
       }

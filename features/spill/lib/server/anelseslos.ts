@@ -5,10 +5,14 @@ import path from "node:path"
 import { dagNummer, iRotasjon } from "../dag"
 import { hemmeligeOrd } from "./hemmelige-ord"
 
-// Word vectors: GloVe (Pennington, Socher & Manning 2014; Common Crawl 42B/840B and Wikipedia+Gigaword 6B,
-// PDDL 1.0), combined and reduced to 300 dims. No subword information, so only context decides similarity.
-// Vocabulary: 25,000 common English lemmas chosen with WordNet 3.0 (© 2006 Princeton University);
-// inflections and British spellings map to their lemma via forms.tsv. L2-normalised, quantised to int8.
+// Word vectors: an ensemble whose cosine is the weighted mean of three models' cosines (1 : 1 : 0.5):
+// GloVe (Pennington, Socher & Manning 2014; Common Crawl 42B/840B and Wikipedia+Gigaword 6B, PDDL 1.0),
+// mxbai-embed-large-v1 (Mixedbread, Apache 2.0) and Qwen3-Embedding-0.6B (Qwen team, Alibaba, Apache 2.0)
+// embedding each word alone ("Given a word, retrieve words that are related to it in meaning or topic").
+// GloVe keeps the associations, the sentence models add categories (lettuce ~ vegetable, food). Distilled to
+// 300 dims by matching each word's neighbour ranking. Vocabulary: 25,000 common English lemmas chosen with
+// WordNet 3.0 (© 2006 Princeton University); inflections and British spellings map to their lemma via
+// forms.tsv. L2-normalised, quantised to int8.
 const MAPPE = path.join(process.cwd(), "features", "spill", "data", "anelseslos")
 const DIM = 300
 

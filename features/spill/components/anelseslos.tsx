@@ -8,15 +8,15 @@ import { lyder } from "../lib/lyd"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
 type Gjetning = { ord: string; avstand: number; hint?: boolean }
-// v3: new similarity model. Older saves hold ranks from the old model and start fresh.
+// v4: ensemble similarity model (Oct 2026). Older saves hold ranks from earlier models and start fresh.
 type Tilstand = {
-  v: 3
+  v: 4
   gjetninger: Gjetning[]
   fasit?: { ord: string; naermeste: string[] }
   resultat: Resultat
 }
 
-const tom = (): Tilstand => ({ v: 3, gjetninger: [], resultat: { status: "pagar" } })
+const tom = (): Tilstand => ({ v: 4, gjetninger: [], resultat: { status: "pagar" } })
 
 // Lessgames-style rows: coloured bar, light text on top. The colour blends from green (top 50) through
 // yellow (~300) and orange (~1500) to red, on a log scale of the rank.
