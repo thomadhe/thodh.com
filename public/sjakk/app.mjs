@@ -1,6 +1,7 @@
 import { Chess } from './vendor/chess.mjs';
 import { colorName, pieceNames } from './game-logic.mjs';
 import { createSession, defaults, validateSettings, applyAction, advanceTime, clockValues, formatClock, noticeFacesOpposite, other } from './session.mjs';
+import { lesFen, trekkFor, TYPER } from './casino.mjs';
 
 const $ = selector => document.querySelector(selector);
 const apiBase = $('meta[name="chess-api-base"]')?.content ?? '/api/rooms';
@@ -101,13 +102,13 @@ function syncNotice() {
 
 function render() {
   document.body.classList.toggle('online', mode === 'online');
-  chess = new Chess(state.fen);
+  chess = state.settings.minispill === 'casino' ? casinoBrett(state) : new Chess(state.fen);
   renderBoard(board.contains(document.activeElement));
   renderPlayer('#top-player', mode === 'online' ? other(playerColor) : 'b');
   renderPlayer('#bottom-player', mode === 'online' ? playerColor : 'w');
   const title = state.status === 'setup' ? 'Klar for et parti?' : state.status === 'waiting' ? 'Venter på en venn' : state.result?.title ?? `${colorName(state.turn)} sin tur`;
   $('#status').textContent = title;
-  $('#status-detail').textContent = state.status === 'setup' ? 'Velg tid og variant for å starte.' : state.status === 'waiting' ? 'Del invitasjonslenken for å starte.' : state.result?.description ?? (state.notices.length ? 'Spillet er på pause mens beskjeden vises.' : chess.isCheck() ? `${colorName(state.turn)} står i sjakk. Beskytt kongen.` : mode === 'online' && state.turn !== playerColor ? 'Venter på motspillerens trekk.' : 'Velg en brikke for å se lovlige trekk.');
+  $('#status-detail').textContent = state.status === 'setup' ? 'Velg tid og variant for å starte.' : state.status === 'waiting' ? 'Del invitasjonslenken for å starte.' : state.result?.description ?? (state.notices.length ? 'Spillet er på pause mens beskjeden vises.' : chess.isCheck() ? `${colorName(state.turn)} står i sjakk. Beskytt kongen.` : mode === 'online' && state.turn !== playerColor ? 'Venter på motspillerens trekk.' : state.settings.minispill === 'casino' ? 'Flytt brikkene hjulene viser. Sjakk er lov – den som slår kongen, vinner.' : 'Velg en brikke for å se lovlige trekk.');
   $('#turn-piece').textContent = state.result?.icon ?? '♟';
   $('#mode-label').textContent = mode === 'online' ? `NETTSPILL · DU ER ${colorName(playerColor).toUpperCase()}` : 'PÅ SAMME SKJERM';
   $('#seat-help').textContent = mode === 'online' ? 'Hver spiller har sitt eget brett.' : 'Hvit sitter her. Svart sitter på motsatt side.';
@@ -117,6 +118,15 @@ function render() {
   if (room?.inviteToken) $('#invite-link').value = `${location.origin}${location.pathname}#room=${room.id}&invite=${room.inviteToken}`;
   $('#move-count').textContent = `${state.moves.length} trekk`;
   $('#history').innerHTML = state.moves.length ? Array.from({ length: Math.ceil(state.moves.length / 2) }, (_, i) => `<div class="move-row"><span class="move-number">${i + 1}.</span><span>${state.moves[2 * i].san.replace('#', '')}</span><span>${(state.moves[2 * i + 1]?.san ?? '—').replace('#', '')}</span></div>`).join('') : '<p class="empty-history">Ingen trekk ennå.</p>';
+  if (state.settings.minispill === 'casino' && state.moves.length) {
+    // Up to three moves per turn, so group by turn instead of white/black pairs.
+    const turer = [];
+    for (const move of state.moves) {
+      if (turer.at(-1)?.color === move.color) turer.at(-1).san.push(move.san);
+      else turer.push({ color: move.color, san: [move.san] });
+    }
+    $('#history').innerHTML = turer.map((tur, i) => `<div class="move-row"><span class="move-number">${i + 1}.</span><span>${colorName(tur.color)}</span><span>${tur.san.join(' ')}</span></div>`).join('');
+  }
   $('#history').scrollTop = $('#history').scrollHeight;
   const training = state.settings.variant === 'training';
   $('#variant-label').textContent = training ? 'EN AKTIV RUNDE' : 'EN LITEN VRI';
@@ -124,8 +134,48 @@ function render() {
   $('#variant-title').textContent = training ? 'En brikke mindre. En øvelse mer.' : 'En brikke mindre. Et plagg mindre.';
   $('#variant-description').textContent = training ? Object.entries(state.settings.exercises).filter(([, reps]) => reps).map(([name, reps]) => `${reps} ${name}`).join(' · ') : 'Vinneren får massasje.';
   $('#variant-prize').textContent = training ? 'Sjakk for hodet. Bevegelse for kroppen.' : 'Vinneren? Massasjetid.';
+  renderCasino();
   renderClocks();
   syncNotice();
+}
+
+// ---- Casinosjakk: the board only offers the pieces the reels came up with ----
+
+function casinoBrett(game) {
+  const brett = lesFen(game.fen);
+  const igjen = new Set((game.casino?.hjul ?? []).filter((_, i) => game.casino.status[i] === 'klar'));
+  return {
+    get: square => brett[square],
+    moves: ({ square }) => { const piece = brett[square]; return piece && piece.color === game.turn && igjen.has(piece.type) ? trekkFor(brett, square) : []; },
+    isCheck: () => false,
+  };
+}
+
+let visteRunde = null;
+let spinnTimer = null;
+
+function renderCasino() {
+  const aktiv = state.settings.minispill === 'casino' && state.casino && state.status !== 'setup';
+  $('#casino-panel').hidden = !aktiv;
+  if (!aktiv) return;
+  const { hjul, status, runde } = state.casino;
+  const reels = [...document.querySelectorAll('[data-hjul]')];
+  const vis = (el, type) => { el.innerHTML = pieceMarkup({ type, color: state.turn }); };
+  const ferdig = () => reels.forEach((el, i) => { vis(el, hjul[i]); el.className = `hjul ${status[i]}`; el.setAttribute('aria-label', `${pieceNames[hjul[i]]}: ${status[i] === 'klar' ? 'skal flyttes' : status[i] === 'brukt' ? 'flyttet' : 'kan ikke flytte'}`); });
+  if (runde !== visteRunde) {
+    // A new spin: the reels roll and stop one after another, like a slot machine.
+    visteRunde = runde;
+    clearInterval(spinnTimer);
+    const start = performance.now();
+    reels.forEach(el => { el.className = 'hjul spinner'; });
+    spinnTimer = setInterval(() => {
+      const t = performance.now() - start;
+      reels.forEach((el, i) => { if (t < 600 + i * 350) vis(el, TYPER[Math.floor(Math.random() * TYPER.length)]); else if (el.classList.contains('spinner')) { vis(el, hjul[i]); el.className = `hjul ${status[i]} landet`; } });
+      if (t >= 600 + 2 * 350) { clearInterval(spinnTimer); ferdig(); }
+    }, 70);
+  } else if (!reels.some(el => el.classList.contains('spinner'))) ferdig();
+  const igjen = hjul.filter((_, i) => status[i] === 'klar').map(type => pieceNames[type]);
+  $('#casino-tekst').textContent = state.status !== 'playing' ? '' : igjen.length ? `Flytt: ${igjen.join(', ')}` : 'Turen går videre';
 }
 
 async function request(path, data, credentials) {
@@ -223,6 +273,7 @@ $('#resign-confirm').addEventListener('click', () => { $('#resign-dialog').close
 $('#player-settings').innerHTML = ['w', 'b'].map(color => `<section class="time-player"><h3>${colorName(color)}</h3>${[['total', 'Partitid'], ['increment', 'Tillegg per trekk'], ['deadline', 'Trekkfrist']].map(([key, label]) => `<label>${label}<span class="input-with-unit"><input id="${color}-${key}" aria-label="${colorName(color)}: ${label}" type="number" min="0" step="any" value="${key === 'deadline' ? 60 : 0}" required /><select id="${color}-${key}-unit" aria-label="Enhet for ${colorName(color).toLowerCase()}: ${label.toLowerCase()}"><option value="1">sek</option><option value="60">min</option></select></span></label>`).join('')}</section>`).join('');
 function loadSettingsForm(settings) {
   $('#variant').value = settings.variant;
+  $('#minispill').value = settings.minispill ?? 'vanlig';
   for (const color of ['w', 'b']) for (const key of ['total', 'increment', 'deadline']) {
     $(`#${color}-${key}`).value = settings.players[color][key];
     $(`#${color}-${key}-unit`).value = '1';
@@ -235,6 +286,7 @@ function loadSettingsForm(settings) {
 function readSettingsForm() {
   const settings = defaults();
   settings.variant = $('#variant').value;
+  settings.minispill = $('#play-mode').value === 'online' ? 'vanlig' : $('#minispill').value;
   for (const color of ['w', 'b']) for (const key of ['total', 'increment', 'deadline']) settings.players[color][key] = Number($(`#${color}-${key}`).value) * Number($(`#${color}-${key}-unit`).value);
   for (const name of ['burpees', 'pushups', 'squats']) settings.exercises[name] = Number($(`#reps-${name}`).value);
   return validateSettings(settings);
@@ -242,6 +294,9 @@ function readSettingsForm() {
 function refreshSetup() {
   $('#exercise-settings').hidden = $('#variant').value !== 'training';
   $('#host-color-field').hidden = $('#play-mode').value !== 'online';
+  // Casinosjakk is for two people on one screen.
+  $('#minispill').disabled = $('#play-mode').value === 'online';
+  if ($('#play-mode').value === 'online') $('#minispill').value = 'vanlig';
   $('#start-game').textContent = $('#play-mode').value === 'online' ? 'Opprett invitasjonslenke' : 'Start parti';
   $('#setup-note').textContent = state.status === 'playing' ? (mode === 'online' ? 'Nettpartiet som pågår, fortsetter.' : 'Partiet som pågår, avsluttes.') : '';
 }

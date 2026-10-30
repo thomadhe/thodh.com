@@ -1,9 +1,11 @@
 import { Chess } from './vendor/chess.mjs';
 import { colorName, pieceNames, outcome } from './game-logic.mjs';
+import { kanFlytte, lesFen, skrivFen, spinn, trekkFor, utfor } from './casino.mjs';
 
 export const other = color => color === 'w' ? 'b' : 'w';
 export const defaults = () => ({
   variant: 'playful',
+  minispill: 'vanlig',
   players: { w: { total: 0, increment: 0, deadline: 60 }, b: { total: 0, increment: 0, deadline: 60 } },
   exercises: { burpees: 5, pushups: 10, squats: 15 },
 });
@@ -12,6 +14,7 @@ export function validateSettings(input) {
   if (!input || !['playful', 'training'].includes(input.variant)) throw new Error('Velg en spillvariant.');
   const settings = defaults();
   settings.variant = input.variant;
+  settings.minispill = input.minispill === 'casino' ? 'casino' : 'vanlig';
   for (const color of ['w', 'b']) for (const field of ['total', 'increment', 'deadline']) {
     const value = input.players?.[color]?.[field];
     if (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > 604800 || (value > 0 && value < .1)) throw new Error('Tider må være 0 eller minst 0,1 sekund, opptil én uke.');
@@ -28,7 +31,9 @@ export function validateSettings(input) {
 
 export function createSession(settings = defaults(), now = Date.now(), waiting = false) {
   settings = validateSettings(settings);
-  return { settings, moves: [], fen: new Chess().fen(), turn: 'w', remaining: { w: settings.players.w.total ? settings.players.w.total * 1000 : null, b: settings.players.b.total ? settings.players.b.total * 1000 : null }, turnRemaining: settings.players.w.deadline ? settings.players.w.deadline * 1000 : null, startedAt: waiting ? null : now, status: waiting ? 'waiting' : 'playing', notices: [], nextNotice: 1, exerciseIndex: 0, timeoutIndex: 0, result: null };
+  const state = { settings, moves: [], fen: new Chess().fen(), turn: 'w', remaining: { w: settings.players.w.total ? settings.players.w.total * 1000 : null, b: settings.players.b.total ? settings.players.b.total * 1000 : null }, turnRemaining: settings.players.w.deadline ? settings.players.w.deadline * 1000 : null, startedAt: waiting ? null : now, status: waiting ? 'waiting' : 'playing', notices: [], nextNotice: 1, exerciseIndex: 0, timeoutIndex: 0, result: null };
+  if (settings.minispill === 'casino') nyttSpinn(state);
+  return state;
 }
 
 export function chessFrom(state) {
@@ -66,6 +71,72 @@ function win(state, winner, reason) {
   state.result = notice;
   state.status = 'finished';
   addNotice(state, notice);
+}
+
+/** A captured piece costs a garment (or an exercise in the training variant). */
+function fangst(state, actor, captured) {
+  const recipient = other(actor);
+  const tap = `${colorName(recipient)} mistet ${captured === 'r' ? 'et' : 'en'} ${pieceNames[captured]}`;
+  if (state.settings.variant === 'training') {
+    const task = exercise(state);
+    addNotice(state, { kind: 'capture', recipient, title: task.text, description: `${tap}. Klar for en liten treningspause?`, icon: '💪' });
+  } else addNotice(state, { kind: 'capture', recipient, title: 'Ta av ett plagg! 😈', description: `${tap}.`, icon: '😈' });
+}
+
+// ---- Casinosjakk ----
+
+/** Spins the reels for the player to move. A reel showing a piece that can't move is void ("tom"). */
+function nyttSpinn(state) {
+  const brett = lesFen(state.fen);
+  for (let forsok = 0; forsok < 12; forsok++) {
+    const hjul = spinn();
+    const status = hjul.map(type => kanFlytte(brett, state.turn, type) ? 'klar' : 'tom');
+    state.casino = { runde: (state.casino?.runde ?? 0) + 1, hjul, status };
+    if (status.includes('klar')) return;
+    // Nothing on the reels can move: the house wins this round and the turn passes.
+    addNotice(state, { kind: 'casino', recipient: state.turn, title: 'Ingen gevinst 🎰', description: `${colorName(state.turn)} fikk ${hjul.map(type => pieceNames[type]).join(', ')}, men ingen av dem kan flytte. Turen går videre.`, icon: '🎰' });
+    state.turn = other(state.turn);
+    state.fen = skrivFen(brett, state.turn);
+    state.turnRemaining = state.settings.players[state.turn].deadline * 1000 || null;
+  }
+}
+
+const bokstav = { n: 'N', b: 'B', r: 'R', q: 'Q', k: 'K', p: '' };
+
+function casinoTrekk(state, action, actor, now) {
+  const brett = lesFen(state.fen);
+  const brikke = brett[action.from];
+  if (!brikke || brikke.color !== actor) throw new Error('Velg en av dine brikker.');
+  const hjul = state.casino.status.findIndex((status, i) => status === 'klar' && state.casino.hjul[i] === brikke.type);
+  if (hjul < 0) throw new Error(`Hjulene ga ikke ${pieceNames[brikke.type]} denne turen.`);
+  const trekk = trekkFor(brett, action.from).find(move => move.to === action.to);
+  if (!trekk) throw new Error('Trekket er ikke lovlig.');
+  const forvandling = ['q', 'r', 'b', 'n'].includes(action.promotion) ? action.promotion : 'q';
+  const nytt = utfor(brett, trekk, forvandling);
+  settle(state, now);
+  state.casino.status[hjul] = 'brukt';
+  const san = `${bokstav[brikke.type] || (trekk.captured ? action.from[0] : '')}${trekk.captured ? 'x' : ''}${trekk.to}${trekk.promotion ? `=${forvandling.toUpperCase()}` : ''}`;
+  state.moves.push({ from: trekk.from, to: trekk.to, promotion: trekk.promotion ? forvandling : undefined, captured: trekk.captured, color: actor, san });
+
+  if (trekk.captured === 'k') {
+    state.fen = skrivFen(nytt, actor);
+    win(state, actor, 'ved å slå kongen');
+    return state;
+  }
+  if (trekk.captured) fangst(state, actor, trekk.captured);
+
+  // Reels whose piece can no longer move are void; when none are left, the turn passes.
+  state.casino.status = state.casino.status.map((status, i) => status === 'klar' && !kanFlytte(nytt, actor, state.casino.hjul[i]) ? 'tom' : status);
+  if (state.casino.status.includes('klar')) state.fen = skrivFen(nytt, actor);
+  else {
+    if (state.remaining[actor] !== null) state.remaining[actor] += state.settings.players[actor].increment * 1000;
+    state.turn = other(actor);
+    state.fen = skrivFen(nytt, state.turn);
+    state.turnRemaining = state.settings.players[state.turn].deadline * 1000 || null;
+    nyttSpinn(state);
+  }
+  if (state.status === 'playing' && !state.notices.length) state.startedAt = now;
+  return state;
 }
 
 export function advanceTime(state, now = Date.now()) {
@@ -110,6 +181,7 @@ export function applyAction(state, action, actor, now = Date.now()) {
   }
   if (actor !== state.turn) throw new Error('Det er ikke din tur.');
   if (action.type !== 'move') throw new Error('Ukjent handling.');
+  if (state.settings.minispill === 'casino') return casinoTrekk(state, action, actor, now);
   const chess = chessFrom(state);
   let move;
   try { move = chess.move({ from: action.from, to: action.to, ...(action.promotion ? { promotion: action.promotion } : {}) }); }
@@ -120,13 +192,7 @@ export function applyAction(state, action, actor, now = Date.now()) {
   state.fen = chess.fen();
   state.turn = chess.turn();
   state.turnRemaining = state.settings.players[state.turn].deadline * 1000 || null;
-  if (move.captured) {
-    const recipient = other(actor);
-    if (state.settings.variant === 'training') {
-      const task = exercise(state);
-      addNotice(state, { kind: 'capture', recipient, title: task.text, description: `${colorName(recipient)} mistet ${move.captured === 'r' ? 'et' : 'en'} ${pieceNames[move.captured]}. Klar for en liten treningspause?`, icon: '💪' });
-    } else addNotice(state, { kind: 'capture', recipient, title: 'Ta av ett plagg! 😈', description: `${colorName(recipient)} mistet ${move.captured === 'r' ? 'et' : 'en'} ${pieceNames[move.captured]}.`, icon: '😈' });
-  }
+  if (move.captured) fangst(state, actor, move.captured);
   const result = outcome(chess);
   if (result?.kind === 'win') win(state, actor);
   else if (result) {

@@ -166,3 +166,19 @@ footer { border-top: 1px solid var(--line); padding: 23px 0 28px; display: flex;
 .twist-card h2 { font-size: 1.35rem; margin: 6px 0 8px; }
 .twist-card p { margin-bottom: 18px; }
 .twist-card h2 { padding-right: 44px; }
+
+/* Casinosjakk: three reels in a little slot machine. */
+.casino-panel { border: 1px solid #8a6a2c; border-radius: 9px; padding: 16px; background: linear-gradient(135deg, #3d2e17, #241c14); text-align: center; }
+.hjulrad { display: flex; justify-content: center; gap: 10px; }
+.hjul { position: relative; display: flex; align-items: center; justify-content: center; width: 64px; height: 72px; border-radius: 8px; background: #f3ead8; box-shadow: inset 0 6px 10px rgb(0 0 0 / .35), inset 0 -6px 10px rgb(0 0 0 / .25); font-size: 2.6rem; transition: opacity .25s, transform .25s; }
+.hjul .piece { line-height: 1; }
+.hjul.spinner { filter: blur(.6px); }
+.hjul.landet { animation: hjul-land .3s ease-out; }
+.hjul.brukt { opacity: .35; }
+.hjul.brukt::after, .hjul.tom::after { position: absolute; right: 4px; bottom: 2px; font-size: .9rem; font-weight: 700; }
+.hjul.brukt::after { content: '✓'; color: #2f9e5b; }
+.hjul.tom { opacity: .3; }
+.hjul.tom::after { content: '✕'; color: #c2414b; }
+#casino-tekst { margin: 12px 0 0; color: #f0d79a; font-size: .9rem; min-height: 1.2em; }
+@keyframes hjul-land { from { transform: translateY(-6px); } 60% { transform: translateY(3px); } }
+@media (prefers-reduced-motion: reduce) { .hjul.landet { animation: none; } }
