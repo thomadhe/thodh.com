@@ -3,6 +3,7 @@ import "server-only"
 import attraksjoner from "../../data/geografi/attraksjoner.json"
 import former from "../../data/geografi/former.json"
 import kart from "../../data/geografi/kart.json"
+import telefonkoder from "../../data/geografi/telefon.json"
 import { dagNummer, stokk } from "../dag"
 import { land, storeByer, type Land } from "../geografi"
 import { egenskaper } from "../geografi-egenskaper"
@@ -10,7 +11,7 @@ import { normaliser } from "../geografi-svar"
 
 // Tilkoblinger (our GeoConnections): 16 tiles, four hidden groups of four. Two kinds of day:
 // - Land day (most days, like GeoConnections): each group is one country, shown four ways. Which four
-//   ways changes daily: flag, outline, capital, a famous sight, a big city, currency, domain, …
+//   ways changes daily: flag, outline, capital, a famous sight, a big city, currency, domain, phone code, …
 // - Category day (about one in three): 16 countries with flag and name; four categories from
 //   different families, each with four countries that fit it and none of the other three.
 
@@ -99,10 +100,11 @@ function bygg(dato: string, forsok: number): KategoriGruppe[] | null {
 // Land days
 // ---------------------------------------------------------------------------------------------
 
-type Visning = "flagg" | "omriss" | "foto" | "hovedstad" | "by" | "valuta" | "domene" | "folketall" | "areal" | "sprak"
+type Visning = "flagg" | "omriss" | "foto" | "hovedstad" | "by" | "valuta" | "domene" | "folketall" | "areal" | "sprak" | "telefon" | "koordinater"
 type Attraksjon = Kreditt & { bilde: string }
 const severdigheter = attraksjoner as Record<string, Attraksjon>
 const formKart = former as Record<string, string>
+const telefon = telefonkoder as Record<string, string>
 const smaa = new Set(Object.keys((kart as { punkter: Record<string, unknown> }).punkter))
 
 const tall = (n: number) => n.toLocaleString("nb-NO")
@@ -144,6 +146,8 @@ const ETIKETT: Partial<Record<Visning, string>> = {
   folketall: "Folketall",
   areal: "Areal",
   sprak: "Språk",
+  telefon: "Telefonkode",
+  koordinater: "Midt i landet",
 }
 
 /** The tile text for a country, or null if this way of showing it doesn't work for that country. */
@@ -161,6 +165,12 @@ function tekstFor(l: Land, v: Visning): string | null {
       return folketall(l.befolkning)
     case "areal":
       return `${tall(tresiffer(l.areal))} km²`
+    case "telefon":
+      return telefon[l.id] ?? null
+    case "koordinater": {
+      const grad = (v: number, pluss: string, minus: string) => `${Math.abs(Math.round(v))}° ${v >= 0 ? pluss : minus}`
+      return `${grad(l.lat, "N", "S")}, ${grad(l.lng, "Ø", "V")}`
+    }
     case "sprak": {
       const s = l.sprak.slice(0, 2)
       const tekst = s.join(" og ")
@@ -185,6 +195,8 @@ function forenlige(valgte: Land[], visninger: Visning[]) {
       const [a, b] = [valgte[i], valgte[j]]
       if (visninger.includes("valuta") && a.valuta.kode === b.valuta.kode) return false
       if (visninger.includes("sprak") && a.sprak.some((s) => b.sprak.includes(s))) return false
+      if (visninger.includes("telefon") && telefon[a.id] === telefon[b.id]) return false
+      if (visninger.includes("koordinater") && Math.abs(a.lat - b.lat) + Math.abs(a.lng - b.lng) < 8) return false
       if (visninger.includes("folketall") && Math.max(a.befolkning, b.befolkning) / Math.min(a.befolkning, b.befolkning) < 1.3) return false
       if (visninger.includes("areal") && Math.max(a.areal, b.areal) / Math.min(a.areal, b.areal) < 1.3) return false
     }
@@ -192,8 +204,9 @@ function forenlige(valgte: Land[], visninger: Visning[]) {
   return true
 }
 
-/** Photos and capitals come up most often. */
+/** Photos and capitals come up most often. Phone codes and coordinates join from 31 Oct; earlier days stay as they were. */
 const ANDRE: Visning[] = ["foto", "foto", "foto", "hovedstad", "hovedstad", "by", "valuta", "domene", "folketall", "areal", "sprak"]
+const ANDRE_FRA_31_OKT: Visning[] = [...ANDRE, "telefon", "koordinater"]
 const kjentNok = (l: Land) => l.befolkning >= 1_000_000
 
 function byggLanddag(dato: string, forsok: number) {
@@ -201,7 +214,8 @@ function byggLanddag(dato: string, forsok: number) {
   // At least one picture of the country itself (flag or outline), sometimes both.
   const antallBilder = stokk([1, 1, 2], `${fro}:antall`)[0]
   const bilder = stokk<Visning>(["flagg", "omriss"], `${fro}:bilde`).slice(0, antallBilder)
-  const visninger = [...bilder, ...new Set(stokk(ANDRE, `${fro}:andre`))].slice(0, 4)
+  const andre = dato >= "2026-10-31" ? ANDRE_FRA_31_OKT : ANDRE
+  const visninger = [...bilder, ...new Set(stokk(andre, `${fro}:andre`))].slice(0, 4)
   const kandidater = stokk(
     land.filter((l) => kjentNok(l) && visninger.every((v) => kanVises(l, v))),
     `${fro}:land`,
