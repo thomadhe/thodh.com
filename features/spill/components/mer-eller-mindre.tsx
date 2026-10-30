@@ -6,23 +6,23 @@ import { formaterVerdi } from "../lib/format"
 import { useDagligTilstand, useResultater, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
 import type { MelItem, MelKategori, MelRunde } from "../lib/mer-eller-mindre"
-import { DelKnapp, Knapp, Kort } from "./spill-ramme"
+import { DelKnapp, Knapp, Kort, sekundarKnapp } from "./spill-ramme"
 
 // v3: new daily slots and chained rounds. Older saves belong to other rounds and start fresh.
 type Tilstand = { v: 3; svar: (0 | 1)[]; resultat: Resultat }
 
 const tom = (): Tilstand => ({ v: 3, svar: [], resultat: { status: "pagar" } })
 /** Count-up, then a beat to see the result, then the chain slides on. */
-const TELL_MS = 1000
-const TIKK_MS = 60
+const TELL_MS = 1700
 const VIS_SVAR_MS = 2000
 
-// Eases out gently so the digits keep visibly moving until the very end, in step with the ticks.
-const myk = (p: number) => 1 - Math.pow(1 - p, 2)
+// Races up and then crawls the last stretch, so the final digits keep you waiting.
+const myk = (p: number) => (p >= 1 ? 1 : (1 - Math.pow(2, -9 * p)) / (1 - Math.pow(2, -9)))
 
 /** Rolls the number up from zero with soft ticks, then reports when it has landed. */
 function Teller({ verdi, format, onFerdig }: { verdi: number; format: MelKategori["format"]; onFerdig?: () => void }) {
   const [vist, setVist] = useState(format === "year" ? verdi : 0)
+  const [landet, setLandet] = useState(false)
   const ferdig = useRef(onFerdig)
   useEffect(() => {
     ferdig.current = onFerdig
@@ -38,18 +38,22 @@ function Teller({ verdi, format, onFerdig }: { verdi: number; format: MelKategor
     const steg = (t: number) => {
       const p = Math.min(1, (t - start) / TELL_MS)
       setVist(verdi * myk(p))
-      // One tick every TIKK_MS for as long as the number is still rolling.
-      if (p < 1 && t - sisteTikk >= TIKK_MS) {
+      // Ticks start fast and slow down with the number, rising in pitch towards the end.
+      if (p < 1 && t - sisteTikk >= 35 + 230 * p * p) {
         sisteTikk = t
-        lyder.tikk()
+        lyder.tikk(p)
       }
       if (p < 1) ramme = requestAnimationFrame(steg)
-      else ferdig.current?.()
+      else {
+        setLandet(true)
+        ferdig.current?.()
+      }
     }
     ramme = requestAnimationFrame(steg)
     return () => cancelAnimationFrame(ramme)
   }, [verdi, format])
-  return <>{formaterVerdi(format === "decimal" ? Math.round(vist * 10) / 10 : vist, format)}</>
+  // A little bump when the number lands.
+  return <span className={`inline-block ${landet ? "mel-landet" : ""}`}>{formaterVerdi(format === "decimal" ? Math.round(vist * 10) / 10 : vist, format)}</span>
 }
 
 function Bilde({ item, format }: { item: MelItem; format: MelKategori["bildeformat"] }) {
@@ -295,9 +299,7 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
               <button
                 type="button"
                 onClick={gaVidere}
-                className={`mel-inn font-mono text-[11px] uppercase tracking-widest transition ${
-                  svart === runde.fasit ? "text-emerald-700" : "text-rose-600"
-                }`}
+                className={`mel-inn ${sekundarKnapp} ${svart === runde.fasit ? "!text-emerald-700" : "!text-rose-700"}`}
               >
                 {svart === runde.fasit ? "Riktig!" : "Feil"} · Neste →
               </button>

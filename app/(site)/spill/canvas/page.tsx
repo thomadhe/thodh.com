@@ -6,7 +6,7 @@ import { dagensFlagg } from "@/features/spill/lib/server/canvas"
 
 export const metadata: Metadata = {
   title: "Canvas",
-  description: "Et flagg skjult bak tolv ruter. Åpne én om gangen og gjett landet.",
+  description: "Et flagg skjult bak 24 ruter. Seks forsøk på å gjette landet.",
 }
 
 export default async function Page({ searchParams }: PageProps<"/spill/canvas">) {
@@ -16,7 +16,7 @@ export default async function Page({ searchParams }: PageProps<"/spill/canvas">)
     <SpillRamme
       spillId="canvas"
       dato={dato}
-      regler={<p>Feil svar gir en ny rute å åpne. Avstand og retning hjelper deg. Flagg: flagcdn.com.</p>}
+      regler={<p>Rutene åpner seg i samme rekkefølge for alle. Avstand og retning hjelper deg. Flagg: flagcdn.com.</p>}
     >
       <Canvas key={dato} dato={dato} nokkel={nokkel} />
     </SpillRamme>

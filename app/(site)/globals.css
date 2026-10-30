@@ -247,3 +247,19 @@ body {
     animation: none;
   }
 }
+
+@keyframes mel-landet {
+  40% {
+    transform: scale(1.18);
+  }
+}
+
+.mel-landet {
+  animation: mel-landet 360ms cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mel-landet {
+    animation: none;
+  }
+}

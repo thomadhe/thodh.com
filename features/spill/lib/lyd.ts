@@ -101,7 +101,8 @@ export const lyder = {
       tone(260, 0, 0.28, { volum: 0.3, til: 110 })
       stoy(0, 0.06, 0.08, 400)
     }),
-  tikk: () => spill(() => tone(1400, 0, 0.02, { volum: 0.05 })),
+  /** A counting tick; hoyde (0–1) raises the pitch as a count nears its end. */
+  tikk: (hoyde = 0) => spill(() => tone(1300 + 900 * hoyde, 0, 0.02, { volum: 0.05 })),
   velg: () => spill(() => tone(520, 0, 0.05, { volum: 0.1, til: 640 })),
   /** A plop whose pitch follows how close a guess was (0 = far, 1 = almost there). */
   naer: (styrke: number) =>

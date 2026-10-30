@@ -1,24 +1,29 @@
 "use client"
 
 import { useState } from "react"
-import { formaterDato } from "../lib/dag"
+import { formaterDato, stokk } from "../lib/dag"
 import type { Land } from "../lib/geografi"
 import { land } from "../lib/geografi"
 import { avstand, landEtterId, naerhet, skjultNokkel } from "../lib/geografi-svar"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
-import { GjetningsRad, LandVelger, styrke } from "./land-gjetting"
+import { delRad, GjetningsRad, LandVelger, styrke } from "./land-gjetting"
 import { DelKnapp, Kort } from "./spill-ramme"
 
-// Canvas: a flag hidden under 12 tiles (4 × 3). Open one tile, guess the country; every wrong guess
-// lets you open one more. Fewer tiles is a better score.
+// Canvas: a flag hidden under 24 tiles (6 × 4). Tiles open in a random order that is the same for
+// everyone that day, more of them after each wrong guess, and about a quarter is still hidden before
+// the sixth and last guess.
 
-const KOLONNER = 4
-const RADER = 3
+const KOLONNER = 6
+const RADER = 4
 const RUTER = KOLONNER * RADER
+const FORSOK = 6
+/** Tiles visible before guess 1, 2, … 6: +1, +1, +2, +3, +5, +6 → 6 of 24 still hidden at the end. */
+const SYNLIGE = [1, 2, 4, 7, 12, 18]
 
-type Tilstand = { v: 1; apne: number[]; gjetninger: string[]; resultat: Resultat }
-const tom = (): Tilstand => ({ v: 1, apne: [], gjetninger: [], resultat: { status: "pagar" } })
+// v2: 24 tiles that open by themselves; v1 saves (12 tiles you picked) start fresh.
+type Tilstand = { v: 2; gjetninger: string[]; resultat: Resultat }
+const tom = (): Tilstand => ({ v: 2, gjetninger: [], resultat: { status: "pagar" } })
 
 export function Canvas({ dato, nokkel }: { dato: string; nokkel: string }) {
   const { verdi, lastet, oppdater } = useDagligTilstand<Tilstand>("canvas", dato, tom)
@@ -27,41 +32,34 @@ export function Canvas({ dato, nokkel }: { dato: string; nokkel: string }) {
   const fasit = land.find((l) => skjultNokkel("canvas", l.id, dato) === nokkel)!
   const gjettet = verdi.gjetninger.map((id) => landEtterId.get(id)!).filter(Boolean)
   const ferdig = verdi.resultat.status !== "pagar"
-  // You open a tile, then guess; a wrong guess earns the next tile.
-  const kanApne = !ferdig && verdi.apne.length === verdi.gjetninger.length && verdi.apne.length < RUTER
-  const kanGjette = !ferdig && verdi.apne.length > verdi.gjetninger.length
-
-  const apne = (i: number) => {
-    if (!kanApne || verdi.apne.includes(i)) return
-    lyder.velg()
-    oppdater((t) => (t.apne.includes(i) || t.apne.length !== t.gjetninger.length ? t : { ...t, apne: [...t.apne, i] }))
-  }
+  const rekkefolge = stokk(
+    Array.from({ length: RUTER }, (_, i) => i),
+    `canvas:${dato}`,
+  )
+  const antallApne = ferdig ? RUTER : SYNLIGE[Math.min(gjettet.length, FORSOK - 1)]
+  const apne = new Set(rekkefolge.slice(0, antallApne))
 
   const gjett = (l: Land) => {
-    if (!kanGjette || verdi.gjetninger.includes(l.id)) return
+    if (ferdig || verdi.gjetninger.includes(l.id)) return
     const riktig = l.id === fasit.id
-    const siste = !riktig && verdi.apne.length >= RUTER
     if (riktig) lyder.seier()
-    else if (siste) lyder.feil()
+    else if (verdi.gjetninger.length + 1 >= FORSOK) lyder.feil()
     else lyder.naer(styrke(naerhet(avstand(l, fasit))))
     oppdater((t) => {
       if (t.resultat.status !== "pagar" || t.gjetninger.includes(l.id)) return t
       const gjetninger = [...t.gjetninger, l.id]
-      const n = t.apne.length
-      if (riktig) return { ...t, gjetninger, resultat: { status: "vunnet", etikett: `${n}/${RUTER} ruter`, poeng: RUTER + 1 - n } }
-      if (n >= RUTER) return { ...t, gjetninger, resultat: { status: "tapt", etikett: `X/${RUTER}`, poeng: 0 } }
+      const n = gjetninger.length
+      if (riktig) return { ...t, gjetninger, resultat: { status: "vunnet", etikett: `${n}/${FORSOK}`, poeng: FORSOK + 1 - n } }
+      if (n >= FORSOK) return { ...t, gjetninger, resultat: { status: "tapt", etikett: `X/${FORSOK}`, poeng: 0 } }
       return { ...t, gjetninger }
     })
   }
 
   if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
-  const apneSett = new Set(verdi.apne)
   const delTekst = [
-    `Canvas · ${formaterDato(dato, "kort")} · ${verdi.resultat.status === "vunnet" ? verdi.apne.length : "X"}/${RUTER}`,
-    ...Array.from({ length: RADER }, (_, r) =>
-      Array.from({ length: KOLONNER }, (_, k) => (apneSett.has(r * KOLONNER + k) ? "🟧" : "⬛")).join(""),
-    ),
+    `Canvas · ${formaterDato(dato, "kort")} · ${verdi.resultat.status === "vunnet" ? gjettet.length : "X"}/${FORSOK}`,
+    ...gjettet.map((g) => delRad(g, fasit)),
     "thodh.com/spill/canvas",
   ].join("\n")
 
@@ -76,37 +74,22 @@ export function Canvas({ dato, nokkel }: { dato: string; nokkel: string }) {
             onLoad={() => setLastetBilde(true)}
             className={`block w-full ${lastetBilde ? "" : "absolute inset-0 h-full object-cover"}`}
           />
-          <div className="absolute inset-0 grid grid-cols-4 grid-rows-3" aria-label="Ruter">
-            {Array.from({ length: RUTER }, (_, i) => {
-              const synlig = ferdig || apneSett.has(i)
-              return (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => apne(i)}
-                  disabled={synlig || !kanApne}
-                  aria-label={synlig ? `Rute ${i + 1}, åpen` : `Åpne rute ${i + 1}`}
-                  // A border in the card colour separates the tiles without leaving gaps to peek through.
-                  className={`border border-[var(--spill-flate)] transition-[opacity,background-color] duration-500 ${
-                    synlig
-                      ? "pointer-events-none opacity-0"
-                      : kanApne
-                        ? "cursor-pointer bg-neutral-300 hover:bg-neutral-400"
-                        : "bg-neutral-300"
-                  }`}
-                />
-              )
-            })}
+          <div className="absolute inset-0 grid grid-cols-6 grid-rows-4" aria-hidden="true">
+            {Array.from({ length: RUTER }, (_, i) => (
+              // A border in the card colour separates the tiles without leaving gaps to peek through.
+              <span
+                key={i}
+                className={`border border-[var(--spill-flate)] bg-neutral-300 transition-opacity duration-700 ${apne.has(i) ? "opacity-0" : ""}`}
+              />
+            ))}
           </div>
         </div>
         <p className="mt-3 text-center font-mono text-[11px] text-neutral-500" role="status">
           {ferdig
-            ? `${verdi.apne.length} av ${RUTER} ruter åpnet`
-            : kanApne
-              ? verdi.apne.length
-                ? "Feil – åpne en rute til"
-                : "Trykk på en rute for å åpne den"
-              : `${verdi.apne.length} av ${RUTER} ruter åpne – hvilket land er det?`}
+            ? verdi.resultat.status === "vunnet"
+              ? `Klart med ${RUTER - SYNLIGE[gjettet.length - 1]} ruter fortsatt skjult`
+              : "Hele flagget"
+            : `Forsøk ${gjettet.length + 1} av ${FORSOK} · ${antallApne} av ${RUTER} ruter åpne`}
         </p>
       </Kort>
 
@@ -122,13 +105,18 @@ export function Canvas({ dato, nokkel }: { dato: string; nokkel: string }) {
           </div>
         </Kort>
       ) : (
-        <LandVelger id="canvas-forslag" utelat={verdi.gjetninger} onVelg={gjett} deaktivert={!kanGjette} plassholder={kanGjette ? "Hvilket land?" : "Åpne en rute først"} />
+        <LandVelger id="canvas-forslag" utelat={verdi.gjetninger} onVelg={gjett} />
       )}
 
       <ul className="flex flex-col gap-1.5">
         {gjettet.map((g) => (
           <GjetningsRad key={g.id} gjett={g} fasit={fasit} />
         ))}
+        {!ferdig
+          ? Array.from({ length: FORSOK - gjettet.length }, (_, i) => (
+              <li key={i} className="h-11 rounded-xl border border-dashed border-neutral-200" />
+            ))
+          : null}
       </ul>
     </div>
   )

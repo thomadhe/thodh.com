@@ -65,7 +65,7 @@ export const spill: Spill[] = [
     navn: "Canvas",
     href: "/spill/canvas",
     kort: "Hvilket flagg skjuler seg bak rutene?",
-    regel: "Åpne én rute om gangen og gjett landet. Jo færre ruter du trenger, jo bedre.",
+    regel: "Gjett landet bak flagget. Seks forsøk, og for hvert feil svar åpner flere ruter seg.",
     ikon: "▦",
     farge: "bg-rose-500 text-white",
   },
