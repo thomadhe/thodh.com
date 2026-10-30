@@ -92,21 +92,40 @@ export function gjett(dato: string, input: string): GjettSvar {
   return { ok: true, ord: m.ord[i], avstand: rangering(dato).plass[i] }
 }
 
-/** A word roughly halfway between the best guess and the answer, never one already guessed. */
+/**
+ * A hint word, never the answer and never one already guessed.
+ * - Best guess above 10: a word roughly halfway between it and the answer.
+ * - Best guess 10 or better: just one step closer (best − 1, or the next free one above it).
+ * - Every word closer than the best is taken: the closest free word, e.g. #11 when #2–#10 are used.
+ */
 export function hint(dato: string, beste: number | null, gjettet: string[]) {
   const m = lastModell()
   const r = rangering(dato)
   const brukt = new Set(gjettet.map(normaliser))
+  const ledig = (p: number) => {
+    const o = m.ord[r.rekkefolge[p - 1]]
+    return brukt.has(o) ? null : { ord: o, avstand: p }
+  }
+  if (beste !== null && beste <= 10) {
+    for (let p = beste - 1; p >= 2; p--) {
+      const h = ledig(p)
+      if (h) return h
+    }
+    for (let p = 2; p <= m.ord.length; p++) {
+      const h = ledig(p)
+      if (h) return h
+    }
+    return null
+  }
   const mal = beste === null ? 500 : Math.max(2, Math.floor(beste / 2))
-  if (beste !== null && mal >= beste) return null
   const ovre = beste === null ? m.ord.length : beste
   for (let p = mal; p >= 2; p--) {
-    const o = m.ord[r.rekkefolge[p - 1]]
-    if (!brukt.has(o)) return { ord: o, avstand: p }
+    const h = ledig(p)
+    if (h) return h
   }
   for (let p = mal + 1; p < ovre; p++) {
-    const o = m.ord[r.rekkefolge[p - 1]]
-    if (!brukt.has(o)) return { ord: o, avstand: p }
+    const h = ledig(p)
+    if (h) return h
   }
   return null
 }

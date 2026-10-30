@@ -5,7 +5,7 @@ import { formaterDato } from "../lib/dag"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
 import { SANG_KATEGORIER, TRINN, type SangKategori } from "../lib/sanglos"
-import { DelKnapp, Knapp, Kort } from "./spill-ramme"
+import { DelKnapp, Knapp, Kort, sekundarKnapp } from "./spill-ramme"
 
 export type SangValg = { id: string; title: string; artist: string }
 /** A guess; songs from the catalogue search keep their title and artist for display. */
@@ -475,7 +475,7 @@ function SangRunde({
               type="button"
               onClick={() => registrer(null)}
               disabled={opptatt}
-              className="rounded-full px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-neutral-500 transition hover:bg-black/5 hover:text-neutral-900 disabled:opacity-40"
+              className={sekundarKnapp}
             >
               {runde.forsok.length + 1 < TRINN.length
                 ? "Hopp over"

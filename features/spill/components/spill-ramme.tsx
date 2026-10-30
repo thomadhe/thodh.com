@@ -125,6 +125,10 @@ function LydKnapp() {
   )
 }
 
+/** Low-key secondary actions (hint, skip, give up): a soft outline so they read as buttons without shouting. */
+export const sekundarKnapp =
+  "rounded-full border border-black/10 bg-neutral-100/70 px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-widest text-neutral-700 transition hover:border-black/25 hover:bg-neutral-100 hover:text-neutral-950 disabled:opacity-40"
+
 export function Kort({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <div className={`rounded-3xl border border-black/5 bg-[var(--spill-flate)] ${className}`}>{children}</div>
 }

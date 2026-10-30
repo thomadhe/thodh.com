@@ -5,7 +5,7 @@ import { formaterDato } from "../lib/dag"
 import { fargetone, naerhetsfarge, type Fargeanker } from "../lib/farger"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
-import { DelKnapp, Knapp, Kort } from "./spill-ramme"
+import { DelKnapp, Knapp, Kort, sekundarKnapp } from "./spill-ramme"
 
 type Gjetning = { ord: string; avstand: number; hint?: boolean }
 // v4: ensemble similarity model (Oct 2026). Older saves hold ranks from earlier models and start fresh.
@@ -241,7 +241,7 @@ export function Anelseslos({ dato, antall }: { dato: string; antall: number }) {
               type="button"
               onClick={hentHint}
               disabled={opptatt}
-              className="rounded-full px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-neutral-500 transition hover:bg-black/5 hover:text-neutral-900 disabled:opacity-40"
+              className={sekundarKnapp}
             >
               Hint
             </button>
@@ -258,7 +258,7 @@ export function Anelseslos({ dato, antall }: { dato: string; antall: number }) {
                 type="button"
                 onClick={() => setBekreftGiOpp(true)}
                 disabled={opptatt || verdi.gjetninger.length === 0}
-                className="rounded-full px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-neutral-500 transition hover:bg-black/5 hover:text-neutral-900 disabled:opacity-40"
+                className={sekundarKnapp}
               >
                 Gi opp
               </button>
