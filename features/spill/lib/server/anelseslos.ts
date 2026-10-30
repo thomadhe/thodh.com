@@ -94,7 +94,7 @@ export function gjett(dato: string, input: string): GjettSvar {
 
 /**
  * A hint word, never the answer and never one already guessed.
- * - Best guess above 10: a word roughly halfway between it and the answer.
+ * - Best guess above 10: a word roughly halfway between it and the answer, but no closer than #10.
  * - Best guess 10 or better: just one step closer (best − 1, or the next free one above it).
  * - Every word closer than the best is taken: the closest free word, e.g. #11 when #2–#10 are used.
  */
@@ -117,7 +117,8 @@ export function hint(dato: string, beste: number | null, gjettet: string[]) {
     }
     return null
   }
-  const mal = beste === null ? 500 : Math.max(2, Math.floor(beste / 2))
+  // Halfway, but never past #10 in one jump: from #13 the hint is #10, then #9, #8 …
+  const mal = beste === null ? 500 : Math.max(10, Math.floor(beste / 2))
   const ovre = beste === null ? m.ord.length : beste
   for (let p = mal; p >= 2; p--) {
     const h = ledig(p)
