@@ -95,7 +95,7 @@ function nyttSpinn(state) {
     state.casino = { runde: (state.casino?.runde ?? 0) + 1, hjul, status };
     if (status.includes('klar')) return;
     // Nothing on the reels can move: the house wins this round and the turn passes.
-    addNotice(state, { kind: 'casino', recipient: state.turn, title: 'Ingen gevinst 🎰', description: `${colorName(state.turn)} fikk ${hjul.map(type => pieceNames[type]).join(', ')}, men ingen av dem kan flytte. Turen går videre.`, icon: '🎰' });
+    addNotice(state, { kind: 'casino', recipient: state.turn, hjul, title: 'Ingen gevinst 🎰', description: `${colorName(state.turn)} fikk ${hjul.map(type => pieceNames[type]).join(', ')}, men ingen av dem kan flytte. Turen går videre.`, icon: '🎰' });
     state.turn = other(state.turn);
     state.fen = skrivFen(brett, state.turn, rokade);
     state.turnRemaining = state.settings.players[state.turn].deadline * 1000 || null;

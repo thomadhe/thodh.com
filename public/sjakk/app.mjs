@@ -2,6 +2,7 @@ import { Chess } from './vendor/chess.mjs';
 import { colorName, pieceNames } from './game-logic.mjs';
 import { createSession, defaults, validateSettings, applyAction, advanceTime, clockValues, formatClock, noticeFacesOpposite, other } from './session.mjs';
 import { lesFen, lesRokade, trekkFor, TYPER } from './casino.mjs';
+import { casinolyd, lydPa, settLyd } from './lyd.mjs';
 
 const $ = selector => document.querySelector(selector);
 const apiBase = $('meta[name="chess-api-base"]')?.content ?? '/api/rooms';
@@ -77,6 +78,8 @@ function renderClocks() {
 
 function syncNotice() {
   const notice = state.notices[0];
+  // A casino "no win" waits until its reels have been spun with the lever.
+  if (notice?.kind === 'casino' && notice.hjul && trukketVarsel !== notice.id) { if (noticeDialog.open) noticeDialog.close(); shownNotice = null; return; }
   if (!notice) { shownNotice = null; if (noticeDialog.open) noticeDialog.close(); return; }
   if (shownNotice !== notice.id) {
     if (promotionDialog.open) promotionDialog.close();
@@ -139,11 +142,26 @@ function render() {
   syncNotice();
 }
 
-// ---- Casinosjakk: the board only offers the pieces the reels came up with ----
+// ---- Casinosjakk: pull the lever, watch the reels, move the pieces they show ----
+
+// Which spin the player has revealed with the lever. Until then the board stays locked.
+let trukketRunde = null;
+let trukketVarsel = null;
+let spinner = false;
+
+/** The reels waiting for the lever: a failed spin (shown before its "no win" notice) or the new spin. */
+function ventendeSpinn() {
+  if (state.settings.minispill !== 'casino' || !state.casino || state.status === 'setup') return null;
+  const varsel = state.notices[0];
+  if (varsel?.kind === 'casino' && varsel.hjul && trukketVarsel !== varsel.id) return { hjul: varsel.hjul, status: varsel.hjul.map(() => 'tom'), farge: varsel.recipient, varsel: varsel.id };
+  if (!state.notices.length && state.status === 'playing' && trukketRunde !== state.casino.runde) return { ...state.casino, farge: state.turn };
+  return null;
+}
 
 function casinoBrett(game) {
   const brett = lesFen(game.fen);
-  const igjen = new Set((game.casino?.hjul ?? []).filter((_, i) => game.casino.status[i] === 'klar'));
+  const opplast = trukketRunde === game.casino?.runde && !spinner;
+  const igjen = new Set(opplast ? (game.casino?.hjul ?? []).filter((_, i) => game.casino.status[i] === 'klar') : []);
   return {
     get: square => brett[square],
     moves: ({ square }) => { const piece = brett[square]; return piece && piece.color === game.turn && igjen.has(piece.type) ? trekkFor(brett, square, lesRokade(game.fen)) : []; },
@@ -151,32 +169,83 @@ function casinoBrett(game) {
   };
 }
 
-let visteRunde = null;
-let spinnTimer = null;
+const reels = () => [...document.querySelectorAll('[data-hjul]')];
+const visBrikke = (el, type, color) => { el.innerHTML = pieceMarkup({ type, color }); };
+
+function visHjul(hjul, status, color) {
+  reels().forEach((el, i) => {
+    visBrikke(el, hjul[i], color);
+    el.className = `hjul ${status[i]}`;
+    el.setAttribute('aria-label', `${pieceNames[hjul[i]]}: ${status[i] === 'klar' ? 'skal flyttes' : status[i] === 'brukt' ? 'flyttet' : 'kan ikke flytte'}`);
+  });
+}
+
+/** Pull the lever: the reels roll for a while and stop one by one, then the board unlocks. */
+function trekkSpak() {
+  const spinn = ventendeSpinn();
+  if (!spinn || spinner) return;
+  spinner = true;
+  casinolyd.spak();
+  const spak = $('#spak');
+  spak.classList.add('trukket');
+  setTimeout(() => spak.classList.remove('trukket'), 450);
+  const stopp = [1500, 2200, 2900];
+  const start = performance.now() + 250;
+  let sisteKlikk = 0;
+  reels().forEach(el => { el.className = 'hjul spinner'; });
+  $('#casino-tekst').textContent = 'Lykke til …';
+  const steg = () => {
+    const t = performance.now() - start;
+    let ruller = false;
+    reels().forEach((el, i) => {
+      if (t < 0) return;
+      if (t < stopp[i]) {
+        ruller = true;
+        // Ticks slow down as the last reel gets close to stopping.
+        if (performance.now() - sisteKlikk > 70 + 90 * (t / stopp[2])) visBrikke(el, TYPER[Math.floor(Math.random() * TYPER.length)], spinn.farge);
+      } else if (el.classList.contains('spinner')) {
+        visBrikke(el, spinn.hjul[i], spinn.farge);
+        el.className = `hjul ${spinn.status[i]} landet`;
+        casinolyd.stopp();
+      }
+    });
+    if (ruller && performance.now() - sisteKlikk > 70 + 90 * (Math.max(0, t) / stopp[2])) { casinolyd.rulle(); sisteKlikk = performance.now(); }
+    if (t < stopp[2] + 50) { requestAnimationFrame(steg); return; }
+    spinner = false;
+    if (spinn.varsel) {
+      casinolyd.tap();
+      trukketVarsel = spinn.varsel;
+    } else {
+      if (spinn.status.includes('klar')) casinolyd.gevinst();
+      trukketRunde = spinn.runde;
+    }
+    setTimeout(render, spinn.varsel ? 700 : 300);
+  };
+  requestAnimationFrame(steg);
+}
 
 function renderCasino() {
   const aktiv = state.settings.minispill === 'casino' && state.casino && state.status !== 'setup';
   $('#casino-panel').hidden = !aktiv;
-  if (!aktiv) return;
-  const { hjul, status, runde } = state.casino;
-  const reels = [...document.querySelectorAll('[data-hjul]')];
-  const vis = (el, type) => { el.innerHTML = pieceMarkup({ type, color: state.turn }); };
-  const ferdig = () => reels.forEach((el, i) => { vis(el, hjul[i]); el.className = `hjul ${status[i]}`; el.setAttribute('aria-label', `${pieceNames[hjul[i]]}: ${status[i] === 'klar' ? 'skal flyttes' : status[i] === 'brukt' ? 'flyttet' : 'kan ikke flytte'}`); });
-  if (runde !== visteRunde) {
-    // A new spin: the reels roll and stop one after another, like a slot machine.
-    visteRunde = runde;
-    clearInterval(spinnTimer);
-    const start = performance.now();
-    reels.forEach(el => { el.className = 'hjul spinner'; });
-    spinnTimer = setInterval(() => {
-      const t = performance.now() - start;
-      reels.forEach((el, i) => { if (t < 600 + i * 350) vis(el, TYPER[Math.floor(Math.random() * TYPER.length)]); else if (el.classList.contains('spinner')) { vis(el, hjul[i]); el.className = `hjul ${status[i]} landet`; } });
-      if (t >= 600 + 2 * 350) { clearInterval(spinnTimer); ferdig(); }
-    }, 70);
-  } else if (!reels.some(el => el.classList.contains('spinner'))) ferdig();
+  if (!aktiv || spinner) return;
+  const venter = ventendeSpinn();
+  const spak = $('#spak');
+  spak.disabled = !venter || (mode === 'online');
+  spak.classList.toggle('klar', Boolean(venter));
+  $('#lyd-av').textContent = lydPa() ? '🔊' : '🔇';
+  if (venter) {
+    reels().forEach(el => { el.innerHTML = '<span class="spm" aria-hidden="true">?</span>'; el.className = 'hjul skjult'; el.setAttribute('aria-label', 'Ikke spunnet ennå'); });
+    $('#casino-tekst').textContent = `${colorName(venter.farge)}: trekk i spaken!`;
+    return;
+  }
+  const { hjul, status } = state.casino;
+  visHjul(hjul, status, state.turn);
   const igjen = hjul.filter((_, i) => status[i] === 'klar').map(type => pieceNames[type]);
   $('#casino-tekst').textContent = state.status !== 'playing' ? '' : igjen.length ? `Flytt: ${igjen.join(', ')}` : 'Turen går videre';
 }
+
+$('#spak').addEventListener('click', trekkSpak);
+$('#lyd-av').addEventListener('click', () => { settLyd(!lydPa()); renderCasino(); });
 
 async function request(path, data, credentials) {
   const response = await fetch(path.replace(/^\/api\/rooms/, apiBase), { method: data === undefined ? 'GET' : 'POST', headers: { ...(data !== undefined ? { 'Content-Type': 'application/json' } : {}), ...(credentials ? { Authorization: `Bearer ${credentials.token}` } : {}) }, ...(data !== undefined ? { body: JSON.stringify(data) } : {}), signal: AbortSignal.timeout(12000), cache: 'no-store' });
@@ -324,7 +393,7 @@ $('#setup-form').addEventListener('submit', async event => {
   try {
     const settings = readSettingsForm();
     if ($('#play-mode').value === 'local') {
-      mode = 'local'; room = null; revision = -1; connected = true; state = createSession(settings); selected = null; flipped = false; shownNotice = null; localSetupPause = false;
+      mode = 'local'; room = null; revision = -1; connected = true; state = createSession(settings); trukketRunde = null; trukketVarsel = null; selected = null; flipped = false; shownNotice = null; localSetupPause = false;
       history.replaceState(null, '', location.pathname); message();
     } else {
       busy = true; $('#start-game').disabled = true;

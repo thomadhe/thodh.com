@@ -182,3 +182,25 @@ footer { border-top: 1px solid var(--line); padding: 23px 0 28px; display: flex;
 #casino-tekst { margin: 12px 0 0; color: #f0d79a; font-size: .9rem; min-height: 1.2em; }
 @keyframes hjul-land { from { transform: translateY(-6px); } 60% { transform: translateY(3px); } }
 @media (prefers-reduced-motion: reduce) { .hjul.landet { animation: none; } }
+
+/* Slot machine with a lever (Casinosjakk). */
+.casino-panel { position: relative; padding: 18px 16px 14px; background: radial-gradient(120% 90% at 50% 0%, #5a3f16, #241a10 70%); border: 2px solid #b8893a; box-shadow: inset 0 0 0 3px #3a2a12, 0 10px 30px rgb(0 0 0 / .35); }
+.automat { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.hjulrad { padding: 8px; border-radius: 10px; background: #1a130b; box-shadow: inset 0 0 0 2px #b8893a, inset 0 8px 16px rgb(0 0 0 / .6); }
+.hjul { overflow: hidden; }
+.hjul.skjult { background: #e9dcc0; }
+.hjul .spm { font: 700 2rem/1 var(--serif); color: #8a6a2c; }
+.hjul.spinner .piece { animation: hjul-rull .09s linear infinite; }
+@keyframes hjul-rull { from { transform: translateY(-40%); opacity: .6; } to { transform: translateY(40%); opacity: .6; } }
+.spak { position: relative; width: 26px; height: 96px; border: 0; background: none; padding: 0; cursor: pointer; }
+.spak:disabled { cursor: default; }
+.spak-stang { position: absolute; left: 50%; bottom: 8px; width: 6px; height: 70px; margin-left: -3px; border-radius: 3px; background: linear-gradient(90deg, #8d8d8d, #e6e6e6, #8d8d8d); transform-origin: 50% 100%; transition: transform .25s cubic-bezier(.3, 1.6, .5, 1); }
+.spak-kule { position: absolute; left: 50%; top: 2px; width: 24px; height: 24px; margin-left: -12px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ff8a8a, #c41b2c 60%, #6d0b16); box-shadow: 0 3px 6px rgb(0 0 0 / .45); transition: transform .25s cubic-bezier(.3, 1.6, .5, 1); }
+.spak::after { content: ''; position: absolute; left: 50%; bottom: 0; width: 16px; height: 12px; margin-left: -8px; border-radius: 4px; background: #3a2a12; box-shadow: inset 0 0 0 2px #b8893a; }
+.spak.trukket .spak-stang { transform: scaleY(.25); }
+.spak.trukket .spak-kule { transform: translateY(52px); }
+.spak.klar .spak-kule { animation: spak-puls 1.2s ease-in-out infinite; }
+@keyframes spak-puls { 50% { box-shadow: 0 0 0 6px rgb(255 120 120 / .25), 0 3px 6px rgb(0 0 0 / .45); } }
+.lyd-av { position: absolute; top: 6px; right: 8px; border: 0; background: none; cursor: pointer; font-size: .9rem; opacity: .6; }
+.lyd-av:hover { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .hjul.spinner .piece, .spak.klar .spak-kule { animation: none; } }
