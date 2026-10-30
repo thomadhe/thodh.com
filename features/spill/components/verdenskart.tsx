@@ -27,6 +27,7 @@ export function Verdenskart({
   titler,
   fremhevet,
   fokus,
+  bareFargede = false,
 }: {
   /** Fill per country id; countries without one are drawn neutral. */
   farger: Record<string, string>
@@ -36,6 +37,8 @@ export function Verdenskart({
   fremhevet?: string[]
   /** Ids to frame when the map first appears (e.g. a route's start and end). */
   fokus?: string[]
+  /** Draw only countries that have a colour: no outlines of anything else (Rusle). */
+  bareFargede?: boolean
 }) {
   const [u, setU] = useState<Utsnitt>(HELE)
   const fokusNokkel = fokus?.join(",") ?? ""
@@ -120,8 +123,10 @@ export function Verdenskart({
         onPointerUp={() => (dra.current = null)}
         onPointerCancel={() => (dra.current = null)}
       >
-        <path d={k.bakgrunn} fill={KART_FARGE.bakgrunn} />
-        {Object.entries(k.land).map(([id, d]) => (
+        {bareFargede ? null : <path d={k.bakgrunn} fill={KART_FARGE.bakgrunn} />}
+        {Object.entries(k.land)
+          .filter(([id]) => !bareFargede || farger[id])
+          .map(([id, d]) => (
           <path
             key={id}
             data-id={id}
@@ -135,7 +140,9 @@ export function Verdenskart({
             {titler?.[id] ? <title>{titler[id]}</title> : null}
           </path>
         ))}
-        {Object.entries(k.punkter).map(([id, [x, y]]) => (
+        {Object.entries(k.punkter)
+          .filter(([id]) => !bareFargede || farger[id])
+          .map(([id, [x, y]]) => (
           <circle
             key={id}
             data-id={id}
