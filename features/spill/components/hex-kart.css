@@ -1,0 +1,19 @@
+/* MapLibre's attribution, dark to match the map in every theme. */
+.heks-kart .maplibregl-ctrl-attrib,
+.heks-kart .maplibregl-ctrl-attrib.maplibregl-compact {
+  background: rgba(11, 16, 22, 0.72);
+  color: #b8bec7;
+  font-size: 10px;
+  line-height: 16px;
+}
+.heks-kart .maplibregl-ctrl-attrib a {
+  color: #d6dae0;
+}
+.heks-kart .maplibregl-ctrl-attrib-button {
+  background-color: transparent;
+  filter: invert(1);
+}
+.heks-kart .maplibregl-canvas:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: -2px;
+}

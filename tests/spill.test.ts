@@ -7,8 +7,9 @@ import { formaterVerdi } from "../features/spill/lib/format"
 import { dagensMerEllerMindre, kategorier, KATEGORIER_PER_DAG, RUNDER_PER_KATEGORI } from "../features/spill/lib/mer-eller-mindre"
 import { dagensStavebien } from "../features/spill/lib/stavebien"
 import { erRiktigStavet } from "../features/spill/lib/stavebien-regler"
-import kart from "../features/spill/data/geografi/kart.json"
-import { celle, fraKart, NIVAER, rundePoeng, sentrum, side, tilKart, vurder } from "../features/spill/lib/heksagon"
+import { gridDisk } from "h3-js"
+import { avstandKm, MAKS_POENG, NIVAER, nivaaForZoom, rundePoeng, utfallForAvstand } from "../features/spill/lib/heksagon"
+import { celleFor, nivaaFor, omriss, sentrum, synligeCeller, vurder } from "../features/spill/lib/heksagon-celler"
 
 const dager = Array.from({ length: 120 }, (_, i) => leggTilDager(START_DATO, i))
 
@@ -101,33 +102,57 @@ test("Anelsesløs: ordlisten og vektorene passer sammen og har ikke CRLF", async
   assert.equal(readFileSync("features/spill/data/anelseslos/vectors.bin").length, ord.split("\n").length * 300)
 })
 
-test("Heksagonal jakt: sekskantene følger kartets projeksjon", () => {
-  // Small countries are drawn as dots at their projected centre; their capitals sit within a fraction of a map unit.
-  const punkter = kart.punkter as unknown as Record<string, [number, number]>
-  for (const [id, lat, lng] of [["MT", 35.9, 14.45], ["SG", 1.35, 103.82], ["LI", 47.16, 9.55], ["AD", 42.55, 1.58], ["VA", 41.9, 12.45]] as const) {
-    const [x, y] = tilKart(lat, lng)
-    assert.ok(Math.hypot(x - punkter[id][0], y - punkter[id][1]) < 0.3, id)
+test("Heksagonal jakt: H3-nivåer og zoom som i HexHunt", () => {
+  assert.deepEqual(NIVAER.map((n) => n.poeng), [80, 120, 155, 180, 200])
+  assert.equal(MAKS_POENG * 7, 1400)
+  // The level changes 0.35 zoom past its threshold, in both directions, and the whole world is always Vid.
+  assert.equal(nivaaForZoom(2.9, 0), 0)
+  assert.equal(nivaaForZoom(3, 0), 1)
+  assert.equal(nivaaForZoom(2.3, 1), 1)
+  assert.equal(nivaaForZoom(2.2, 1), 0)
+  assert.equal(nivaaForZoom(9, 0), 4)
+  assert.equal(nivaaForZoom(9, 4, true), 0)
+  const oslo: [number, number] = [59.91, 10.75]
+  for (let n = 0; n < NIVAER.length; n++) assert.equal(nivaaFor(celleFor(...oslo, n)), n)
+  assert.equal(nivaaFor(celleFor(...oslo, 6)), null)
+  assert.equal(nivaaFor("hei"), null)
+  // Outlines on the date line don't streak across the map, and those around a pole close along it.
+  for (const c of [celleFor(-17.8, 179.99, 1), celleFor(89.9, 0, 0), celleFor(-89.9, 0, 0)]) {
+    const ring = omriss(c)
+    ring.slice(1).forEach((p, i) => assert.ok(Math.abs(p[0] - ring[i][0]) <= 180 || Math.abs(p[1]) === 90, c))
   }
-  const [lat, lng] = fraKart(...tilKart(-33.9, 151.2))!
-  assert.ok(Math.abs(lat + 33.9) < 1e-9 && Math.abs(lng - 151.2) < 1e-9)
-  assert.equal(fraKart(0, 0), null)
-  for (let n = 0; n < NIVAER.length; n++) {
-    const [x, y] = sentrum(n, 7, -3)
-    assert.deepEqual(celle(n, x + side(n) * 0.8, y), [7, -3])
-  }
+  assert.ok(omriss(celleFor(89.9, 0, 0)).some(([, lat]) => lat === 90))
+  // The visible cells cover the view, also across the date line.
+  assert.ok(synligeCeller(5, 55, 16, 64, 3).includes(celleFor(...oslo, 3)))
+  const stillehavet = synligeCeller(170, -25, 190, -10, 2)
+  assert.ok(stillehavet.includes(celleFor(-18.1, 178.4, 2)) && stillehavet.includes(celleFor(-17, -178, 2)))
+  assert.equal(synligeCeller(-170, -80, 170, 80, 3).length, 0)
 })
 
 test("Heksagonal jakt: vurdering og poeng som i HexHunt", () => {
   const oslo: [number, number] = [59.91, 10.75]
-  const punkt = tilKart(...oslo)
-  const [q, r] = celle(2, ...punkt)
-  assert.equal(vurder(2, q, r, punkt, oslo), "funnet")
-  assert.equal(vurder(2, q + 1, r, punkt, oslo), "het")
-  assert.equal(vurder(2, q + 40, r, punkt, oslo), "kald")
-  // A large site counts as found from a neighbouring hex.
-  assert.equal(vurder(2, q + 1, r, punkt, oslo, 300), "funnet")
-  assert.equal(rundePoeng("funnet", 3, 0), 200)
-  assert.equal(rundePoeng("funnet", 2, 1), 128)
+  const c = celleFor(...oslo, 2)
+  assert.equal(vurder(c, oslo), "funnet")
+  for (const nabo of gridDisk(c, 1).filter((x) => x !== c)) {
+    assert.equal(vurder(nabo, oslo), utfallForAvstand(2, avstandKm(sentrum(nabo), oslo)))
+    assert.notEqual(vurder(nabo, oslo), "kald")
+    // A large site counts as found from a neighbouring hex.
+    assert.equal(vurder(nabo, oslo, 300, true), "funnet")
+  }
+  assert.equal(vurder(celleFor(-33.9, 151.2, 2), oslo), "kald")
+  // A city's 10 km reach every hex that meets at a corner of its own.
+  const [lng, lat] = omriss(celleFor(...oslo, 4))[0]
+  for (const nabo of gridDisk(celleFor(lat, lng, 4), 1)) {
+    if (omriss(nabo).some(([x, y]) => Math.hypot(x - lng, y - lat) < 1e-9)) assert.equal(vurder(nabo, [lat, lng], 10), "funnet")
+  }
+  assert.notEqual(vurder(celleFor(61, 10.75, 4), oslo, 10), "funnet")
+  // Feedback in hex sizes (√area): hot within 1.5, warm within 3, lukewarm within 6.
+  assert.equal(utfallForAvstand(4, 1.5 * Math.sqrt(1770) - 0.1), "het")
+  assert.equal(utfallForAvstand(4, 1.5 * Math.sqrt(1770) + 0.1), "varm")
+  assert.equal(utfallForAvstand(4, 6 * Math.sqrt(1770) + 0.1), "kald")
+  assert.equal(rundePoeng("funnet", 4, 0), 200)
+  assert.equal(rundePoeng("funnet", 2, 1), 124)
+  assert.equal(rundePoeng("varm", 3, 0), 54)
   assert.equal(rundePoeng("het", 0, 2), 29)
-  assert.equal(rundePoeng("lunken", 3, 0), 0)
+  assert.equal(rundePoeng("lunken", 4, 0), 0)
 })

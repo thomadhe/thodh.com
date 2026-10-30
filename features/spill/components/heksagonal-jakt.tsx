@@ -1,24 +1,32 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { useEffect, useState, useSyncExternalStore } from "react"
 import { formaterDato } from "../lib/dag"
-import { celle, fraKart, hexSti, KM_PER_PX, MAKS_POENG, NIVAER, nivaaForZoom, rundePoeng, sentrum, synligeCeller, type Utfall } from "../lib/heksagon"
+import { MAKS_POENG, NIVAER, rundePoeng, type Utfall } from "../lib/heksagon"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
 import type { JaktFasit, JaktSted } from "../lib/server/heksagonal-jakt"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
-import { Verdenskart, type KartUtsnitt } from "./verdenskart"
 
-// Heksagonal jakt (our HexHunt): tap the hex a place is in. The zoom sets the hex size, and smaller hexes
-// are worth more. Three guesses per place; the server judges them and shows the answer at the end of a round.
+// Heksagonal jakt (our HexHunt): tap the hex a place is in. The zoom sets the hex size (H3 resolutions 0–4),
+// and smaller hexes are worth more. Three guesses per place; the server judges them and shows the answer at
+// the end of a round.
+
+// MapLibre and H3 are heavy, so the map comes in its own chunk, on the client only.
+const HexKart = dynamic(() => import("./hex-kart"), {
+  ssr: false,
+  loading: () => <div className="aspect-[5/4] animate-pulse rounded-2xl bg-[#1b232b] sm:aspect-video" />,
+})
 
 const FORSOK = 3
 const ANTALL = 7
 
-type Gjetning = { n: number; q: number; r: number; u: Utfall }
+/** A guess: its H3 cell, the cell's level and the feedback. */
+type Gjetning = { c: string; n: number; u: Utfall }
 type Runde = { g: Gjetning[]; fasit: JaktFasit | null }
-type Tilstand = { v: 1; runder: Runde[]; resultat: Resultat }
-const tom = (): Tilstand => ({ v: 1, runder: [], resultat: { status: "pagar" } })
+type Tilstand = { v: 2; runder: Runde[]; resultat: Resultat }
+const tom = (): Tilstand => ({ v: 2, runder: [], resultat: { status: "pagar" } })
 const nyRunde = (): Runde => ({ g: [], fasit: null })
 
 const UTFALL: Record<Utfall, { navn: string; farge: string }> = {
@@ -87,7 +95,8 @@ function Blomst({ farger, aktiv }: { farger: (string | null)[]; aktiv: number | 
 
 export function HeksagonalJakt({ dato, steder }: { dato: string; steder: JaktSted[] }) {
   const { verdi, lastet, oppdater } = useDagligTilstand<Tilstand>("heksagonal-jakt", dato, tom)
-  const [valgt, setValgt] = useState<{ n: number; q: number; r: number } | null>(null)
+  const [valgt, setValgt] = useState<[number, number] | null>(null)
+  const [nivaa, setNivaa] = useState(0)
   const [opptatt, setOpptatt] = useState(false)
   const [melding, setMelding] = useState<string | null>(null)
   const storSkjerm = useSyncExternalStore(lyttBredde, () => window.matchMedia(bred).matches, () => false)
@@ -109,30 +118,30 @@ export function HeksagonalJakt({ dato, steder }: { dato: string; steder: JaktSte
       .catch(() => undefined)
   }, [trengerFasit, dato, oppdater])
 
-  const trykk = (x: number, y: number, u: KartUtsnitt) => {
+  const velg = (punkt: [number, number] | null) => {
     if (ferdig || avsluttet || opptatt) return
-    const n = nivaaForZoom(u.pxPerEnhet)
-    const [q, r] = celle(n, x, y)
-    if (!fraKart(...sentrum(n, q, r))) return
     setMelding(null)
-    if (valgt && valgt.n === n && valgt.q === q && valgt.r === r) return setValgt(null)
-    lyder.velg()
-    setValgt({ n, q, r })
+    if (punkt) lyder.velg()
+    setValgt(punkt)
   }
 
   const gjett = async () => {
     if (!valgt || opptatt || ferdig || avsluttet) return
-    if (runde.g.some((g) => g.n === valgt.n && g.q === valgt.q && g.r === valgt.r)) return setMelding("Den har du prøvd.")
+    // The map has loaded the grid module already, so this resolves at once.
+    const { celleFor } = await import("../lib/heksagon-celler")
+    const n = nivaa
+    const c = celleFor(valgt[0], valgt[1], n)
+    if (runde.g.some((g) => g.c === c)) return setMelding("Den har du prøvd.")
     setOpptatt(true)
     try {
       const forsok = runde.g.length + 1
-      const svar = await spor<{ utfall: Utfall; fasit?: JaktFasit }>({ type: "gjett", dato, nr, nivaa: valgt.n, q: valgt.q, r: valgt.r, forsok })
-      const gjetning: Gjetning = { ...valgt, u: svar.utfall }
+      const svar = await spor<{ utfall: Utfall; fasit?: JaktFasit }>({ type: "gjett", dato, nr, celle: c, forsok })
+      const gjetning: Gjetning = { c, n, u: svar.utfall }
       const fasit = svar.fasit ?? null
       const sisteRunde = fasit !== null && nr === ANTALL - 1
       if (sisteRunde) lyder.seier()
       else if (svar.utfall === "funnet") lyder.riktig()
-      else if (fasit && rundePoeng(svar.utfall, valgt.n, forsok - 1) === 0) lyder.feil()
+      else if (fasit && rundePoeng(svar.utfall, n, forsok - 1) === 0) lyder.feil()
       else lyder.naer(LYD[svar.utfall])
       setValgt(null)
       oppdater((t) => {
@@ -170,87 +179,22 @@ export function HeksagonalJakt({ dato, steder }: { dato: string; steder: JaktSte
 
   if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
-  const forhold = storSkjerm ? 0.56 : 0.8
+  const forhold = storSkjerm ? 9 / 16 : 0.8
   const resultat = oppgjor(runde)
-  const prikk = (u: KartUtsnitt, px: number) => px / Math.max(u.pxPerEnhet, 0.1)
 
   // After a miss, frame the guesses and the answer so both are in view; at the end, all seven places.
-  let ramme: [number, number, number, number] | undefined
-  const boks = (punkter: [number, number][]) =>
-    [Math.min(...punkter.map((p) => p[0])), Math.min(...punkter.map((p) => p[1])), Math.max(...punkter.map((p) => p[0])), Math.max(...punkter.map((p) => p[1]))] as [number, number, number, number]
-  if (ferdig) {
-    const alle = verdi.runder.flatMap((r) => (r.fasit ? [r.fasit.punkt] : []))
-    if (alle.length) ramme = boks(alle)
-  } else if (runde.fasit && resultat?.klasse !== "treff") {
-    ramme = boks([runde.fasit.punkt, ...runde.g.map((g) => sentrum(g.n, g.q, g.r))])
-  }
-
-  const lag = (u: KartUtsnitt) => {
-    if (ferdig) {
-      return verdi.runder.map((r, i) => {
+  const ramme = ferdig
+    ? { punkter: verdi.runder.flatMap((r) => (r.fasit ? [r.fasit.punkt] : [])), celler: [] }
+    : runde.fasit && resultat?.klasse !== "treff"
+      ? { punkter: [runde.fasit.punkt], celler: runde.g.map((g) => g.c) }
+      : null
+  const punkter = ferdig
+    ? verdi.runder.flatMap((r, i) => {
         const o = oppgjorte[i]
-        if (!r.fasit || !o) return null
-        const [x, y] = r.fasit.punkt
-        return (
-          <g key={i} pointerEvents="none">
-            <circle cx={x} cy={y} r={prikk(u, 8)} fill={KLASSE[o.klasse].farge} stroke="#fff" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
-            <text x={x} y={y} dy="0.35em" textAnchor="middle" fontSize={prikk(u, 10)} fontWeight={700} fill="#0b1016">
-              {i + 1}
-            </text>
-          </g>
-        )
+        return r.fasit && o ? [{ punkt: r.fasit.punkt, farge: KLASSE[o.klasse].farge, tekst: String(i + 1) }] : []
       })
-    }
-    const n = nivaaForZoom(u.pxPerEnhet)
-    return (
-      <g pointerEvents="none">
-        {avsluttet ? null : (
-          <path d={hexSti(n, synligeCeller(n, u.x, u.y, u.b, u.h))} fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth={0.75} vectorEffect="non-scaling-stroke" />
-        )}
-        {runde.g.map((g, i) => (
-          <path
-            key={i}
-            d={hexSti(g.n, [[g.q, g.r]])}
-            fill={UTFALL[g.u].farge}
-            fillOpacity={0.5}
-            stroke={UTFALL[g.u].farge}
-            strokeWidth={1.5}
-            vectorEffect="non-scaling-stroke"
-          />
-        ))}
-        {valgt ? (
-          <path d={hexSti(valgt.n, [[valgt.q, valgt.r]])} fill="#fff" fillOpacity={0.25} stroke="#fff" strokeWidth={2} vectorEffect="non-scaling-stroke" />
-        ) : null}
-        {runde.fasit && resultat ? (
-          <>
-            {runde.fasit.radiusKm > 0 ? (
-              <circle cx={runde.fasit.punkt[0]} cy={runde.fasit.punkt[1]} r={runde.fasit.radiusKm / KM_PER_PX} fill="#22c55e" fillOpacity={0.15} stroke="#22c55e" strokeDasharray="4 3" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
-            ) : null}
-            <path
-              d={hexSti(resultat.siste.n, [celle(resultat.siste.n, ...runde.fasit.punkt)])}
-              fill="none"
-              stroke="#22c55e"
-              strokeWidth={2}
-              vectorEffect="non-scaling-stroke"
-            />
-            <circle cx={runde.fasit.punkt[0]} cy={runde.fasit.punkt[1]} r={prikk(u, 4.5)} fill="#fff" stroke="#22c55e" strokeWidth={2} vectorEffect="non-scaling-stroke" />
-          </>
-        ) : null}
-      </g>
-    )
-  }
-
-  const merke = (u: KartUtsnitt) => {
-    if (ferdig || avsluttet) return null
-    const n = valgt?.n ?? nivaaForZoom(u.pxPerEnhet)
-    return (
-      // The map is dark in every theme, so the label uses fixed colours rather than the flipped neutrals.
-      <span className="flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[11px] text-white backdrop-blur" style={{ background: "rgba(11, 16, 22, 0.7)" }}>
-        <span aria-hidden="true">⬢</span>
-        {NIVAER[n].navn} · {NIVAER[n].poeng}
-      </span>
-    )
-  }
+    : []
+  const visNivaa = !ferdig && !avsluttet
 
   const blomstFarger = Array.from({ length: ANTALL }, (_, i) => (oppgjorte[i] ? KLASSE[oppgjorte[i]!.klasse].farge : null))
   const delTekst = [
@@ -285,7 +229,30 @@ export function HeksagonalJakt({ dato, steder }: { dato: string; steder: JaktSte
         {ferdig ? <DelKnapp tekst={delTekst} /> : <span className="font-mono text-[11px] text-neutral-400">{nr + 1}/{ANTALL}</span>}
       </Kort>
 
-      <Verdenskart farger={{}} visPunkter={false} tastatur maksZoom={24} forhold={forhold} ramme={ramme} lag={lag} merke={merke} onTrykk={ferdig || avsluttet ? undefined : trykk} />
+      <div className="relative">
+        <HexKart
+          forhold={forhold}
+          aktiv={!ferdig && !avsluttet}
+          valgt={ferdig || avsluttet ? null : valgt}
+          celler={ferdig ? [] : runde.g.map((g) => ({ celle: g.c, farge: UTFALL[g.u].farge }))}
+          fasit={!ferdig && runde.fasit && resultat ? { ...runde.fasit, nivaa: resultat.siste.n } : null}
+          punkter={punkter}
+          ramme={ramme}
+          runde={nr}
+          onVelg={velg}
+          onNivaa={setNivaa}
+        />
+        {visNivaa ? (
+          // The map is dark in every theme, so the label uses fixed colours rather than the flipped neutrals.
+          <span
+            className="pointer-events-none absolute top-2 left-2 flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[11px] text-white backdrop-blur"
+            style={{ background: "rgba(11, 16, 22, 0.7)" }}
+          >
+            <span aria-hidden="true">⬢</span>
+            {NIVAER[nivaa].navn} · {NIVAER[nivaa].poeng}
+          </span>
+        ) : null}
+      </div>
 
       {ferdig ? (
         <ul className="flex flex-col gap-1.5">

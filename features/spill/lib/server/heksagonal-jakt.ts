@@ -3,7 +3,8 @@ import "server-only"
 import { dagNummer, stokk } from "../dag"
 import { omrader } from "../geografi"
 import { steder, type Sted } from "../geografi-egenskaper"
-import { tilKart, vurder, type Utfall } from "../heksagon"
+import type { Utfall } from "../heksagon"
+import { vurder } from "../heksagon-celler"
 
 // Heksagonal jakt (our HexHunt): seven places a day, five cities and two landmarks. The page only gets
 // names and countries; coordinates stay here until a place is found or its guesses are used up.
@@ -13,7 +14,8 @@ const BYER_PER_DAG = 5
 // Order of the day: cities from big to small with the landmarks in between.
 const REKKE: Sted["type"][] = ["by", "by", "landemerke", "by", "by", "landemerke", "by"]
 
-/** Rough extent in km of sites much larger than a hex; reaching them anywhere counts as found. */
+/** Rough extent in km of sites much larger than a hex; reaching them anywhere counts as found, and misses are
+ * measured from their edge. */
 const UTSTREKNING: Record<string, number> = {
   "store-barriererev": 900,
   "den-kinesiske-mur": 300,
@@ -31,6 +33,8 @@ const UTSTREKNING: Record<string, number> = {
   "ha-long-bukta": 30,
   geirangerfjorden: 15,
 }
+/** Cities count within this many km of their centre, as in HexHunt. */
+const BY_KM = 10
 
 const byer = steder.filter((s) => s.type === "by")
 const landemerker = steder.filter((s) => s.type === "landemerke")
@@ -102,17 +106,18 @@ export function dagensJakt(dato: string): JaktSted[] {
   })
 }
 
-/** Where a place is, once it may be shown: its map point and the radius of large sites in km. */
+/** Where a place is, once it may be shown: [lat, lng], and the radius in km of ground that counts as the place. */
 export type JaktFasit = { punkt: [number, number]; radiusKm: number }
 
+const omraade = (s: Sted) => UTSTREKNING[s.id] ?? (s.type === "by" ? BY_KM : 0)
+
 function fasitFor(s: Sted): JaktFasit {
-  const [x, y] = tilKart(s.lat, s.lng)
-  return { punkt: [Math.round(x * 100) / 100, Math.round(y * 100) / 100], radiusKm: UTSTREKNING[s.id] ?? 0 }
+  return { punkt: [Math.round(s.lat * 1e4) / 1e4, Math.round(s.lng * 1e4) / 1e4], radiusKm: omraade(s) }
 }
 
-export function vurderGjetning(dato: string, nr: number, nivaa: number, q: number, r: number): Utfall {
+export function vurderGjetning(dato: string, nr: number, celle: string): Utfall {
   const s = dagensSteder(dato)[nr]
-  return vurder(nivaa, q, r, tilKart(s.lat, s.lng), [s.lat, s.lng], UTSTREKNING[s.id] ?? 0)
+  return vurder(celle, [s.lat, s.lng], omraade(s), s.id in UTSTREKNING)
 }
 
 export function dagensFasit(dato: string, nr: number): JaktFasit {
