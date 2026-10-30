@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Omriss } from "@/features/spill/components/omriss"
+import { OmrissFaner } from "@/features/spill/components/omriss-faner"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
 import { velgDato } from "@/features/spill/lib/dag"
 import { dagensOmriss } from "@/features/spill/lib/server/omriss"
@@ -18,7 +18,7 @@ export default async function Page({ searchParams }: PageProps<"/spill/omriss">)
       dato={dato}
       regler={<p>Pilen peker mot landet, og prosenten viser hvor nær du er. Kartdata: Natural Earth.</p>}
     >
-      <Omriss key={dato} dato={dato} form={form} nokkel={nokkel} />
+      <OmrissFaner key={dato} dato={dato} form={form} nokkel={nokkel} />
     </SpillRamme>
   )
 }
