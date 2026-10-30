@@ -165,9 +165,14 @@ export function Emovi({ dato, emoji }: { dato: string; emoji: string }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <Kort className="px-4 py-8 text-center">
-        <p className="text-5xl leading-tight tracking-[0.2em] sm:text-6xl" role="img" aria-label="Dagens emojier">
-          {emoji}
+      <Kort className="px-3 py-8">
+        {/* One emoji per cell so the five always sit on one line, shrinking on narrow screens. */}
+        <p className="flex flex-nowrap items-center justify-center gap-[2vw] sm:gap-3" role="img" aria-label="Dagens emojier">
+          {[...new Intl.Segmenter("nb", { granularity: "grapheme" }).segment(emoji)].map((s, i) => (
+            <span key={i} className="text-[clamp(2rem,12vw,3.75rem)] leading-none" aria-hidden="true">
+              {s.segment}
+            </span>
+          ))}
         </p>
       </Kort>
 
