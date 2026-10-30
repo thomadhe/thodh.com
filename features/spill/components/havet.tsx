@@ -6,6 +6,7 @@ import { landEtterId } from "../lib/geografi-svar"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
 import type { HavetOppgave } from "../lib/server/havet"
+import { Forstorrelse, ForstorrKnapp } from "./forstorrelse"
 import { DelKnapp, Kort, sekundarKnapp } from "./spill-ramme"
 
 // Havet: place each of nine countries in one of nine categories, in any order. No undo; aim for the most points.
@@ -53,6 +54,8 @@ export function Havet({ dato, oppgave }: { dato: string; oppgave: HavetOppgave }
   const { verdi, lastet, oppdater } = useDagligTilstand<Tilstand>("havet", dato, tom)
   const [visBeste, setVisBeste] = useState(false)
   const [valgtLand, setValgtLand] = useState<number | null>(null)
+  // The country whose flag is shown large.
+  const [zoom, setZoom] = useState<string | null>(null)
   const ferdig = verdi.resultat.status !== "pagar"
   const n = oppgave.land.length
   const katFor = Array.from({ length: n }, (_, i) => verdi.plassert.find(([l]) => l === i)?.[1] ?? -1)
@@ -103,26 +106,28 @@ export function Havet({ dato, oppgave }: { dato: string; oppgave: HavetOppgave }
               const plassert = katFor[i] >= 0
               const valgt = aktiv === i
               return (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => setValgtLand(valgt ? null : i)}
-                  disabled={plassert}
-                  aria-pressed={valgt}
-                  className={`flex items-center gap-2 rounded-xl border-2 px-2 py-1.5 text-left text-[13px] font-semibold leading-tight transition ${
-                    plassert
-                      ? "border-transparent bg-neutral-100 text-neutral-400"
-                      : valgt
-                        ? "border-neutral-900 bg-white text-neutral-950 shadow-sm"
-                        : "border-black/10 bg-[var(--spill-flate)] text-neutral-900 hover:border-black/30"
-                  }`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element -- small flags from flagcdn */}
-                  <img src={`https://flagcdn.com/w40/${flagg(id)}.png`} alt="" className={`h-4 w-auto shrink-0 rounded-[2px] shadow-sm ${plassert ? "opacity-40" : ""}`} />
-                  <span className={`min-w-0 hyphens-auto break-words ${plassert ? "line-through" : ""}`} lang="nb">
-                    {navn(id)}
-                  </span>
-                </button>
+                <div key={id} className="relative flex">
+                  <button
+                    type="button"
+                    onClick={() => setValgtLand(valgt ? null : i)}
+                    disabled={plassert}
+                    aria-pressed={valgt}
+                    className={`flex w-full items-center gap-2 rounded-xl border-2 py-1.5 pr-7 pl-2 text-left text-[13px] font-semibold leading-tight transition ${
+                      plassert
+                        ? "border-transparent bg-neutral-100 text-neutral-400"
+                        : valgt
+                          ? "border-neutral-900 bg-white text-neutral-950 shadow-sm"
+                          : "border-black/10 bg-[var(--spill-flate)] text-neutral-900 hover:border-black/30"
+                    }`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element -- small flags from flagcdn */}
+                    <img src={`https://flagcdn.com/w40/${flagg(id)}.png`} alt="" className={`h-4 w-auto shrink-0 rounded-[2px] shadow-sm ${plassert ? "opacity-40" : ""}`} />
+                    <span className={`min-w-0 hyphens-auto break-words ${plassert ? "line-through" : ""}`} lang="nb">
+                      {navn(id)}
+                    </span>
+                  </button>
+                  <ForstorrKnapp onClick={() => setZoom(id)} etikett={`Forstørr flagget til ${navn(id)}`} className="absolute top-1/2 right-0.5 -translate-y-1/2" />
+                </div>
               )
             })}
           </div>
@@ -145,6 +150,21 @@ export function Havet({ dato, oppgave }: { dato: string; oppgave: HavetOppgave }
           </div>
         </Kort>
       )}
+
+      <Forstorrelse apen={zoom !== null} onLukk={() => setZoom(null)} etikett={zoom ? `Flagget til ${navn(zoom)}` : "Flagg"}>
+        {zoom ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element -- large flags from flagcdn */}
+            <img
+              src={`https://flagcdn.com/w640/${flagg(zoom)}.png`}
+              srcSet={`https://flagcdn.com/w640/${flagg(zoom)}.png 1x, https://flagcdn.com/w1280/${flagg(zoom)}.png 2x`}
+              alt=""
+              className="h-auto max-h-[55vh] w-full object-contain drop-shadow-lg"
+            />
+            <p className="text-2xl font-semibold tracking-tight text-neutral-950">{navn(zoom)}</p>
+          </>
+        ) : null}
+      </Forstorrelse>
 
       <div className="grid grid-cols-3 gap-2">
         {oppgave.kategorier.map((kat, k) => {

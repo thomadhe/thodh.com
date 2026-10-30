@@ -14,6 +14,7 @@ import { Knapp, Kort, sekundarKnapp } from "./spill-ramme"
 // states only or the territories too; each choice keeps its own record.
 
 const RUNDE_MS = 60_000
+const FASIT_MS = 1700
 type Form = { id: string; form: string }
 type Svar = { id: string; riktig: boolean }
 
@@ -131,11 +132,12 @@ export function OmrissOvelse() {
       neste()
     } else {
       lyder.feil()
+      // A miss or a skip shows the answer long enough to read and learn it.
       setVisFasit(landEtterId.get(naaForm.id) ?? null)
       setTimeout(() => {
         setVisFasit(null)
         neste()
-      }, 1100)
+      }, FASIT_MS)
     }
   }
 
@@ -173,16 +175,10 @@ export function OmrissOvelse() {
           </div>
         )}
         {status === "spiller" && formOmrade && !formOmrade.suveren ? <TerritoriumMerke /> : null}
-        {visFasit ? (
-          <p className="mel-inn absolute bottom-3 left-0 right-0 text-center text-sm font-semibold text-rose-700">
-            Det var {visFasit.navn}
-            {tilhorerNavn(visFasit) ? <span className="font-normal"> ({tilhorerNavn(visFasit)})</span> : null}
-          </p>
-        ) : null}
       </Kort>
 
       {status === "spiller" ? (
-        <div className="flex flex-col gap-2">
+        <div className="relative flex flex-col gap-2">
           <LandVelger
             id="ovelse-forslag"
             utelat={utvalg === "land" ? territorieIder : []}
@@ -195,6 +191,16 @@ export function OmrissOvelse() {
               Hopp over
             </button>
           </div>
+          {/* After a miss or a skip the answer covers the (locked) input for a moment, leaving the shape in view. */}
+          {visFasit ? (
+            <div className="mel-inn absolute inset-x-0 top-0 flex h-12 items-center justify-center gap-2 rounded-2xl border border-rose-300 bg-rose-50 px-4" role="status">
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-rose-600">Det var</span>
+              {/* eslint-disable-next-line @next/next/no-img-element -- small flags from flagcdn */}
+              <img src={`https://flagcdn.com/w40/${visFasit.flagg}.png`} alt="" className="h-4 w-auto shrink-0 rounded-[2px] shadow-sm" />
+              <span className="truncate text-lg font-semibold text-neutral-950">{visFasit.navn}</span>
+              {tilhorerNavn(visFasit) ? <span className="shrink-0 text-xs text-neutral-500">· {tilhorerNavn(visFasit)}</span> : null}
+            </div>
+          ) : null}
         </div>
       ) : (
         <div className="flex flex-col items-center gap-3">

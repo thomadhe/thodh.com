@@ -6,6 +6,7 @@ import { formaterDato, stokk } from "../lib/dag"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
 import type { Brikke, Gruppe } from "../lib/server/tilkoblinger"
+import { Forstorrelse, ForstorrKnapp } from "./forstorrelse"
 import { DelKnapp, Knapp, sekundarKnapp } from "./spill-ramme"
 
 // Tilkoblinger (our GeoConnections): find four groups of four tiles. On land days a group is one
@@ -47,41 +48,47 @@ function GruppeRad({ g }: { g: Funnet }) {
   )
 }
 
-function Rute({ b, dato, aktiv, onVelg }: { b: Brikke; dato: string; aktiv: boolean; onVelg: () => void }) {
-  const src = `/spill/api/tilkoblinger/bilde?dato=${dato}&b=${b.id}`
+const bildeSrc = (dato: string, b: Brikke) => `/spill/api/tilkoblinger/bilde?dato=${dato}&b=${b.id}`
+const SLAGNAVN: Record<Brikke["slag"], string> = { flagg: "Flagg", omriss: "Omriss", foto: "Bilde", tekst: "Tekst" }
+
+function Rute({ b, dato, aktiv, onVelg, onForstorr }: { b: Brikke; dato: string; aktiv: boolean; onVelg: () => void; onForstorr: () => void }) {
+  const src = bildeSrc(dato, b)
   const foto = b.slag === "foto"
   return (
-    <button
-      type="button"
-      onClick={onVelg}
-      aria-pressed={aktiv}
-      aria-label={b.tekst ?? (b.slag === "flagg" ? "Flagg" : b.slag === "omriss" ? "Omriss" : "Bilde")}
-      className={`relative flex h-24 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl px-1 py-2 text-center leading-tight transition active:scale-95 sm:h-28 ${
-        aktiv ? (foto ? "ring-4 ring-neutral-900" : "bg-neutral-900 text-neutral-50") : "bg-neutral-100 text-neutral-950 hover:bg-neutral-200"
-      }`}
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element -- tile pictures come from our own proxy route */}
-      {b.slag === "foto" ? <img src={src} alt="" className={`absolute inset-0 h-full w-full object-cover transition ${aktiv ? "scale-105 brightness-75" : ""}`} /> : null}
-      {b.slag === "flagg" ? (
-        // eslint-disable-next-line @next/next/no-img-element -- flag via our proxy route
-        <img src={src} alt="" className={`w-auto rounded-[2px] shadow-sm ${b.tekst ? "h-4" : "max-h-12 max-w-[85%] sm:max-h-14"}`} />
-      ) : null}
-      {b.slag === "omriss" ? (
-        // eslint-disable-next-line @next/next/no-img-element -- outline via our proxy route
-        <img src={src} alt="" className={b.tekst ? "h-8 w-8" : "h-16 w-16 sm:h-20 sm:w-20"} />
-      ) : null}
-      {b.etikett ? <span className="font-mono text-[9px] uppercase tracking-wider opacity-60">{b.etikett}</span> : null}
-      {b.tekst ? (
-        <span className={`hyphens-auto break-words font-semibold ${b.slag === "tekst" ? "text-[13px]" : "text-[12px]"}`} lang="nb">
-          {b.tekst}
-        </span>
-      ) : null}
-      {aktiv && b.slag !== "tekst" ? (
-        <span className="absolute top-1.5 right-1.5 grid h-5 w-5 place-items-center rounded-full bg-neutral-900 text-neutral-50 shadow">
-          <Check className="h-3 w-3" strokeWidth={3} />
-        </span>
-      ) : null}
-    </button>
+    <div className="relative">
+      <button
+        type="button"
+        onClick={onVelg}
+        aria-pressed={aktiv}
+        aria-label={b.tekst ?? SLAGNAVN[b.slag]}
+        className={`relative flex h-24 w-full flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl px-1 py-2 text-center leading-tight transition active:scale-95 sm:h-28 ${
+          aktiv ? (foto ? "ring-4 ring-neutral-900" : "bg-neutral-900 text-neutral-50") : "bg-neutral-100 text-neutral-950 hover:bg-neutral-200"
+        }`}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element -- tile pictures come from our own proxy route */}
+        {b.slag === "foto" ? <img src={src} alt="" className={`absolute inset-0 h-full w-full object-cover transition ${aktiv ? "scale-105 brightness-75" : ""}`} /> : null}
+        {b.slag === "flagg" ? (
+          // eslint-disable-next-line @next/next/no-img-element -- flag via our proxy route
+          <img src={src} alt="" className={`w-auto rounded-[2px] shadow-sm ${b.tekst ? "h-4" : "max-h-12 max-w-[85%] sm:max-h-14"}`} />
+        ) : null}
+        {b.slag === "omriss" ? (
+          // eslint-disable-next-line @next/next/no-img-element -- outline via our proxy route
+          <img src={src} alt="" className={b.tekst ? "h-8 w-8" : "h-16 w-16 sm:h-20 sm:w-20"} />
+        ) : null}
+        {b.etikett ? <span className="font-mono text-[9px] uppercase tracking-wider opacity-60">{b.etikett}</span> : null}
+        {b.tekst ? (
+          <span className={`hyphens-auto break-words font-semibold ${b.slag === "tekst" ? "text-[13px]" : "text-[12px]"}`} lang="nb">
+            {b.tekst}
+          </span>
+        ) : null}
+        {aktiv && b.slag !== "tekst" ? (
+          <span className="absolute top-1.5 right-1.5 grid h-5 w-5 place-items-center rounded-full bg-neutral-900 text-neutral-50 shadow">
+            <Check className="h-3 w-3" strokeWidth={3} />
+          </span>
+        ) : null}
+      </button>
+      {b.slag !== "tekst" ? <ForstorrKnapp onClick={onForstorr} etikett={`Forstørr ${SLAGNAVN[b.slag].toLowerCase()}`} className="absolute top-0.5 left-0.5" /> : null}
+    </div>
   )
 }
 
@@ -92,6 +99,8 @@ export function Tilkoblinger({ dato, slag, brikker }: { dato: string; slag: "lan
   const [melding, setMelding] = useState<string | null>(null)
   const [opptatt, setOpptatt] = useState(false)
   const [knust, setKnust] = useState<number | null>(null)
+  // The tile shown large.
+  const [zoom, setZoom] = useState<Brikke | null>(null)
   const ferdig = verdi.resultat.status !== "pagar"
 
   const trengerFasit = lastet && ferdig && !verdi.fasit
@@ -185,10 +194,29 @@ export function Tilkoblinger({ dato, slag, brikker }: { dato: string; slag: "lan
       {!ferdig ? (
         <div className="grid grid-cols-4 gap-2">
           {igjen.map((b) => (
-            <Rute key={b.id} b={b} dato={dato} aktiv={valgt.includes(b.id)} onVelg={() => velg(b.id)} />
+            <Rute key={b.id} b={b} dato={dato} aktiv={valgt.includes(b.id)} onVelg={() => velg(b.id)} onForstorr={() => setZoom(b)} />
           ))}
         </div>
       ) : null}
+
+      <Forstorrelse apen={zoom !== null} onLukk={() => setZoom(null)} etikett={zoom ? SLAGNAVN[zoom.slag] : "Bilde"}>
+        {zoom ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element -- tile pictures come from our own proxy route */}
+            <img
+              src={bildeSrc(dato, zoom)}
+              alt=""
+              className={`max-h-[60vh] w-full object-contain ${zoom.slag === "foto" ? "rounded-2xl" : "drop-shadow-lg"} ${zoom.slag === "omriss" ? "max-w-80" : ""}`}
+            />
+            {zoom.etikett || zoom.tekst ? (
+              <p className="text-center">
+                {zoom.etikett ? <span className="block font-mono text-[11px] uppercase tracking-wider text-neutral-500">{zoom.etikett}</span> : null}
+                {zoom.tekst ? <span className="text-xl font-semibold text-neutral-950">{zoom.tekst}</span> : null}
+              </p>
+            ) : null}
+          </>
+        ) : null}
+      </Forstorrelse>
 
       <div className="flex items-center justify-center gap-2 py-1" aria-label={`${LIV - verdi.feil} liv igjen`}>
         {Array.from({ length: LIV }, (_, i) => {

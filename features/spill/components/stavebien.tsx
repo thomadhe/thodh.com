@@ -127,12 +127,17 @@ function Avsloring({ svar, fasit, riktig, onFerdig }: { svar: string; fasit: str
     }, BOKSTAV_MS)
     return () => clearInterval(t)
   }, [fasit, riktig])
+  // Always one line: long words get narrower boxes and smaller letters (container units of the card's width).
+  const n = fasit.length
+  const mellom = n > 10 ? 2 : 4
+  const bredde = `min(2rem, calc((100cqw - ${(n - 1) * mellom}px) / ${n}))`
   return (
-    <span className="inline-flex flex-wrap justify-center gap-1 font-mono text-2xl font-semibold" aria-label={fasit}>
+    <span className="flex w-full justify-center font-mono font-semibold [container-type:inline-size]" style={{ gap: mellom }} aria-label={fasit}>
       {[...fasit].map((t, i) => (
         <span
           key={i}
-          className={`flex h-10 w-8 items-center justify-center rounded-lg border-b-2 transition-all duration-200 ${
+          style={{ width: bredde, height: `calc(${bredde} * 1.25)`, fontSize: `calc(${bredde} * 0.75)` }}
+          className={`flex shrink-0 items-center justify-center rounded-lg border-b-2 transition-all duration-200 ${
             i >= vist
               ? "translate-y-1 border-neutral-300 text-transparent"
               : svar[i]?.toLowerCase() === t.toLowerCase()
