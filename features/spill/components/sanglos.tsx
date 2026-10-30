@@ -11,10 +11,12 @@ export type SangValg = { id: string; title: string; artist: string }
 type Forsok = { id: string; sammeArtist: boolean; tittel?: string; artist?: string } | null
 type Fasit = { id: string; tittel: string; artist: string; aar: number; bilde?: string; lenke?: string }
 type Runde = { forsok: Forsok[]; status: "pagar" | "vunnet" | "tapt"; fasit?: Fasit }
-type Tilstand = { runder: Record<SangKategori, Runde>; resultat: Resultat }
+// v2: new song list (Oct 2026). Older saves point at other songs and start fresh.
+type Tilstand = { v: 2; runder: Record<SangKategori, Runde>; resultat: Resultat }
 
 const tomRunde = (): Runde => ({ forsok: [], status: "pagar" })
 const tom = (): Tilstand => ({
+  v: 2,
   runder: { alle: tomRunde(), rock: tomRunde(), hiphop: tomRunde() },
   resultat: { status: "pagar" },
 })
@@ -498,7 +500,7 @@ export function Sanglos({ dato, sanger }: { dato: string; sanger: SangValg[] }) 
           ferdige === alle.length
             ? { status: klart === alle.length ? "vunnet" : klart ? "ferdig" : "tapt", etikett: `${klart}/${alle.length}`, poeng: klart }
             : { status: "pagar", etikett: `${ferdige}/${alle.length} sanger` }
-        return { runder, resultat }
+        return { v: 2, runder, resultat }
       }),
     [oppdater],
   )
