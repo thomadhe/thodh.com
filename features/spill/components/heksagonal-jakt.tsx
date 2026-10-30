@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic"
 import { useEffect, useState, useSyncExternalStore } from "react"
 import { formaterDato } from "../lib/dag"
-import { MAKS_POENG, NIVAER, rundePoeng, type Utfall } from "../lib/heksagon"
+import { MAKS_POENG, NIVAER, rundePoeng, UNNA, type Utfall } from "../lib/heksagon"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
 import type { JaktFasit, JaktSted } from "../lib/server/heksagonal-jakt"
@@ -22,8 +22,8 @@ const HexKart = dynamic(() => import("./hex-kart"), {
 const FORSOK = 3
 const ANTALL = 7
 
-/** A guess: its H3 cell, the cell's level and the feedback. */
-type Gjetning = { c: string; n: number; u: Utfall }
+/** A guess: its H3 cell, the cell's level, the feedback and, for a miss, about how many hexes away it is. */
+type Gjetning = { c: string; n: number; u: Utfall; a?: number }
 type Runde = { g: Gjetning[]; fasit: JaktFasit | null }
 type Tilstand = { v: 2; runder: Runde[]; resultat: Resultat }
 const tom = (): Tilstand => ({ v: 2, runder: [], resultat: { status: "pagar" } })
@@ -67,6 +67,21 @@ const lyttBredde = (varsle: () => void) => {
   const mq = window.matchMedia(bred)
   mq.addEventListener("change", varsle)
   return () => mq.removeEventListener("change", varsle)
+}
+
+/** The legend under the game: what each colour means, in hexes away. */
+function Forklaring() {
+  return (
+    <ul className="grid grid-cols-5 gap-1.5" aria-label="Forklaring">
+      {(Object.keys(UTFALL) as Utfall[]).map((u) => (
+        <li key={u} className="min-w-0">
+          <div className="h-1.5 rounded-full" style={{ background: UTFALL[u].farge }} />
+          <p className="mt-1 truncate text-[11px] font-semibold text-neutral-800">{UTFALL[u].navn}</p>
+          <p className="truncate font-mono text-[10px] text-neutral-500">{u === "funnet" ? "i ruta" : `${UNNA[u]} unna`}</p>
+        </li>
+      ))}
+    </ul>
+  )
 }
 
 /** Seven hexes as a flower: the day's progress, one petal per place. */
@@ -135,8 +150,8 @@ export function HeksagonalJakt({ dato, steder }: { dato: string; steder: JaktSte
     setOpptatt(true)
     try {
       const forsok = runde.g.length + 1
-      const svar = await spor<{ utfall: Utfall; fasit?: JaktFasit }>({ type: "gjett", dato, nr, celle: c, forsok })
-      const gjetning: Gjetning = { c, n, u: svar.utfall }
+      const svar = await spor<{ utfall: Utfall; unna?: number; fasit?: JaktFasit }>({ type: "gjett", dato, nr, celle: c, forsok })
+      const gjetning: Gjetning = { c, n, u: svar.utfall, ...(svar.unna ? { a: svar.unna } : {}) }
       const fasit = svar.fasit ?? null
       const sisteRunde = fasit !== null && nr === ANTALL - 1
       if (sisteRunde) lyder.seier()
@@ -234,7 +249,7 @@ export function HeksagonalJakt({ dato, steder }: { dato: string; steder: JaktSte
           forhold={forhold}
           aktiv={!ferdig && !avsluttet}
           valgt={ferdig || avsluttet ? null : valgt}
-          celler={ferdig ? [] : runde.g.map((g) => ({ celle: g.c, farge: UTFALL[g.u].farge }))}
+          celler={ferdig ? [] : runde.g.map((g) => ({ celle: g.c, farge: UTFALL[g.u].farge, tekst: g.a ? String(g.a) : undefined }))}
           fasit={!ferdig && runde.fasit && resultat ? { ...runde.fasit, nivaa: resultat.siste.n } : null}
           punkter={punkter}
           ramme={ramme}
@@ -291,6 +306,7 @@ export function HeksagonalJakt({ dato, steder }: { dato: string; steder: JaktSte
             {runde.g.map((g, i) => (
               <li key={i} className="rounded-full px-3 py-1 text-xs font-semibold text-white" style={{ background: UTFALL[g.u].farge }}>
                 {UTFALL[g.u].navn}
+                {g.a ? <span className="font-mono font-normal opacity-90"> · {g.a}</span> : null}
               </li>
             ))}
             {runde.g.length === 0 ? <li className="font-mono text-[11px] text-neutral-500">{melding ?? (storSkjerm ? "Dra, og zoom med hjulet eller + og −. Enter gjetter." : "Zoom inn for flere poeng")}</li> : null}
@@ -302,6 +318,8 @@ export function HeksagonalJakt({ dato, steder }: { dato: string; steder: JaktSte
           </Knapp>
         </div>
       )}
+
+      {ferdig ? null : <Forklaring />}
     </div>
   )
 }

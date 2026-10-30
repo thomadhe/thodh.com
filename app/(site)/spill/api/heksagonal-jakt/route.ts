@@ -15,13 +15,14 @@ const foresporsel = z.discriminatedUnion("type", [
   z.object({ type: z.literal("fasit"), dato: z.string() }),
 ])
 
-// Places stay on the server; a guess gets its feedback, and the answer once it is found or the third guess is spent.
+// Places stay on the server; a guess gets its feedback and about how many hexes away it is, and the answer once it
+// is found or the third guess is spent.
 export async function POST(request: Request) {
   const tolket = foresporsel.safeParse(await request.json().catch(() => null))
   if (!tolket.success || !kanSpilles(tolket.data.dato)) return Response.json({ melding: "Ugyldig forespørsel." }, { status: 400 })
   const data = tolket.data
   if (data.type === "fasit") return Response.json({ steder: heleFasit(data.dato) })
-  const utfall = vurderGjetning(data.dato, data.nr, data.celle)
+  const { utfall, unna } = vurderGjetning(data.dato, data.nr, data.celle)
   const avslutt = utfall === "funnet" || data.forsok === 3
-  return Response.json(avslutt ? { utfall, fasit: dagensFasit(data.dato, data.nr) } : { utfall })
+  return Response.json(avslutt ? { utfall, unna, fasit: dagensFasit(data.dato, data.nr) } : { utfall, unna })
 }

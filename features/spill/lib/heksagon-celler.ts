@@ -1,5 +1,5 @@
 import { cellToBoundary, cellToChildren, cellToLatLng, getRes0Cells, getResolution, isValidCell, latLngToCell, polygonToCells, polygonToCellsExperimental, POLYGON_TO_CELLS_FLAGS } from "h3-js"
-import { avstandKm, NIVAER, utfallForAvstand, type Utfall } from "./heksagon"
+import { avstandKm, heksUnna, NIVAER, utfallForAvstand, type Utfall } from "./heksagon"
 
 // The H3 grid for Heksagonal jakt: the page draws and taps cells with it, and the server judges guesses
 // with the same functions, so both agree on every cell. Holds no answers.
@@ -42,13 +42,14 @@ function dekning(punkt: readonly [number, number], km: number, nivaa: number) {
 /**
  * Judges a guess as HexHunt does: a find if the hex holds the place or reaches into its ground (`radiusKm` around
  * it), otherwise feedback by the distance from the hex centre. Large sites (`fraKant`) measure from their edge.
+ * `unna` is about how many hexes away a miss is (0 for a find).
  */
-export function vurder(celle: string, punkt: readonly [number, number], radiusKm = 0, fraKant = false): Utfall {
+export function vurder(celle: string, punkt: readonly [number, number], radiusKm = 0, fraKant = false): { utfall: Utfall; unna: number } {
   const nivaa = getResolution(celle)
-  if (latLngToCell(punkt[0], punkt[1], nivaa) === celle) return "funnet"
-  if (radiusKm > 0 && dekning(punkt, radiusKm, nivaa).has(celle)) return "funnet"
-  const km = avstandKm(cellToLatLng(celle), punkt)
-  return utfallForAvstand(nivaa, Math.max(0, km - (fraKant ? radiusKm : 0)))
+  if (latLngToCell(punkt[0], punkt[1], nivaa) === celle) return { utfall: "funnet", unna: 0 }
+  if (radiusKm > 0 && dekning(punkt, radiusKm, nivaa).has(celle)) return { utfall: "funnet", unna: 0 }
+  const km = Math.max(0, avstandKm(cellToLatLng(celle), punkt) - (fraKant ? radiusKm : 0))
+  return { utfall: utfallForAvstand(nivaa, km), unna: heksUnna(nivaa, km) }
 }
 
 /** The centre of a cell as [lat, lng]. */

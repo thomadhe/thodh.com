@@ -34,11 +34,21 @@ export function avstandKm(a: readonly [number, number], b: readonly [number, num
 
 export type Utfall = "funnet" | "het" | "varm" | "lunken" | "kald"
 
-/** Feedback for a miss `km` from the hex centre, measured in hex sizes (√area) as in HexHunt. */
+/** `km` in hex sizes (√area) of a level: the measure of the feedback, as in HexHunt. */
+const iHekser = (nivaa: number, km: number) => km / Math.sqrt(NIVAER[nivaa].km2)
+
+/** Feedback for a miss `km` from the hex centre. */
 export function utfallForAvstand(nivaa: number, km: number): Exclude<Utfall, "funnet"> {
-  const forhold = km / Math.sqrt(NIVAER[nivaa].km2)
+  const forhold = iHekser(nivaa, km)
   return forhold <= 1.5 ? "het" : forhold <= 3 ? "varm" : forhold <= 6 ? "lunken" : "kald"
 }
+
+/** About how many hexes away a miss `km` from the hex centre is, in the feedback's measure; within one of the
+ * count on the grid. */
+export const heksUnna = (nivaa: number, km: number) => Math.max(1, Math.round(iHekser(nivaa, km)))
+
+/** What each feedback means in hexes away, for the legend. Rounding puts 3 and 6 on both sides of a boundary. */
+export const UNNA: Record<Exclude<Utfall, "funnet">, string> = { het: "1", varm: "2–3", lunken: "3–6", kald: "6+" }
 
 /** Share of the level's points kept for the round's last guess. */
 const TREFF: Record<Utfall, number> = { funnet: 1, het: 0.6, varm: 0.3, lunken: 0, kald: 0 }

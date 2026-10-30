@@ -171,7 +171,7 @@ function harWebGL() {
   }
 }
 
-export type KartCelle = { celle: string; farge: string }
+export type KartCelle = { celle: string; farge: string; tekst?: string }
 export type KartPunkt = { punkt: [number, number]; farge: string; tekst: string }
 export type KartFasit = { punkt: [number, number]; radiusKm: number; nivaa: number }
 
@@ -193,7 +193,7 @@ export default function HexKart({
   aktiv: boolean
   /** The chosen point [lat, lng]; its hex follows the zoom level. */
   valgt: [number, number] | null
-  /** Guessed hexes, coloured by their feedback. */
+  /** Guessed hexes, coloured by their feedback, with an optional badge. */
   celler: KartCelle[]
   /** The answer, once shown: the place, its ground and its hex at the level of the last guess. */
   fasit: KartFasit | null
@@ -357,11 +357,22 @@ export default function HexKart({
     kart.getSource<GeoJSONSource>("valgt")?.setData(valgtCelle ? flate([valgtCelle]) : tom)
   }, [kart, valgtCelle])
 
-  const cellerNokkel = celler.map((c) => `${c.celle}:${c.farge}`).join(",")
+  const cellerNokkel = JSON.stringify(celler)
   useEffect(() => {
     if (!kart || kart !== levende.current) return
-    const farger = new Map(cellerNokkel ? cellerNokkel.split(",").map((s) => s.split(":") as [string, string]) : [])
+    const liste = JSON.parse(cellerNokkel) as KartCelle[]
+    const farger = new Map(liste.map((c) => [c.celle, c.farge]))
     kart.getSource<GeoJSONSource>("gjetninger")?.setData(flate([...farger.keys()], (c) => ({ farge: farger.get(c) })))
+    // A miss's hexes away sit on its hex as a small HTML badge, like the summary's dots.
+    const merker = liste.flatMap((c) => {
+      if (!c.tekst) return []
+      const el = document.createElement("div")
+      el.textContent = c.tekst
+      el.style.cssText = `min-width:18px;height:18px;padding:0 4px;border-radius:9999px;background:rgba(11,16,22,.85);border:1.5px solid ${c.farge};color:#fff;font:700 10px/15px ui-sans-serif,system-ui,sans-serif;text-align:center;pointer-events:none`
+      const [lat, lng] = sentrum(c.celle)
+      return [new Marker({ element: el }).setLngLat([lng, lat]).addTo(kart)]
+    })
+    return () => merker.forEach((m) => m.remove())
   }, [kart, cellerNokkel])
 
   const fasitNokkel = fasit ? `${fasit.punkt.join(",")}:${fasit.radiusKm}:${fasit.nivaa}` : ""

@@ -7,7 +7,7 @@ import { formaterVerdi } from "../features/spill/lib/format"
 import { dagensMerEllerMindre, kategorier, KATEGORIER_PER_DAG, RUNDER_PER_KATEGORI } from "../features/spill/lib/mer-eller-mindre"
 import { dagensStavebien } from "../features/spill/lib/stavebien"
 import { erRiktigStavet } from "../features/spill/lib/stavebien-regler"
-import { gridDisk } from "h3-js"
+import { gridDisk, gridRing } from "h3-js"
 import { avstandKm, MAKS_POENG, NIVAER, nivaaForZoom, rundePoeng, utfallForAvstand } from "../features/spill/lib/heksagon"
 import { celleFor, nivaaFor, omriss, sentrum, synligeCeller, vurder } from "../features/spill/lib/heksagon-celler"
 
@@ -132,20 +132,26 @@ test("Heksagonal jakt: H3-nivåer og zoom som i HexHunt", () => {
 test("Heksagonal jakt: vurdering og poeng som i HexHunt", () => {
   const oslo: [number, number] = [59.91, 10.75]
   const c = celleFor(...oslo, 2)
-  assert.equal(vurder(c, oslo), "funnet")
+  assert.deepEqual(vurder(c, oslo), { utfall: "funnet", unna: 0 })
   for (const nabo of gridDisk(c, 1).filter((x) => x !== c)) {
-    assert.equal(vurder(nabo, oslo), utfallForAvstand(2, avstandKm(sentrum(nabo), oslo)))
-    assert.notEqual(vurder(nabo, oslo), "kald")
+    const { utfall, unna } = vurder(nabo, oslo)
+    assert.equal(utfall, utfallForAvstand(2, avstandKm(sentrum(nabo), oslo)))
+    assert.notEqual(utfall, "kald")
+    assert.ok(unna >= 1 && unna <= 2, `${unna}`)
     // A large site counts as found from a neighbouring hex.
-    assert.equal(vurder(nabo, oslo, 300, true), "funnet")
+    assert.equal(vurder(nabo, oslo, 300, true).utfall, "funnet")
   }
-  assert.equal(vurder(celleFor(-33.9, 151.2, 2), oslo), "kald")
+  assert.equal(vurder(celleFor(-33.9, 151.2, 2), oslo).utfall, "kald")
+  // About as many hexes away as the grid counts, also further out.
+  for (const ring of [3, 6, 10]) {
+    for (const g of gridRing(c, ring)) assert.ok(Math.abs(vurder(g, oslo).unna - ring) <= 2, `${ring}: ${vurder(g, oslo).unna}`)
+  }
   // A city's 10 km reach every hex that meets at a corner of its own.
   const [lng, lat] = omriss(celleFor(...oslo, 4))[0]
   for (const nabo of gridDisk(celleFor(lat, lng, 4), 1)) {
-    if (omriss(nabo).some(([x, y]) => Math.hypot(x - lng, y - lat) < 1e-9)) assert.equal(vurder(nabo, [lat, lng], 10), "funnet")
+    if (omriss(nabo).some(([x, y]) => Math.hypot(x - lng, y - lat) < 1e-9)) assert.equal(vurder(nabo, [lat, lng], 10).utfall, "funnet")
   }
-  assert.notEqual(vurder(celleFor(61, 10.75, 4), oslo, 10), "funnet")
+  assert.notEqual(vurder(celleFor(61, 10.75, 4), oslo, 10).utfall, "funnet")
   // Feedback in hex sizes (√area): hot within 1.5, warm within 3, lukewarm within 6.
   assert.equal(utfallForAvstand(4, 1.5 * Math.sqrt(1770) - 0.1), "het")
   assert.equal(utfallForAvstand(4, 1.5 * Math.sqrt(1770) + 0.1), "varm")

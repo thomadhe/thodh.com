@@ -115,7 +115,7 @@ function fasitFor(s: Sted): JaktFasit {
   return { punkt: [Math.round(s.lat * 1e4) / 1e4, Math.round(s.lng * 1e4) / 1e4], radiusKm: omraade(s) }
 }
 
-export function vurderGjetning(dato: string, nr: number, celle: string): Utfall {
+export function vurderGjetning(dato: string, nr: number, celle: string): { utfall: Utfall; unna: number } {
   const s = dagensSteder(dato)[nr]
   return vurder(celle, [s.lat, s.lng], omraade(s), s.id in UTSTREKNING)
 }

@@ -20,7 +20,7 @@ export default async function Page({ searchParams }: PageProps<"/spill/heksagona
         <>
           <p>
             Zoom inn for mindre sekskanter og flere poeng (80–200). Tre forsøk per sted. Het er under 1,5 sekskanter unna, varm under
-            3 og lunken under 6. Nesten gir litt poeng, og senere forsøk gir mindre. En by teller innen 10 km fra sentrum, og store
+            3 og lunken under 6, og tallet på et bom sier omtrent hvor mange sekskanter unna stedet er. Nesten gir litt poeng, og senere forsøk gir mindre. En by teller innen 10 km fra sentrum, og store
             steder teller der de når.
           </p>
           <p className="mt-2 text-xs">
