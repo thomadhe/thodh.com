@@ -8,6 +8,7 @@ import { avstand, landEtterId, naerhet, omrissNokkel } from "../lib/geografi-sva
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
 import { delRad, GjetningsRad, LandVelger, styrke } from "./land-gjetting"
+import { OmrissBonus } from "./omriss-bonus"
 import { DelKnapp, Kort } from "./spill-ramme"
 
 const FORSOK = 6
@@ -90,6 +91,8 @@ export function Omriss({ dato, form, nokkel }: { dato: string; form: string; nok
             ))
           : null}
       </ul>
+
+      {ferdig ? <OmrissBonus fasit={fasit} dato={dato} /> : null}
     </div>
   )
 }
