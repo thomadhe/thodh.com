@@ -18,14 +18,15 @@ type Tilstand = {
 
 const tom = (): Tilstand => ({ v: 4, gjetninger: [], resultat: { status: "pagar" } })
 
-// Lessgames-style rows: coloured bar, light text on top. The colour blends from green (top 50) through
-// yellow (~300) and orange (~1500) to red, on a log scale of the rank.
+// Lessgames-style rows: coloured bar, light text on top. Like Clueless the colour blends from green
+// (top 50) through yellow (~200) and orange (~500) to red from about 1000, on a log scale of the rank.
 const ANKER: Fargeanker = [
   [0, 145],
   [Math.log10(50), 128],
-  [Math.log10(300), 56],
-  [Math.log10(1500), 30],
-  [Math.log10(5000), 6],
+  [Math.log10(200), 60],
+  [Math.log10(500), 32],
+  [Math.log10(1000), 12],
+  [Math.log10(2000), 4],
 ]
 const farge = (avstand: number) => naerhetsfarge(fargetone(ANKER, Math.log10(avstand)))
 
@@ -182,7 +183,7 @@ export function Anelseslos({ dato, antall }: { dato: string; antall: number }) {
       : `Ga opp etter ${antallGjett} gjetninger`,
     [...verdi.gjetninger]
       .filter((g) => !g.hint)
-      .map((g) => (g.avstand === 1 ? "🟩" : g.avstand <= 50 ? "🟢" : g.avstand <= 300 ? "🟡" : g.avstand <= 1500 ? "🟠" : "🔴"))
+      .map((g) => (g.avstand === 1 ? "🟩" : g.avstand <= 50 ? "🟢" : g.avstand <= 200 ? "🟡" : g.avstand <= 1000 ? "🟠" : "🔴"))
       .slice(-30)
       .join(""),
     "thodh.com/spill",

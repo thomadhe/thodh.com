@@ -54,16 +54,42 @@ function klokke(t: number) {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`
 }
 
-/** Where audible sound starts: some previews open with a few seconds of silence or a slow fade-in. */
+/**
+ * Where to start playing. Previews are 30 s excerpts that Apple cuts anywhere – after silence, in a
+ * fade-in or mid-note – so we skip to the first audible sound and then to the first clear attack (a
+ * drum hit, a plucked or sung note) within the next few seconds, so even 0.13 s starts on something.
+ */
 function forsteLyd(b: AudioBuffer) {
   const kanaler = Array.from({ length: b.numberOfChannels }, (_, i) => b.getChannelData(i))
   const vindu = Math.max(1, Math.floor(b.sampleRate * 0.01))
-  for (let i = 0; i + vindu < b.length; i += vindu) {
+  const antall = Math.floor(Math.min(b.length, b.sampleRate * 8) / vindu)
+  // Per 10 ms window: loudness, and "sharpness" (energy of the sample-to-sample change, which jumps on attacks).
+  const styrke = new Float32Array(antall)
+  const skarphet = new Float32Array(antall)
+  for (let w = 0; w < antall; w++) {
     let sum = 0
-    for (const k of kanaler) for (let j = i; j < i + vindu; j++) sum += k[j] * k[j]
-    if (Math.sqrt(sum / (vindu * kanaler.length)) > 0.02) return Math.max(0, i / b.sampleRate - 0.03)
+    let diff = 0
+    for (const k of kanaler) {
+      for (let j = w * vindu; j < (w + 1) * vindu; j++) {
+        sum += k[j] * k[j]
+        const d = j ? k[j] - k[j - 1] : 0
+        diff += d * d
+      }
+    }
+    styrke[w] = Math.sqrt(sum / (vindu * kanaler.length))
+    skarphet[w] = Math.sqrt(diff / (vindu * kanaler.length))
   }
-  return 0
+  const forste = styrke.findIndex((s) => s > 0.02)
+  if (forste < 0) return 0
+  // The first attack: sharpness clearly above the average of the 150 ms before it.
+  // Look at most 1.5 s ahead, so a soft intro never costs much of the clip.
+  for (let w = Math.max(forste, 15); w < Math.min(antall, forste + 150); w++) {
+    let snitt = 0
+    for (let j = w - 15; j < w; j++) snitt += skarphet[j]
+    snitt /= 15
+    if (styrke[w] > 0.04 && skarphet[w] > 0.008 && skarphet[w] > 1.8 * snitt) return Math.max(0, (w * vindu) / b.sampleRate - 0.01)
+  }
+  return Math.max(0, (forste * vindu) / b.sampleRate - 0.03)
 }
 
 function useLydspiller(dato: string, kategori: SangKategori) {
