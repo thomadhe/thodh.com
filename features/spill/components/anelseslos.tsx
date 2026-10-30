@@ -18,21 +18,23 @@ type Tilstand = {
 
 const tom = (): Tilstand => ({ v: 5, gjetninger: [], resultat: { status: "pagar" } })
 
-// Lessgames-style rows: coloured bar, light text on top. Like Clueless the colour blends from green
-// (top 50) through yellow (~200) and orange (~500) to red from about 1000, on a log scale of the rank.
+// Lessgames-style rows: coloured bar, light text on top. Every word past rank 1000 is red and hugs the left
+// edge; from 1000 in, the colour shifts evenly on a log scale of the rank: orange (~300), yellow (~100),
+// green in the top ten.
+const GRENSE = 1000
+/** How far a rank has come from 1000 (0) to the answer (1), on a log scale. */
+const naerhet = (avstand: number) => Math.max(0, 1 - Math.log10(avstand) / Math.log10(GRENSE))
 const ANKER: Fargeanker = [
-  [0, 145],
-  [Math.log10(50), 128],
-  [Math.log10(200), 60],
-  [Math.log10(500), 32],
-  [Math.log10(1000), 12],
-  [Math.log10(2000), 4],
+  [0, 4],
+  [1, 145],
 ]
-const farge = (avstand: number) => naerhetsfarge(fargetone(ANKER, Math.log10(avstand)))
+const farge = (avstand: number) => naerhetsfarge(fargetone(ANKER, naerhet(avstand)))
 
-/** Bar length: close words fill almost the whole row (#6 ≈ 95 %), the long tail shrinks fast. */
+/** Bar length: past 1000 a sliver (10 % down to 3 % at the last word); from there it grows to the whole row
+ * (#100 ≈ 60 %, #6 ≈ 94 %). */
 function andelFor(avstand: number, antall: number) {
-  return Math.max(0.04, 1 - (Math.log(avstand) / Math.log(antall)) ** 1.8)
+  if (avstand >= GRENSE) return 0.1 - 0.07 * Math.min(1, Math.log(avstand / GRENSE) / Math.log(Math.max(antall, 2 * GRENSE) / GRENSE))
+  return 0.1 + 0.9 * (1 - (1 - naerhet(avstand)) ** 2)
 }
 
 function Rad({ g, antall, fremhevet, nr }: { g: Gjetning; antall: number; fremhevet?: boolean; nr?: number }) {
