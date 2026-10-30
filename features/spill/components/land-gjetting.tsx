@@ -2,7 +2,7 @@
 
 import { ArrowUp } from "lucide-react"
 import { useRef, useState } from "react"
-import type { Land } from "../lib/geografi"
+import type { Omrade as Land } from "../lib/geografi"
 import { fargetone, naerhetsfarge, type Fargeanker } from "../lib/farger"
 import { avstand, forslag, naerhet, retning } from "../lib/geografi-svar"
 import { Knapp } from "./spill-ramme"

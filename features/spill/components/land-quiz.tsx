@@ -35,7 +35,7 @@ function lesRekord(modus: QuizModus) {
   }
 }
 
-const svarFor = (modus: QuizModus, l: Land) => (modus === "land" ? l.navn : l.hovedstad)
+const svarFor = (modus: QuizModus, l: Pick<Land, "navn" | "hovedstad">) => (modus === "land" ? l.navn : l.hovedstad)
 
 export function LandQuiz({ modus }: { modus: QuizModus }) {
   const [status, setStatus] = useState<Status>("klar")

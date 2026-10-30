@@ -6,8 +6,8 @@ import { dagensFlagg } from "@/features/spill/lib/server/canvas"
 export async function GET(request: Request) {
   const dato = new URL(request.url).searchParams.get("dato") ?? ""
   if (!kanSpilles(dato)) return new Response("Ugyldig dag.", { status: 400 })
-  const { id } = dagensFlagg(velgDato(dato))
-  const svar = await fetch(`https://flagcdn.com/${id.toLowerCase()}.svg`, { next: { revalidate: 604800 } })
+  const { flagg } = dagensFlagg(velgDato(dato))
+  const svar = await fetch(`https://flagcdn.com/${flagg}.svg`, { next: { revalidate: 604800 } })
   if (!svar.ok) return new Response("Fant ikke flagget.", { status: 502 })
   return new Response(await svar.text(), {
     headers: {

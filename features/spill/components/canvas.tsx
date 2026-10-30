@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { formaterDato, stokk } from "../lib/dag"
-import type { Land } from "../lib/geografi"
-import { land } from "../lib/geografi"
+import type { Omrade as Land } from "../lib/geografi"
+import { omrader } from "../lib/geografi"
 import { avstand, landEtterId, naerhet, skjultNokkel } from "../lib/geografi-svar"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
@@ -29,7 +29,7 @@ export function Canvas({ dato, nokkel }: { dato: string; nokkel: string }) {
   const { verdi, lastet, oppdater } = useDagligTilstand<Tilstand>("canvas", dato, tom)
   const [lastetBilde, setLastetBilde] = useState(false)
 
-  const fasit = land.find((l) => skjultNokkel("canvas", l.id, dato) === nokkel)!
+  const fasit = omrader.find((l) => skjultNokkel("canvas", l.id, dato) === nokkel)!
   const gjettet = verdi.gjetninger.map((id) => landEtterId.get(id)!).filter(Boolean)
   const ferdig = verdi.resultat.status !== "pagar"
   const rekkefolge = stokk(

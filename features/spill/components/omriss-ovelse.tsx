@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import type { Land } from "../lib/geografi"
+import type { Omrade as Land } from "../lib/geografi"
 import { landEtterId } from "../lib/geografi-svar"
 import { lyder } from "../lib/lyd"
 import { LandVelger } from "./land-gjetting"

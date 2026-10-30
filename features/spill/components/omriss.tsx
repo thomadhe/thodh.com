@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { formaterDato } from "../lib/dag"
-import type { Land } from "../lib/geografi"
-import { land } from "../lib/geografi"
+import type { Omrade as Land } from "../lib/geografi"
+import { omrader } from "../lib/geografi"
 import { avstand, landEtterId, naerhet, omrissNokkel } from "../lib/geografi-svar"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
@@ -19,7 +19,7 @@ export function Omriss({ dato, form, nokkel }: { dato: string; form: string; nok
   const { verdi, lastet, oppdater } = useDagligTilstand<Tilstand>("omriss", dato, tom)
   const [melding, setMelding] = useState<string | null>(null)
 
-  const fasit = land.find((l) => omrissNokkel(l.id, dato) === nokkel)!
+  const fasit = omrader.find((l) => omrissNokkel(l.id, dato) === nokkel)!
   const gjettet = verdi.gjetninger.map((id) => landEtterId.get(id)!).filter(Boolean)
   const ferdig = verdi.resultat.status !== "pagar"
 

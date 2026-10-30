@@ -1,4 +1,4 @@
-import { land, type Land } from "./geografi"
+import { land, omrader, type Land, type Omrade } from "./geografi"
 
 /** Lowercase a–z only, so "Côte d'Ivoire" → "cotedivoire" and "Sør-Sudan" = "Sor-Sudan" → "sorsudan". */
 export function normaliser(s: string) {
@@ -64,15 +64,16 @@ export function kanBliLengre(modus: QuizModus, tekst: string, funnet: Set<string
   return false
 }
 
-export const landEtterId = new Map(land.map((l) => [l.id, l]))
+/** Every country and territory by id (the map quizzes only ever produce the 197 sovereign ids). */
+export const landEtterId = new Map<string, Omrade>(omrader.map((l) => [l.id, l]))
 
-/** Autocomplete for the Omriss guess field: names starting with (then containing) the text. */
-export function forslag(tekst: string, maks = 6): Land[] {
+/** Autocomplete for Omriss and Canvas, territories included: names starting with (then containing) the text. */
+export function forslag(tekst: string, maks = 6): Omrade[] {
   const t = normaliser(tekst)
   if (!t) return []
-  const navn = (l: Land) => [l.navn, l.en, ...l.svar].map(normaliser)
-  const start = land.filter((l) => navn(l).some((n) => n.startsWith(t)))
-  const inni = land.filter((l) => !start.includes(l) && navn(l).some((n) => n.includes(t)))
+  const navn = (l: Omrade) => [l.navn, l.en, ...l.svar].map(normaliser)
+  const start = omrader.filter((l) => navn(l).some((n) => n.startsWith(t)))
+  const inni = omrader.filter((l) => !start.includes(l) && navn(l).some((n) => n.includes(t)))
   return [...start, ...inni].slice(0, maks)
 }
 
@@ -91,7 +92,7 @@ export const omrissNokkel = (id: string, dato: string) => skjultNokkel("omriss",
 const R = 6371
 
 /** Great-circle distance in km between two countries' centres. */
-export function avstand(a: Land, b: Land) {
+export function avstand(a: Omrade, b: Omrade) {
   const rad = Math.PI / 180
   const dLat = (b.lat - a.lat) * rad
   const dLng = (b.lng - a.lng) * rad
@@ -100,7 +101,7 @@ export function avstand(a: Land, b: Land) {
 }
 
 /** Initial compass bearing (degrees, 0 = north) from a towards b. */
-export function retning(a: Land, b: Land) {
+export function retning(a: Omrade, b: Omrade) {
   const rad = Math.PI / 180
   const y = Math.sin((b.lng - a.lng) * rad) * Math.cos(b.lat * rad)
   const x =
