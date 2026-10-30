@@ -21,6 +21,7 @@ export type IkonNavn =
   | "flagg"
   | "sok"
   | "film"
+  | "sti"
 
 const omriss = "#111"
 
@@ -177,6 +178,14 @@ const tegninger: Record<IkonNavn, React.ReactNode> = {
       <path d="M7 7h18l-1.5 4H8.5Z" fill="#fdba74" />
       <circle cx="13" cy="17" r="1.6" fill="#2b2d31" />
       <circle cx="19" cy="17" r="1.6" fill="#2b2d31" />
+    </>
+  ),
+  sti: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
+      <path d="M9 22c3-6 6 0 9-6s5-5 6-8" fill="none" stroke="#5eead4" strokeWidth="2.5" strokeDasharray="3 2.5" />
+      <circle cx="9" cy="22" r="3" fill="#ec4899" />
+      <circle cx="24" cy="8" r="3" fill="#14b8a6" />
     </>
   ),
 }

@@ -112,6 +112,20 @@ function Emovi() {
   )
 }
 
+function Rusle() {
+  const steg = ["bg-pink-500", "bg-green-500", "bg-green-500", "bg-amber-400", "bg-teal-400"]
+  return (
+    <div className="flex items-center gap-1" aria-hidden="true">
+      {steg.map((f, i) => (
+        <span key={i} className="flex items-center gap-1">
+          <span className={`h-8 w-8 rounded-[10px] ${f} ${i % 2 ? "translate-y-2" : "-translate-y-1"}`} />
+          {i < steg.length - 1 ? <span className="h-0.5 w-2 bg-white/40" /> : null}
+        </span>
+      ))}
+    </div>
+  )
+}
+
 export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   "mer-eller-mindre": MerEllerMindre,
   anelseslos: Anelseslos,
@@ -121,4 +135,5 @@ export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   canvas: Canvas,
   soket: Soket,
   emovi: Emovi,
+  rusle: Rusle,
 }

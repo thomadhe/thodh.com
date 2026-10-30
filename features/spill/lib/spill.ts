@@ -1,5 +1,5 @@
 /** Daily games: one puzzle per day, with calendar and stored results. */
-export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas" | "soket" | "emovi"
+export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas" | "soket" | "emovi" | "rusle"
 /** Free-play quizzes without a daily puzzle. */
 export type QuizId = "verdens-land" | "hovedsteder"
 
@@ -86,6 +86,15 @@ export const spill: Spill[] = [
     regel: "Gjett filmen. Tre forsøk, og hvert feil svar gir et hint.",
     ikon: "🎬",
     farge: "bg-orange-400 text-neutral-950",
+  },
+  {
+    id: "rusle",
+    navn: "Rusle",
+    href: "/spill/rusle",
+    kort: "Fra ett land til et annet, over landegrensene.",
+    regel: "Nevn landene imellom. Jo nærmere korteste vei, jo bedre.",
+    ikon: "↝",
+    farge: "bg-teal-500 text-neutral-950",
   },
 ]
 

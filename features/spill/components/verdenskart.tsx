@@ -26,6 +26,7 @@ export function Verdenskart({
   farger,
   titler,
   fremhevet,
+  fokus,
 }: {
   /** Fill per country id; countries without one are drawn neutral. */
   farger: Record<string, string>
@@ -33,8 +34,11 @@ export function Verdenskart({
   titler?: Record<string, string>
   /** Ids drawn with a white outline, e.g. the latest answer. */
   fremhevet?: string[]
+  /** Ids to frame when the map first appears (e.g. a route's start and end). */
+  fokus?: string[]
 }) {
   const [u, setU] = useState<Utsnitt>(HELE)
+  const fokusNokkel = fokus?.join(",") ?? ""
   const svg = useRef<SVGSVGElement>(null)
   const dra = useRef<{ px: number; py: number; u: Utsnitt } | null>(null)
   const skala = u.b / k.bredde
@@ -50,6 +54,31 @@ export function Verdenskart({
       return klem({ b, x: cx - (cx - f.x) * r, y: cy - (cy - f.y) * r })
     })
   }, [])
+
+  // Frame the focus countries: union of their bounding boxes, padded, at the map's aspect ratio.
+  useEffect(() => {
+    const el = svg.current
+    if (!el || !fokusNokkel) return
+    let x0 = Infinity
+    let y0 = Infinity
+    let x1 = -Infinity
+    let y1 = -Infinity
+    for (const id of fokusNokkel.split(",")) {
+      const node = el.querySelector<SVGGraphicsElement>(`[data-id="${id}"]`)
+      if (!node) continue
+      const r = node.getBBox()
+      x0 = Math.min(x0, r.x)
+      y0 = Math.min(y0, r.y)
+      x1 = Math.max(x1, r.x + r.width)
+      y1 = Math.max(y1, r.y + r.height)
+    }
+    if (!Number.isFinite(x0)) return
+    const pad = 0.35
+    const bredde = Math.max((x1 - x0) * (1 + pad * 2), ((y1 - y0) * (1 + pad * 2) * k.bredde) / k.hoyde, 90)
+    const hoyde = (bredde * k.hoyde) / k.bredde
+    // Measuring the rendered paths is only possible after mount.
+    setU(klem({ b: bredde, x: (x0 + x1) / 2 - bredde / 2, y: (y0 + y1) / 2 - hoyde / 2 }))
+  }, [fokusNokkel])
 
   // React's wheel handler is passive, so the page would scroll while zooming.
   useEffect(() => {
@@ -95,6 +124,7 @@ export function Verdenskart({
         {Object.entries(k.land).map(([id, d]) => (
           <path
             key={id}
+            data-id={id}
             d={d}
             fill={farger[id] ?? KART_FARGE.ukjent}
             stroke={fremhevet?.includes(id) ? "#fff" : KART_FARGE.hav}
@@ -108,6 +138,7 @@ export function Verdenskart({
         {Object.entries(k.punkter).map(([id, [x, y]]) => (
           <circle
             key={id}
+            data-id={id}
             cx={x}
             cy={y}
             r={Math.max(0.6, 3.2 * skala)}
