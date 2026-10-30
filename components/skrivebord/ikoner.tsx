@@ -22,6 +22,7 @@ export type IkonNavn =
   | "sok"
   | "film"
   | "sti"
+  | "grupper"
 
 const omriss = "#111"
 
@@ -186,6 +187,17 @@ const tegninger: Record<IkonNavn, React.ReactNode> = {
       <path d="M9 22c3-6 6 0 9-6s5-5 6-8" fill="none" stroke="#5eead4" strokeWidth="2.5" strokeDasharray="3 2.5" />
       <circle cx="9" cy="22" r="3" fill="#ec4899" />
       <circle cx="24" cy="8" r="3" fill="#14b8a6" />
+    </>
+  ),
+  grupper: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
+      <rect x="7" y="7" width="18" height="4" rx="1" fill="#fcd34d" />
+      <rect x="7" y="12" width="18" height="4" rx="1" fill="#34d399" />
+      <rect x="7" y="17" width="8" height="4" rx="1" fill="#71717a" />
+      <rect x="17" y="17" width="8" height="4" rx="1" fill="#71717a" />
+      <rect x="7" y="22" width="8" height="3" rx="1" fill="#71717a" />
+      <rect x="17" y="22" width="8" height="3" rx="1" fill="#e879f9" />
     </>
   ),
 }

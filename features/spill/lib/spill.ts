@@ -1,5 +1,5 @@
 /** Daily games: one puzzle per day, with calendar and stored results. */
-export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas" | "soket" | "emovi" | "rusle"
+export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas" | "soket" | "emovi" | "rusle" | "tilkoblinger"
 /** Free-play quizzes without a daily puzzle. */
 export type QuizId = "verdens-land" | "hovedsteder"
 
@@ -95,6 +95,15 @@ export const spill: Spill[] = [
     regel: "Nevn landene imellom. Jo nærmere korteste vei, jo bedre.",
     ikon: "↝",
     farge: "bg-teal-500 text-neutral-950",
+  },
+  {
+    id: "tilkoblinger",
+    navn: "Tilkoblinger",
+    href: "/spill/tilkoblinger",
+    kort: "Seksten land, fire grupper.",
+    regel: "Finn fire grupper med fire land som har noe til felles. Fire feil, og det er over.",
+    ikon: "▤",
+    farge: "bg-fuchsia-500 text-white",
   },
 ]
 

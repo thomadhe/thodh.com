@@ -311,3 +311,30 @@ body {
     animation: none;
   }
 }
+
+/* Tilkoblinger: a heart cracks on a wrong guess. */
+@keyframes til-knus {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.35) rotate(-8deg);
+  }
+  50% {
+    transform: scale(0.9) rotate(8deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(-4deg);
+  }
+}
+
+.til-knus {
+  display: inline-block;
+  animation: til-knus 600ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .til-knus {
+    animation: none;
+  }
+}

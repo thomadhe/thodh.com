@@ -34,6 +34,7 @@ const dagligeProgrammer: Program[] = [
   { id: "soket", navn: "Søket", mal: "/spill/soket", ikon: "sok", spill: "soket" },
   { id: "emovi", navn: "Emovi", mal: "/spill/emovi", ikon: "film", spill: "emovi" },
   { id: "rusle", navn: "Rusle", mal: "/spill/rusle", ikon: "sti", spill: "rusle" },
+  { id: "tilkoblinger", navn: "Tilkoblinger", mal: "/spill/tilkoblinger", ikon: "grupper", spill: "tilkoblinger" },
 ]
 
 const spillProgrammer: Program[] = [
@@ -414,7 +415,7 @@ export function Skrivebord() {
           {grupper.map(([tittel, liste]) => (
             <div key={tittel} className="pointer-events-auto flex flex-col">
               <p className="mb-0.5 px-2 text-[10px] tracking-[0.2em] text-white/70 uppercase">{tittel}</p>
-              <div className="grid grid-cols-4 gap-y-1 sm:grid-cols-1">{liste.map(ikon)}</div>
+              <div className={`grid grid-cols-4 gap-y-1 ${liste.length > 6 ? "sm:grid-cols-2" : "sm:grid-cols-1"}`}>{liste.map(ikon)}</div>
             </div>
           ))}
         </nav>

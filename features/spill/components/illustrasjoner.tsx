@@ -126,6 +126,21 @@ function Rusle() {
   )
 }
 
+function Tilkoblinger() {
+  const rader = ["bg-amber-300", "bg-emerald-400", "bg-sky-400", "bg-fuchsia-400"]
+  return (
+    <div className="flex w-44 flex-col gap-1" aria-hidden="true">
+      {rader.map((f, r) => (
+        <span key={r} className="grid grid-cols-4 gap-1">
+          {Array.from({ length: 4 }, (_, k) => (
+            <span key={k} className={`h-5 rounded ${r < 2 ? f : "bg-black/40"}`} />
+          ))}
+        </span>
+      ))}
+    </div>
+  )
+}
+
 export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   "mer-eller-mindre": MerEllerMindre,
   anelseslos: Anelseslos,
@@ -136,4 +151,5 @@ export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   soket: Soket,
   emovi: Emovi,
   rusle: Rusle,
+  tilkoblinger: Tilkoblinger,
 }

@@ -6,7 +6,7 @@ import { formaterVerdi } from "../lib/format"
 import { useDagligTilstand, useResultater, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
 import type { MelItem, MelKategori, MelRunde } from "../lib/mer-eller-mindre"
-import { DelKnapp, Knapp, Kort, sekundarKnapp } from "./spill-ramme"
+import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
 // v3: new daily slots and chained rounds. Older saves belong to other rounds and start fresh.
 type Tilstand = { v: 3; svar: (0 | 1)[]; resultat: Resultat }
@@ -14,7 +14,7 @@ type Tilstand = { v: 3; svar: (0 | 1)[]; resultat: Resultat }
 const tom = (): Tilstand => ({ v: 3, svar: [], resultat: { status: "pagar" } })
 /** Count-up, then a beat to see the result, then the chain slides on. */
 const TELL_MS = 1700
-const VIS_SVAR_MS = 2000
+const VIS_SVAR_MS = 1200
 
 // Races up and then crawls the last stretch, so the final digits keep you waiting.
 const myk = (p: number) => (p >= 1 ? 1 : (1 - Math.pow(2, -9 * p)) / (1 - Math.pow(2, -9)))
@@ -295,14 +295,11 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
           <Forhandslast runde={runder[aktiv + 1]} />
 
           <div className="flex h-11 items-center justify-center">
+            {/* The next pair comes by itself shortly after the number lands. */}
             {svart !== undefined ? (
-              <button
-                type="button"
-                onClick={gaVidere}
-                className={`mel-inn ${sekundarKnapp} ${svart === runde.fasit ? "!text-emerald-700" : "!text-rose-700"}`}
-              >
-                {svart === runde.fasit ? "Riktig!" : "Feil"} · Neste →
-              </button>
+              <p className={`mel-inn font-mono text-[11px] uppercase tracking-widest ${svart === runde.fasit ? "text-emerald-700" : "text-rose-700"}`}>
+                {svart === runde.fasit ? "Riktig!" : "Feil"}
+              </p>
             ) : (
               <p className="font-mono text-[11px] text-neutral-400">
                 Poeng: {verdi.svar.filter((s, i) => s === runder[i].fasit).length}
