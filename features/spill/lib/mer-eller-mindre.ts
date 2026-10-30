@@ -3,6 +3,7 @@ import { artisterLyttere } from "../data/mer-eller-mindre/artister-lyttere"
 import { artisterLytterNorden } from "../data/mer-eller-mindre/artister-lyttere-norden"
 import { avstandOslo } from "../data/mer-eller-mindre/avstand-oslo"
 import { dyrVekt } from "../data/mer-eller-mindre/dyr-vekt"
+import { fakta } from "../data/mer-eller-mindre/fakta"
 import { filmerImdb } from "../data/mer-eller-mindre/filmer-imdb"
 import { hoyde } from "../data/mer-eller-mindre/hoyde"
 import { hvaVeierMest } from "../data/mer-eller-mindre/hva-veier-mest"
@@ -34,7 +35,7 @@ const PLASSER: MerEllerMindreCategory[][] = [
   [filmerImdb, serierImdb],
   [kuriositeter, ran, oppkjop, overgangssummer, priserNorge],
   [landBefolkning, landAreal],
-  [dyrVekt, hoyde, matKalorier, hvaKomForst, norskeKommuner, avstandOslo, toppfart, hvaVeierMest, levealder],
+  [dyrVekt, hoyde, matKalorier, hvaKomForst, norskeKommuner, avstandOslo, toppfart, hvaVeierMest, levealder, fakta],
 ]
 
 export const kategorier: MerEllerMindreCategory[] = PLASSER.flat()
