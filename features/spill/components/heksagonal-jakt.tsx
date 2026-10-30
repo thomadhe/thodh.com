@@ -157,6 +157,17 @@ export function HeksagonalJakt({ dato, steder }: { dato: string; steder: JaktSte
     oppdater((t) => (t.runder.length < ANTALL && t.runder.at(-1)?.fasit ? { ...t, runder: [...t.runder, nyRunde()] } : t))
   }
 
+  // Enter guesses the chosen hex, or moves on to the next place once a round is over.
+  useEffect(() => {
+    const ved = (e: KeyboardEvent) => {
+      if (e.key !== "Enter" || e.repeat || (e.target as HTMLElement | null)?.closest("button, a, input")) return
+      if (avsluttet && !ferdig) neste()
+      else void gjett()
+    }
+    window.addEventListener("keydown", ved)
+    return () => window.removeEventListener("keydown", ved)
+  })
+
   if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   const forhold = storSkjerm ? 0.56 : 0.8
@@ -274,7 +285,7 @@ export function HeksagonalJakt({ dato, steder }: { dato: string; steder: JaktSte
         {ferdig ? <DelKnapp tekst={delTekst} /> : <span className="font-mono text-[11px] text-neutral-400">{nr + 1}/{ANTALL}</span>}
       </Kort>
 
-      <Verdenskart farger={{}} visPunkter={false} maksZoom={24} forhold={forhold} ramme={ramme} lag={lag} merke={merke} onTrykk={ferdig || avsluttet ? undefined : trykk} />
+      <Verdenskart farger={{}} visPunkter={false} tastatur maksZoom={24} forhold={forhold} ramme={ramme} lag={lag} merke={merke} onTrykk={ferdig || avsluttet ? undefined : trykk} />
 
       {ferdig ? (
         <ul className="flex flex-col gap-1.5">
@@ -315,7 +326,7 @@ export function HeksagonalJakt({ dato, steder }: { dato: string; steder: JaktSte
                 {UTFALL[g.u].navn}
               </li>
             ))}
-            {runde.g.length === 0 ? <li className="font-mono text-[11px] text-neutral-500">{melding ?? "Zoom inn for flere poeng"}</li> : null}
+            {runde.g.length === 0 ? <li className="font-mono text-[11px] text-neutral-500">{melding ?? (storSkjerm ? "Dra, og zoom med hjulet eller + og −. Enter gjetter." : "Zoom inn for flere poeng")}</li> : null}
             {runde.g.length > 0 && melding ? <li className="font-mono text-[11px] text-neutral-500">{melding}</li> : null}
           </ul>
           <span className="font-mono text-[11px] text-neutral-400">{FORSOK - runde.g.length} igjen</span>

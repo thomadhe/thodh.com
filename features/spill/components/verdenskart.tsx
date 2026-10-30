@@ -4,7 +4,8 @@ import { Minus, Plus, RotateCcw } from "lucide-react"
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import kart from "../data/geografi/kart.json"
 
-// World map from precomputed SVG paths (scripts/geo/lag-geodata.mjs). Drag to pan, wheel or buttons to zoom.
+// World map from precomputed SVG paths (scripts/geo/lag-geodata.mjs). Drag to pan, wheel or buttons to zoom
+// (and keys, when asked for).
 
 type Kart = { bredde: number; hoyde: number; land: Record<string, string>; bakgrunn: string; punkter: Record<string, [number, number]> }
 // JSON imports type coordinate pairs as number[], hence the cast via unknown.
@@ -43,6 +44,7 @@ export function Verdenskart({
   lag,
   merke,
   onTrykk,
+  tastatur = false,
 }: {
   /** Fill per country id; countries without one are drawn neutral. */
   farger: Record<string, string>
@@ -70,6 +72,8 @@ export function Verdenskart({
   merke?: (u: KartUtsnitt) => ReactNode
   /** A tap or click that didn't drag or pinch, in map coordinates. */
   onTrykk?: (x: number, y: number, u: KartUtsnitt) => void
+  /** Zoom and pan with the keyboard (+, −, arrows, 0) anywhere on the page, for games without a text field. */
+  tastatur?: boolean
 }) {
   const [u, setUraa] = useState<Utsnitt>(() => klem(HELE, maksZoom, forhold))
   const setU = useCallback((ny: Utsnitt | ((f: Utsnitt) => Utsnitt)) => setUraa((f) => klem(typeof ny === "function" ? ny(f) : ny, maksZoom, forhold)), [maksZoom, forhold])
@@ -198,6 +202,33 @@ export function Verdenskart({
     el.addEventListener("wheel", ved, { passive: false })
     return () => el.removeEventListener("wheel", ved)
   }, [zoom])
+
+  // Keys on a PC: + and − zoom, arrows pan, 0 shows the whole map. Off while typing in a field.
+  useEffect(() => {
+    if (!tastatur) return
+    const ved = (e: KeyboardEvent) => {
+      const mal = e.target as HTMLElement | null
+      if (e.ctrlKey || e.metaKey || e.altKey || mal?.closest("input, textarea, select, [contenteditable=true]")) return
+      const flytt = (dx: number, dy: number) => setU((f) => ({ ...f, x: f.x + dx * f.b * 0.2, y: f.y + dy * f.b * forhold * 0.2 }))
+      const handling: Record<string, () => void> = {
+        "+": () => zoom(0.6),
+        "=": () => zoom(0.6),
+        "-": () => zoom(1 / 0.6),
+        _: () => zoom(1 / 0.6),
+        "0": () => setU(HELE),
+        ArrowLeft: () => flytt(-1, 0),
+        ArrowRight: () => flytt(1, 0),
+        ArrowUp: () => flytt(0, -1),
+        ArrowDown: () => flytt(0, 1),
+      }
+      const h = handling[e.key]
+      if (!h) return
+      e.preventDefault()
+      h()
+    }
+    window.addEventListener("keydown", ved)
+    return () => window.removeEventListener("keydown", ved)
+  }, [tastatur, zoom, setU, forhold])
 
   const knapp =
     "flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100/90 text-neutral-700 shadow-sm backdrop-blur transition hover:text-neutral-950"
