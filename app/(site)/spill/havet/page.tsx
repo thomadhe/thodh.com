@@ -15,7 +15,7 @@ export default async function Page({ searchParams }: PageProps<"/spill/havet">) 
     <SpillRamme
       spillId="havet"
       dato={dato}
-      regler={<p>Landene kommer ett om gangen. Velg kategorien som gir mest – hver kategori kan bare brukes én gang, og du kan ikke angre.</p>}
+      regler={<p>Velg et land, og legg det i kategorien der det gir mest. Hver kategori kan bare brukes én gang, og du kan ikke angre. Det finnes alltid en fordeling der alle land passer.</p>}
     >
       <Havet key={dato} dato={dato} oppgave={dagensHavet(dato)} />
     </SpillRamme>

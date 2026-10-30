@@ -10,8 +10,9 @@ import { hemmeligeOrd } from "./hemmelige-ord"
 // mxbai-embed-large-v1 (Mixedbread, Apache 2.0) and Qwen3-Embedding-0.6B (Qwen team, Alibaba, Apache 2.0)
 // embedding each word alone ("Given a word, retrieve words that are related to it in meaning or topic").
 // GloVe keeps the associations, the sentence models add categories (lettuce ~ vegetable, food). Distilled to
-// 300 dims by matching each word's neighbour ranking. Vocabulary: 25,000 common English lemmas chosen with
-// WordNet 3.0 (© 2006 Princeton University); inflections and British spellings map to their lemma via
+// 300 dims by matching each word's neighbour ranking. Vocabulary: about 15,000 everyday English lemmas chosen with
+// WordNet 3.0 (© 2006 Princeton University) and kept at Zipf frequency ≥ 2.9 in wordfreq (Robyn Speer; code
+// Apache-2.0, data CC BY-SA 4.0); inflections and British spellings map to their lemma via
 // forms.tsv. L2-normalised, quantised to int8.
 const MAPPE = path.join(process.cwd(), "features", "spill", "data", "anelseslos")
 const DIM = 300

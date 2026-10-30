@@ -10,13 +10,13 @@ import { DelKnapp, Knapp, Kort, sekundarKnapp } from "./spill-ramme"
 type Gjetning = { ord: string; avstand: number; hint?: boolean }
 // v4: ensemble similarity model (Oct 2026). Older saves hold ranks from earlier models and start fresh.
 type Tilstand = {
-  v: 4
+  v: 5
   gjetninger: Gjetning[]
   fasit?: { ord: string; naermeste: string[] }
   resultat: Resultat
 }
 
-const tom = (): Tilstand => ({ v: 4, gjetninger: [], resultat: { status: "pagar" } })
+const tom = (): Tilstand => ({ v: 5, gjetninger: [], resultat: { status: "pagar" } })
 
 // Lessgames-style rows: coloured bar, light text on top. Like Clueless the colour blends from green
 // (top 50) through yellow (~200) and orange (~500) to red from about 1000, on a log scale of the rank.

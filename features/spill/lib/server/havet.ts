@@ -60,9 +60,27 @@ function beste(poeng: number[][]) {
   return dp[(1 << n) - 1]
 }
 
+/** Can every country get its own category worth at least `min` points? (Perfect matching, same DP.) */
+function kanFordeles(poeng: number[][], min: number) {
+  const n = poeng.length
+  const nadd = new Uint8Array(1 << n)
+  nadd[0] = 1
+  for (let maske = 0; maske < 1 << n; maske++) {
+    if (!nadd[maske]) continue
+    let i = 0
+    for (let m = maske; m; m &= m - 1) i++
+    if (i >= n) continue
+    for (let k = 0; k < n; k++) if (!(maske & (1 << k)) && poeng[i][k] >= min) nadd[maske | (1 << k)] = 1
+  }
+  return nadd[(1 << n) - 1] === 1
+}
+
 const kjent = land.filter((l) => l.befolkning >= 1_500_000 && egenskaper[l.id])
 
-/** Today's nine countries (in arrival order), nine categories and the score table. */
+/** A placement counts as fitting from this many points. */
+const PASSER = 40
+
+/** Today's nine countries, nine categories and the score table. */
 export function dagensHavet(dato: string): HavetOppgave {
   for (let forsok = 0; ; forsok++) {
     const binare = stokk(KATEGORIER.filter((k) => k.regel.startsWith("100")), `havet:${dato}:${forsok}:b`).slice(0, 4)
@@ -70,9 +88,9 @@ export function dagensHavet(dato: string): HavetOppgave {
     const kategorier = stokk([...binare, ...tall], `havet:${dato}:${forsok}:rekke`)
     const valgte = stokk(kjent, `havet:${dato}:${forsok}:land`).slice(0, 9)
     const poeng = valgte.map((l) => kategorier.map((k) => k.poeng(l)))
-    // Every yes/no category should be reachable by at least one country, so no card is a dead end.
-    const brukbar = kategorier.every((_, k) => valgte.some((_, i) => poeng[i][k] > 0))
-    if (!brukbar && forsok < 50) continue
+    // There must be a way to give every country a category it fits, so a full board without a zero
+    // (indeed with at least 40 points each) is always possible. Falls back to "no zeros" if that's rare.
+    if (!kanFordeles(poeng, forsok < 300 ? PASSER : 1) && forsok < 600) continue
     return {
       land: valgte.map((l) => l.id),
       kategorier: kategorier.map(({ id, navn, regel, ikon }) => ({ id, navn, regel, ikon })),
