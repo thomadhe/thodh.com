@@ -37,7 +37,9 @@ test("Mer eller mindre: fem kategorier med fem gyldige runder hver dag", () => {
     for (const k of dag) {
       const kilde = kategorier.find((x) => x.id === k.id)!
       assert.equal(k.runder.length, RUNDER_PER_KATEGORI, `${dato} ${k.id}`)
-      const navn = k.runder.flatMap((r) => [r.a.name, r.b.name])
+      // Rounds form a chain: the right card of one round is the left card of the next.
+      k.runder.slice(1).forEach((r, i) => assert.equal(r.a.name, k.runder[i].b.name, `${dato} ${k.id} brutt kjede`))
+      const navn = [k.runder[0].a.name, ...k.runder.map((r) => r.b.name)]
       assert.equal(new Set(navn).size, navn.length, `${dato} ${k.id} gjentar et element`)
       for (const r of k.runder) {
         const [vinner, taper] = r.fasit === 0 ? [r.a, r.b] : [r.b, r.a]
