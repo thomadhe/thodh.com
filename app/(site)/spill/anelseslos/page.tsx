@@ -19,9 +19,7 @@ export default async function Page({ searchParams }: PageProps<"/spill/anelseslo
       regler={
         <>
           <p>
-            Ordene er engelske. Ordlisten har {antall.toLocaleString("nb-NO")} vanlige ord. Grønt betyr blant de 300
-            nærmeste, gult blant de 1 500 nærmeste. Bøyde former som «dogs» regnes som grunnformen «dog». Står du fast,
-            gir et hint et ord som er omtrent dobbelt så nært som ditt beste.
+            Grønt er veldig nært, gult nært, oransje lunkent og rødt langt unna. Bøyde former som «dogs» regnes som «dog». Et hint gir et ord omtrent dobbelt så nært som ditt beste.
           </p>
           <p className="font-mono text-[11px] text-neutral-400">
             Likhet beregnet med GloVe-ordvektorer (Pennington, Socher &amp; Manning 2014, PDDL 1.0). Ordutvalg med

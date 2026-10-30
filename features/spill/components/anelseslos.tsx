@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { formaterDato } from "../lib/dag"
+import { fargetone, naerhetsfarge, type Fargeanker } from "../lib/farger"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
@@ -16,13 +17,16 @@ type Tilstand = {
 
 const tom = (): Tilstand => ({ v: 3, gjetninger: [], resultat: { status: "pagar" } })
 
-// Lessgames-style rows: coloured bar, light text on top.
-function farge(avstand: number) {
-  if (avstand === 1) return "bg-emerald-500"
-  if (avstand <= 300) return "bg-emerald-600"
-  if (avstand <= 1500) return "bg-amber-600"
-  return "bg-rose-600"
-}
+// Lessgames-style rows: coloured bar, light text on top. The colour blends from green (top 50) through
+// yellow (~300) and orange (~1500) to red, on a log scale of the rank.
+const ANKER: Fargeanker = [
+  [0, 145],
+  [Math.log10(50), 128],
+  [Math.log10(300), 56],
+  [Math.log10(1500), 30],
+  [Math.log10(5000), 6],
+]
+const farge = (avstand: number) => naerhetsfarge(fargetone(ANKER, Math.log10(avstand)))
 
 /** Bar length: close words fill almost the whole row (#6 ≈ 95 %), the long tail shrinks fast. */
 function andelFor(avstand: number, antall: number) {
@@ -38,7 +42,7 @@ function Rad({ g, antall, fremhevet }: { g: Gjetning; antall: number; fremhevet?
         fremhevet ? "ring-2 ring-neutral-900" : ""
       }`}
     >
-      <span className={`absolute inset-y-0 left-0 ${bar} transition-[width] duration-500`} style={{ width: `${andel * 100}%` }} />
+      <span className="absolute inset-y-0 left-0 transition-[width] duration-500" style={{ width: `${andel * 100}%`, background: bar }} />
       <span className="relative flex-1 truncate text-[15px] font-medium text-neutral-950 [text-shadow:0_1px_1px_rgb(0_0_0/0.35)]">
         {g.ord}
         {g.hint ? <span className="ml-2 font-mono text-[10px] uppercase tracking-wider opacity-70">hint</span> : null}
@@ -175,7 +179,7 @@ export function Anelseslos({ dato, antall }: { dato: string; antall: number }) {
       : `Ga opp etter ${antallGjett} gjetninger`,
     [...verdi.gjetninger]
       .filter((g) => !g.hint)
-      .map((g) => (g.avstand === 1 ? "🟩" : g.avstand <= 300 ? "🟢" : g.avstand <= 1500 ? "🟡" : "🔴"))
+      .map((g) => (g.avstand === 1 ? "🟩" : g.avstand <= 50 ? "🟢" : g.avstand <= 300 ? "🟡" : g.avstand <= 1500 ? "🟠" : "🔴"))
       .slice(-30)
       .join(""),
     "thodh.com/spill",

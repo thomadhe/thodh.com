@@ -6,6 +6,7 @@ import { formaterDato } from "../lib/dag"
 import type { Land } from "../lib/geografi"
 import { land } from "../lib/geografi"
 import { avstand, forslag, landEtterId, naerhet, omrissNokkel, retning } from "../lib/geografi-svar"
+import { fargetone, naerhetsfarge, type Fargeanker } from "../lib/farger"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
@@ -29,32 +30,21 @@ function styrke(p: number) {
   return Math.min(1, Math.max(0, (p - 50) / 50)) ** 1.5
 }
 
-/** Hue anchors (proximity %, hue): red far away, orange around 85 %, green for neighbours (97 %+). */
-const FARGEANKRE: [number, number][] = [
+/** Proximity % â†’ hue: red far away, orange ~85 %, yellow ~93 %, green for neighbours (97 %+). */
+const ANKER: Fargeanker = [
   [60, 4],
   [75, 16],
-  [85, 30],
-  [92, 44],
-  [96, 90],
-  [98, 140],
+  [85, 28],
+  [91, 46],
+  [95, 56],
+  [97, 140],
 ]
-
-function fargetone(p: number) {
-  if (p <= FARGEANKRE[0][0]) return FARGEANKRE[0][1]
-  for (let i = 1; i < FARGEANKRE.length; i++) {
-    const [p1, h1] = FARGEANKRE[i]
-    const [p0, h0] = FARGEANKRE[i - 1]
-    if (p <= p1) return h0 + ((p - p0) / (p1 - p0)) * (h1 - h0)
-  }
-  return FARGEANKRE.at(-1)![1]
-}
-
 function Rad({ gjett, fasit }: { gjett: Land; fasit: Land }) {
   const riktig = gjett.id === fasit.id
   const d = avstand(gjett, fasit)
   const p = riktig ? 100 : naerhet(d)
   const s = riktig ? 1 : styrke(p)
-  const farge = `hsl(${fargetone(p)} 62% 42%)`
+  const farge = naerhetsfarge(fargetone(ANKER, p))
   return (
     <li className="relative h-11 overflow-hidden rounded-xl bg-neutral-100 text-sm">
       <span
