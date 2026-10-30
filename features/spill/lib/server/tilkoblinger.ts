@@ -158,7 +158,8 @@ function tekstFor(l: Land, v: Visning): string | null {
     case "by":
       return storBy(l)
     case "valuta":
-      return avslorer(l.valuta.navn, l) ? null : l.valuta.navn
+      // The ISO code (SEK) rather than the name ("svensk krone"), which would give the country away.
+      return l.valuta.kode
     case "domene":
       return `.${l.id === "GB" ? "uk" : l.id.toLowerCase()}`
     case "folketall":

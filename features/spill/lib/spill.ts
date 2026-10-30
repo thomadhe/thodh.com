@@ -83,7 +83,7 @@ export const spill: Spill[] = [
     navn: "Emovi",
     href: "/spill/emovi",
     kort: "Fem emojier, én film.",
-    regel: "Gjett filmen på seks forsøk. Et hint koster ett forsøk.",
+    regel: "Gjett filmen. Tre liv: feil svar og hint koster ett liv hver.",
     ikon: "🎬",
     farge: "bg-orange-400 text-neutral-950",
   },

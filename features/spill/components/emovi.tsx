@@ -8,16 +8,16 @@ import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
 import { DelKnapp, Knapp, Kort, sekundarKnapp } from "./spill-ramme"
 
-// Emovi: five emojis, one film, six tries shared by guesses and hints. A hint costs a try:
-// year, then director and leads, then genre. After all three hints you may give up.
+// Emovi: five emojis, one film, three lives. A wrong guess or asking for a hint costs a life, and every
+// life lost reveals the next hint: year, then director and leads, then genre.
 
-const FORSOK = 6
-const HINT = 3
+const LIV = 3
 
 type Gjetning = Filmtittel & { riktig: boolean }
-/** `plakat` is the poster URL once known (null: none), fetched with the answer. */
-type Tilstand = { v: 1; gjetninger: Gjetning[]; hint: string[]; fasit?: Filmtittel; plakat?: string | null; resultat: Resultat }
-const tom = (): Tilstand => ({ v: 1, gjetninger: [], hint: [], resultat: { status: "pagar" } })
+/** `hint` has one entry per life lost. `plakat` is the poster URL once known (null: none). */
+type Tilstand = { v: 2; gjetninger: Gjetning[]; hint: string[]; fasit?: Filmtittel; plakat?: string | null; resultat: Resultat }
+// v2: lives (Oct 2026); older saves start fresh.
+const tom = (): Tilstand => ({ v: 2, gjetninger: [], hint: [], resultat: { status: "pagar" } })
 
 async function spor<T>(body: unknown): Promise<T> {
   const svar = await fetch("/spill/api/emovi", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
@@ -112,11 +112,17 @@ export function Emovi({ dato, emoji }: { dato: string; emoji: string }) {
   const { verdi, lastet, oppdater } = useDagligTilstand<Tilstand>("emovi", dato, tom)
   const [opptatt, setOpptatt] = useState(false)
   const [melding, setMelding] = useState<string | null>(null)
+  const [knust, setKnust] = useState<number | null>(null)
   const ferdig = verdi.resultat.status !== "pagar"
-  // Guesses and hints share the tries; a hint is only offered while a guess would still be left after it.
-  const brukt = verdi.gjetninger.length + verdi.hint.length
-  const igjen = FORSOK - brukt
-  const kanHint = !ferdig && verdi.hint.length < HINT && igjen > 1
+  const tapt = verdi.hint.length
+  const igjen = LIV - tapt
+  // A hint is only offered while a life would still be left to guess with.
+  const kanHint = !ferdig && igjen > 1
+
+  const mistLiv = () => {
+    setKnust(tapt)
+    setTimeout(() => setKnust(null), 700)
+  }
 
   const trengerFasit = lastet && ferdig && (!verdi.fasit || verdi.plakat === undefined)
   useEffect(() => {
@@ -131,13 +137,10 @@ export function Emovi({ dato, emoji }: { dato: string; emoji: string }) {
     setOpptatt(true)
     setMelding(null)
     try {
-      const { tekst } = await spor<{ tekst: string }>({ type: "hint", dato, nr: verdi.hint.length + 1 })
+      const { tekst } = await spor<{ tekst: string }>({ type: "hint", dato, nr: tapt + 1 })
       lyder.velg()
-      oppdater((t) =>
-        t.resultat.status !== "pagar" || t.hint.length >= HINT || t.hint.includes(tekst) || t.gjetninger.length + t.hint.length >= FORSOK - 1
-          ? t
-          : { ...t, hint: [...t.hint, tekst] },
-      )
+      mistLiv()
+      oppdater((t) => (t.resultat.status !== "pagar" || t.hint.length !== tapt ? t : { ...t, hint: [...t.hint, tekst] }))
     } catch (e) {
       setMelding((e as Error).message)
     } finally {
@@ -148,7 +151,7 @@ export function Emovi({ dato, emoji }: { dato: string; emoji: string }) {
   const giOpp = () => {
     if (ferdig || kanHint) return
     lyder.feil()
-    oppdater((t) => (t.resultat.status !== "pagar" ? t : { ...t, resultat: { status: "tapt", etikett: `X/${FORSOK}`, poeng: 0 } }))
+    oppdater((t) => (t.resultat.status !== "pagar" ? t : { ...t, resultat: { status: "tapt", etikett: `X/${LIV}`, poeng: 0 } }))
   }
 
   const gjett = async (f: Filmtittel) => {
@@ -157,19 +160,27 @@ export function Emovi({ dato, emoji }: { dato: string; emoji: string }) {
     setMelding(null)
     try {
       const { riktig, plakat } = await spor<{ riktig: boolean; plakat?: string | null }>({ type: "gjett", dato, tittel: f.tittel, aar: f.aar })
-      oppdater((t) => {
-        if (t.resultat.status !== "pagar") return t
-        const n = t.gjetninger.length + t.hint.length + 1
-        const gjetninger = [...t.gjetninger, { ...f, riktig }]
-        if (riktig) return { ...t, gjetninger, fasit: f, plakat: plakat ?? null, resultat: { status: "vunnet", etikett: `${n}/${FORSOK}`, poeng: FORSOK + 1 - n } }
-        if (n >= FORSOK) return { ...t, gjetninger, resultat: { status: "tapt", etikett: `X/${FORSOK}`, poeng: 0 } }
-        return { ...t, gjetninger }
-      })
-      if (riktig) lyder.seier()
-      else {
-        lyder.feil()
-        setMelding("Feil film!")
+      if (riktig) {
+        lyder.seier()
+        oppdater((t) => {
+          if (t.resultat.status !== "pagar") return t
+          const n = t.hint.length + 1
+          const gjetninger = [...t.gjetninger, { ...f, riktig }]
+          return { ...t, gjetninger, fasit: f, plakat: plakat ?? null, resultat: { status: "vunnet", etikett: `${n}/${LIV}`, poeng: LIV + 1 - n } }
+        })
+        return
       }
+      // A wrong guess costs a life and reveals the next hint (the last one comes with the answer).
+      const { tekst } = await spor<{ tekst: string }>({ type: "hint", dato, nr: tapt + 1 })
+      lyder.feil()
+      mistLiv()
+      setMelding("Feil film!")
+      oppdater((t) => {
+        if (t.resultat.status !== "pagar" || t.hint.length !== tapt) return t
+        const gjetninger = [...t.gjetninger, { ...f, riktig }]
+        const hint = [...t.hint, tekst]
+        return hint.length >= LIV ? { ...t, gjetninger, hint, resultat: { status: "tapt", etikett: `X/${LIV}`, poeng: 0 } } : { ...t, gjetninger, hint }
+      })
     } catch (e) {
       setMelding((e as Error).message)
     } finally {
@@ -179,10 +190,13 @@ export function Emovi({ dato, emoji }: { dato: string; emoji: string }) {
 
   if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
+  // Lives lost by asking for a hint, as opposed to by a wrong guess.
+  const viaHint = Math.max(0, tapt - verdi.gjetninger.filter((g) => !g.riktig).length)
+  const ruter = [...Array<string>(viaHint).fill("💡"), ...verdi.gjetninger.map((g) => (g.riktig ? "🟩" : "🟥"))]
   const delTekst = [
-    `Emovi · ${formaterDato(dato, "kort")} · ${verdi.resultat.status === "vunnet" ? brukt : "X"}/${FORSOK}`,
+    `Emovi · ${formaterDato(dato, "kort")} · ${verdi.resultat.status === "vunnet" ? tapt + 1 : "X"}/${LIV}`,
     emoji,
-    [...verdi.hint.map(() => "💡"), ...verdi.gjetninger.map((g) => (g.riktig ? "🟩" : "🟥")), ...Array<string>(Math.max(0, igjen)).fill("⬜")].join(""),
+    [...ruter, ...Array<string>(Math.max(0, LIV - ruter.length)).fill("⬜")].join(""),
     "thodh.com/spill/emovi",
   ].join("\n")
 
@@ -228,13 +242,23 @@ export function Emovi({ dato, emoji }: { dato: string; emoji: string }) {
       ) : (
         <>
           <FilmVelger utelat={verdi.gjetninger} onVelg={gjett} deaktivert={opptatt} />
-          <div className="flex items-center justify-between px-1">
-            <p className="font-mono text-[11px] text-neutral-500" role="status">
-              {melding ?? (igjen === 1 ? "Siste forsøk" : `${igjen} forsøk igjen`)}
-            </p>
+          <div className="flex items-center justify-between gap-2 px-1">
+            <div className="flex items-center gap-1.5" aria-label={`${igjen} liv igjen`}>
+              {Array.from({ length: LIV }, (_, i) => {
+                const borte = i >= igjen
+                return (
+                  <span key={i} aria-hidden="true" className={`text-lg transition-all duration-500 ${knust === LIV - 1 - i ? "til-knus" : ""} ${borte ? "opacity-30 grayscale" : ""}`}>
+                    {borte ? "💔" : "❤️"}
+                  </span>
+                )
+              })}
+              <span className="ml-1 font-mono text-[11px] text-neutral-500" role="status">
+                {melding}
+              </span>
+            </div>
             {kanHint ? (
               <button type="button" onClick={() => void nesteHint()} disabled={opptatt} className={sekundarKnapp}>
-                Hint (−1 forsøk)
+                Hint · −1 ❤️
               </button>
             ) : (
               <button type="button" onClick={giOpp} className={sekundarKnapp}>
