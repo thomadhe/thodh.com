@@ -1,5 +1,5 @@
 /** Daily games: one puzzle per day, with calendar and stored results. */
-export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas" | "soket" | "emovi" | "rusle" | "tilkoblinger" | "havet"
+export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas" | "soket" | "emovi" | "rusle" | "tilkoblinger" | "havet" | "heksagonal-jakt"
 /** Free-play quizzes without a daily puzzle. */
 export type QuizId = "verdens-land" | "hovedsteder"
 
@@ -113,6 +113,15 @@ export const spill: Spill[] = [
     regel: "Plasser hvert land i en kategori. Hver kategori brukes én gang, og du kan ikke angre.",
     ikon: "≋",
     farge: "bg-blue-600 text-white",
+  },
+  {
+    id: "heksagonal-jakt",
+    navn: "Heksagonal jakt",
+    href: "/spill/heksagonal-jakt",
+    kort: "Finn stedene på kartet.",
+    regel: "Trykk på sekskanten der stedet ligger. Varmt eller kaldt forteller hvor nær du er.",
+    ikon: "⬢",
+    farge: "bg-orange-500 text-white",
   },
 ]
 

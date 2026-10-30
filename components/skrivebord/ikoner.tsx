@@ -24,6 +24,7 @@ export type IkonNavn =
   | "sti"
   | "grupper"
   | "bolge"
+  | "sekskant"
 
 const omriss = "#111"
 
@@ -207,6 +208,14 @@ const tegninger: Record<IkonNavn, React.ReactNode> = {
       <path d="M6 13c3-3 5 3 8 0s5 3 8 0 3-2 4-1" fill="none" stroke="#60a5fa" strokeWidth="2.5" />
       <path d="M6 19c3-3 5 3 8 0s5 3 8 0 3-2 4-1" fill="none" stroke="#2563eb" strokeWidth="2.5" />
       <path d="M6 25c3-3 5 3 8 0s5 3 8 0" fill="none" stroke="#1d4ed8" strokeWidth="2.5" />
+    </>
+  ),
+  sekskant: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
+      <path d="M11 6l5 3v6l-5 3-5-3V9z" fill="#52525b" />
+      <path d="M21 6l5 3v6l-5 3-5-3V9z" fill="#fb923c" />
+      <path d="M16 15l5 3v6l-5 3-5-3v-6z" fill="#f43f5e" />
     </>
   ),
 }

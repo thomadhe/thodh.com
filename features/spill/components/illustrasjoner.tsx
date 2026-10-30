@@ -154,6 +154,21 @@ function Havet() {
   )
 }
 
+function HeksagonalJakt() {
+  const farger = ["bg-black/40", "bg-sky-400", "bg-black/40", "bg-amber-300", "bg-orange-500", "bg-black/40", "bg-black/40", "bg-rose-500", "bg-black/40"]
+  return (
+    <div className="flex w-40 flex-col" aria-hidden="true">
+      {[0, 1, 2].map((r) => (
+        <span key={r} className={`-mt-1.5 flex gap-1 first:mt-0 ${r % 2 ? "translate-x-[22px]" : ""}`}>
+          {[0, 1, 2].map((k) => (
+            <span key={k} className={`h-12 w-10 ${farger[r * 3 + k]}`} style={{ clipPath: "polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%)" }} />
+          ))}
+        </span>
+      ))}
+    </div>
+  )
+}
+
 export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   "mer-eller-mindre": MerEllerMindre,
   anelseslos: Anelseslos,
@@ -166,4 +181,5 @@ export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   rusle: Rusle,
   tilkoblinger: Tilkoblinger,
   havet: Havet,
+  "heksagonal-jakt": HeksagonalJakt,
 }

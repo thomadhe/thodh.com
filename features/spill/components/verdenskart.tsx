@@ -1,7 +1,7 @@
 "use client"
 
 import { Minus, Plus, RotateCcw } from "lucide-react"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import kart from "../data/geografi/kart.json"
 
 // World map from precomputed SVG paths (scripts/geo/lag-geodata.mjs). Drag to pan, wheel or buttons to zoom.
@@ -14,12 +14,19 @@ type Utsnitt = { x: number; y: number; b: number }
 const HELE: Utsnitt = { x: 0, y: 0, b: k.bredde }
 const MAKS_ZOOM = 12
 
+/** The visible part of the map in map units, and how many screen pixels one map unit takes up. */
+export type KartUtsnitt = { x: number; y: number; b: number; h: number; pxPerEnhet: number }
+
 export const KART_FARGE = { ukjent: "#3b3f46", bakgrunn: "#2a2d32", hav: "#1b232b" }
 
-function klem(u: Utsnitt): Utsnitt {
-  const b = Math.min(k.bredde, Math.max(k.bredde / MAKS_ZOOM, u.b))
-  const h = (b * k.hoyde) / k.bredde
-  return { b, x: Math.min(k.bredde - b, Math.max(0, u.x)), y: Math.min(k.hoyde - h, Math.max(0, u.y)) }
+const KART_FORHOLD = k.hoyde / k.bredde
+
+function klem(u: Utsnitt, maksZoom = MAKS_ZOOM, forhold = KART_FORHOLD): Utsnitt {
+  const b = Math.min(k.bredde, Math.max(k.bredde / maksZoom, u.b))
+  const h = b * forhold
+  // A view taller than the map keeps it centred vertically, with sea above and below.
+  const y = h >= k.hoyde ? (k.hoyde - h) / 2 : Math.min(k.hoyde - h, Math.max(0, u.y))
+  return { b, x: Math.min(k.bredde - b, Math.max(0, u.x)), y }
 }
 
 export function Verdenskart({
@@ -29,6 +36,13 @@ export function Verdenskart({
   fokus,
   bareFargede = false,
   fokusKant,
+  maksZoom = MAKS_ZOOM,
+  forhold = KART_FORHOLD,
+  ramme,
+  visPunkter = true,
+  lag,
+  merke,
+  onTrykk,
 }: {
   /** Fill per country id; countries without one are drawn neutral. */
   farger: Record<string, string>
@@ -42,8 +56,26 @@ export function Verdenskart({
   bareFargede?: boolean
   /** Ids framed only by their point nearest the focus, so a huge country (Russia) doesn't zoom the map out. */
   fokusKant?: string[]
+  /** How far the map may zoom in (times the whole width). */
+  maksZoom?: number
+  /** Height of the view as a share of its width; defaults to the map's own shape. */
+  forhold?: number
+  /** A map rectangle [x0, y0, x1, y1] to frame whenever it changes. */
+  ramme?: [number, number, number, number]
+  /** Draw the clickable dots for countries too small to see. */
+  visPunkter?: boolean
+  /** Extra SVG drawn on top of the countries, in map coordinates. */
+  lag?: (u: KartUtsnitt) => ReactNode
+  /** Small HTML label in the map's top left corner. */
+  merke?: (u: KartUtsnitt) => ReactNode
+  /** A tap or click that didn't drag or pinch, in map coordinates. */
+  onTrykk?: (x: number, y: number, u: KartUtsnitt) => void
 }) {
-  const [u, setU] = useState<Utsnitt>(HELE)
+  const [u, setUraa] = useState<Utsnitt>(() => klem(HELE, maksZoom, forhold))
+  const setU = useCallback((ny: Utsnitt | ((f: Utsnitt) => Utsnitt)) => setUraa((f) => klem(typeof ny === "function" ? ny(f) : ny, maksZoom, forhold)), [maksZoom, forhold])
+  const [pxBredde, setPxBredde] = useState(0)
+  // The pointer that may become a tap; cleared once it moves or a second finger joins.
+  const trykk = useRef<{ id: number; x: number; y: number } | null>(null)
   const fokusNokkel = `${fokus?.join(",") ?? ""}|${fokusKant?.join(",") ?? ""}`
   const svg = useRef<SVGSVGElement>(null)
   // Active pointers (mouse or fingers) and the gesture they started from: one = drag, two = pinch.
@@ -70,14 +102,25 @@ export function Verdenskart({
   /** Zooms around a point given as a fraction of the visible map (0.5, 0.5 = centre). */
   const zoom = useCallback((faktor: number, fx = 0.5, fy = 0.5) => {
     setU((f) => {
-      const h = (f.b * k.hoyde) / k.bredde
+      const h = f.b * forhold
       const cx = f.x + fx * f.b
       const cy = f.y + fy * h
-      const b = Math.min(k.bredde, Math.max(k.bredde / MAKS_ZOOM, f.b * faktor))
+      const b = Math.min(k.bredde, Math.max(k.bredde / maksZoom, f.b * faktor))
       const r = b / f.b
-      return klem({ b, x: cx - (cx - f.x) * r, y: cy - (cy - f.y) * r })
+      return { b, x: cx - (cx - f.x) * r, y: cy - (cy - f.y) * r }
     })
-  }, [])
+  }, [setU, maksZoom, forhold])
+
+  /** Frames a map rectangle with some padding, at the view's aspect ratio. */
+  const rammeInn = useCallback(
+    (x0: number, y0: number, x1: number, y1: number) => {
+      const pad = 0.35
+      const bredde = Math.max((x1 - x0) * (1 + pad * 2), ((y1 - y0) * (1 + pad * 2)) / forhold, 90)
+      const hoyde = bredde * forhold
+      setU({ b: bredde, x: (x0 + x1) / 2 - bredde / 2, y: (y0 + y1) / 2 - hoyde / 2 })
+    },
+    [setU, forhold],
+  )
 
   // Frame the focus countries: union of their bounding boxes, padded, at the map's aspect ratio.
   useEffect(() => {
@@ -116,13 +159,30 @@ export function Verdenskart({
       }
     }
     if (!Number.isFinite(x0)) return
-    const pad = 0.35
-    const bredde = Math.max((x1 - x0) * (1 + pad * 2), ((y1 - y0) * (1 + pad * 2) * k.bredde) / k.hoyde, 90)
-    const hoyde = (bredde * k.hoyde) / k.bredde
     // Measuring the rendered paths is only possible after mount.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setU(klem({ b: bredde, x: (x0 + x1) / 2 - bredde / 2, y: (y0 + y1) / 2 - hoyde / 2 }))
-  }, [fokusNokkel])
+    rammeInn(x0, y0, x1, y1)
+  }, [fokusNokkel, rammeInn])
+
+  const rammeNokkel = ramme?.join(",") ?? ""
+  useEffect(() => {
+    if (!rammeNokkel) return
+    const [x0, y0, x1, y1] = rammeNokkel.split(",").map(Number)
+    // Follows the prop like the focus framing above; dragging in between must not be undone on re-render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    rammeInn(x0, y0, x1, y1)
+  }, [rammeNokkel, rammeInn])
+
+  // Screen width, for overlays that size themselves in pixels.
+  const maal = Boolean(lag || merke)
+  useEffect(() => {
+    const el = svg.current
+    if (!el || !maal) return
+    const obs = new ResizeObserver(([e]) => setPxBredde(e.contentRect.width))
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [maal])
+  const utsnitt: KartUtsnitt = { x: u.x, y: u.y, b: u.b, h: u.b * forhold, pxPerEnhet: pxBredde / u.b }
 
   // React's wheel handler is passive, so the page would scroll while zooming.
   useEffect(() => {
@@ -146,7 +206,7 @@ export function Verdenskart({
     <div className="relative overflow-hidden rounded-2xl" style={{ background: KART_FARGE.hav }}>
       <svg
         ref={svg}
-        viewBox={`${u.x} ${u.y} ${u.b} ${(u.b * k.hoyde) / k.bredde}`}
+        viewBox={`${u.x} ${u.y} ${u.b} ${u.b * forhold}`}
         className="block h-auto w-full cursor-grab touch-none select-none active:cursor-grabbing"
         role="img"
         aria-label="Verdenskart"
@@ -155,11 +215,14 @@ export function Verdenskart({
           if (e.pointerType === "mouse" && e.button !== 0) return
           e.currentTarget.setPointerCapture(e.pointerId)
           pekere.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+          trykk.current = pekere.current.size === 1 ? { id: e.pointerId, x: e.clientX, y: e.clientY } : null
           startGrep(u)
         }}
         onPointerMove={(e) => {
           if (!pekere.current.has(e.pointerId)) return
           pekere.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+          const t = trykk.current
+          if (t && Math.hypot(e.clientX - t.x, e.clientY - t.y) > 6) trykk.current = null
           const g = grep.current
           if (!g) return
           const r = svg.current!.getBoundingClientRect()
@@ -167,18 +230,25 @@ export function Verdenskart({
           if (g.avstand && b) {
             // Two fingers: zoom by the change in distance and keep the map point under their midpoint in place.
             const faktor = g.avstand / Math.max(1, Math.hypot(a.x - b.x, a.y - b.y))
-            const bredde = Math.min(k.bredde, Math.max(k.bredde / MAKS_ZOOM, g.u.b * faktor))
+            const bredde = Math.min(k.bredde, Math.max(k.bredde / maksZoom, g.u.b * faktor))
             const mx = ((a.x + b.x) / 2 - r.left) / r.width
             const my = ((a.y + b.y) / 2 - r.top) / r.height
             const px = g.u.x + g.fx * g.u.b
-            const py = g.u.y + g.fy * ((g.u.b * k.hoyde) / k.bredde)
-            setU(klem({ b: bredde, x: px - mx * bredde, y: py - my * ((bredde * k.hoyde) / k.bredde) }))
+            const py = g.u.y + g.fy * g.u.b * forhold
+            setU({ b: bredde, x: px - mx * bredde, y: py - my * bredde * forhold })
           } else {
             const per = g.u.b / r.width
-            setU(klem({ ...g.u, x: g.u.x - (a.x - g.px) * per, y: g.u.y - (a.y - g.py) * per }))
+            setU({ ...g.u, x: g.u.x - (a.x - g.px) * per, y: g.u.y - (a.y - g.py) * per })
           }
         }}
-        onPointerUp={(e) => slipp(e.pointerId)}
+        onPointerUp={(e) => {
+          if (onTrykk && trykk.current?.id === e.pointerId) {
+            const r = svg.current!.getBoundingClientRect()
+            onTrykk(u.x + ((e.clientX - r.left) / r.width) * u.b, u.y + ((e.clientY - r.top) / r.height) * utsnitt.h, utsnitt)
+          }
+          trykk.current = null
+          slipp(e.pointerId)
+        }}
         onPointerCancel={(e) => slipp(e.pointerId)}
       >
         {bareFargede ? null : <path d={k.bakgrunn} fill={KART_FARGE.bakgrunn} />}
@@ -199,7 +269,7 @@ export function Verdenskart({
             {titler?.[id] ? <title>{titler[id]}</title> : null}
           </path>
         ))}
-        {Object.entries(k.punkter)
+        {Object.entries(visPunkter ? k.punkter : {})
           .filter(([id]) => !bareFargede || farger[id])
           .map(([id, [x, y]]) => (
           <circle
@@ -216,7 +286,9 @@ export function Verdenskart({
             {titler?.[id] ? <title>{titler[id]}</title> : null}
           </circle>
         ))}
+        {lag?.(utsnitt)}
       </svg>
+      {merke ? <div className="pointer-events-none absolute top-2 left-2">{merke(utsnitt)}</div> : null}
       <div className="absolute right-2 bottom-2 flex flex-col gap-1">
         <button type="button" className={knapp} onClick={() => zoom(0.6)} aria-label="Zoom inn">
           <Plus className="h-4 w-4" />

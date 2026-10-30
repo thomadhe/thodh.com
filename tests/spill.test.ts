@@ -7,6 +7,8 @@ import { formaterVerdi } from "../features/spill/lib/format"
 import { dagensMerEllerMindre, kategorier, KATEGORIER_PER_DAG, RUNDER_PER_KATEGORI } from "../features/spill/lib/mer-eller-mindre"
 import { dagensStavebien } from "../features/spill/lib/stavebien"
 import { erRiktigStavet } from "../features/spill/lib/stavebien-regler"
+import kart from "../features/spill/data/geografi/kart.json"
+import { celle, fraKart, NIVAER, rundePoeng, sentrum, side, tilKart, vurder } from "../features/spill/lib/heksagon"
 
 const dager = Array.from({ length: 120 }, (_, i) => leggTilDager(START_DATO, i))
 
@@ -97,4 +99,35 @@ test("Anelsesløs: ordlisten og vektorene passer sammen og har ikke CRLF", async
   const ord = readFileSync("features/spill/data/anelseslos/vocab.txt", "utf8")
   assert.ok(!ord.includes("\r"), "vocab.txt har fått Windows-linjeskift")
   assert.equal(readFileSync("features/spill/data/anelseslos/vectors.bin").length, ord.split("\n").length * 300)
+})
+
+test("Heksagonal jakt: sekskantene følger kartets projeksjon", () => {
+  // Small countries are drawn as dots at their projected centre; their capitals sit within a fraction of a map unit.
+  const punkter = kart.punkter as unknown as Record<string, [number, number]>
+  for (const [id, lat, lng] of [["MT", 35.9, 14.45], ["SG", 1.35, 103.82], ["LI", 47.16, 9.55], ["AD", 42.55, 1.58], ["VA", 41.9, 12.45]] as const) {
+    const [x, y] = tilKart(lat, lng)
+    assert.ok(Math.hypot(x - punkter[id][0], y - punkter[id][1]) < 0.3, id)
+  }
+  const [lat, lng] = fraKart(...tilKart(-33.9, 151.2))!
+  assert.ok(Math.abs(lat + 33.9) < 1e-9 && Math.abs(lng - 151.2) < 1e-9)
+  assert.equal(fraKart(0, 0), null)
+  for (let n = 0; n < NIVAER.length; n++) {
+    const [x, y] = sentrum(n, 7, -3)
+    assert.deepEqual(celle(n, x + side(n) * 0.8, y), [7, -3])
+  }
+})
+
+test("Heksagonal jakt: vurdering og poeng som i HexHunt", () => {
+  const oslo: [number, number] = [59.91, 10.75]
+  const punkt = tilKart(...oslo)
+  const [q, r] = celle(2, ...punkt)
+  assert.equal(vurder(2, q, r, punkt, oslo), "funnet")
+  assert.equal(vurder(2, q + 1, r, punkt, oslo), "het")
+  assert.equal(vurder(2, q + 40, r, punkt, oslo), "kald")
+  // A large site counts as found from a neighbouring hex.
+  assert.equal(vurder(2, q + 1, r, punkt, oslo, 300), "funnet")
+  assert.equal(rundePoeng("funnet", 3, 0), 200)
+  assert.equal(rundePoeng("funnet", 2, 1), 128)
+  assert.equal(rundePoeng("het", 0, 2), 29)
+  assert.equal(rundePoeng("lunken", 3, 0), 0)
 })
