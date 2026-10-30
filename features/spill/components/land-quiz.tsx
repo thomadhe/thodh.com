@@ -4,6 +4,7 @@ import { Lightbulb } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { land, type Land } from "../lib/geografi"
 import { finnSvar, kanBliLengre, landEtterId, type QuizModus } from "../lib/geografi-svar"
+import { lyder } from "../lib/lyd"
 import { Knapp, Kort } from "./spill-ramme"
 import { Verdenskart } from "./verdenskart"
 
@@ -65,6 +66,7 @@ export function LandQuiz({ modus }: { modus: QuizModus }) {
   }, [])
 
   const avslutt = (antall: number) => {
+    if (antall === total) lyder.seier()
     setStatus("ferdig")
     setHint(null)
     // Practice rounds and rounds with hints don't count as records.
@@ -107,6 +109,7 @@ export function LandQuiz({ modus }: { modus: QuizModus }) {
 
   const godta = (ider: string[]) => {
     if (vent.current) clearTimeout(vent.current)
+    lyder.treff()
     setFunnet((f) => [...f, ...ider.filter((id) => !f.includes(id))])
     setHint((h) => (h && ider.includes(h.id) ? null : h))
     setTekst("")

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 import type { StavebienWord } from "../data/types"
 import { formaterDato } from "../lib/dag"
 import { useDagligTilstand, useResultater, type Resultat } from "../lib/lagring"
+import { lyder } from "../lib/lyd"
 import { erRiktigStavet, LIV } from "../lib/stavebien-regler"
 import { lydTekst, type LydDel } from "../lib/stavebien-lyd"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
@@ -97,16 +98,85 @@ function Hjerter({ igjen }: { igjen: number }) {
   )
 }
 
-function Sammenlign({ svar, fasit }: { svar: string; fasit: string }) {
-  // Letter-by-letter marks are enough feedback for single words.
+const BOKSTAV_MS = 110
+
+/**
+ * The right spelling appears one letter at a time with a tick, like a spelling bee judge reading it out.
+ * Letters the player got right are green, the rest red. Calls `onFerdig` once the whole word is shown.
+ */
+function Avsloring({ svar, fasit, riktig, onFerdig }: { svar: string; fasit: string; riktig: boolean; onFerdig: () => void }) {
+  const [vist, setVist] = useState(0)
+  const ferdig = useRef(onFerdig)
+  useEffect(() => {
+    ferdig.current = onFerdig
+  })
+  useEffect(() => {
+    let n = 0
+    const t = setInterval(() => {
+      n++
+      setVist(n)
+      lyder.tikk()
+      if (n >= fasit.length) {
+        clearInterval(t)
+        setTimeout(() => {
+          if (riktig) lyder.riktig()
+          else lyder.feil()
+          ferdig.current()
+        }, 160)
+      }
+    }, BOKSTAV_MS)
+    return () => clearInterval(t)
+  }, [fasit, riktig])
   return (
-    <span className="font-mono tracking-wider">
+    <span className="inline-flex flex-wrap justify-center gap-1 font-mono text-2xl font-semibold" aria-label={fasit}>
       {[...fasit].map((t, i) => (
-        <span key={i} className={svar[i]?.toLowerCase() === t ? "text-emerald-700" : "rounded bg-rose-100 text-rose-700"}>
+        <span
+          key={i}
+          className={`flex h-10 w-8 items-center justify-center rounded-lg border-b-2 transition-all duration-200 ${
+            i >= vist
+              ? "translate-y-1 border-neutral-300 text-transparent"
+              : svar[i]?.toLowerCase() === t.toLowerCase()
+                ? "border-emerald-500 bg-emerald-50 text-emerald-800"
+                : "border-rose-500 bg-rose-50 text-rose-700"
+          }`}
+        >
           {t}
         </span>
       ))}
     </span>
+  )
+}
+
+function Tilbakemelding({
+  svar,
+  fasit,
+  riktig,
+  sisteKnapp,
+  onNeste,
+}: {
+  svar: string
+  fasit: string
+  riktig: boolean
+  sisteKnapp: string
+  onNeste: () => void
+}) {
+  const [klar, setKlar] = useState(false)
+  const farge = !klar ? "" : riktig ? "border-emerald-200 bg-emerald-50" : "border-rose-200 bg-rose-50"
+  return (
+    <Kort className={`px-5 py-5 text-center transition-colors duration-300 ${farge}`}>
+      <Avsloring svar={svar} fasit={fasit} riktig={riktig} onFerdig={() => setKlar(true)} />
+      <div className={`transition-opacity duration-300 ${klar ? "opacity-100" : "opacity-0"}`}>
+        <p className={`mt-3 text-lg font-semibold ${riktig ? "text-emerald-800" : "text-rose-700"}`}>{riktig ? "Riktig! 🐝" : "Ikke helt"}</p>
+        {!riktig ? (
+          <p className="mt-1 text-sm text-neutral-600">
+            Du skrev: <span className="font-mono line-through decoration-rose-400">{svar}</span>
+          </p>
+        ) : null}
+        <Knapp className="mt-4 min-w-36" onClick={onNeste} disabled={!klar}>
+          {sisteKnapp}
+        </Knapp>
+      </div>
+    </Kort>
   )
 }
 
@@ -265,24 +335,14 @@ export function Stavebien({ dato, ord }: { dato: string; ord: StaveOrd[] }) {
       </Kort>
 
       {svart !== undefined ? (
-        <Kort className={`px-5 py-5 text-center ${riktig ? "border-emerald-200 bg-emerald-50" : "border-rose-200 bg-rose-50"}`}>
-          <p className={`text-lg font-semibold ${riktig ? "text-emerald-800" : "text-rose-700"}`}>
-            {riktig ? "Riktig! 🐝" : "Ikke helt"}
-          </p>
-          {!riktig ? (
-            <div className="mt-2 space-y-1 text-sm text-neutral-600">
-              <p>
-                Du skrev: <span className="font-mono line-through decoration-rose-400">{svart}</span>
-              </p>
-              <p>
-                Riktig: <Sammenlign svar={svart} fasit={naa.word} />
-              </p>
-            </div>
-          ) : null}
-          <Knapp className="mt-4 min-w-36" onClick={neste} autoFocus>
-            {indeks >= ord.length || igjen <= 0 ? "Se resultat" : "Neste ord"}
-          </Knapp>
-        </Kort>
+        <Tilbakemelding
+          key={visIndeks}
+          svar={svart}
+          fasit={naa.word}
+          riktig={riktig}
+          sisteKnapp={indeks >= ord.length || igjen <= 0 ? "Se resultat" : "Neste ord"}
+          onNeste={neste}
+        />
       ) : (
         <form onSubmit={send} className="flex gap-2">
           <input

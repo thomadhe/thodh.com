@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { formaterDato } from "../lib/dag"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
+import { lyder } from "../lib/lyd"
 import { SANG_KATEGORIER, TRINN, type SangKategori } from "../lib/sanglos"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
@@ -276,6 +277,10 @@ function SangRunde({
         return { ...r, forsok: alle, status: riktig ? "vunnet" : alle.length >= TRINN.length ? "tapt" : "pagar" }
       })
       setSporring("")
+      if (riktig) lyder.seier()
+      else if (sammeArtist) lyder.naer(0.6)
+      else if (forsok) lyder.feil()
+      else lyder.velg()
       if (riktig || n + 1 >= TRINN.length) await hentFasit()
     } catch (e) {
       setMelding((e as Error).message)

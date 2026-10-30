@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { formaterDato } from "../lib/dag"
 import { fargetone, naerhetsfarge, type Fargeanker } from "../lib/farger"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
+import { lyder } from "../lib/lyd"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
 type Gjetning = { ord: string; avstand: number; hint?: boolean }
@@ -97,6 +98,8 @@ export function Anelseslos({ dato, antall }: { dato: string; antall: number }) {
   }, [trengerFasit, dato, oppdater])
 
   const leggTil = (g: Gjetning) => {
+    if (g.avstand === 1) lyder.seier()
+    else lyder.naer(andelFor(g.avstand, antall))
     // A winning guess and the win itself are stored in the same update.
     oppdater((t) => {
       if (t.gjetninger.some((x) => x.ord === g.ord)) return t

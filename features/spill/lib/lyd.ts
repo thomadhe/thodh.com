@@ -103,4 +103,19 @@ export const lyder = {
     }),
   tikk: () => spill(() => tone(1400, 0, 0.02, { volum: 0.05 })),
   velg: () => spill(() => tone(520, 0, 0.05, { volum: 0.1, til: 640 })),
+  /** A plop whose pitch follows how close a guess was (0 = far, 1 = almost there). */
+  naer: (styrke: number) =>
+    spill(() => {
+      const f = 240 + 640 * Math.min(1, Math.max(0, styrke))
+      tone(f, 0, 0.14, { volum: 0.22, til: f * 1.6 })
+    }),
+  /** A short plop for each find in the map quizzes. */
+  treff: () => spill(() => tone(600, 0, 0.09, { volum: 0.18, til: 1000 })),
+  /** Three rising plops for solving the whole thing. */
+  seier: () =>
+    spill(() => {
+      tone(420, 0, 0.12, { volum: 0.22, til: 840 })
+      tone(560, 0.1, 0.12, { volum: 0.22, til: 1120 })
+      tone(700, 0.2, 0.22, { volum: 0.24, til: 1400 })
+    }),
 }

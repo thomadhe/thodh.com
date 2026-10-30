@@ -8,6 +8,7 @@ import { land } from "../lib/geografi"
 import { avstand, forslag, landEtterId, naerhet, omrissNokkel, retning } from "../lib/geografi-svar"
 import { fargetone, naerhetsfarge, type Fargeanker } from "../lib/farger"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
+import { lyder } from "../lib/lyd"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
 const FORSOK = 6
@@ -84,6 +85,9 @@ export function Omriss({ dato, form, nokkel }: { dato: string; form: string; nok
       return
     }
     setMelding(null)
+    if (l.id === fasit.id) lyder.seier()
+    else if (verdi.gjetninger.length + 1 >= FORSOK) lyder.feil()
+    else lyder.naer(styrke(naerhet(avstand(l, fasit))))
     oppdater((t) => {
       if (t.resultat.status !== "pagar" || t.gjetninger.includes(l.id)) return t
       const gjetninger = [...t.gjetninger, l.id]

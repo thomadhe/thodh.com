@@ -1,11 +1,10 @@
 "use client"
 
-import { Volume2, VolumeX } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { formaterDato } from "../lib/dag"
 import { formaterVerdi } from "../lib/format"
 import { useDagligTilstand, useResultater, type Resultat } from "../lib/lagring"
-import { lyder, settLyd, useLydPa } from "../lib/lyd"
+import { lyder } from "../lib/lyd"
 import type { MelItem, MelKategori, MelRunde } from "../lib/mer-eller-mindre"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
@@ -171,21 +170,6 @@ function Fremdrift({ kategorier, svar }: { kategorier: MelKategori[]; svar: (0 |
   )
 }
 
-function LydKnapp() {
-  const pa = useLydPa()
-  return (
-    <button
-      type="button"
-      onClick={() => settLyd(!pa)}
-      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-neutral-400 transition hover:bg-black/5 hover:text-neutral-900"
-      aria-label={pa ? "Slå av lyd" : "Slå på lyd"}
-      title={pa ? "Lyd på" : "Lyd av"}
-    >
-      {pa ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-    </button>
-  )
-}
-
 export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier: MelKategori[] }) {
   const { verdi, lastet, oppdater } = useDagligTilstand<Tilstand>("mer-eller-mindre", dato, tom)
   const runder = kategorier.flatMap((k, ki) => k.runder.map((r, nr) => ({ ...r, kategori: k, ki, nr })))
@@ -256,10 +240,7 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
 
   return (
     <div className="flex flex-1 flex-col gap-5">
-      <div className="flex items-center gap-3">
-        <Fremdrift kategorier={kategorier} svar={verdi.svar} />
-        <LydKnapp />
-      </div>
+      <Fremdrift kategorier={kategorier} svar={verdi.svar} />
 
       {visOverskrift ? (
         <Kort key={`intro-${runde.ki}`} className="mel-inn flex flex-1 flex-col items-center justify-center px-6 py-14 text-center">

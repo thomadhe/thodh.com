@@ -1,9 +1,10 @@
 "use client"
 
-import { ArrowLeft, CalendarDays, ChevronLeft, ChevronRight, CircleHelp } from "lucide-react"
+import { ArrowLeft, CalendarDays, ChevronLeft, ChevronRight, CircleHelp, Volume2, VolumeX } from "lucide-react"
 import Link from "next/link"
 import { useState, type ReactNode } from "react"
 import { formaterDato, iDagOslo, leggTilDager, START_DATO } from "../lib/dag"
+import { settLyd, useLydPa } from "../lib/lyd"
 import { finnSpill, type QuizId, type SpillId } from "../lib/spill"
 import { Kalender } from "./kalender"
 import { visningsskrift } from "./skrift"
@@ -77,6 +78,7 @@ export function SpillRamme({
               ) : null}
             </nav>
           ) : null}
+          <LydKnapp />
           <button
             type="button"
             onClick={() => veksle("regler")}
@@ -104,6 +106,22 @@ export function SpillRamme({
         <main className="flex flex-1 flex-col py-6">{children}</main>
       </div>
     </div>
+  )
+}
+
+/** Sound effects on/off, shared by every game. */
+function LydKnapp() {
+  const pa = useLydPa()
+  return (
+    <button
+      type="button"
+      onClick={() => settLyd(!pa)}
+      className={ikonKnapp}
+      aria-label={pa ? "Slå av lyd" : "Slå på lyd"}
+      title={pa ? "Lyd på" : "Lyd av"}
+    >
+      {pa ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+    </button>
   )
 }
 
