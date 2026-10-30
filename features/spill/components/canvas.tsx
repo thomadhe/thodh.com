@@ -18,8 +18,8 @@ const KOLONNER = 6
 const RADER = 4
 const RUTER = KOLONNER * RADER
 const FORSOK = 6
-/** Tiles visible before guess 1, 2, … 6: the first guess is blind, then +1, +2, +3, +5, +7 → 6 of 24 still hidden at the end. */
-const SYNLIGE = [0, 1, 3, 6, 11, 18]
+/** Tiles visible before guess 1, 2, … 6: the first guess is blind, then +1, +1, +1, +2, +3 (0, 1, 2, 3, 5, 8). */
+const SYNLIGE = [0, 1, 2, 3, 5, 8]
 
 // v2: 24 tiles that open by themselves; v1 saves (12 tiles you picked) start fresh.
 type Tilstand = { v: 2; gjetninger: string[]; resultat: Resultat }
