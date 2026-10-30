@@ -1,4 +1,4 @@
-import { Play, SkipBack, SkipForward, Volume2 } from "lucide-react"
+import { Play, Search, SkipBack, SkipForward, Volume2 } from "lucide-react"
 import type { SpillId } from "../lib/spill"
 
 // Small decorative drawings for the game tiles on the hub. Purely visual, hidden from screen readers.
@@ -89,6 +89,29 @@ function Canvas() {
   )
 }
 
+function Soket() {
+  return (
+    <div className="flex flex-col items-center gap-2" aria-hidden="true">
+      <span className="flex h-9 w-44 items-center gap-2 rounded-full bg-white/90 px-3 text-xs text-neutral-500">
+        <Search className="h-3.5 w-3.5" /> hvorfor er katter så
+      </span>
+      <span className="flex gap-1">
+        {["bg-emerald-500", "bg-amber-400", "bg-black/40", "bg-emerald-500", "bg-black/40"].map((f, i) => (
+          <span key={i} className={`h-7 w-7 rounded-md ${f}`} />
+        ))}
+      </span>
+    </div>
+  )
+}
+
+function Emovi() {
+  return (
+    <span className="text-4xl tracking-[0.15em]" aria-hidden="true">
+      🦁👑🌅🐗🎶
+    </span>
+  )
+}
+
 export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   "mer-eller-mindre": MerEllerMindre,
   anelseslos: Anelseslos,
@@ -96,4 +119,6 @@ export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   sanglos: Sanglos,
   omriss: Omriss,
   canvas: Canvas,
+  soket: Soket,
+  emovi: Emovi,
 }

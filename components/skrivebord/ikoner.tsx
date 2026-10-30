@@ -19,6 +19,8 @@ export type IkonNavn =
   | "form"
   | "stjerne"
   | "flagg"
+  | "sok"
+  | "film"
 
 const omriss = "#111"
 
@@ -159,6 +161,22 @@ const tegninger: Record<IkonNavn, React.ReactNode> = {
       <rect x="11" y="9" width="4" height="14" fill="#fff" />
       <rect x="16" y="9" width="9" height="5" fill="#1f2937" opacity=".85" />
       <rect x="7" y="18" width="4" height="5" fill="#1f2937" opacity=".85" />
+    </>
+  ),
+  sok: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
+      <circle cx="14" cy="14" r="6" fill="none" stroke="#60a5fa" strokeWidth="3" />
+      <path d="M18.5 18.5 24 24" stroke="#60a5fa" strokeWidth="3.5" />
+    </>
+  ),
+  film: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
+      <rect x="7" y="11" width="18" height="12" rx="1" fill="#fb923c" />
+      <path d="M7 7h18l-1.5 4H8.5Z" fill="#fdba74" />
+      <circle cx="13" cy="17" r="1.6" fill="#2b2d31" />
+      <circle cx="19" cy="17" r="1.6" fill="#2b2d31" />
     </>
   ),
 }

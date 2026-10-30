@@ -263,3 +263,51 @@ body {
     animation: none;
   }
 }
+
+/* Søket: tiles flip as they are scored, and the row shakes on a too-short word. */
+@keyframes sok-snu {
+  0% {
+    transform: rotateX(0);
+    background: transparent;
+    border-color: var(--color-neutral-500);
+    color: var(--color-neutral-950);
+  }
+  49% {
+    transform: rotateX(90deg);
+    background: transparent;
+    border-color: var(--color-neutral-500);
+    color: var(--color-neutral-950);
+  }
+  50% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0);
+  }
+}
+
+.sok-snu {
+  animation: sok-snu 420ms ease-in-out backwards;
+}
+
+@keyframes sok-rist {
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+.sok-rist {
+  animation: sok-rist 320ms ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sok-snu,
+  .sok-rist {
+    animation: none;
+  }
+}

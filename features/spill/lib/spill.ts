@@ -1,5 +1,5 @@
 /** Daily games: one puzzle per day, with calendar and stored results. */
-export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas"
+export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas" | "soket" | "emovi"
 /** Free-play quizzes without a daily puzzle. */
 export type QuizId = "verdens-land" | "hovedsteder"
 
@@ -68,6 +68,24 @@ export const spill: Spill[] = [
     regel: "Gjett landet bak flagget. Første gjetning er i blinde, og for hvert feil svar åpner flere ruter seg. Seks forsøk.",
     ikon: "▦",
     farge: "bg-rose-500 text-white",
+  },
+  {
+    id: "soket",
+    navn: "Søket",
+    href: "/spill/soket",
+    kort: "Hva søker folk egentlig etter?",
+    regel: "Gjett ordet som fullfører søket. Grønt og gult som i Wordle, seks forsøk.",
+    ikon: "⌕",
+    farge: "bg-blue-500 text-white",
+  },
+  {
+    id: "emovi",
+    navn: "Emovi",
+    href: "/spill/emovi",
+    kort: "Fem emojier, én film.",
+    regel: "Gjett filmen. Tre forsøk, og hvert feil svar gir et hint.",
+    ikon: "🎬",
+    farge: "bg-orange-400 text-neutral-950",
   },
 ]
 
