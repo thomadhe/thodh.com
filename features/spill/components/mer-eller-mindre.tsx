@@ -1,9 +1,11 @@
 "use client"
 
+import { Volume2, VolumeX } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { formaterDato } from "../lib/dag"
 import { formaterVerdi } from "../lib/format"
 import { useDagligTilstand, useResultater, type Resultat } from "../lib/lagring"
+import { lyder, settLyd, useLydPa } from "../lib/lyd"
 import type { MelItem, MelKategori, MelRunde } from "../lib/mer-eller-mindre"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
@@ -11,18 +13,37 @@ import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 type Tilstand = { v: 3; svar: (0 | 1)[]; resultat: Resultat }
 
 const tom = (): Tilstand => ({ v: 3, svar: [], resultat: { status: "pagar" } })
-const VIS_SVAR_MS = 1500
+/** Count-up, then a beat to see the result, then the chain slides on. */
+const TELL_MS = 900
+const VIS_SVAR_MS = 2000
 
-function Teller({ verdi, format }: { verdi: number; format: MelKategori["format"] }) {
+const myk = (p: number) => 1 - Math.pow(1 - p, 3)
+
+/** Rolls the number up from zero with soft ticks, then reports when it has landed. */
+function Teller({ verdi, format, onFerdig }: { verdi: number; format: MelKategori["format"]; onFerdig?: () => void }) {
   const [vist, setVist] = useState(format === "year" ? verdi : 0)
+  const ferdig = useRef(onFerdig)
   useEffect(() => {
-    if (format === "year") return
+    ferdig.current = onFerdig
+  })
+  useEffect(() => {
+    if (format === "year") {
+      ferdig.current?.()
+      return
+    }
     let ramme = 0
+    let sisteTikk = 0
     const start = performance.now()
     const steg = (t: number) => {
-      const p = Math.min(1, (t - start) / 650)
-      setVist(verdi * (1 - Math.pow(1 - p, 3)))
+      const p = Math.min(1, (t - start) / TELL_MS)
+      setVist(verdi * myk(p))
+      // Ticks slow down with the numbers, like a mechanical counter.
+      if (p < 1 && t - sisteTikk > 45 + 140 * p) {
+        sisteTikk = t
+        lyder.tikk()
+      }
       if (p < 1) ramme = requestAnimationFrame(steg)
+      else ferdig.current?.()
     }
     ramme = requestAnimationFrame(steg)
     return () => cancelAnimationFrame(ramme)
@@ -36,7 +57,7 @@ function Bilde({ item, format }: { item: MelItem; format: MelKategori["bildeform
   if (!item.bilde || feilet) {
     return (
       <span
-        className={`flex items-center justify-center rounded-2xl bg-neutral-50 text-5xl leading-none transition group-hover:scale-[1.02] ${storrelse}`}
+        className={`flex items-center justify-center rounded-2xl bg-neutral-50 text-5xl leading-none transition duration-300 group-hover:scale-[1.03] ${storrelse}`}
         aria-hidden="true"
       >
         {item.emoji}
@@ -51,68 +72,75 @@ function Bilde({ item, format }: { item: MelItem; format: MelKategori["bildeform
       loading="eager"
       referrerPolicy="no-referrer"
       onError={() => setFeilet(true)}
-      className={`rounded-2xl bg-neutral-100 object-cover shadow-sm transition group-hover:scale-[1.02] ${storrelse}`}
+      className={`rounded-2xl bg-neutral-100 object-cover shadow-sm transition duration-300 group-hover:scale-[1.03] ${storrelse}`}
     />
   )
 }
 
+type Rolle = "forbi" | "venstre" | "hoyre" | "kommer"
+
 function ValgKort({
   item,
   kategori,
+  rolle,
   onVelg,
   avslort,
   vinner,
   valgt,
-  tast,
-  kjent = false,
+  onTalt,
 }: {
-  item: MelRunde["a"]
+  item: MelItem
   kategori: MelKategori
+  rolle: Rolle
   onVelg: () => void
+  /** The current round has been answered. */
   avslort: boolean
   vinner: boolean
   valgt: boolean
-  tast: string
-  /** The left card carries over from the previous round, so its value is already known. */
-  kjent?: boolean
+  onTalt?: () => void
 }) {
-  const ramme = !avslort
-    ? "border-black/5 hover:-translate-y-0.5 hover:border-black/15 hover:shadow-md"
-    : vinner
-      ? "border-emerald-500 bg-emerald-50"
-      : valgt
-        ? "border-rose-400 bg-rose-50"
-        : "border-black/5 opacity-70"
+  const aktiv = rolle === "venstre" || rolle === "hoyre"
+  // The left card carries over from the previous round, so its value is known from the start.
+  const visVerdi = rolle === "venstre" || rolle === "forbi" || (rolle === "hoyre" && avslort)
+  const ramme =
+    !aktiv || !avslort
+      ? "border-black/5 hover:-translate-y-1 hover:border-black/15 hover:shadow-lg"
+      : vinner
+        ? "border-emerald-500 bg-emerald-50 scale-[1.02]"
+        : valgt
+          ? "border-rose-400 bg-rose-50"
+          : "border-black/5 opacity-75"
   return (
     <button
       type="button"
       onClick={onVelg}
-      disabled={avslort}
-      className={`group relative flex min-h-56 flex-col items-center justify-start rounded-3xl border-2 bg-[var(--spill-flate)] px-3 pt-5 pb-4 text-center transition duration-200 disabled:cursor-default ${ramme}`}
+      disabled={!aktiv || avslort}
+      tabIndex={aktiv ? 0 : -1}
+      aria-hidden={!aktiv}
+      className={`group relative flex min-h-60 w-[calc((100%-0.75rem)/2)] shrink-0 flex-col items-center justify-start rounded-3xl border-2 bg-[var(--spill-flate)] px-3 pt-5 pb-4 text-center transition-[transform,border-color,background-color,opacity,box-shadow] duration-300 ease-out disabled:cursor-default ${ramme} ${
+        aktiv ? "" : "opacity-0"
+      }`}
     >
-      <span className="absolute top-3 left-3 hidden h-5 w-5 items-center justify-center rounded-md border border-black/10 font-mono text-[10px] text-neutral-400 sm:flex">
-        {tast}
-      </span>
-      {avslort && valgt ? (
+      {aktiv && avslort && valgt ? (
         <span
-          className={`absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full text-xs text-white ${
+          className={`mel-pop absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full text-xs text-white ${
             vinner ? "bg-emerald-500" : "bg-rose-500"
           }`}
         >
           {vinner ? "✓" : "✕"}
         </span>
       ) : null}
-      <Bilde key={item.name} item={item} format={kategori.bildeformat} />
+      <Bilde item={item} format={kategori.bildeformat} />
       <span className="mt-4 text-[15px] font-semibold leading-tight tracking-tight text-neutral-950">{item.name}</span>
       {item.detail ? <span className="mt-1 font-mono text-[10px] text-neutral-400">{item.detail}</span> : null}
       <span
-        className={`mt-4 min-h-12 text-lg font-semibold tabular-nums tracking-tight transition ${
-          avslort ? (vinner ? "text-emerald-700" : "text-neutral-700") : kjent ? "text-neutral-700" : "text-transparent"
+        className={`mt-4 min-h-12 text-lg font-semibold tabular-nums tracking-tight transition-colors duration-300 ${
+          visVerdi ? (aktiv && avslort && vinner ? "text-emerald-700" : "text-neutral-700") : "text-neutral-300"
         }`}
       >
-        {avslort || kjent ? (
+        {visVerdi ? (
           <>
-            {kjent ? formaterVerdi(item.value, kategori.format) : <Teller verdi={item.value} format={kategori.format} />}
+            {rolle === "hoyre" ? <Teller verdi={item.value} format={kategori.format} onFerdig={onTalt} /> : formaterVerdi(item.value, kategori.format)}
             {kategori.unit ? <span className="block text-[11px] font-normal text-neutral-500">{kategori.unit}</span> : null}
           </>
         ) : (
@@ -126,18 +154,33 @@ function ValgKort({
 function Fremdrift({ kategorier, svar }: { kategorier: MelKategori[]; svar: (0 | 1)[] }) {
   let i = 0
   return (
-    <div className="flex gap-1.5" aria-label={`${svar.length} av ${kategorier.length * 5} runder`}>
+    <div className="flex flex-1 gap-1.5" aria-label={`${svar.length} av ${kategorier.length * 5} runder`}>
       {kategorier.map((k) => (
         <div key={k.id} className="flex flex-1 gap-0.5">
           {k.runder.map((r) => {
             const n = i++
             const s = svar[n]
             const farge = s === undefined ? "bg-black/10" : s === r.fasit ? "bg-emerald-500" : "bg-rose-500"
-            return <span key={n} className={`h-1.5 flex-1 rounded-full transition-colors ${farge}`} />
+            return <span key={n} className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${farge}`} />
           })}
         </div>
       ))}
     </div>
+  )
+}
+
+function LydKnapp() {
+  const pa = useLydPa()
+  return (
+    <button
+      type="button"
+      onClick={() => settLyd(!pa)}
+      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-neutral-400 transition hover:bg-black/5 hover:text-neutral-900"
+      aria-label={pa ? "Slå av lyd" : "Slå på lyd"}
+      title={pa ? "Lyd på" : "Lyd av"}
+    >
+      {pa ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+    </button>
   )
 }
 
@@ -162,6 +205,7 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
   const velg = (valg: 0 | 1) => {
     if (visning !== null || ferdig || visOverskrift) return
     const n = neste
+    lyder.velg()
     oppdater((t) => {
       if (t.svar.length !== n) return t
       const svar = [...t.svar, valg]
@@ -170,7 +214,7 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
       return { v: 3, svar, resultat: { status: "ferdig", etikett: `${poeng}/${totalt}`, poeng } }
     })
     setVisning(n)
-    tidsur.current = setTimeout(() => setVisning(null), VIS_SVAR_MS)
+    tidsur.current = setTimeout(() => setVisning(null), TELL_MS + VIS_SVAR_MS)
   }
 
   const gaVidere = () => {
@@ -205,13 +249,18 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
   if (ferdig) return <Resultater dato={dato} kategorier={kategorier} svar={verdi.svar} />
 
   const svart = visning !== null ? verdi.svar[visning] : undefined
+  const kjede = [runde.kategori.runder[0].a, ...runde.kategori.runder.map((r) => r.b)]
+  const rolle = (i: number): Rolle => (i < runde.nr ? "forbi" : i === runde.nr ? "venstre" : i === runde.nr + 1 ? "hoyre" : "kommer")
 
   return (
     <div className="flex flex-1 flex-col gap-5">
-      <Fremdrift kategorier={kategorier} svar={verdi.svar} />
+      <div className="flex items-center gap-3">
+        <Fremdrift kategorier={kategorier} svar={verdi.svar} />
+        <LydKnapp />
+      </div>
 
       {visOverskrift ? (
-        <Kort className="flex flex-1 flex-col items-center justify-center px-6 py-14 text-center">
+        <Kort key={`intro-${runde.ki}`} className="mel-inn flex flex-1 flex-col items-center justify-center px-6 py-14 text-center">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-neutral-400">
             Kategori {runde.ki + 1} av {kategorier.length}
           </p>
@@ -223,7 +272,7 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
           <p className="mt-6 font-mono text-[10px] text-neutral-400">Kilde: {runde.kategori.source}</p>
         </Kort>
       ) : (
-        <>
+        <div key={`kategori-${runde.ki}`} className="mel-inn flex flex-col gap-5">
           <div className="text-center">
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-neutral-400">
               {runde.kategori.title} · {runde.nr + 1}/{runde.kategori.runder.length}
@@ -231,26 +280,26 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
             <h2 className="mt-2 text-lg font-semibold tracking-tight text-neutral-950">{runde.kategori.question}</h2>
           </div>
 
-          <div className="relative grid grid-cols-2 gap-3">
-            <ValgKort
-              item={runde.a}
-              kategori={runde.kategori}
-              onVelg={() => velg(0)}
-              avslort={svart !== undefined}
-              vinner={runde.fasit === 0}
-              valgt={svart === 0}
-              tast="1"
-              kjent
-            />
-            <ValgKort
-              item={runde.b}
-              kategori={runde.kategori}
-              onVelg={() => velg(1)}
-              avslort={svart !== undefined}
-              vinner={runde.fasit === 1}
-              valgt={svart === 1}
-              tast="2"
-            />
+          {/* The whole chain sits on one track; each round slides it one card to the left. */}
+          <div className="relative -mx-1 overflow-hidden px-1 py-2">
+            <div
+              className="flex gap-3 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              style={{ transform: `translateX(calc(${-runde.nr} * (50% + 0.375rem)))` }}
+            >
+              {kjede.map((item, i) => (
+                <ValgKort
+                  key={`${item.name}-${i}`}
+                  item={item}
+                  kategori={runde.kategori}
+                  rolle={rolle(i)}
+                  onVelg={() => velg(i === runde.nr ? 0 : 1)}
+                  avslort={svart !== undefined}
+                  vinner={(i === runde.nr && runde.fasit === 0) || (i === runde.nr + 1 && runde.fasit === 1)}
+                  valgt={(i === runde.nr && svart === 0) || (i === runde.nr + 1 && svart === 1)}
+                  onTalt={i === runde.nr + 1 && svart !== undefined ? () => (svart === runde.fasit ? lyder.riktig() : lyder.feil()) : undefined}
+                />
+              ))}
+            </div>
             <span className="pointer-events-none absolute top-1/2 left-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-black/5 bg-[var(--spill-flate)] font-mono text-[10px] uppercase text-neutral-500 shadow-sm">
               eller
             </span>
@@ -263,7 +312,7 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
               <button
                 type="button"
                 onClick={gaVidere}
-                className={`font-mono text-[11px] uppercase tracking-widest transition ${
+                className={`mel-inn font-mono text-[11px] uppercase tracking-widest transition ${
                   svart === runde.fasit ? "text-emerald-700" : "text-rose-600"
                 }`}
               >
@@ -276,7 +325,7 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
             )}
           </div>
           <Kreditering runde={runde} />
-        </>
+        </div>
       )}
     </div>
   )

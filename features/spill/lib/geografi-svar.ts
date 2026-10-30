@@ -26,14 +26,42 @@ function oppslag(navn: (l: Land) => string[]) {
 
 export type QuizModus = "land" | "hovedsteder"
 
+/** Common abbreviations on top of land.json (which already has DRC, UK, USA, UAE, CAR, PNG, DPRK, PRC, RSA). */
+const FORKORTELSER: Record<string, string[]> = {
+  CG: ["RC"],
+  AE: ["FAE"],
+  NZ: ["NZ"],
+  KR: ["ROK"],
+  BA: ["BiH"],
+  SA: ["KSA"],
+  GB: ["GB"],
+  ST: ["STP"],
+  DO: ["DomRep"],
+  VA: ["Vatikan"],
+  CF: ["Sentralafrika"],
+}
+
 const svarKart: Record<QuizModus, Map<string, string[]>> = {
-  land: oppslag((l) => [l.navn, l.en, ...l.svar]),
+  land: oppslag((l) => [l.navn, l.en, ...l.svar, ...(FORKORTELSER[l.id] ?? [])]),
   hovedsteder: oppslag((l) => [l.hovedstad, l.hovedstadEn, ...l.hovedstadSvar]),
 }
 
 /** Country ids an answer matches exactly (after normalising). Empty when nothing matches. */
 export function finnSvar(modus: QuizModus, tekst: string): string[] {
   return svarKart[modus].get(normaliser(tekst)) ?? []
+}
+
+/**
+ * True when the text could still grow into another answer that is not found yet ("us" → "Usbekistan",
+ * "uk" → "Ukraina", "niger" → "Nigeria"). The quiz then waits a moment instead of accepting at once.
+ */
+export function kanBliLengre(modus: QuizModus, tekst: string, funnet: Set<string>) {
+  const t = normaliser(tekst)
+  const her = svarKart[modus].get(t) ?? []
+  for (const [k, ider] of svarKart[modus]) {
+    if (k.length > t.length && k.startsWith(t) && ider.some((id) => !funnet.has(id) && !her.includes(id))) return true
+  }
+  return false
 }
 
 export const landEtterId = new Map(land.map((l) => [l.id, l]))

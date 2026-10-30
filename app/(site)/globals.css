@@ -214,3 +214,36 @@ body {
     text-shadow: 1px 1px 0 rgb(0 0 0 / 0.6);
   }
 }
+
+/* Mer eller mindre: soft entrances for new categories, the result line and the ✓/✕ badge. */
+@keyframes mel-inn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes mel-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  70% {
+    transform: scale(1.15);
+  }
+}
+
+.mel-inn {
+  animation: mel-inn 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mel-pop {
+  animation: mel-pop 320ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mel-inn,
+  .mel-pop {
+    animation: none;
+  }
+}
