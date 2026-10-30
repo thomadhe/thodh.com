@@ -107,10 +107,9 @@ export function retning(a: Land, b: Land) {
 }
 
 /**
- * 100 % = same place, 0 % = the other side of the planet. A gentle curve between Worldle's straight line
- * (neighbours all score 96–98 %) and a square root (a neighbour 600 km away only 82 %): 600 km ≈ 93 %,
- * 2000 km ≈ 82 %, 5000 km ≈ 65 %.
+ * 100 % = same place, 0 % = the other side of the planet, in a straight line like Worldle (max 20 000 km
+ * between country centres): a neighbour 600 km away is 97 %, 2000 km is 90 %.
  */
 export function naerhet(km: number) {
-  return Math.max(0, Math.round(100 * (1 - Math.pow(Math.min(1, km / 20015), 0.75))))
+  return Math.max(0, Math.round(100 * (1 - km / 20000)))
 }

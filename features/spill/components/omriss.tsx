@@ -34,7 +34,7 @@ function Rad({ gjett, fasit }: { gjett: Land; fasit: Land }) {
       </span>
       <span
         className={`rounded-md py-1 text-center font-mono text-xs font-semibold tabular-nums ${
-          riktig ? "bg-emerald-500 text-white" : p >= 75 ? "bg-amber-600 text-white" : "bg-neutral-200 text-neutral-700"
+          riktig ? "bg-emerald-500 text-white" : p >= 90 ? "bg-amber-600 text-white" : "bg-neutral-200 text-neutral-700"
         }`}
       >
         {p} %

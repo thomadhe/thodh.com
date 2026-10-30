@@ -14,10 +14,12 @@ type Tilstand = { v: 3; svar: (0 | 1)[]; resultat: Resultat }
 
 const tom = (): Tilstand => ({ v: 3, svar: [], resultat: { status: "pagar" } })
 /** Count-up, then a beat to see the result, then the chain slides on. */
-const TELL_MS = 900
+const TELL_MS = 1000
+const TIKK_MS = 60
 const VIS_SVAR_MS = 2000
 
-const myk = (p: number) => 1 - Math.pow(1 - p, 3)
+// Eases out gently so the digits keep visibly moving until the very end, in step with the ticks.
+const myk = (p: number) => 1 - Math.pow(1 - p, 2)
 
 /** Rolls the number up from zero with soft ticks, then reports when it has landed. */
 function Teller({ verdi, format, onFerdig }: { verdi: number; format: MelKategori["format"]; onFerdig?: () => void }) {
@@ -32,13 +34,13 @@ function Teller({ verdi, format, onFerdig }: { verdi: number; format: MelKategor
       return
     }
     let ramme = 0
-    let sisteTikk = 0
+    let sisteTikk = -Infinity
     const start = performance.now()
     const steg = (t: number) => {
       const p = Math.min(1, (t - start) / TELL_MS)
       setVist(verdi * myk(p))
-      // Ticks slow down with the numbers, like a mechanical counter.
-      if (p < 1 && t - sisteTikk > 45 + 140 * p) {
+      // One tick every TIKK_MS for as long as the number is still rolling.
+      if (p < 1 && t - sisteTikk >= TIKK_MS) {
         sisteTikk = t
         lyder.tikk()
       }

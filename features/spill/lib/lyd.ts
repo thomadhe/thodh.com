@@ -62,6 +62,24 @@ function tone(frekvens: number, start: number, varighet: number, { type = "sine"
   o.stop(t0 + varighet + 0.03)
 }
 
+/** A short burst of filtered noise, for the soft thud under the "bonk". */
+function stoy(start: number, varighet: number, volum: number, frekvens: number) {
+  const c = kontekst()
+  const t0 = c.currentTime + start
+  const buffer = c.createBuffer(1, Math.ceil(c.sampleRate * varighet), c.sampleRate)
+  const data = buffer.getChannelData(0)
+  for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 3)
+  const kilde = c.createBufferSource()
+  const filter = c.createBiquadFilter()
+  const g = c.createGain()
+  kilde.buffer = buffer
+  filter.type = "bandpass"
+  filter.frequency.value = frekvens
+  g.gain.value = volum
+  kilde.connect(filter).connect(g).connect(c.destination)
+  kilde.start(t0)
+}
+
 function spill(lag: () => void) {
   if (typeof window === "undefined" || !lesPa()) return
   try {
@@ -71,17 +89,18 @@ function spill(lag: () => void) {
   }
 }
 
+// "Myk pop": round, bubbly sounds — a rising plop when right, a soft falling bonk when wrong.
 export const lyder = {
   riktig: () =>
     spill(() => {
-      tone(659.3, 0, 0.14, { type: "triangle", volum: 0.2 })
-      tone(987.8, 0.08, 0.3, { type: "triangle", volum: 0.2 })
+      tone(420, 0, 0.12, { volum: 0.25, til: 880 })
+      tone(660, 0.1, 0.18, { volum: 0.2, til: 1320 })
     }),
   feil: () =>
     spill(() => {
-      tone(196, 0, 0.32, { type: "sawtooth", volum: 0.05, til: 130 })
-      tone(98, 0, 0.34, { type: "sine", volum: 0.16, til: 70 })
+      tone(260, 0, 0.28, { volum: 0.3, til: 110 })
+      stoy(0, 0.06, 0.08, 400)
     }),
-  tikk: () => spill(() => tone(2100, 0, 0.025, { type: "square", volum: 0.015 })),
-  velg: () => spill(() => tone(520, 0, 0.06, { type: "triangle", volum: 0.08 })),
+  tikk: () => spill(() => tone(1400, 0, 0.02, { volum: 0.05 })),
+  velg: () => spill(() => tone(520, 0, 0.05, { volum: 0.1, til: 640 })),
 }
