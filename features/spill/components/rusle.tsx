@@ -105,7 +105,7 @@ export function Rusle({ dato, fra, til }: { dato: string; fra: string; til: stri
       </Kort>
 
       {/* Like Travle: only the start, the goal and what you have named are drawn, until the game is over. */}
-      <Verdenskart farger={farger} titler={titler} fokus={[fra, til]} fremhevet={[fra, til]} bareFargede={!ferdig} />
+      <Verdenskart farger={farger} titler={titler} fokus={kortesteVei(fra, til).slice(1, -1)} fokusKant={[fra, til]} fremhevet={[fra, til]} bareFargede={!ferdig} />
 
       {ferdig ? (
         <Kort className="px-6 py-6 text-center">
