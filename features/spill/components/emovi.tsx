@@ -8,14 +8,15 @@ import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
 import { DelKnapp, Knapp, Kort, sekundarKnapp } from "./spill-ramme"
 
-// Emovi: five emojis, one film, three guesses. Each wrong guess (or the hint button) unlocks a hint:
-// year, then director and leads, then genre.
+// Emovi: five emojis, one film, six tries shared by guesses and hints. A hint costs a try:
+// year, then director and leads, then genre. After all three hints you may give up.
 
-const FORSOK = 3
+const FORSOK = 6
 const HINT = 3
 
 type Gjetning = Filmtittel & { riktig: boolean }
-type Tilstand = { v: 1; gjetninger: Gjetning[]; hint: string[]; fasit?: Filmtittel; resultat: Resultat }
+/** `plakat` is the poster URL once known (null: none), fetched with the answer. */
+type Tilstand = { v: 1; gjetninger: Gjetning[]; hint: string[]; fasit?: Filmtittel; plakat?: string | null; resultat: Resultat }
 const tom = (): Tilstand => ({ v: 1, gjetninger: [], hint: [], resultat: { status: "pagar" } })
 
 async function spor<T>(body: unknown): Promise<T> {
@@ -112,19 +113,42 @@ export function Emovi({ dato, emoji }: { dato: string; emoji: string }) {
   const [opptatt, setOpptatt] = useState(false)
   const [melding, setMelding] = useState<string | null>(null)
   const ferdig = verdi.resultat.status !== "pagar"
+  // Guesses and hints share the tries; a hint is only offered while a guess would still be left after it.
+  const brukt = verdi.gjetninger.length + verdi.hint.length
+  const igjen = FORSOK - brukt
+  const kanHint = !ferdig && verdi.hint.length < HINT && igjen > 1
 
-  const trengerFasit = lastet && ferdig && !verdi.fasit
+  const trengerFasit = lastet && ferdig && (!verdi.fasit || verdi.plakat === undefined)
   useEffect(() => {
     if (!trengerFasit) return
-    spor<Filmtittel>({ type: "fasit", dato })
-      .then((f) => oppdater((t) => ({ ...t, fasit: f })))
+    spor<Filmtittel & { plakat: string | null }>({ type: "fasit", dato })
+      .then(({ tittel, aar, plakat }) => oppdater((t) => ({ ...t, fasit: { tittel, aar }, plakat })))
       .catch(() => undefined)
   }, [trengerFasit, dato, oppdater])
 
   const nesteHint = async () => {
-    if (verdi.hint.length >= HINT) return
-    const { tekst } = await spor<{ tekst: string }>({ type: "hint", dato, nr: verdi.hint.length + 1 })
-    oppdater((t) => (t.hint.length >= HINT || t.hint.includes(tekst) ? t : { ...t, hint: [...t.hint, tekst] }))
+    if (!kanHint || opptatt) return
+    setOpptatt(true)
+    setMelding(null)
+    try {
+      const { tekst } = await spor<{ tekst: string }>({ type: "hint", dato, nr: verdi.hint.length + 1 })
+      lyder.velg()
+      oppdater((t) =>
+        t.resultat.status !== "pagar" || t.hint.length >= HINT || t.hint.includes(tekst) || t.gjetninger.length + t.hint.length >= FORSOK - 1
+          ? t
+          : { ...t, hint: [...t.hint, tekst] },
+      )
+    } catch (e) {
+      setMelding((e as Error).message)
+    } finally {
+      setOpptatt(false)
+    }
+  }
+
+  const giOpp = () => {
+    if (ferdig || kanHint) return
+    lyder.feil()
+    oppdater((t) => (t.resultat.status !== "pagar" ? t : { ...t, resultat: { status: "tapt", etikett: `X/${FORSOK}`, poeng: 0 } }))
   }
 
   const gjett = async (f: Filmtittel) => {
@@ -132,12 +156,12 @@ export function Emovi({ dato, emoji }: { dato: string; emoji: string }) {
     setOpptatt(true)
     setMelding(null)
     try {
-      const { riktig } = await spor<{ riktig: boolean }>({ type: "gjett", dato, tittel: f.tittel, aar: f.aar })
-      const n = verdi.gjetninger.length + 1
+      const { riktig, plakat } = await spor<{ riktig: boolean; plakat?: string | null }>({ type: "gjett", dato, tittel: f.tittel, aar: f.aar })
       oppdater((t) => {
         if (t.resultat.status !== "pagar") return t
+        const n = t.gjetninger.length + t.hint.length + 1
         const gjetninger = [...t.gjetninger, { ...f, riktig }]
-        if (riktig) return { ...t, gjetninger, fasit: f, resultat: { status: "vunnet", etikett: `${n}/${FORSOK}`, poeng: FORSOK + 1 - n } }
+        if (riktig) return { ...t, gjetninger, fasit: f, plakat: plakat ?? null, resultat: { status: "vunnet", etikett: `${n}/${FORSOK}`, poeng: FORSOK + 1 - n } }
         if (n >= FORSOK) return { ...t, gjetninger, resultat: { status: "tapt", etikett: `X/${FORSOK}`, poeng: 0 } }
         return { ...t, gjetninger }
       })
@@ -145,7 +169,6 @@ export function Emovi({ dato, emoji }: { dato: string; emoji: string }) {
       else {
         lyder.feil()
         setMelding("Feil film!")
-        if (n < FORSOK) await nesteHint()
       }
     } catch (e) {
       setMelding((e as Error).message)
@@ -157,9 +180,9 @@ export function Emovi({ dato, emoji }: { dato: string; emoji: string }) {
   if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   const delTekst = [
-    `Emovi · ${formaterDato(dato, "kort")} · ${verdi.resultat.status === "vunnet" ? verdi.gjetninger.length : "X"}/${FORSOK}`,
+    `Emovi · ${formaterDato(dato, "kort")} · ${verdi.resultat.status === "vunnet" ? brukt : "X"}/${FORSOK}`,
     emoji,
-    Array.from({ length: FORSOK }, (_, i) => (verdi.gjetninger[i] ? (verdi.gjetninger[i].riktig ? "🟩" : "🟥") : "⬜")).join(""),
+    [...verdi.hint.map(() => "💡"), ...verdi.gjetninger.map((g) => (g.riktig ? "🟩" : "🟥")), ...Array<string>(Math.max(0, igjen)).fill("⬜")].join(""),
     "thodh.com/spill/emovi",
   ].join("\n")
 
@@ -189,6 +212,10 @@ export function Emovi({ dato, emoji }: { dato: string; emoji: string }) {
 
       {ferdig ? (
         <Kort className="px-6 py-6 text-center">
+          {verdi.plakat ? (
+            // eslint-disable-next-line @next/next/no-img-element -- poster hotlinked from Wikipedia
+            <img src={verdi.plakat} alt={`Plakat for ${verdi.fasit?.tittel ?? "filmen"}`} className="mel-inn mx-auto mb-4 h-56 w-auto rounded-lg shadow-lg" />
+          ) : null}
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-neutral-400">
             {verdi.resultat.status === "vunnet" ? "Riktig!" : "Filmen var"}
           </p>
@@ -203,13 +230,17 @@ export function Emovi({ dato, emoji }: { dato: string; emoji: string }) {
           <FilmVelger utelat={verdi.gjetninger} onVelg={gjett} deaktivert={opptatt} />
           <div className="flex items-center justify-between px-1">
             <p className="font-mono text-[11px] text-neutral-500" role="status">
-              {melding ?? `Forsøk ${verdi.gjetninger.length + 1} av ${FORSOK}`}
+              {melding ?? (igjen === 1 ? "Siste forsøk" : `${igjen} forsøk igjen`)}
             </p>
-            {verdi.hint.length < HINT ? (
-              <button type="button" onClick={() => void nesteHint()} className={sekundarKnapp}>
-                Få et hint
+            {kanHint ? (
+              <button type="button" onClick={() => void nesteHint()} disabled={opptatt} className={sekundarKnapp}>
+                Hint (−1 forsøk)
               </button>
-            ) : null}
+            ) : (
+              <button type="button" onClick={giOpp} className={sekundarKnapp}>
+                Gi opp
+              </button>
+            )}
           </div>
         </>
       )}

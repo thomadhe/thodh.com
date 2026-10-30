@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { kanSpilles } from "@/features/spill/lib/dag"
-import { dagensFilm, enkelTittel } from "@/features/spill/lib/server/emovi"
+import { dagensFilm, enkelTittel, plakat } from "@/features/spill/lib/server/emovi"
 
 const foresporsel = z.discriminatedUnion("type", [
   z.object({ type: z.literal("gjett"), dato: z.string(), tittel: z.string().max(200), aar: z.number().int() }),
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     case "gjett": {
       const tittel = enkelTittel(data.tittel)
       const riktig = data.aar === film.aar && [film.tittel, film.originaltittel].some((t) => t && enkelTittel(t) === tittel)
-      return Response.json({ riktig })
+      return Response.json(riktig ? { riktig, plakat: plakat(film.id) } : { riktig })
     }
     case "hint": {
       const tekst =
@@ -25,6 +25,6 @@ export async function POST(request: Request) {
       return Response.json({ tekst })
     }
     case "fasit":
-      return Response.json({ tittel: film.tittel, aar: film.aar })
+      return Response.json({ tittel: film.tittel, aar: film.aar, plakat: plakat(film.id) })
   }
 }

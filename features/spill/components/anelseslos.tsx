@@ -35,7 +35,7 @@ function andelFor(avstand: number, antall: number) {
   return Math.max(0.04, 1 - (Math.log(avstand) / Math.log(antall)) ** 1.8)
 }
 
-function Rad({ g, antall, fremhevet }: { g: Gjetning; antall: number; fremhevet?: boolean }) {
+function Rad({ g, antall, fremhevet, nr }: { g: Gjetning; antall: number; fremhevet?: boolean; nr?: number }) {
   const andel = andelFor(g.avstand, antall)
   const bar = farge(g.avstand)
   return (
@@ -45,6 +45,9 @@ function Rad({ g, antall, fremhevet }: { g: Gjetning; antall: number; fremhevet?
       }`}
     >
       <span className="absolute inset-y-0 left-0 transition-[width] duration-500" style={{ width: `${andel * 100}%`, background: bar }} />
+      {nr !== undefined ? (
+        <span className="relative mr-2.5 w-6 shrink-0 font-mono text-[11px] tabular-nums text-neutral-950/70 [text-shadow:0_1px_1px_rgb(0_0_0/0.35)]">{nr}</span>
+      ) : null}
       <span className="relative flex-1 truncate text-[15px] font-medium text-neutral-950 [text-shadow:0_1px_1px_rgb(0_0_0/0.35)]">
         {g.ord}
         {g.hint ? <span className="ml-2 font-mono text-[10px] uppercase tracking-wider opacity-70">hint</span> : null}
@@ -53,6 +56,43 @@ function Rad({ g, antall, fremhevet }: { g: Gjetning; antall: number; fremhevet?
         {g.avstand === 1 ? "🏆" : g.avstand.toLocaleString("nb-NO")}
       </span>
     </li>
+  )
+}
+
+/**
+ * The way there, like Clueless after a game: every guess in order as a dot (higher = closer, log scale)
+ * and a line for the best so far.
+ */
+function Vei({ gjetninger, antall }: { gjetninger: Gjetning[]; antall: number }) {
+  const B = 320
+  const H = 140
+  const V = 26
+  const P = 8
+  const n = gjetninger.length
+  const x = (i: number) => V + (n === 1 ? (B - V - P) / 2 : (i / (n - 1)) * (B - V - P))
+  const y = (avstand: number) => P + (Math.log10(avstand) / Math.log10(antall)) * (H - 2 * P)
+  const linje = gjetninger.map((_, i) => {
+    const best = Math.min(...gjetninger.slice(0, i + 1).map((g) => g.avstand))
+    return `${x(i).toFixed(1)},${y(best).toFixed(1)}`
+  })
+  const nivaer = [1, 10, 100, 1000, 10000].filter((t) => t < antall)
+  return (
+    <svg viewBox={`0 0 ${B} ${H}`} className="w-full text-neutral-900" role="img" aria-label="Gjetningene dine i rekkefølge">
+      {nivaer.map((t) => (
+        <g key={t}>
+          <line x1={V} x2={B - P} y1={y(t)} y2={y(t)} stroke="currentColor" strokeOpacity={0.08} />
+          <text x={V - 4} y={y(t) + 3} textAnchor="end" className="fill-neutral-400 font-mono text-[8px]">
+            {t >= 1000 ? `${t / 1000}k` : t}
+          </text>
+        </g>
+      ))}
+      <polyline points={linje.join(" ")} fill="none" stroke="currentColor" strokeOpacity={0.5} strokeWidth={1.5} strokeLinejoin="round" />
+      {gjetninger.map((g, i) => (
+        <circle key={g.ord} cx={x(i)} cy={y(g.avstand)} r={n > 60 ? 2.5 : 3.5} fill={farge(g.avstand)} stroke={g.hint ? "currentColor" : "none"} strokeWidth={1}>
+          <title>{`${i + 1}. ${g.ord}: ${g.avstand}${g.hint ? " (hint)" : ""}`}</title>
+        </circle>
+      ))}
+    </svg>
   )
 }
 
@@ -74,6 +114,7 @@ export function Anelseslos({ dato, antall }: { dato: string; antall: number }) {
   const [siste, setSiste] = useState<string | null>(null)
   const [opptatt, setOpptatt] = useState(false)
   const [bekreftGiOpp, setBekreftGiOpp] = useState(false)
+  const [visVei, setVisVei] = useState(false)
   const felt = useRef<HTMLInputElement>(null)
 
   const ferdig = verdi.resultat.status !== "pagar"
@@ -273,7 +314,40 @@ export function Anelseslos({ dato, antall }: { dato: string; antall: number }) {
         </ul>
       ) : null}
 
-      {sortert.length ? (
+      {ferdig && verdi.gjetninger.length > 1 ? (
+        <div className="flex justify-center gap-1" role="tablist">
+          {[
+            ["Nærmest først", false],
+            ["Din vei", true],
+          ].map(([navn, vei]) => (
+            <button
+              key={String(vei)}
+              type="button"
+              role="tab"
+              aria-selected={visVei === vei}
+              onClick={() => setVisVei(vei as boolean)}
+              className={`rounded-full px-3 py-1 font-mono text-[11px] uppercase tracking-widest transition ${
+                visVei === vei ? "bg-neutral-900 text-neutral-50" : "text-neutral-500 hover:text-neutral-900"
+              }`}
+            >
+              {navn}
+            </button>
+          ))}
+        </div>
+      ) : null}
+
+      {ferdig && visVei && verdi.gjetninger.length > 1 ? (
+        <>
+          <Kort className="px-3 py-3">
+            <Vei gjetninger={verdi.gjetninger} antall={antall} />
+          </Kort>
+          <ul className="flex flex-col gap-1.5">
+            {verdi.gjetninger.map((g, i) => (
+              <Rad key={g.ord} g={g} antall={antall} nr={i + 1} />
+            ))}
+          </ul>
+        </>
+      ) : sortert.length ? (
         <ul className="flex flex-col gap-1.5">
           {sortert.map((g) => (
             <Rad key={g.ord} g={g} antall={antall} />

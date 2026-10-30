@@ -1,0 +1,1202 @@
+{
+ "titanic-1997": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/18/Titanic_%281997_film%29_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Titanic_(1997_film)_poster.png"
+ },
+ "the-godfather-1972": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/1c/Godfather_ver1.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Godfather_ver1.jpg"
+ },
+ "pulp-fiction-1994": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/3b/Pulp_Fiction_%281994%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Pulp_Fiction_(1994)_poster.jpg"
+ },
+ "jurassic-park-1993": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/e/e7/Jurassic_Park_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Jurassic_Park_poster.jpg"
+ },
+ "jaws-1975": {
+  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Jaws_movie_poster.jpg/500px-Jaws_movie_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Jaws_movie_poster.jpg"
+ },
+ "star-wars-a-new-hope-1977": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/87/StarWarsMoviePoster1977.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:StarWarsMoviePoster1977.jpg"
+ },
+ "i-robot-2004": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/3b/Movie_poster_i_robot.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Movie_poster_i_robot.jpg"
+ },
+ "lucy-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/14/Lucy_%282014_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Lucy_(2014_film)_poster.jpg"
+ },
+ "looper-2012": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/0a/Looper_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Looper_poster.jpg"
+ },
+ "arrival-2016": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/df/Arrival%2C_Movie_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Arrival,_Movie_Poster.jpg"
+ },
+ "oblivion-2013": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/2/2e/Oblivion2013Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Oblivion2013Poster.jpg"
+ },
+ "harry-potter-and-the-philosopher-s-stone-2001": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/7/7a/Harry_Potter_and_the_Philosopher%27s_Stone_banner.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Harry_Potter_and_the_Philosopher's_Stone_banner.jpg"
+ },
+ "maleficent-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/55/Maleficent_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Maleficent_poster.jpg"
+ },
+ "alice-in-wonderland-2010": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/36/Alice_in_Wonderland_%282010_film%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Alice_in_Wonderland_(2010_film).png"
+ },
+ "pan-s-labyrinth-2006": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/67/Pan%27s_Labyrinth.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Pan's_Labyrinth.jpg"
+ },
+ "stardust-2007": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/6f/Stardust_promo_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Stardust_promo_poster.jpg"
+ },
+ "big-fish-2003": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/41/Big_Fish_movie_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Big_Fish_movie_poster.png"
+ },
+ "the-lord-of-the-rings-the-fellowship-of-the-ring-2001": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/f/fb/Lord_Rings_Fellowship_Ring.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Lord_Rings_Fellowship_Ring.jpg"
+ },
+ "the-last-samurai-2003": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/c/c6/The_Last_Samurai.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Last_Samurai.jpg"
+ },
+ "kingdom-of-heaven-2005": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/9e/KoHposter.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:KoHposter.jpg"
+ },
+ "apocalypto-2006": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/62/Apocalypto-poster01.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Apocalypto-poster01.jpg"
+ },
+ "iron-man-2008": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/02/Iron_Man_%282008_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Iron_Man_(2008_film)_poster.jpg"
+ },
+ "the-avengers-2012": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/8a/The_Avengers_%282012_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Avengers_(2012_film)_poster.jpg"
+ },
+ "hancock-2008": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/c/c9/Hancockposter.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Hancockposter.jpg"
+ },
+ "kick-ass-2010": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/30/Kick-Ass_film_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Kick-Ass_film_poster.jpg"
+ },
+ "black-panther-2018": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/d6/Black_Panther_%28film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Black_Panther_(film)_poster.jpg"
+ },
+ "thor-ragnarok-2017": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/7/7d/Thor_Ragnarok_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Thor_Ragnarok_poster.jpg"
+ },
+ "guardians-of-the-galaxy-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/33/Guardians_of_the_Galaxy_%28film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Guardians_of_the_Galaxy_(film)_poster.jpg"
+ },
+ "doctor-strange-2016": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/a1/Doctor_Strange_%282016_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Doctor_Strange_(2016_film)_poster.jpg"
+ },
+ "rango-2011": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/6d/Rango2011Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Rango2011Poster.jpg"
+ },
+ "spider-man-2002": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/6c/Spider-Man_%282002_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Spider-Man_(2002_film)_poster.jpg"
+ },
+ "megamind-2010": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/89/Megamind2010Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Megamind2010Poster.jpg"
+ },
+ "deadpool-2016": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/2/23/Deadpool_%282016_poster%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Deadpool_(2016_poster).png"
+ },
+ "baby-driver-2017": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/8e/Baby_Driver_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Baby_Driver_poster.jpg"
+ },
+ "the-dark-knight-2008": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/1c/The_Dark_Knight_%282008_film%29.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Dark_Knight_(2008_film).jpg"
+ },
+ "prisoners-2013": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/63/Prisoners2013Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Prisoners2013Poster.jpg"
+ },
+ "joker-2019": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/e/e1/Joker_%282019_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Joker_(2019_film)_poster.jpg"
+ },
+ "split-2016": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/31/Split_%282017_film%29.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Split_(2017_film).jpg"
+ },
+ "wonder-woman-2017": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/b0/Wonder_Woman_%282017_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Wonder_Woman_(2017_film)_poster.jpg"
+ },
+ "toy-story-1995": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/13/Toy_Story.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Toy_Story.jpg"
+ },
+ "finding-nemo-2003": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/2/29/Finding_Nemo.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Finding_Nemo.jpg"
+ },
+ "monsters-inc-2001": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/63/Monsters_Inc.JPG",
+  "kilde": "https://en.wikipedia.org/wiki/File:Monsters_Inc.JPG"
+ },
+ "up-2009": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/05/Up_%282009_film%29.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Up_(2009_film).jpg"
+ },
+ "inside-out-2015": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/0a/Inside_Out_%282015_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Inside_Out_(2015_film)_poster.jpg"
+ },
+ "lilo-and-stitch-2002": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/c/c6/LiloandStitchmovieposter.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:LiloandStitchmovieposter.jpg"
+ },
+ "wall-e-2008": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/4c/WALL-E_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:WALL-E_poster.jpg"
+ },
+ "ratatouille-2007": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/50/RatatouillePoster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:RatatouillePoster.jpg"
+ },
+ "the-incredibles-2004": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/2/27/The_Incredibles_%282004_animated_feature_film%29.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Incredibles_(2004_animated_feature_film).jpg"
+ },
+ "cars-2006": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/34/Cars_2006.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Cars_2006.jpg"
+ },
+ "coco-2017": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/98/Coco_%282017_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Coco_(2017_film)_poster.jpg"
+ },
+ "frost-2013": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/05/Frozen_%282013_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Frozen_(2013_film)_poster.jpg"
+ },
+ "moana-2016": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/2/26/Moana_Teaser_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Moana_Teaser_Poster.jpg"
+ },
+ "encanto-2021": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/83/Encanto_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Encanto_poster.jpg"
+ },
+ "tangled-2010": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/a8/Tangled_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Tangled_poster.jpg"
+ },
+ "zootropolis-2016": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/96/Zootopia_%28movie_poster%29.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Zootopia_(movie_poster).jpg"
+ },
+ "big-hero-6-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/4b/Big_Hero_6_%28film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Big_Hero_6_(film)_poster.jpg"
+ },
+ "aladdin-1992": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/bd/Aladdin_%281992_Disney_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Aladdin_(1992_Disney_film)_poster.jpg"
+ },
+ "lovenes-konge-1994": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/3d/The_Lion_King_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Lion_King_poster.jpg"
+ },
+ "beauty-and-the-beast-1991": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/5e/Beauty_and_the_Beast_%281991_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Beauty_and_the_Beast_(1991_film)_poster.jpg"
+ },
+ "the-little-mermaid-1989": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/c/c0/The_Little_Mermaid_%28Official_1989_Film_Poster%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Little_Mermaid_(Official_1989_Film_Poster).png"
+ },
+ "mulan-1998": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/a3/Movie_poster_mulan.JPG",
+  "kilde": "https://en.wikipedia.org/wiki/File:Movie_poster_mulan.JPG"
+ },
+ "shrek-2001": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/7/7b/Shrek_%282001_animated_feature_film%29.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Shrek_(2001_animated_feature_film).jpg"
+ },
+ "cloudy-with-a-chance-of-meatballs-2009": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/d1/Cloudy_with_a_chance_of_meatballs_theataposter.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Cloudy_with_a_chance_of_meatballs_theataposter.jpg"
+ },
+ "madagascar-2005": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/36/Madagascar_Theatrical_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Madagascar_Theatrical_Poster.jpg"
+ },
+ "kung-fu-panda-2008": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/7/76/Kungfupanda.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Kungfupanda.jpg"
+ },
+ "how-to-train-your-dragon-2010": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/99/How_to_Train_Your_Dragon_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:How_to_Train_Your_Dragon_Poster.jpg"
+ },
+ "despicable-me-2010": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/c/c0/Despicable_Me_%282010_animated_feature_film%29.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Despicable_Me_(2010_animated_feature_film).jpg"
+ },
+ "leon-1994": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/03/Leon-poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Leon-poster.jpg"
+ },
+ "ice-age-2002": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/3c/Ice_Age_%282002_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Ice_Age_(2002_film)_poster.jpg"
+ },
+ "the-lego-movie-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/10/The_Lego_Movie_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Lego_Movie_poster.jpg"
+ },
+ "spirited-away-2001": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/db/Spirited_Away_Japanese_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Spirited_Away_Japanese_poster.png"
+ },
+ "sleepy-hollow-1999": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/09/Sleepy_hollow_ver2.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Sleepy_hollow_ver2.jpg"
+ },
+ "the-super-mario-bros-movie-2023": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/44/The_Super_Mario_Bros._Movie_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Super_Mario_Bros._Movie_poster.jpg"
+ },
+ "barbie-2023": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/0b/Barbie_2023_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Barbie_2023_poster.jpg"
+ },
+ "oppenheimer-2023": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/4a/Oppenheimer_%28film%29.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Oppenheimer_(film).jpg"
+ },
+ "hugo-2011": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/7/73/Hugo_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Hugo_Poster.jpg"
+ },
+ "coraline-2009": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/36/Coraline_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Coraline_poster.jpg"
+ },
+ "the-nightmare-before-christmas-1993": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/9a/The_nightmare_before_christmas_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_nightmare_before_christmas_poster.jpg"
+ },
+ "home-alone-1990": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/7/76/Home_alone_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Home_alone_poster.jpg"
+ },
+ "elf-2003": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/df/Elf_movie.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Elf_movie.jpg"
+ },
+ "how-the-grinch-stole-christmas-2000": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/e/e7/How_the_Grinch_Stole_Christmas_film_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:How_the_Grinch_Stole_Christmas_film_poster.jpg"
+ },
+ "die-hard-1988": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/c/ca/Die_Hard_%281988_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Die_Hard_(1988_film)_poster.jpg"
+ },
+ "love-actually-2003": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/e/eb/Love_Actually_movie.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Love_Actually_movie.jpg"
+ },
+ "the-polar-express-2004": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/2/24/The_Polar_Express_%282004%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Polar_Express_(2004)_poster.jpg"
+ },
+ "the-shawshank-redemption-1994": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:ShawshankRedemptionMoviePoster.jpg"
+ },
+ "forrest-gump-1994": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/67/Forrest_Gump_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Forrest_Gump_poster.jpg"
+ },
+ "fight-club-1999": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/f/fc/Fight_Club_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Fight_Club_poster.jpg"
+ },
+ "the-matrix-1999": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/db/The_Matrix.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Matrix.png"
+ },
+ "gladiator-2000": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/f/fb/Gladiator_%282000_film_poster%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Gladiator_(2000_film_poster).png"
+ },
+ "inception-2010": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Inception_(2010)_theatrical_poster.jpg"
+ },
+ "interstellar-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Interstellar_film_poster.jpg"
+ },
+ "back-to-the-future-1985": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/d2/Back_to_the_Future.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Back_to_the_Future.jpg"
+ },
+ "terminator-2-judgment-day-1991": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/5e/Terminator_2-Judgment_Day.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Terminator_2-Judgment_Day.png"
+ },
+ "alien-1979": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/c/c3/Alien_movie_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Alien_movie_poster.jpg"
+ },
+ "memento-2000": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/c/c7/Memento_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Memento_poster.jpg"
+ },
+ "raiders-of-the-lost-ark-1981": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/4c/Raiders_of_the_Lost_Ark.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Raiders_of_the_Lost_Ark.jpg"
+ },
+ "e-t-the-extra-terrestrial-1982": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/66/E_t_the_extra_terrestrial_ver3.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:E_t_the_extra_terrestrial_ver3.jpg"
+ },
+ "cloverfield-2008": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/f/f1/Cloverfield_theatrical_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Cloverfield_theatrical_poster.jpg"
+ },
+ "the-silence-of-the-lambs-1991": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/86/The_Silence_of_the_Lambs_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Silence_of_the_Lambs_poster.jpg"
+ },
+ "se7en-1995": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/68/Seven_%28movie%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Seven_(movie)_poster.jpg"
+ },
+ "schindler-s-list-1993": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/38/Schindler%27s_List_movie.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Schindler's_List_movie.jpg"
+ },
+ "saving-private-ryan-1998": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/ac/Saving_Private_Ryan_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Saving_Private_Ryan_poster.jpg"
+ },
+ "goodfellas-1990": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/7/7b/Goodfellas.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Goodfellas.jpg"
+ },
+ "scarface-1983": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/7/71/Scarface_-_1983_film.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Scarface_-_1983_film.jpg"
+ },
+ "ex-machina-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/ba/Ex-machina-uk-poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Ex-machina-uk-poster.jpg"
+ },
+ "the-shining-1980": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/1d/The_Shining_%281980%29_U.K._release_poster_-_The_tide_of_terror_that_swept_America_IS_HERE.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Shining_(1980)_U.K._release_poster_-_The_tide_of_terror_that_swept_America_IS_HERE.jpg"
+ },
+ "howl-s-moving-castle-2004": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/a0/Howls-moving-castleposter.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Howls-moving-castleposter.jpg"
+ },
+ "watchmen-2009": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/bc/Watchmen_film_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Watchmen_film_poster.jpg"
+ },
+ "the-wizard-of-oz-1939": {
+  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/69/Wizard_of_oz_movie_poster.jpg/500px-Wizard_of_oz_movie_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Wizard_of_oz_movie_poster.jpg"
+ },
+ "the-sound-of-music-1965": {
+  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Sound_of_music.jpg/500px-Sound_of_music.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Sound_of_music.jpg"
+ },
+ "captain-america-civil-war-2016": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/53/Captain_America_Civil_War_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Captain_America_Civil_War_poster.jpg"
+ },
+ "grease-1978": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/e/e2/Grease_ver2.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Grease_ver2.jpg"
+ },
+ "dirty-dancing-1987": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/00/Dirty_Dancing.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Dirty_Dancing.jpg"
+ },
+ "rocky-1976": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/18/Rocky_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Rocky_poster.jpg"
+ },
+ "the-cabin-in-the-woods-2011": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/84/The_Cabin_in_the_Woods_%282012%29_theatrical_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Cabin_in_the_Woods_(2012)_theatrical_poster.jpg"
+ },
+ "top-gun-maverick-2022": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/13/Top_Gun_Maverick_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Top_Gun_Maverick_Poster.jpg"
+ },
+ "mission-impossible-1996": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/e/e1/MissionImpossiblePoster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:MissionImpossiblePoster.jpg"
+ },
+ "ghostbusters-1984": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/2/2f/Ghostbusters_%281984%29_theatrical_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Ghostbusters_(1984)_theatrical_poster.png"
+ },
+ "the-breakfast-club-1985": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/d1/The_Breakfast_Club_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Breakfast_Club_poster.jpg"
+ },
+ "ferris-bueller-s-day-off-1986": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/9b/Ferris_Bueller%27s_Day_Off.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Ferris_Bueller's_Day_Off.jpg"
+ },
+ "beetlejuice-1988": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/7/76/Beetlejuice_%281988_film_poster%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Beetlejuice_(1988_film_poster).png"
+ },
+ "edward-scissorhands-1990": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/3b/Edwardscissorhandsposter.JPG",
+  "kilde": "https://en.wikipedia.org/wiki/File:Edwardscissorhandsposter.JPG"
+ },
+ "pirates-of-the-caribbean-the-curse-of-the-black-pearl-2003": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/89/Pirates_of_the_Caribbean_-_The_Curse_of_the_Black_Pearl.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Pirates_of_the_Caribbean_-_The_Curse_of_the_Black_Pearl.png"
+ },
+ "charlie-and-the-chocolate-factory-2005": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/17/Charlie_and_the_Chocolate_Factory_%28film%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Charlie_and_the_Chocolate_Factory_(film).png"
+ },
+ "mamma-mia-2008": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/95/Mamma_Mia_%282008%29_US_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Mamma_Mia_(2008)_US_poster.jpg"
+ },
+ "les-miserables-2012": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/b0/Les-miserables-movie-poster1.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Les-miserables-movie-poster1.jpg"
+ },
+ "la-la-land-2016": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/ab/La_La_Land_%28film%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:La_La_Land_(film).png"
+ },
+ "the-greatest-showman-2017": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/10/The_Greatest_Showman_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Greatest_Showman_poster.png"
+ },
+ "bohemian-rhapsody-2018": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/2/2e/Bohemian_Rhapsody_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Bohemian_Rhapsody_poster.png"
+ },
+ "whiplash-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/01/Whiplash_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Whiplash_poster.jpg"
+ },
+ "parasite-2019": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/53/Parasite_%282019_film%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Parasite_(2019_film).png"
+ },
+ "get-out-2017": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/a3/Get_Out_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Get_Out_poster.png"
+ },
+ "a-quiet-place-2018": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/a0/A_Quiet_Place_film_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:A_Quiet_Place_film_poster.png"
+ },
+ "it-2017": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/5a/It_%282017%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:It_(2017)_poster.jpg"
+ },
+ "the-conjuring-2013": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/8c/The_Conjuring_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Conjuring_poster.jpg"
+ },
+ "saw-2004": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/56/Saw_official_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Saw_official_poster.jpg"
+ },
+ "scream-1996": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/86/Scream_%281996_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Scream_(1996_film)_poster.jpg"
+ },
+ "halloween-1978": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/af/Halloween_%281978%29_theatrical_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Halloween_(1978)_theatrical_poster.jpg"
+ },
+ "a-nightmare-on-elm-street-1984": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/f/fa/A_Nightmare_on_Elm_Street_%281984%29_theatrical_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:A_Nightmare_on_Elm_Street_(1984)_theatrical_poster.jpg"
+ },
+ "the-exorcist-1973": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/7/7b/Exorcist_ver2.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Exorcist_ver2.jpg"
+ },
+ "hereditary-2018": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/d9/Hereditary.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Hereditary.png"
+ },
+ "midsommar-2019": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/47/Midsommar_%282019_film_poster%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Midsommar_(2019_film_poster).png"
+ },
+ "the-ring-2002": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/37/Theringpostere.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Theringpostere.jpg"
+ },
+ "final-destination-2000": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/a3/Final_Destination_movie.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Final_Destination_movie.jpg"
+ },
+ "superbad-2007": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/8b/Superbad_Poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Superbad_Poster.png"
+ },
+ "the-hangover-2009": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/b9/Hangoverposter09.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Hangoverposter09.jpg"
+ },
+ "bridesmaids-2011": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/df/BridesmaidsPoster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:BridesmaidsPoster.jpg"
+ },
+ "mean-girls-2004": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/ac/Mean_Girls_film_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Mean_Girls_film_poster.png"
+ },
+ "clueless-1995": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/5a/Clueless_film_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Clueless_film_poster.png"
+ },
+ "legally-blonde-2001": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/be/Legally_Blonde_film_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Legally_Blonde_film_poster.png"
+ },
+ "21-jump-street-2012": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/93/21JumpStreetfilm.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:21JumpStreetfilm.jpg"
+ },
+ "step-brothers-2008": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/d9/StepbrothersMP08.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:StepbrothersMP08.jpg"
+ },
+ "dumb-and-dumber-1994": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/64/Dumbanddumber.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Dumbanddumber.jpg"
+ },
+ "ace-ventura-pet-detective-1994": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/84/Ace_ventura_pet_detective.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Ace_ventura_pet_detective.jpg"
+ },
+ "the-mask-1994": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/4b/The_Mask_%28film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Mask_(film)_poster.jpg"
+ },
+ "liar-liar-1997": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/3d/Liar_Liar_poster.JPG",
+  "kilde": "https://en.wikipedia.org/wiki/File:Liar_Liar_poster.JPG"
+ },
+ "bruce-almighty-2003": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/60/BruceAlmighty_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:BruceAlmighty_poster.jpg"
+ },
+ "mrs-doubtfire-1993": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/5a/Mrs_Doubtfire.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Mrs_Doubtfire.jpg"
+ },
+ "borat-2006": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/39/Borat_ver2.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Borat_ver2.jpg"
+ },
+ "austin-powers-international-man-of-mystery-1997": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/d7/Austin_Powers_International_Man_of_Mystery_theatrical_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Austin_Powers_International_Man_of_Mystery_theatrical_poster.jpg"
+ },
+ "zoolander-2001": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/7/7c/Movie_poster_zoolander.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Movie_poster_zoolander.jpg"
+ },
+ "tropic-thunder-2008": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/d6/Tropic_thunder_ver3.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Tropic_thunder_ver3.jpg"
+ },
+ "meet-the-parents-2000": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/05/Meet_the_parents_ver2.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Meet_the_parents_ver2.jpg"
+ },
+ "wedding-crashers-2005": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/3e/Wedding_crashers_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Wedding_crashers_poster.jpg"
+ },
+ "the-wolf-of-wall-street-2013": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/d8/The_Wolf_of_Wall_Street_%282013%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Wolf_of_Wall_Street_(2013).png"
+ },
+ "pretty-woman-1990": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/b6/Pretty_woman_movie.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Pretty_woman_movie.jpg"
+ },
+ "notting-hill-1999": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/38/NottingHillRobertsGrant.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:NottingHillRobertsGrant.jpg"
+ },
+ "bridget-jones-s-diary-2001": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/17/BridgetJonesDiaryMoviePoster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:BridgetJonesDiaryMoviePoster.jpg"
+ },
+ "10-things-i-hate-about-you-1999": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/95/10_Things_I_Hate_About_You_film.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:10_Things_I_Hate_About_You_film.jpg"
+ },
+ "the-notebook-2004": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/86/Posternotebook.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Posternotebook.jpg"
+ },
+ "twilight-2008": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/b6/Twilight_%282008_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Twilight_(2008_film)_poster.jpg"
+ },
+ "the-hunger-games-2012": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/42/HungerGamesPoster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:HungerGamesPoster.jpg"
+ },
+ "the-fault-in-our-stars-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/41/The_Fault_in_Our_Stars_%28Official_Film_Poster%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Fault_in_Our_Stars_(Official_Film_Poster).png"
+ },
+ "brave-2012": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/96/Brave_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Brave_Poster.jpg"
+ },
+ "pride-and-prejudice-2005": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/03/Prideandprejudiceposter.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Prideandprejudiceposter.jpg"
+ },
+ "the-princess-bride-1987": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/db/Princess_bride.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Princess_bride.jpg"
+ },
+ "dune-2021": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/8e/Dune_%282021_film%29.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Dune_(2021_film).jpg"
+ },
+ "the-imitation-game-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/87/The_Imitation_Game_%282014%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Imitation_Game_(2014).png"
+ },
+ "blade-runner-2049-2017": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/9b/Blade_Runner_2049_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Blade_Runner_2049_poster.png"
+ },
+ "blood-diamond-2006": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/5a/Blooddiamondposter.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Blooddiamondposter.jpg"
+ },
+ "avatar-2009": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/d6/Avatar_%282009_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Avatar_(2009_film)_poster.jpg"
+ },
+ "gran-torino-2008": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/c/c6/Gran_Torino_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Gran_Torino_poster.jpg"
+ },
+ "mad-max-fury-road-2015": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/6e/Mad_Max_Fury_Road.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Mad_Max_Fury_Road.jpg"
+ },
+ "john-wick-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/98/John_Wick_TeaserPoster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:John_Wick_TeaserPoster.jpg"
+ },
+ "kill-bill-vol-1-2003": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/2/2c/Kill_Bill_Volume_1.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Kill_Bill_Volume_1.png"
+ },
+ "django-unchained-2012": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/8b/Django_Unchained_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Django_Unchained_Poster.jpg"
+ },
+ "inglourious-basterds-2009": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/c/c3/Inglourious_Basterds_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Inglourious_Basterds_poster.jpg"
+ },
+ "once-upon-a-time-in-hollywood-2019": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/a6/Once_Upon_a_Time_in_Hollywood_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Once_Upon_a_Time_in_Hollywood_poster.png"
+ },
+ "district-9-2009": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/d7/District_nine_ver2.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:District_nine_ver2.jpg"
+ },
+ "easy-a-2010": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/5c/Easy_A_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Easy_A_poster.jpg"
+ },
+ "skyfall-2012": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/a7/Skyfall_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Skyfall_poster.jpg"
+ },
+ "snatch-2000": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/a7/Snatch_ver4.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Snatch_ver4.jpg"
+ },
+ "anchorman-the-legend-of-ron-burgundy-2004": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/64/Movie_poster_Anchorman_The_Legend_of_Ron_Burgundy.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Movie_poster_Anchorman_The_Legend_of_Ron_Burgundy.jpg"
+ },
+ "the-fast-and-the-furious-2001": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/54/Fast_and_the_furious_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Fast_and_the_furious_poster.jpg"
+ },
+ "transformers-2007": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/66/Transformers07.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Transformers07.jpg"
+ },
+ "armageddon-1998": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/f/fc/Armageddon-poster06.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Armageddon-poster06.jpg"
+ },
+ "independence-day-1996": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/bb/Independence_day_movieposter.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Independence_day_movieposter.jpg"
+ },
+ "men-in-black-1997": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/f/fb/Men_in_Black_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Men_in_Black_Poster.jpg"
+ },
+ "the-day-after-tomorrow-2004": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/58/The_Day_After_Tomorrow_movie.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Day_After_Tomorrow_movie.jpg"
+ },
+ "gravity-2013": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/f/f6/Gravity_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Gravity_Poster.jpg"
+ },
+ "the-martian-2015": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/c/cd/The_Martian_film_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Martian_film_poster.jpg"
+ },
+ "ready-player-one-2018": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/7/74/Ready_Player_One_%28film%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Ready_Player_One_(film).png"
+ },
+ "jumanji-1995": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/b6/Jumanji_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Jumanji_poster.jpg"
+ },
+ "moulin-rouge-2001": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/9f/Moulin_rouge_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Moulin_rouge_poster.jpg"
+ },
+ "the-truman-show-1998": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/c/cd/Trumanshow.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Trumanshow.jpg"
+ },
+ "cast-away-2000": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/a7/Cast_away_film_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Cast_away_film_poster.jpg"
+ },
+ "the-green-mile-1999": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/e/e2/The_Green_Mile_%28movie_poster%29.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Green_Mile_(movie_poster).jpg"
+ },
+ "catch-me-if-you-can-2002": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/4d/Catch_Me_If_You_Can_2002_movie.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Catch_Me_If_You_Can_2002_movie.jpg"
+ },
+ "the-prestige-2006": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/d2/Prestige_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Prestige_poster.jpg"
+ },
+ "shutter-island-2010": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/7/76/Shutterislandposter.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Shutterislandposter.jpg"
+ },
+ "the-departed-2006": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/50/Departed234.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Departed234.jpg"
+ },
+ "gone-girl-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/05/Gone_Girl_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Gone_Girl_Poster.jpg"
+ },
+ "the-social-network-2010": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/8c/The_Social_Network_film_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Social_Network_film_poster.png"
+ },
+ "knives-out-2019": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/1f/Knives_Out_poster.jpeg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Knives_Out_poster.jpeg"
+ },
+ "the-grand-budapest-hotel-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/1c/The_Grand_Budapest_Hotel.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Grand_Budapest_Hotel.png"
+ },
+ "everything-everywhere-all-at-once-2022": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/1e/Everything_Everywhere_All_at_Once.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Everything_Everywhere_All_at_Once.jpg"
+ },
+ "wicked-2024": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/3c/Wicked_%282024_film%29_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Wicked_(2024_film)_poster.png"
+ },
+ "intouchables-2011": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/93/The_Intouchables.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Intouchables.jpg"
+ },
+ "big-1988": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/be/Big_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Big_Poster.jpg"
+ },
+ "tarzan-1999": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/4f/Tarzan_%281999_film%29_-_theatrical_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Tarzan_(1999_film)_-_theatrical_poster.jpg"
+ },
+ "hercules-1997": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/65/Hercules_%281997_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Hercules_(1997_film)_poster.jpg"
+ },
+ "soul-2020": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/39/Soul_%282020_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Soul_(2020_film)_poster.jpg"
+ },
+ "rush-hour-1998": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/49/Rush_Hour_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Rush_Hour_poster.png"
+ },
+ "bad-boys-1995": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/a8/Bad_Boys.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Bad_Boys.jpg"
+ },
+ "taken-2008": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/e/ed/Taken_film_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Taken_film_poster.jpg"
+ },
+ "300-2006": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/5c/300poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:300poster.jpg"
+ },
+ "troy-2004": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/9f/Troy_03500296.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Troy_03500296.png"
+ },
+ "braveheart-1995": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/e/e1/Braveheart_film_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Braveheart_film_poster.png"
+ },
+ "king-kong-2005": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/6a/Kingkong_bigfinal1.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Kingkong_bigfinal1.jpg"
+ },
+ "pacific-rim-2013": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/f/f3/Pacific_Rim_FilmPoster.jpeg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Pacific_Rim_FilmPoster.jpeg"
+ },
+ "fury-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/17/Fury_2014_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Fury_2014_poster.jpg"
+ },
+ "speed-1994": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/45/Speed_movie_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Speed_movie_poster.jpg"
+ },
+ "edge-of-tomorrow-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/f/f9/Edge_of_Tomorrow_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Edge_of_Tomorrow_Poster.jpg"
+ },
+ "minority-report-2002": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/44/Minority_Report_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Minority_Report_Poster.jpg"
+ },
+ "the-bourne-identity-2002": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/49/The_Bourne_Identity_%282002%29_US_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Bourne_Identity_(2002)_US_poster.jpg"
+ },
+ "ocean-s-eleven-2001": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/68/Ocean%27s_Eleven_2001_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Ocean's_Eleven_2001_Poster.jpg"
+ },
+ "mr-and-mrs-smith-2005": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/f/fd/Mr_and_Mrs_Smith_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Mr_and_Mrs_Smith_poster.png"
+ },
+ "american-psycho-2000": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/0c/American_Psycho.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:American_Psycho.png"
+ },
+ "good-will-hunting-1997": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/52/Good_Will_Hunting.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Good_Will_Hunting.png"
+ },
+ "dead-poets-society-1989": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/86/Dead_poets_society.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Dead_poets_society.png"
+ },
+ "the-pursuit-of-happyness-2006": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/81/Poster-pursuithappyness.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Poster-pursuithappyness.jpg"
+ },
+ "the-king-s-speech-2010": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/4/4a/The_King%27s_Speech_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_King's_Speech_poster.jpg"
+ },
+ "the-revenant-2015": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/b6/The_Revenant_2015_film_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Revenant_2015_film_poster.jpg"
+ },
+ "slumdog-millionaire-2008": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/92/Slumdog_Millionaire_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Slumdog_Millionaire_poster.png"
+ },
+ "wreck-it-ralph-2012": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/15/Wreckitralphposter.jpeg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Wreckitralphposter.jpeg"
+ },
+ "life-of-pi-2012": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/57/Life_of_Pi_2012_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Life_of_Pi_2012_Poster.jpg"
+ },
+ "black-swan-2010": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/68/Black_Swan_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Black_Swan_poster.jpg"
+ },
+ "hotel-transylvania-2012": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/f/f5/HotelTransylvania.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:HotelTransylvania.jpg"
+ },
+ "ted-2012": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/d4/Ted_%28film%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Ted_(film).png"
+ },
+ "american-pie-1999": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/c/c8/American_Pie1.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:American_Pie1.jpg"
+ },
+ "the-fifth-element-1997": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/65/Fifth_element_poster_%281997%29.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Fifth_element_poster_(1997).jpg"
+ },
+ "groundhog-day-1993": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/b1/Groundhog_Day_%28movie_poster%29.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Groundhog_Day_(movie_poster).jpg"
+ },
+ "logan-2017": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/37/Logan_2017_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Logan_2017_poster.jpg"
+ },
+ "venom-2018": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/10/Venom_%282018_film%29_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Venom_(2018_film)_poster.png"
+ },
+ "the-sixth-sense-1999": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/a4/The_Sixth_Sense_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Sixth_Sense_poster.png"
+ },
+ "gremlins-1984": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/3d/Gremlins1.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Gremlins1.jpg"
+ },
+ "the-goonies-1985": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/c/c6/The_Goonies.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Goonies.jpg"
+ },
+ "amelie-2001": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/53/Amelie_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Amelie_poster.jpg"
+ },
+ "the-karate-kid-1984": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/a9/Karate_kid.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Karate_kid.jpg"
+ },
+ "psycho-1960": {
+  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Psycho_%281960%29_theatrical_poster_%28retouched%29.jpg/500px-Psycho_%281960%29_theatrical_poster_%28retouched%29.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Psycho_(1960)_theatrical_poster_(retouched).jpg"
+ },
+ "i-am-legend-2007": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/df/I_am_legend_teaser.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:I_am_legend_teaser.jpg"
+ },
+ "the-mummy-1999": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/68/The_mummy.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_mummy.jpg"
+ },
+ "green-book-2018": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/5b/Green_Book_%282018_poster%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Green_Book_(2018_poster).png"
+ },
+ "shaun-of-the-dead-2004": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/8d/Shaun_of_the_Dead_film_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Shaun_of_the_Dead_film_poster.jpg"
+ },
+ "a-star-is-born-2018": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/39/A_Star_is_Born.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:A_Star_is_Born.png"
+ },
+ "the-devil-wears-prada-2006": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/e/e7/The_Devil_Wears_Prada_main_onesheet.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Devil_Wears_Prada_main_onesheet.jpg"
+ },
+ "500-days-of-summer-2009": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/d1/Five_hundred_days_of_summer.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Five_hundred_days_of_summer.jpg"
+ },
+ "kingsman-the-secret-service-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/8b/Kingsman_The_Secret_Service_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Kingsman_The_Secret_Service_poster.jpg"
+ },
+ "sherlock-holmes-2009": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/e/e0/Sherlock_holmes_ver5.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Sherlock_holmes_ver5.jpg"
+ },
+ "the-chronicles-of-narnia-the-lion-the-witch-and-the-wardrobe-2005": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/10/The_Chronicles_of_Narnia_-_The_Lion%2C_the_Witch_and_the_Wardrobe.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Chronicles_of_Narnia_-_The_Lion,_the_Witch_and_the_Wardrobe.jpg"
+ },
+ "zombieland-2009": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/a/a3/Zombieland-poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Zombieland-poster.jpg"
+ },
+ "world-war-z-2013": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/d/dc/World_War_Z_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:World_War_Z_poster.jpg"
+ },
+ "28-days-later-2002": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/e/e4/28_days_later.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:28_days_later.jpg"
+ },
+ "the-boy-in-the-striped-pajamas-2008": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/34/Theboyposter.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Theboyposter.jpg"
+ },
+ "tenet-2020": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/14/Tenet_movie_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Tenet_movie_poster.jpg"
+ },
+ "dunkirk-2017": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/15/Dunkirk_Film_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Dunkirk_Film_poster.jpg"
+ },
+ "1917-2019": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/f/fe/1917_%282019%29_Film_Poster.jpeg",
+  "kilde": "https://en.wikipedia.org/wiki/File:1917_(2019)_Film_Poster.jpeg"
+ },
+ "hacksaw-ridge-2016": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/8/8a/Hacksaw_Ridge_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Hacksaw_Ridge_poster.png"
+ },
+ "school-of-rock-2003": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/11/School_of_Rock_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:School_of_Rock_Poster.jpg"
+ },
+ "predator-1987": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/95/Predator_Movie.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Predator_Movie.jpg"
+ },
+ "pitch-perfect-2012": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/b9/Pitch_Perfect_movie_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Pitch_Perfect_movie_poster.jpg"
+ },
+ "night-at-the-museum-2006": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/34/Night_at_the_Museum_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Night_at_the_Museum_poster.jpg"
+ },
+ "free-guy-2021": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/1c/Free_Guy_2021_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Free_Guy_2021_Poster.jpg"
+ },
+ "don-t-look-up-2021": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/5c/Don%27t_Look_Up_2021_film.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Don't_Look_Up_2021_film.jpg"
+ },
+ "the-emperor-s-new-groove-2000": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/69/Grooveposter.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Grooveposter.jpg"
+ },
+ "red-notice-2021": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/0c/Red_Notice_-_film_promotional_image.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Red_Notice_-_film_promotional_image.jpg"
+ },
+ "a-minecraft-movie-2025": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/6/66/A_Minecraft_Movie_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:A_Minecraft_Movie_poster.jpg"
+ },
+ "flaklypa-grand-prix-1975": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/34/Pinchcliffe_Grand_Prix.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Pinchcliffe_Grand_Prix.jpg"
+ },
+ "kon-tiki-2012": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/0b/Kon-tiki_2012_Poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Kon-tiki_2012_Poster.jpg"
+ },
+ "max-manus-2008": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/0f/Max_Manus_film.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Max_Manus_film.jpg"
+ },
+ "bird-box-2018": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/b/bd/Bird_Box_%28film%29.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Bird_Box_(film).png"
+ },
+ "bolgen-2015": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/3b/The_Wave_%282015_film%29.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Wave_(2015_film).jpg"
+ },
+ "trolljegeren-2010": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/1e/TrollHunter.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:TrollHunter.jpg"
+ },
+ "the-purge-2013": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/94/The_Purge_film_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:The_Purge_film_poster.jpg"
+ },
+ "borning-2014": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/f/f4/B%C3%B8rning_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:B%C3%B8rning_poster.jpg"
+ },
+ "us-2019": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/0/00/Us_%282019%29_theatrical_poster.png",
+  "kilde": "https://en.wikipedia.org/wiki/File:Us_(2019)_theatrical_poster.png"
+ },
+ "bullet-train-2022": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/1/13/Bullet_Train_%28poster%29.jpeg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Bullet_Train_(poster).jpeg"
+ },
+ "sinners-2025": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/5/5f/Sinners_%282025_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Sinners_(2025_film)_poster.jpg"
+ },
+ "superman-2025": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/3/32/Superman_%282025_film%29_poster.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:Superman_(2025_film)_poster.jpg"
+ },
+ "50-first-dates-2004": {
+  "src": "https://upload.wikimedia.org/wikipedia/en/9/9d/50FirstDates.jpg",
+  "kilde": "https://en.wikipedia.org/wiki/File:50FirstDates.jpg"
+ }
+}
