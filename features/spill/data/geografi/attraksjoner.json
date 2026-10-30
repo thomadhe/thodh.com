@@ -1,0 +1,982 @@
+{
+  "AE": {
+    "navn": "Burj Khalifa",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Burj_Khalifa_%28worlds_tallest_building%29_and_the_Dubai_skyline_%2825781049892%29.jpg/500px-Burj_Khalifa_%28worlds_tallest_building%29_and_the_Dubai_skyline_%2825781049892%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Burj_Khalifa_(worlds_tallest_building)_and_the_Dubai_skyline_(25781049892).jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "imran shahabuddin"
+  },
+  "AF": {
+    "navn": "Minareten i Jam",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Jam_afghan_architecture_harirud_brick.jpg/500px-Jam_afghan_architecture_harirud_brick.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Jam_afghan_architecture_harirud_brick.jpg",
+    "lisens": "Public domain",
+    "fotograf": "david adamec"
+  },
+  "AG": {
+    "navn": "Nelson's Dockyard",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Nelson%27s_Dockyard.jpg/500px-Nelson%27s_Dockyard.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Nelson's_Dockyard.jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "David Stanley"
+  },
+  "AL": {
+    "navn": "Berat",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Berat_57.jpg/500px-Berat_57.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Berat_57.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Arianit"
+  },
+  "AM": {
+    "navn": "Khor Virap-klosteret",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Monasterio_Khor_Virap%2C_Armenia%2C_2016-10-01%2C_DD_25.jpg/500px-Monasterio_Khor_Virap%2C_Armenia%2C_2016-10-01%2C_DD_25.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Monasterio_Khor_Virap,_Armenia,_2016-10-01,_DD_25.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Diego Delso"
+  },
+  "AO": {
+    "navn": "Calandula-fossene",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Kalandula_waterfalls_of_the_Lucala-River_in_Malange%2C_Angola.JPG/500px-Kalandula_waterfalls_of_the_Lucala-River_in_Malange%2C_Angola.JPG",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Kalandula_waterfalls_of_the_Lucala-River_in_Malange,_Angola.JPG",
+    "lisens": "CC0",
+    "fotograf": "Paulo César Santos"
+  },
+  "AR": {
+    "navn": "Perito Moreno-breen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Perito_Moreno_Glacier_2023.jpg/500px-Perito_Moreno_Glacier_2023.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Perito_Moreno_Glacier_2023.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Fernando"
+  },
+  "AT": {
+    "navn": "Schönbrunn",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Wien_-_Schloss_Sch%C3%B6nbrunn.JPG/500px-Wien_-_Schloss_Sch%C3%B6nbrunn.JPG",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Wien_-_Schloss_Sch%C3%B6nbrunn.JPG",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "C.Stadler/Bwag"
+  },
+  "AU": {
+    "navn": "Operahuset i Sydney",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Sydney_Opera_House_2026.jpg/500px-Sydney_Opera_House_2026.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Sydney_Opera_House_2026.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "BAVhah"
+  },
+  "AZ": {
+    "navn": "Flame Towers",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Flame_towers_from_Baku_boulevard.JPG/500px-Flame_towers_from_Baku_boulevard.JPG",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Flame_towers_from_Baku_boulevard.JPG",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Xoncha"
+  },
+  "BA": {
+    "navn": "Stari Most",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Mostar_Old_Town_Panorama_2007.jpg/500px-Mostar_Old_Town_Panorama_2007.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Mostar_Old_Town_Panorama_2007.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Ramirez"
+  },
+  "BD": {
+    "navn": "Ahsan Manzil",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Ahsan_Manzil-Front_View.jpg/500px-Ahsan_Manzil-Front_View.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Ahsan_Manzil-Front_View.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Mahbub Hossain Shaheed (mahosha)"
+  },
+  "BE": {
+    "navn": "Atomium",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_Atomium_during_civil_twilight_%28DSCF1135%29.jpg/500px-The_Atomium_during_civil_twilight_%28DSCF1135%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:The_Atomium_during_civil_twilight_(DSCF1135).jpg",
+    "lisens": "CC BY 4.0",
+    "fotograf": "Trougnouf (Benoit Brummer)"
+  },
+  "BG": {
+    "navn": "Rila-klosteret",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Rila_Monastery%2C_August_2013.jpg/500px-Rila_Monastery%2C_August_2013.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Rila_Monastery,_August_2013.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Raggatt2000"
+  },
+  "BH": {
+    "navn": "Bahrain World Trade Center",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Bahrain_World_trade_Center_.jpg/500px-Bahrain_World_trade_Center_.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Bahrain_World_trade_Center_.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "B.alotaby"
+  },
+  "BN": {
+    "navn": "Omar Ali Saifuddien-moskeen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Sultan_Omar_Ali_Saifuddin_Mosque_with_the_ceremonial_ship.jpg/500px-Sultan_Omar_Ali_Saifuddin_Mosque_with_the_ceremonial_ship.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Sultan_Omar_Ali_Saifuddin_Mosque_with_the_ceremonial_ship.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Abdullah Geelah"
+  },
+  "BO": {
+    "navn": "Salar de Uyuni",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Reflection_on_the_Salar_de_Uyuni%2C_bolivia.jpg/500px-Reflection_on_the_Salar_de_Uyuni%2C_bolivia.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Reflection_on_the_Salar_de_Uyuni,_bolivia.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Christopher Crouzet"
+  },
+  "BR": {
+    "navn": "Kristusstatuen i Rio",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Christ_the_Redeemer_-_Cristo_Redentor.jpg/500px-Christ_the_Redeemer_-_Cristo_Redentor.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Christ_the_Redeemer_-_Cristo_Redentor.jpg",
+    "lisens": "CC BY-SA 3.0 de",
+    "fotograf": "Arne Müseler"
+  },
+  "BT": {
+    "navn": "Tigerreiret (Paro Taktsang)",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Paro_Taktsang%2C_Bhutan_%28edited%29.jpg/500px-Paro_Taktsang%2C_Bhutan_%28edited%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Paro_Taktsang,_Bhutan_(edited).jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "Original: Nina R from Africa Derivative work: UnpetitproleX"
+  },
+  "BY": {
+    "navn": "Mir slott",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/%D0%9A%D0%BE%D0%BC%D0%BF%D0%BB%D0%B5%D0%BA%D1%81_%D0%9C%D0%B8%D1%80%D1%81%D0%BA%D0%BE%D0%B3%D0%BE_%D0%B7%D0%B0%D0%BC%D0%BA%D0%B0.JPG/500px-%D0%9A%D0%BE%D0%BC%D0%BF%D0%BB%D0%B5%D0%BA%D1%81_%D0%9C%D0%B8%D1%80%D1%81%D0%BA%D0%BE%D0%B3%D0%BE_%D0%B7%D0%B0%D0%BC%D0%BA%D0%B0.JPG",
+    "kilde": "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%BE%D0%BC%D0%BF%D0%BB%D0%B5%D0%BA%D1%81_%D0%9C%D0%B8%D1%80%D1%81%D0%BA%D0%BE%D0%B3%D0%BE_%D0%B7%D0%B0%D0%BC%D0%BA%D0%B0.JPG",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Вадзім Новикаў"
+  },
+  "BZ": {
+    "navn": "Great Blue Hole",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Great_Blue_Hole.jpg/500px-Great_Blue_Hole.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Great_Blue_Hole.jpg",
+    "lisens": "Public domain",
+    "fotograf": "U.S. Geological Survey (USGS)"
+  },
+  "CA": {
+    "navn": "CN Tower",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Toronto_-_ON_-_CN_Tower_bei_Nacht.jpg/500px-Toronto_-_ON_-_CN_Tower_bei_Nacht.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Toronto_-_ON_-_CN_Tower_bei_Nacht.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Wladyslaw Sojka"
+  },
+  "CH": {
+    "navn": "Kapellbrücke i Luzern",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Kapellbruecke.JPG/500px-Kapellbruecke.JPG",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Kapellbruecke.JPG",
+    "lisens": "CC BY-SA 2.5",
+    "fotograf": "Simon Koopmann"
+  },
+  "CI": {
+    "navn": "Basilikaen i Yamoussoukro",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Basilique_notre_Dame_de_la_Paix_de_Yamoussoukro_9.jpg/500px-Basilique_notre_Dame_de_la_Paix_de_Yamoussoukro_9.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Basilique_notre_Dame_de_la_Paix_de_Yamoussoukro_9.jpg",
+    "lisens": "CC0",
+    "fotograf": "Didierwiki"
+  },
+  "CL": {
+    "navn": "Moai på Påskeøya",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/AhuTongariki.JPG/500px-AhuTongariki.JPG",
+    "kilde": "https://commons.wikimedia.org/wiki/File:AhuTongariki.JPG",
+    "lisens": "CC BY 2.5",
+    "fotograf": "Ian Sewell"
+  },
+  "CN": {
+    "navn": "Den kinesiske mur",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/The_Great_Wall_of_China_at_Jinshanling-edit.jpg/500px-The_Great_Wall_of_China_at_Jinshanling-edit.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:The_Great_Wall_of_China_at_Jinshanling-edit.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Severin.stalder"
+  },
+  "CO": {
+    "navn": "Castillo San Felipe de Barajas",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/62_-_Carthag%C3%A8ne_-_D%C3%A9cembre_2008.jpg/500px-62_-_Carthag%C3%A8ne_-_D%C3%A9cembre_2008.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:62_-_Carthag%C3%A8ne_-_D%C3%A9cembre_2008.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Martin St-Amant (S23678)"
+  },
+  "CR": {
+    "navn": "Arenal-vulkanen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Arenal_volcano_%2870785p%29_%28cropped%29.jpg/500px-Arenal_volcano_%2870785p%29_%28cropped%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Arenal_volcano_(70785p)_(cropped).jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Rhododendrites"
+  },
+  "CU": {
+    "navn": "El Capitolio",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/El_Capitolio_Havana_Cuba.jpg/500px-El_Capitolio_Havana_Cuba.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:El_Capitolio_Havana_Cuba.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Nigel Pacquette"
+  },
+  "CV": {
+    "navn": "Pico do Fogo",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Cape_Verde_Pico_do_Fogo_b.jpg/500px-Cape_Verde_Pico_do_Fogo_b.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Cape_Verde_Pico_do_Fogo_b.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Cayambe"
+  },
+  "CZ": {
+    "navn": "Karlsbroen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Charles_Bridge_Covid.jpg/500px-Charles_Bridge_Covid.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Charles_Bridge_Covid.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Tadeáš Gregor"
+  },
+  "DE": {
+    "navn": "Brandenburger Tor",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Brandenburger_Tor_abends.jpg/500px-Brandenburger_Tor_abends.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Brandenburger_Tor_abends.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Thomas Wolf, www.foto-tw.de"
+  },
+  "DK": {
+    "navn": "Nyhavn",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/The_Nyhavn_Canal_3.jpg/500px-The_Nyhavn_Canal_3.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:The_Nyhavn_Canal_3.jpg",
+    "lisens": "CC BY 4.0",
+    "fotograf": "European Commission"
+  },
+  "DZ": {
+    "navn": "Den store moskeen i Alger",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Djama%C3%A2_El-Djaza%C3%AFr_-_20240405_212406834.jpg/500px-Djama%C3%A2_El-Djaza%C3%AFr_-_20240405_212406834.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Djama%C3%A2_El-Djaza%C3%AFr_-_20240405_212406834.jpg",
+    "lisens": "CC BY 4.0",
+    "fotograf": "Riad Salih"
+  },
+  "EC": {
+    "navn": "Cotopaxi",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Cotopaxi_volcano_2008-06-27T1322.jpg/500px-Cotopaxi_volcano_2008-06-27T1322.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Cotopaxi_volcano_2008-06-27T1322.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Gerard Prins"
+  },
+  "EE": {
+    "navn": "Gamlebyen i Tallinn",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Old_Town_of_Tallinn%2C_Tallinn%2C_Estonia_-_panoramio_%2858%29.jpg/500px-Old_Town_of_Tallinn%2C_Tallinn%2C_Estonia_-_panoramio_%2858%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Old_Town_of_Tallinn,_Tallinn,_Estonia_-_panoramio_(58).jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Ben Bender"
+  },
+  "EG": {
+    "navn": "Pyramidene i Giza",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Great_Pyramid_of_Giza_-_Pyramid_of_Khufu.jpg/500px-Great_Pyramid_of_Giza_-_Pyramid_of_Khufu.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Great_Pyramid_of_Giza_-_Pyramid_of_Khufu.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Douwe C. van der Zee"
+  },
+  "ES": {
+    "navn": "Sagrada Família",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/SF_maig_2_cropped.jpg/500px-SF_maig_2_cropped.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:SF_maig_2_cropped.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Canaan"
+  },
+  "ET": {
+    "navn": "Klippekirkene i Lalibela",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Lalibela%2C_san_giorgio%2C_esterno_24.jpg/500px-Lalibela%2C_san_giorgio%2C_esterno_24.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Lalibela,_san_giorgio,_esterno_24.jpg",
+    "lisens": "CC BY 3.0",
+    "fotograf": "Sailko"
+  },
+  "FI": {
+    "navn": "Helsinki domkirke",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Kirkko3.png/500px-Kirkko3.png",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Kirkko3.png",
+    "lisens": "CC0",
+    "fotograf": "Manster323"
+  },
+  "FM": {
+    "navn": "Nan Madol",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Nan_madol.jpg/500px-Nan_madol.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Nan_madol.jpg",
+    "lisens": "Public domain",
+    "fotograf": "NOAA"
+  },
+  "FR": {
+    "navn": "Eiffeltårnet",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/500px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Tour_Eiffel_Wikimedia_Commons_(cropped).jpg",
+    "lisens": "Public domain",
+    "fotograf": "Benh LIEU SONG"
+  },
+  "GB": {
+    "navn": "Big Ben",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Elizabeth_Tower_and_the_north_front_of_the_Palace_of_Westminster%2C_London.jpg/500px-Elizabeth_Tower_and_the_north_front_of_the_Palace_of_Westminster%2C_London.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Elizabeth_Tower_and_the_north_front_of_the_Palace_of_Westminster,_London.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Christian David"
+  },
+  "GE": {
+    "navn": "Gergeti treenighetskirke",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Gergeti_Trinity_Church_09.23.jpg/500px-Gergeti_Trinity_Church_09.23.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Gergeti_Trinity_Church_09.23.jpg",
+    "lisens": "CC BY 4.0",
+    "fotograf": "Supanut Arunoprayote"
+  },
+  "GH": {
+    "navn": "Cape Coast Castle",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Cape_Coast_Castle%2C_Cape_Coast%2C_Ghana.JPG/500px-Cape_Coast_Castle%2C_Cape_Coast%2C_Ghana.JPG",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Cape_Coast_Castle,_Cape_Coast,_Ghana.JPG",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Rjruiziii"
+  },
+  "GR": {
+    "navn": "Parthenon",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/The_Parthenon_in_Athens.jpg/500px-The_Parthenon_in_Athens.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:The_Parthenon_in_Athens.jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "Steve Swayne"
+  },
+  "GT": {
+    "navn": "Tikal",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Tikal_3.jpg/500px-Tikal_3.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Tikal_3.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Mundo Maya"
+  },
+  "GY": {
+    "navn": "Kaieteur-fossen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/GuyanaKaieteurFalls2004.jpg/500px-GuyanaKaieteurFalls2004.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:GuyanaKaieteurFalls2004.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Sorenriise at English Wikipedia"
+  },
+  "HR": {
+    "navn": "Bymurene i Dubrovnik",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Dubrovnik_s_24.jpg/500px-Dubrovnik_s_24.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Dubrovnik_s_24.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Miroslav.vajdic"
+  },
+  "HT": {
+    "navn": "Citadelle Laferrière",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Citadelle_Laferri%C3%A8re.jpg/500px-Citadelle_Laferri%C3%A8re.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Citadelle_Laferri%C3%A8re.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Rémi Kaupp"
+  },
+  "HU": {
+    "navn": "Parlamentsbygningen i Budapest",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Hungarian_Parliament_Building_from_across_the_Danube%2C_2025-01-11.jpg/500px-Hungarian_Parliament_Building_from_across_the_Danube%2C_2025-01-11.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Hungarian_Parliament_Building_from_across_the_Danube,_2025-01-11.jpg",
+    "lisens": "CC BY 4.0",
+    "fotograf": "Kilyann Le Hen"
+  },
+  "ID": {
+    "navn": "Borobudur",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Pradaksina.jpg/500px-Pradaksina.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Pradaksina.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Heri nugroho"
+  },
+  "IE": {
+    "navn": "Moherklippene",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Cliffs-Of-Moher-OBriens-From-South.JPG/500px-Cliffs-Of-Moher-OBriens-From-South.JPG",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Cliffs-Of-Moher-OBriens-From-South.JPG",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Bjørn Christian Tørrissen"
+  },
+  "IL": {
+    "navn": "Masada",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Israel-2013-Aerial_21-Masada.jpg/500px-Israel-2013-Aerial_21-Masada.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Israel-2013-Aerial_21-Masada.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Godot13"
+  },
+  "IN": {
+    "navn": "Taj Mahal",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/500px-Taj_Mahal_%28Edited%29.jpeg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Taj_Mahal_(Edited).jpeg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Yann; edited by Jim Carter"
+  },
+  "IQ": {
+    "navn": "Den store moskeen i Samarra",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Samrraa_05.jpg/500px-Samrraa_05.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Samrraa_05.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Fakhri Mahmood"
+  },
+  "IR": {
+    "navn": "Persepolis",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/2018-09-21_Iran%2C_Persepolis%2C_Tachara_%28from_the_southeast%29.jpg/500px-2018-09-21_Iran%2C_Persepolis%2C_Tachara_%28from_the_southeast%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:2018-09-21_Iran,_Persepolis,_Tachara_(from_the_southeast).jpg",
+    "lisens": "CC BY 4.0",
+    "fotograf": "Laurens R. Krol"
+  },
+  "IS": {
+    "navn": "Hallgrímskirkja",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Hallgrimskirkja_mai_2026.jpg/500px-Hallgrimskirkja_mai_2026.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Hallgrimskirkja_mai_2026.jpg",
+    "lisens": "CC BY 4.0",
+    "fotograf": "Steinninn"
+  },
+  "IT": {
+    "navn": "Colosseum",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/500px-Colosseo_2020.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Colosseo_2020.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "FeaturedPics"
+  },
+  "JM": {
+    "navn": "Dunn's River Falls",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Dunns_River_Falls_climb.JPG/500px-Dunns_River_Falls_climb.JPG",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Dunns_River_Falls_climb.JPG",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Breakyunit at English Wikipedia"
+  },
+  "JO": {
+    "navn": "Petra",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Al_Deir_Petra.JPG/500px-Al_Deir_Petra.JPG",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Al_Deir_Petra.JPG",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Azurfrog"
+  },
+  "JP": {
+    "navn": "Fuji",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/View_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg/500px-View_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:View_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Suicasmo"
+  },
+  "KG": {
+    "navn": "Burana-tårnet",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Burana_Tower%2C_Kyrgyzstan.jpg/500px-Burana_Tower%2C_Kyrgyzstan.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Burana_Tower,_Kyrgyzstan.jpg",
+    "lisens": "CC0",
+    "fotograf": "Bernard Gagnon"
+  },
+  "KH": {
+    "navn": "Angkor Wat",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Angkor_Wat.jpg/500px-Angkor_Wat.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Angkor_Wat.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Bjørn Christian Tørrissen"
+  },
+  "KN": {
+    "navn": "Brimstone Hill Fortress",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/BrimstoneHill01.jpg/500px-BrimstoneHill01.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:BrimstoneHill01.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Ukexpat"
+  },
+  "KP": {
+    "navn": "Juche-tårnet",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Tower_of_Juche_Idea%2C_Pyongyang%2C_North_Korea_%282909246855%29.jpg/500px-Tower_of_Juche_Idea%2C_Pyongyang%2C_North_Korea_%282909246855%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Tower_of_Juche_Idea,_Pyongyang,_North_Korea_(2909246855).jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "yeowatzup"
+  },
+  "KR": {
+    "navn": "Gyeongbokgung",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Gwanghwamun_is_the_main_gate_to_the_south_of_Gyeongbokgung_Palace.jpg/500px-Gwanghwamun_is_the_main_gate_to_the_south_of_Gyeongbokgung_Palace.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Gwanghwamun_is_the_main_gate_to_the_south_of_Gyeongbokgung_Palace.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Pinterpandai"
+  },
+  "KW": {
+    "navn": "Kuwait Towers",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Kuwait_towers.jpg/500px-Kuwait_towers.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Kuwait_towers.jpg",
+    "lisens": "CC BY-SA 2.5 se",
+    "fotograf": "Mikael Lindmark"
+  },
+  "KZ": {
+    "navn": "Baiterek",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Baiterek.jpg/500px-Baiterek.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Baiterek.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "אמר מר"
+  },
+  "LA": {
+    "navn": "Pha That Luang",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Pha_That_Luang%2C_July_2023.jpg/500px-Pha_That_Luang%2C_July_2023.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Pha_That_Luang,_July_2023.jpg",
+    "lisens": "CC0",
+    "fotograf": "Coalfruit1012"
+  },
+  "LB": {
+    "navn": "Baalbek",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Temple_of_Bacchus%2C_Baalbek%2C_Lebanon_%2849890013476%29.jpg/500px-Temple_of_Bacchus%2C_Baalbek%2C_Lebanon_%2849890013476%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Temple_of_Bacchus,_Baalbek,_Lebanon_(49890013476).jpg",
+    "lisens": "CC BY-SA 2.0",
+    "fotograf": "Lodo from Moscow, Russia"
+  },
+  "LC": {
+    "navn": "Pitons",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Petit_Piton_and_Gros_Piton_%2846916689791%29.jpg/500px-Petit_Piton_and_Gros_Piton_%2846916689791%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Petit_Piton_and_Gros_Piton_(46916689791).jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "David Stanley from Nanaimo, Canada"
+  },
+  "LI": {
+    "navn": "Slottet i Vaduz",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Vaduz_Castle_1.jpg/500px-Vaduz_Castle_1.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Vaduz_Castle_1.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "AnonymousGuyFawkes"
+  },
+  "LK": {
+    "navn": "Sigiriya",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Sigiriya_%28141688197%29.jpeg/500px-Sigiriya_%28141688197%29.jpeg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Sigiriya_(141688197).jpeg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Wrobell"
+  },
+  "LS": {
+    "navn": "Maletsunyane-fossen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Maletsunyanefalls.JPG/500px-Maletsunyanefalls.JPG",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Maletsunyanefalls.JPG",
+    "lisens": "Public domain",
+    "fotograf": "BagelBelt"
+  },
+  "LT": {
+    "navn": "Trakai slott",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Traku_pilis_by_Augustas_Didzgalvis.jpg/500px-Traku_pilis_by_Augustas_Didzgalvis.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Traku_pilis_by_Augustas_Didzgalvis.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "BigHead"
+  },
+  "LU": {
+    "navn": "Adolphe-broen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Adolphe_Bridge_post_2017_renovation_works_-_7_August_2018.jpg/500px-Adolphe_Bridge_post_2017_renovation_works_-_7_August_2018.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Adolphe_Bridge_post_2017_renovation_works_-_7_August_2018.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Denise Hastert"
+  },
+  "LV": {
+    "navn": "Frihetsmonumentet i Riga",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/0873_LVA_Riga_freedom_monument_SE.jpg/500px-0873_LVA_Riga_freedom_monument_SE.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:0873_LVA_Riga_freedom_monument_SE.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Virtual-Pano"
+  },
+  "LY": {
+    "navn": "Leptis Magna",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Leptis_Magna_%2829%29_%288288918733%29.jpg/500px-Leptis_Magna_%2829%29_%288288918733%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Leptis_Magna_(29)_(8288918733).jpg",
+    "lisens": "CC BY-SA 2.0",
+    "fotograf": "joepyrek from Richmond, Va, USA"
+  },
+  "MA": {
+    "navn": "Hassan II-moskeen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Sunshine_on_mosque_Hassan_II_in_Casablanca%2C_Morocco_-_Flickr_-_Milamber%27s_portfolio.jpg/500px-Sunshine_on_mosque_Hassan_II_in_Casablanca%2C_Morocco_-_Flickr_-_Milamber%27s_portfolio.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Sunshine_on_mosque_Hassan_II_in_Casablanca,_Morocco_-_Flickr_-_Milamber's_portfolio.jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "Milamber's portfolio"
+  },
+  "MC": {
+    "navn": "Casinoet i Monte Carlo",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/The_Casino%2C_Monte_Carlo_-_panoramio_cropped.jpg/500px-The_Casino%2C_Monte_Carlo_-_panoramio_cropped.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:The_Casino,_Monte_Carlo_-_panoramio_cropped.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Steve Hedin"
+  },
+  "MD": {
+    "navn": "Orheiul Vechi",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Stanca_deasupra_Rautului_Butuceni.jpg/500px-Stanca_deasupra_Rautului_Butuceni.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Stanca_deasupra_Rautului_Butuceni.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Alex Prodan md"
+  },
+  "ME": {
+    "navn": "Sveti Stefan",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Sveti_Stefan_%2806%29.jpg/500px-Sveti_Stefan_%2806%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Sveti_Stefan_(06).jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Marcin Konsek"
+  },
+  "MG": {
+    "navn": "Baobab-alleen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Adansonia_grandidieri_Pat_Hooper.jpg/500px-Adansonia_grandidieri_Pat_Hooper.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Adansonia_grandidieri_Pat_Hooper.jpg",
+    "lisens": "CC BY-SA 2.0",
+    "fotograf": "Pat Hooper from Chicago, IL, USA"
+  },
+  "MK": {
+    "navn": "Kaneo-kirken ved Ohridsjøen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Church_of_St._John_at_Kaneo_6.jpg/500px-Church_of_St._John_at_Kaneo_6.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Church_of_St._John_at_Kaneo_6.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "kallerna"
+  },
+  "ML": {
+    "navn": "Den store moskeen i Djenné",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Djenne_great_mud_mosque.jpg/500px-Djenne_great_mud_mosque.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Djenne_great_mud_mosque.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Ruud Zwart"
+  },
+  "MM": {
+    "navn": "Shwedagon-pagoden",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Shwedagon_Pagoda_2017.jpg/500px-Shwedagon_Pagoda_2017.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Shwedagon_Pagoda_2017.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Bjørn Christian Tørrissen"
+  },
+  "MN": {
+    "navn": "Djengis Khan-statuen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Genghis_Khan_Equestrian_Statue%2C_photo_by_Vaiz_Ha.jpg/500px-Genghis_Khan_Equestrian_Statue%2C_photo_by_Vaiz_Ha.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Genghis_Khan_Equestrian_Statue,_photo_by_Vaiz_Ha.jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "Vaiz Ha"
+  },
+  "MR": {
+    "navn": "Richat-strukturen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Richat_Structure_ISS030-E-12516.jpg/500px-Richat_Structure_ISS030-E-12516.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Richat_Structure_ISS030-E-12516.jpg",
+    "lisens": "Public domain",
+    "fotograf": "NASA"
+  },
+  "MT": {
+    "navn": "Valletta",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/St_Sebastian_Curtain_%28cropped%29.jpg/500px-St_Sebastian_Curtain_%28cropped%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:St_Sebastian_Curtain_(cropped).jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Mandyy88"
+  },
+  "MU": {
+    "navn": "Le Morne Brabant",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Le_Morne_Peninsula_in_Mauritius_%2853697779236%29.jpg/500px-Le_Morne_Peninsula_in_Mauritius_%2853697779236%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Le_Morne_Peninsula_in_Mauritius_(53697779236).jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "\"dronepicr\""
+  },
+  "MX": {
+    "navn": "Chichén Itzá",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Chichen_Itza_3.jpg/500px-Chichen_Itza_3.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Chichen_Itza_3.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Daniel Schwen"
+  },
+  "MY": {
+    "navn": "Petronas-tårnene",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Kuala_Lumpur_Malaysia_Petronas-Twin-Towers-01.jpg/500px-Kuala_Lumpur_Malaysia_Petronas-Twin-Towers-01.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Kuala_Lumpur_Malaysia_Petronas-Twin-Towers-01.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "CEphoto, Uwe Aranas"
+  },
+  "NA": {
+    "navn": "Deadvlei",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Dead_Vlei%2C_Sossusvlei%2C_Namibia%2C_2018-08-06%2C_DD_085.jpg/500px-Dead_Vlei%2C_Sossusvlei%2C_Namibia%2C_2018-08-06%2C_DD_085.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Dead_Vlei,_Sossusvlei,_Namibia,_2018-08-06,_DD_085.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Diego Delso"
+  },
+  "NG": {
+    "navn": "Zuma Rock",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Zuma_Rock.jpg/500px-Zuma_Rock.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Zuma_Rock.jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "Jeff Attaway"
+  },
+  "NI": {
+    "navn": "Katedralen i León",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Nicaragua_2017-03-13_%2833663091692%29.jpg/500px-Nicaragua_2017-03-13_%2833663091692%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Nicaragua_2017-03-13_(33663091692).jpg",
+    "lisens": "CC BY-SA 2.0",
+    "fotograf": "Guillaume Baviere from Uppsala, Sweden"
+  },
+  "NL": {
+    "navn": "Vindmøllene i Kinderdijk",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/KinderdijkMolens02.jpg/500px-KinderdijkMolens02.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:KinderdijkMolens02.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Lucas Hirschegger"
+  },
+  "NO": {
+    "navn": "Preikestolen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Preikestolen_-_Pulpit_Rock.jpg/500px-Preikestolen_-_Pulpit_Rock.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Preikestolen_-_Pulpit_Rock.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Svein-Magne Tunli"
+  },
+  "NP": {
+    "navn": "Boudhanath",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Boudhanath_stupa_%2C_Kathmandu%2C_Nepal.jpg/500px-Boudhanath_stupa_%2C_Kathmandu%2C_Nepal.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Boudhanath_stupa_,_Kathmandu,_Nepal.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Sumitbhatt222"
+  },
+  "NZ": {
+    "navn": "Milford Sound",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Milford_Sound_%28New_Zealand%29.JPG/500px-Milford_Sound_%28New_Zealand%29.JPG",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Milford_Sound_(New_Zealand).JPG",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Maros M r a z (Maros)"
+  },
+  "OM": {
+    "navn": "Sultan Qaboos-moskeen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Muscat%2C_moschea_del_sultano_qaboos%2C_esterno_01.jpg/500px-Muscat%2C_moschea_del_sultano_qaboos%2C_esterno_01.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Muscat,_moschea_del_sultano_qaboos,_esterno_01.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Francesco Bini"
+  },
+  "PA": {
+    "navn": "Panamakanalen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Miraflores_Locks%2C_Panama_Canal%2C_Panama.jpg/500px-Miraflores_Locks%2C_Panama_Canal%2C_Panama.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Miraflores_Locks,_Panama_Canal,_Panama.jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "RB Photo"
+  },
+  "PE": {
+    "navn": "Machu Picchu",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Machu_Picchu%2C_2023_%28012%29.jpg/500px-Machu_Picchu%2C_2023_%28012%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Machu_Picchu,_2023_(012).jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Draceane"
+  },
+  "PH": {
+    "navn": "Chocolate Hills",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Chocolate_Hills_Bohol.JPG/500px-Chocolate_Hills_Bohol.JPG",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Chocolate_Hills_Bohol.JPG",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "P199"
+  },
+  "PK": {
+    "navn": "Badshahi-moskeen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Badshahi_Mosque_front_picture.jpg/500px-Badshahi_Mosque_front_picture.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Badshahi_Mosque_front_picture.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Romero Maia"
+  },
+  "PL": {
+    "navn": "Malbork slott",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Zesp%C3%B3%C5%82_Zamku_Krzy%C5%BCackiego_MALBORK_01.jpg/500px-Zesp%C3%B3%C5%82_Zamku_Krzy%C5%BCackiego_MALBORK_01.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Zesp%C3%B3%C5%82_Zamku_Krzy%C5%BCackiego_MALBORK_01.jpg",
+    "lisens": "CC BY-SA 3.0 pl",
+    "fotograf": "Gregy"
+  },
+  "PS": {
+    "navn": "Fødselskirken i Betlehem",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Church_of_the_Nativity_%287703592746%29.jpg/500px-Church_of_the_Nativity_%287703592746%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Church_of_the_Nativity_(7703592746).jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "Neil Ward"
+  },
+  "PT": {
+    "navn": "Belém-tårnet",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Torre_Bel%C3%A9m_April_2009-4a.jpg/500px-Torre_Bel%C3%A9m_April_2009-4a.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Torre_Bel%C3%A9m_April_2009-4a.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Alvesgaspar"
+  },
+  "PW": {
+    "navn": "Rock Islands",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Rock-Islands-Palau-1-2016-aerial-view-Luka-Peternel.jpg/500px-Rock-Islands-Palau-1-2016-aerial-view-Luka-Peternel.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Rock-Islands-Palau-1-2016-aerial-view-Luka-Peternel.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Luka Peternel"
+  },
+  "QA": {
+    "navn": "Museet for islamsk kunst",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/IslamicArtMuseumDohaSkyline.jpg/500px-IslamicArtMuseumDohaSkyline.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:IslamicArtMuseumDohaSkyline.jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "Mohamod Fasil"
+  },
+  "RO": {
+    "navn": "Bran slott",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Castelul_Bran2.jpg/500px-Castelul_Bran2.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Castelul_Bran2.jpg",
+    "lisens": "CC BY-SA 3.0 ro",
+    "fotograf": "Dobre Cezar"
+  },
+  "RS": {
+    "navn": "Sankt Sava-kirken",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Church_of_Saint_Sava_in_Belgrade%2C_Serbia_%28October_2026%2C_2%29.jpg/500px-Church_of_Saint_Sava_in_Belgrade%2C_Serbia_%28October_2026%2C_2%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Church_of_Saint_Sava_in_Belgrade,_Serbia_(October_2026,_2).jpg",
+    "lisens": "CC0",
+    "fotograf": "DKjellby"
+  },
+  "RU": {
+    "navn": "Vasilijkatedralen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Saint_Basil%27s_Cathedral_in_Moscow.jpg/500px-Saint_Basil%27s_Cathedral_in_Moscow.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Saint_Basil's_Cathedral_in_Moscow.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Tsy1980"
+  },
+  "SA": {
+    "navn": "Kingdom Centre",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Kingdom_Centre_Riyadh_2024.jpeg/500px-Kingdom_Centre_Riyadh_2024.jpeg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Kingdom_Centre_Riyadh_2024.jpeg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Hamza A. Durrani"
+  },
+  "SC": {
+    "navn": "Anse Source d'Argent",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Anse_Source_d%27Argent_-_La_Digue_-_Seychelles_-_10.jpg/500px-Anse_Source_d%27Argent_-_La_Digue_-_Seychelles_-_10.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Anse_Source_d'Argent_-_La_Digue_-_Seychelles_-_10.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "NorbertNagel"
+  },
+  "SD": {
+    "navn": "Pyramidene i Meroë",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/NubianMeroePyramids30sep2005%282%29.jpg/500px-NubianMeroePyramids30sep2005%282%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:NubianMeroePyramids30sep2005(2).jpg",
+    "lisens": "Public domain",
+    "fotograf": "Wufei07"
+  },
+  "SE": {
+    "navn": "Stockholm slott",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/The_Royal_Palace_%2815891592359%29.jpg/500px-The_Royal_Palace_%2815891592359%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:The_Royal_Palace_(15891592359).jpg",
+    "lisens": "CC BY-SA 2.0",
+    "fotograf": "Magnus Johansson"
+  },
+  "SG": {
+    "navn": "Marina Bay Sands",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Marina_Bay_Sands_%28I%29.jpg/500px-Marina_Bay_Sands_%28I%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Marina_Bay_Sands_(I).jpg",
+    "lisens": "CC BY 4.0",
+    "fotograf": "Supanut Arunoprayote"
+  },
+  "SI": {
+    "navn": "Bledsjøen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Lake_Bled_from_the_Mountain.jpg/500px-Lake_Bled_from_the_Mountain.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Lake_Bled_from_the_Mountain.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Canadianhockey91"
+  },
+  "SK": {
+    "navn": "Slottet i Bratislava",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Bratislava_-_Burg_%28b%29.JPG/500px-Bratislava_-_Burg_%28b%29.JPG",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Bratislava_-_Burg_(b).JPG",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "C.Stadler/Bwag"
+  },
+  "SM": {
+    "navn": "Guaita-tårnet",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Guaita_Fortress_-_San_Marino_-_2024_02_13_-_GT_02_%28details%29.jpg/500px-Guaita_Fortress_-_San_Marino_-_2024_02_13_-_GT_02_%28details%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Guaita_Fortress_-_San_Marino_-_2024_02_13_-_GT_02_(details).jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Terragio67"
+  },
+  "SN": {
+    "navn": "Monumentet for den afrikanske renessansen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/African_Renaissance_Monument_Dakar_2025.jpg/500px-African_Renaissance_Monument_Dakar_2025.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:African_Renaissance_Monument_Dakar_2025.jpg",
+    "lisens": "CC0",
+    "fotograf": "Gromane"
+  },
+  "SY": {
+    "navn": "Palmyra",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Palmyra_03.jpg/500px-Palmyra_03.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Palmyra_03.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Bernard Gagnon"
+  },
+  "TH": {
+    "navn": "Wat Arun",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%99%E0%B8%97%E0%B8%A3%E0%B8%87%E0%B8%9B%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B8%84%E0%B9%8C%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AD%E0%B8%A3%E0%B8%B8%E0%B8%932.jpg/500px-%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%99%E0%B8%97%E0%B8%A3%E0%B8%87%E0%B8%9B%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B8%84%E0%B9%8C%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AD%E0%B8%A3%E0%B8%B8%E0%B8%932.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%99%E0%B8%97%E0%B8%A3%E0%B8%87%E0%B8%9B%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B8%84%E0%B9%8C%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AD%E0%B8%A3%E0%B8%B8%E0%B8%932.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Mastertongapollo"
+  },
+  "TL": {
+    "navn": "Cristo Rei i Dili",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Christ_Dili.jpg/500px-Christ_Dili.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Christ_Dili.jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "Kok Leng, Yeo from Singapore, Singapore"
+  },
+  "TM": {
+    "navn": "Darvaza-krateret",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Darvasa_gas_crater_panorama.jpg/500px-Darvasa_gas_crater_panorama.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Darvasa_gas_crater_panorama.jpg",
+    "lisens": "CC BY-SA 2.0",
+    "fotograf": "Tormod Sandtorv"
+  },
+  "TN": {
+    "navn": "Amfiteatret i El Djem",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/The_Amphitheatre_of_El_Jem%2C_built_around_AD_238_in_Thysdrus_in_Africa_Proconsularis%2C_the_estimated_capacity_is_35%2C000%2C_Tunisia_-_52717762494.jpg/500px-The_Amphitheatre_of_El_Jem%2C_built_around_AD_238_in_Thysdrus_in_Africa_Proconsularis%2C_the_estimated_capacity_is_35%2C000%2C_Tunisia_-_52717762494.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:The_Amphitheatre_of_El_Jem,_built_around_AD_238_in_Thysdrus_in_Africa_Proconsularis,_the_estimated_capacity_is_35,000,_Tunisia_-_52717762494.jpg",
+    "lisens": "CC BY-SA 2.0",
+    "fotograf": "Carole Raddato"
+  },
+  "TR": {
+    "navn": "Hagia Sofia",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Hagia_Sophia_%28228968325%29.jpeg/500px-Hagia_Sophia_%28228968325%29.jpeg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Hagia_Sophia_(228968325).jpeg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Adli Wahid"
+  },
+  "TW": {
+    "navn": "Taipei 101",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Taipei_Taiwan_Taipei-101-Tower-01.jpg/500px-Taipei_Taiwan_Taipei-101-Tower-01.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Taipei_Taiwan_Taipei-101-Tower-01.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "CEphoto, Uwe Aranas"
+  },
+  "TZ": {
+    "navn": "Kilimanjaro",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Kilimanjaro_from_Amboseli.jpg/500px-Kilimanjaro_from_Amboseli.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Kilimanjaro_from_Amboseli.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Sergey Pesterev"
+  },
+  "UA": {
+    "navn": "Kyiv-Pechersk Lavra",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/%D0%9B%D0%B0%D0%B2%D1%80%D0%B0.jpg/500px-%D0%9B%D0%B0%D0%B2%D1%80%D0%B0.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:%D0%9B%D0%B0%D0%B2%D1%80%D0%B0.jpg",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Falin"
+  },
+  "US": {
+    "navn": "Frihetsgudinnen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Front_view_of_Statue_of_Liberty_%28cropped%29.jpg/500px-Front_view_of_Statue_of_Liberty_%28cropped%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Front_view_of_Statue_of_Liberty_(cropped).jpg",
+    "lisens": "CC0",
+    "fotograf": "AskALotl"
+  },
+  "UY": {
+    "navn": "Palacio Salvo",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Palacio_Salvo_Montevideo-Uruguay.JPG/500px-Palacio_Salvo_Montevideo-Uruguay.JPG",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Palacio_Salvo_Montevideo-Uruguay.JPG",
+    "lisens": "CC BY-SA 3.0",
+    "fotograf": "Marceloracosta"
+  },
+  "UZ": {
+    "navn": "Registan",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/RegistanSquare_Samarkand.jpg/500px-RegistanSquare_Samarkand.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:RegistanSquare_Samarkand.jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "Registan_-_Gusjer.jpg: Gustavo Jeronimo from Aranjuez, Spain derivative work: MrPanyGoff"
+  },
+  "VA": {
+    "navn": "Peterskirken",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Basilica_di_San_Pietro_in_Vaticano_September_2015-1a.jpg/500px-Basilica_di_San_Pietro_in_Vaticano_September_2015-1a.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Basilica_di_San_Pietro_in_Vaticano_September_2015-1a.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Alvesgaspar"
+  },
+  "VE": {
+    "navn": "Angelfossen",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/e/e9/SaltoAngel1.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:SaltoAngel1.jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "Rich Childs"
+  },
+  "VN": {
+    "navn": "Ha Long-bukta",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Ha_Long_Bay_in_2019.jpg/500px-Ha_Long_Bay_in_2019.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Ha_Long_Bay_in_2019.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Taewangkorea"
+  },
+  "YE": {
+    "navn": "Shibam",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/%D9%85%D8%AF%D9%8A%D9%86%D8%A9_%D8%B4%D8%A8%D8%A7%D9%85_%D8%AD%D8%B6%D8%B1%D9%85%D9%88%D8%AA.jpg/500px-%D9%85%D8%AF%D9%8A%D9%86%D8%A9_%D8%B4%D8%A8%D8%A7%D9%85_%D8%AD%D8%B6%D8%B1%D9%85%D9%88%D8%AA.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:%D9%85%D8%AF%D9%8A%D9%86%D8%A9_%D8%B4%D8%A8%D8%A7%D9%85_%D8%AD%D8%B6%D8%B1%D9%85%D9%88%D8%AA.jpg",
+    "lisens": "CC BY-SA 4.0",
+    "fotograf": "Bkar6190"
+  },
+  "ZA": {
+    "navn": "Taffelfjellet",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Table_Mountain_DanieVDM.jpg/500px-Table_Mountain_DanieVDM.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Table_Mountain_DanieVDM.jpg",
+    "lisens": "CC BY 2.0",
+    "fotograf": "Danie van der Merwe from Cape Town, South Africa"
+  },
+  "ZW": {
+    "navn": "Great Zimbabwe",
+    "bilde": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Conical_Tower_-_Great_Enclosure_III_%2833736918448%29.jpg/500px-Conical_Tower_-_Great_Enclosure_III_%2833736918448%29.jpg",
+    "kilde": "https://commons.wikimedia.org/wiki/File:Conical_Tower_-_Great_Enclosure_III_(33736918448).jpg",
+    "lisens": "CC BY-SA 2.0",
+    "fotograf": "Andrew Moore from Johannesburg, South Africa"
+  }
+}

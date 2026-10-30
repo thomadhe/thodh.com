@@ -1,20 +1,22 @@
 "use client"
 
+import { Check } from "lucide-react"
 import { useEffect, useState } from "react"
 import { formaterDato, stokk } from "../lib/dag"
-import { landEtterId } from "../lib/geografi-svar"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
+import type { Brikke, Gruppe } from "../lib/server/tilkoblinger"
 import { DelKnapp, Knapp, sekundarKnapp } from "./spill-ramme"
 
-// Tilkoblinger (our GeoConnections): find four groups of four countries. Four hearts; a wrong guess
-// breaks one. Groups are checked on the server.
+// Tilkoblinger (our GeoConnections): find four groups of four tiles. On land days a group is one
+// country shown four ways (flag, outline, capital, a famous sight …); on category days it is four
+// countries with something in common. Four hearts; a wrong guess breaks one. Groups are checked on the server.
 
 const LIV = 4
-type Gruppe = { navn: string; niva: number; ider: string[] }
 type Funnet = Gruppe & { nr: number }
-type Tilstand = { v: 1; forsok: string[][]; funnet: Funnet[]; feil: number; fasit?: Gruppe[]; resultat: Resultat }
-const tom = (): Tilstand => ({ v: 1, forsok: [], funnet: [], feil: 0, resultat: { status: "pagar" } })
+// v2: tiles instead of countries (Oct 2026); older saves start fresh.
+type Tilstand = { v: 2; forsok: string[][]; funnet: Funnet[]; feil: number; fasit?: Gruppe[]; resultat: Resultat }
+const tom = (): Tilstand => ({ v: 2, forsok: [], funnet: [], feil: 0, resultat: { status: "pagar" } })
 
 /** Yellow, green, blue, purple – easiest to hardest, like Connections. */
 const FARGE = ["bg-amber-300 text-neutral-950", "bg-emerald-400 text-neutral-950", "bg-sky-400 text-neutral-950", "bg-fuchsia-400 text-neutral-950"]
@@ -27,22 +29,66 @@ async function spor<T>(body: unknown): Promise<T> {
   return data as T
 }
 
-const navn = (id: string) => landEtterId.get(id)?.navn ?? id
-const flagg = (id: string) => landEtterId.get(id)?.flagg ?? id.toLowerCase()
-
 function GruppeRad({ g }: { g: Funnet }) {
   return (
     <div className={`mel-inn rounded-2xl px-4 py-3 text-center ${FARGE[g.nr]}`}>
       <p className="text-sm font-bold uppercase tracking-wide">{g.navn}</p>
-      <p className="mt-0.5 text-sm">{g.ider.map(navn).join(", ")}</p>
+      <p className="mt-0.5 text-sm">{g.detaljer}</p>
+      {g.kreditt ? (
+        <p className="mt-1 text-[10px] opacity-70">
+          Foto:{" "}
+          <a href={g.kreditt.kilde} target="_blank" rel="noreferrer" className="underline underline-offset-2">
+            {g.kreditt.fotograf}
+          </a>
+          , {g.kreditt.lisens}
+        </p>
+      ) : null}
     </div>
   )
 }
 
-export function Tilkoblinger({ dato, rekke }: { dato: string; rekke: string[] }) {
+function Rute({ b, dato, aktiv, onVelg }: { b: Brikke; dato: string; aktiv: boolean; onVelg: () => void }) {
+  const src = `/spill/api/tilkoblinger/bilde?dato=${dato}&b=${b.id}`
+  const foto = b.slag === "foto"
+  return (
+    <button
+      type="button"
+      onClick={onVelg}
+      aria-pressed={aktiv}
+      aria-label={b.tekst ?? (b.slag === "flagg" ? "Flagg" : b.slag === "omriss" ? "Omriss" : "Bilde")}
+      className={`relative flex h-24 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl px-1 py-2 text-center leading-tight transition active:scale-95 sm:h-28 ${
+        aktiv ? (foto ? "ring-4 ring-neutral-900" : "bg-neutral-900 text-neutral-50") : "bg-neutral-100 text-neutral-950 hover:bg-neutral-200"
+      }`}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element -- tile pictures come from our own proxy route */}
+      {b.slag === "foto" ? <img src={src} alt="" className={`absolute inset-0 h-full w-full object-cover transition ${aktiv ? "scale-105 brightness-75" : ""}`} /> : null}
+      {b.slag === "flagg" ? (
+        // eslint-disable-next-line @next/next/no-img-element -- flag via our proxy route
+        <img src={src} alt="" className={`w-auto rounded-[2px] shadow-sm ${b.tekst ? "h-4" : "max-h-12 max-w-[85%] sm:max-h-14"}`} />
+      ) : null}
+      {b.slag === "omriss" ? (
+        // eslint-disable-next-line @next/next/no-img-element -- outline via our proxy route
+        <img src={src} alt="" className={b.tekst ? "h-8 w-8" : "h-16 w-16 sm:h-20 sm:w-20"} />
+      ) : null}
+      {b.etikett ? <span className="font-mono text-[9px] uppercase tracking-wider opacity-60">{b.etikett}</span> : null}
+      {b.tekst ? (
+        <span className={`hyphens-auto break-words font-semibold ${b.slag === "tekst" ? "text-[13px]" : "text-[12px]"}`} lang="nb">
+          {b.tekst}
+        </span>
+      ) : null}
+      {aktiv && b.slag !== "tekst" ? (
+        <span className="absolute top-1.5 right-1.5 grid h-5 w-5 place-items-center rounded-full bg-neutral-900 text-neutral-50 shadow">
+          <Check className="h-3 w-3" strokeWidth={3} />
+        </span>
+      ) : null}
+    </button>
+  )
+}
+
+export function Tilkoblinger({ dato, slag, brikker }: { dato: string; slag: "land" | "kategori"; brikker: Brikke[] }) {
   const { verdi, lastet, oppdater } = useDagligTilstand<Tilstand>("tilkoblinger", dato, tom)
   const [valgt, setValgt] = useState<string[]>([])
-  const [orden, setOrden] = useState(rekke)
+  const [orden, setOrden] = useState(brikker)
   const [melding, setMelding] = useState<string | null>(null)
   const [opptatt, setOpptatt] = useState(false)
   const [knust, setKnust] = useState<number | null>(null)
@@ -57,7 +103,7 @@ export function Tilkoblinger({ dato, rekke }: { dato: string; rekke: string[] })
   }, [trengerFasit, dato, oppdater])
 
   const iGrupper = new Set(verdi.funnet.flatMap((g) => g.ider))
-  const igjen = orden.filter((id) => !iGrupper.has(id))
+  const igjen = orden.filter((b) => !iGrupper.has(b.id))
 
   const velg = (id: string) => {
     if (ferdig || opptatt) return
@@ -74,9 +120,10 @@ export function Tilkoblinger({ dato, rekke }: { dato: string; rekke: string[] })
     }
     setOpptatt(true)
     try {
-      const svar = await spor<{ gruppe: number; navn?: string; niva?: number; ider?: string[]; enUnna?: boolean }>({ type: "gjett", dato, ider: valgt })
+      const svar = await spor<{ gruppe: number; enUnna?: boolean } & Partial<Gruppe>>({ type: "gjett", dato, ider: valgt })
       if (svar.gruppe >= 0) {
-        const funnet = { navn: svar.navn!, niva: svar.niva!, ider: svar.ider!, nr: svar.gruppe }
+        const { gruppe, ...g } = svar
+        const funnet = { ...(g as Gruppe), nr: gruppe }
         const alle = verdi.funnet.length + 1 === 4
         oppdater((t) => ({
           ...t,
@@ -125,7 +172,9 @@ export function Tilkoblinger({ dato, rekke }: { dato: string; rekke: string[] })
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-center text-sm text-neutral-500">Finn fire grupper med fire land som har noe til felles.</p>
+      <p className="text-center text-sm text-neutral-500">
+        {slag === "land" ? "Fire land, vist på fire måter hver. Finn hvilke som hører sammen." : "Finn fire grupper med fire land som har noe til felles."}
+      </p>
 
       <div className="flex flex-col gap-2">
         {visteGrupper.map((g) => (
@@ -135,25 +184,9 @@ export function Tilkoblinger({ dato, rekke }: { dato: string; rekke: string[] })
 
       {!ferdig ? (
         <div className="grid grid-cols-4 gap-2">
-          {igjen.map((id) => {
-            const aktiv = valgt.includes(id)
-            return (
-              <button
-                key={id}
-                type="button"
-                onClick={() => velg(id)}
-                className={`flex min-h-20 flex-col items-center justify-center gap-1.5 rounded-xl px-1 py-2 text-center text-[13px] font-semibold leading-tight transition active:scale-95 ${
-                  aktiv ? "bg-neutral-900 text-neutral-50" : "bg-neutral-100 text-neutral-950 hover:bg-neutral-200"
-                }`}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element -- small flags from flagcdn */}
-                <img src={`https://flagcdn.com/w40/${flagg(id)}.png`} alt="" className="h-4 w-auto rounded-[2px] shadow-sm" />
-                <span className="hyphens-auto break-words" lang="nb">
-                  {navn(id)}
-                </span>
-              </button>
-            )
-          })}
+          {igjen.map((b) => (
+            <Rute key={b.id} b={b} dato={dato} aktiv={valgt.includes(b.id)} onVelg={() => velg(b.id)} />
+          ))}
         </div>
       ) : null}
 
