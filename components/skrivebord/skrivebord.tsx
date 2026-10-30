@@ -257,6 +257,32 @@ function DagensSpill({ apne }: { apne: (mal: string) => void }) {
   )
 }
 
+/** Slow pixel clouds drifting across the dusk. Pure decoration. */
+function Skyer() {
+  const skyer = [
+    { top: "14%", varighet: 140, forsinkelse: -20, skala: 1 },
+    { top: "31%", varighet: 190, forsinkelse: -120, skala: 0.7 },
+    { top: "52%", varighet: 160, forsinkelse: -70, skala: 1.3 },
+  ]
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden opacity-25">
+      {skyer.map((s, i) => (
+        <div
+          key={i}
+          className="os-sky absolute left-0"
+          style={{ top: s.top, animationDuration: `${s.varighet}s`, animationDelay: `${s.forsinkelse}s` }}
+        >
+          <div style={{ transform: `scale(${s.skala})` }}>
+            <div className="ml-6 h-3 w-10 bg-white" />
+            <div className="ml-2 h-3 w-20 bg-white" />
+            <div className="h-3 w-28 bg-white" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // ---- desktop ----
 
 export function Skrivebord() {
@@ -361,6 +387,7 @@ export function Skrivebord() {
   return (
     <div className="os os-skrivebord fixed inset-0 overflow-hidden text-black select-none">
       <h1 className="sr-only">thodh.com – spill og apper</h1>
+      <Skyer />
       <p
         aria-hidden="true"
         className="os-merke pointer-events-none absolute right-[-0.04em] bottom-[30px] text-[clamp(6rem,22vw,20rem)] leading-none font-black"

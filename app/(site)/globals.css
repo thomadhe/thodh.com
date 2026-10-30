@@ -89,15 +89,33 @@ body {
   }
 
   .os-skrivebord {
-    /* The classic teal desktop. */
-    background-color: #008080;
+    /* Dusk over a dithered horizon: 98-era pixels, our own colours. */
+    background-color: #1d1c52;
+    background-image:
+      radial-gradient(rgb(255 255 255 / 0.07) 1px, transparent 1px),
+      radial-gradient(ellipse 60% 38% at 78% 112%, rgb(255 176 120 / 0.55), transparent 70%),
+      linear-gradient(180deg, #14134a 0%, #2e2275 38%, #6a3a8c 66%, #c75d7c 88%, #f08f6a 100%);
+    background-size: 3px 3px, 100% 100%, 100% 100%;
   }
 
   .os-merke {
     /* Huge outlined wordmark behind the icons. */
-    -webkit-text-stroke: 1px rgb(255 255 255 / 0.14);
+    -webkit-text-stroke: 1px rgb(255 255 255 / 0.16);
     color: transparent;
     letter-spacing: -0.06em;
+  }
+
+  @keyframes os-sky {
+    from {
+      transform: translateX(-30vw);
+    }
+    to {
+      transform: translateX(130vw);
+    }
+  }
+
+  .os-sky {
+    animation: os-sky linear infinite;
   }
 
   @keyframes os-apne {
@@ -123,6 +141,7 @@ body {
 
   @media (prefers-reduced-motion: reduce) {
     .os-apne,
+    .os-sky,
     .os-blink {
       animation: none;
     }

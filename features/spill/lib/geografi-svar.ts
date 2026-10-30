@@ -78,7 +78,10 @@ export function retning(a: Land, b: Land) {
   return ((Math.atan2(y, x) / rad) + 360) % 360
 }
 
-/** 100 % = same place, 0 % = the other side of the planet. */
+/**
+ * 100 % = same place, 0 % = the other side of the planet. A square-root curve so the number keeps moving
+ * when you are close: a neighbour 1000 km away is 78 %, not 95 % as with a straight line.
+ */
 export function naerhet(km: number) {
-  return Math.max(0, Math.round(100 * (1 - km / 20015)))
+  return Math.max(0, Math.round(100 * (1 - Math.sqrt(Math.min(1, km / 20015)))))
 }
