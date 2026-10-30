@@ -15,7 +15,8 @@
 //     has no figure (Taiwan, Vatican City, most territories, Eritrea, North Korea, South Sudan).
 //   - Capital coordinates: Wikidata capital (P36) -> P625, matched against our capital name; GeoNames
 //     (cities15000, CC BY 4.0) when Wikidata has none; HOVEDSTAD_POS in omrade-data.mjs by hand for the rest.
-//   - Largest cities: GeoNames cities15000 (CC BY 4.0), top 4 by population per country (city proper).
+//   - Largest cities: GeoNames cities15000 (CC BY 4.0), top 4 by population per country (city proper), with
+//     Norwegian names and corrected populations from Wikidata (see byer-wikidata.mjs).
 //   - Control borders: mledoze/countries (land borders, from Natural Earth / Wikipedia) - only used by
 //     sjekk-geodata.mjs to cross-check the computed neighbours.
 
@@ -26,6 +27,7 @@ import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 import { LAND_RADER } from "./land-data.mjs";
 import { HOVEDSTAD_POS, OMRADE_RADER } from "./omrade-data.mjs";
+import { byerMedWikidata, lesGeonames } from "./byer-wikidata.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const DL = path.join(tmpdir(), "geo-data", "dl");
@@ -130,19 +132,11 @@ if (!existsSync(txt)) {
   if (process.platform === "win32") execFileSync("powershell", ["-NoProfile", "-Command", `Expand-Archive -LiteralPath '${zip}' -DestinationPath '${DL}' -Force`]);
   else execFileSync("unzip", ["-o", "-q", zip, "-d", DL]);
 }
-const byer = new Map();
-for (const linje of readFileSync(txt, "utf8").split("\n")) {
-  const k = linje.split("\t");
-  if (k.length < 15 || k[6] !== "P" || k[7] === "PPLX") continue;
-  const by = { navn: k[1], ascii: k[2], alt: k[3], lat: +k[4], lng: +k[5], land: k[8], folketall: +k[14] };
-  (byer.get(by.land) ?? byer.set(by.land, []).get(by.land)).push(by);
-}
-for (const liste of byer.values()) liste.sort((a, b) => b.folketall - a.folketall);
+const byer = lesGeonames(txt);
 
 // ---- assemble ------------------------------------------------------------------------------------------------
 const runde = (v, d) => Math.round(v * 10 ** d) / 10 ** d;
 const land = {};
-const byerUt = {};
 const advarsler = [];
 for (const r of rader) {
   const id = r.id;
@@ -179,8 +173,9 @@ for (const r of rader) {
 
   rad.kontrollNaboer = (m?.borders ?? []).map((b) => til2.get(b)).filter(Boolean).sort();
   land[id] = rad;
-  byerUt[id] = (byer.get(id) ?? []).slice(0, 4).map((b) => ({ navn: b.navn, folketall: b.folketall, lat: runde(b.lat, 3), lng: runde(b.lng, 3) }));
 }
+const { byer: byerUt, rettelser } = await byerMedWikidata(byer, rader.map((r) => r.id));
+for (const r of rettelser) log("RETTET:", r);
 
 const ut = {
   hentet: new Date().toISOString().slice(0, 10),
@@ -189,7 +184,7 @@ const ut = {
     areal: "median of World Bank AG.SRF.TOTL.K2, Wikidata P2046 and mledoze/countries",
     bnp: "World Bank WDI NY.GDP.PCAP.CD (current US$, latest year)",
     hovedstadPos: "Wikidata P36 -> P625; GeoNames cities15000 (CC BY 4.0); a few by hand",
-    byer: "GeoNames cities15000 (CC BY 4.0)",
+    byer: "GeoNames cities15000 (CC BY 4.0); Norwegian names and corrected populations from Wikidata (CC0)",
     kontrollNaboer: "mledoze/countries (land borders)",
   },
   land,
