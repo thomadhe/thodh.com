@@ -21,10 +21,19 @@ export function dagensPulje(dato: string): Omrade[] {
   return dato >= TERRITORIER_FRA ? medTerritorier : bareLand
 }
 
+/** Practice pools: all 197 states, or the territories too. Tiny ones are in as well; it is only practice. */
+const OVELSE = {
+  land: land.filter((o) => formKart[o.id]),
+  alle: omrader.filter((o) => formKart[o.id]),
+}
+export type OvelsesUtvalg = keyof typeof OVELSE
+export const erOvelsesUtvalg = (u: unknown): u is OvelsesUtvalg => u === "land" || u === "alle"
+
 /** A batch of random outlines for practice (answers included; nothing to hide there). */
-export function ovelsesformer(antall: number) {
+export function ovelsesformer(antall: number, utvalg: OvelsesUtvalg) {
+  const pulje = OVELSE[utvalg]
   const valgt = new Set<string>()
-  while (valgt.size < Math.min(antall, medTerritorier.length)) valgt.add(medTerritorier[Math.floor(Math.random() * medTerritorier.length)].id)
+  while (valgt.size < Math.min(antall, pulje.length)) valgt.add(pulje[Math.floor(Math.random() * pulje.length)].id)
   return [...valgt].map((id) => ({ id, form: formKart[id] }))
 }
 

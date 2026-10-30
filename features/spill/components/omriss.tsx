@@ -13,6 +13,18 @@ import { DelKnapp, Kort } from "./spill-ramme"
 
 const FORSOK = 6
 
+/** Marks an outline that is a territory rather than a state, so nobody looks among the countries only. */
+export function TerritoriumMerke() {
+  return (
+    <span className="absolute top-3 left-3 rounded-full bg-amber-100 px-2.5 py-1 font-mono text-[11px] text-amber-900" title="Ikke et selvstendig land">
+      Territorium
+    </span>
+  )
+}
+
+/** "Danmark" for Greenland: the state a territory belongs to, if any. */
+export const tilhorerNavn = (o: Land) => (o.tilhorer ? landEtterId.get(o.tilhorer)?.navn : undefined)
+
 type Tilstand = { v: 1; gjetninger: string[]; resultat: Resultat }
 const tom = (): Tilstand => ({ v: 1, gjetninger: [], resultat: { status: "pagar" } })
 
@@ -54,10 +66,11 @@ export function Omriss({ dato, form, nokkel }: { dato: string; form: string; nok
 
   return (
     <div className="flex flex-col gap-4">
-      <Kort className="flex items-center justify-center p-6">
+      <Kort className="relative flex items-center justify-center p-6">
         <svg viewBox="0 0 200 200" className="h-56 w-56 sm:h-64 sm:w-64" role="img" aria-label="Omrisset av dagens land">
           <path d={form} className="fill-sky-400" />
         </svg>
+        {fasit.suveren ? null : <TerritoriumMerke />}
       </Kort>
 
       {ferdig ? (
@@ -66,7 +79,10 @@ export function Omriss({ dato, form, nokkel }: { dato: string; form: string; nok
             {verdi.resultat.status === "vunnet" ? "Riktig!" : "Det var"}
           </p>
           <p className="mt-1 text-3xl font-semibold tracking-tight text-neutral-950">{fasit.navn}</p>
-          <p className="mt-1 text-sm text-neutral-500">Hovedstad: {fasit.hovedstad}</p>
+          <p className="mt-1 text-sm text-neutral-500">
+            Hovedstad: {fasit.hovedstad}
+            {tilhorerNavn(fasit) ? ` · tilhører ${tilhorerNavn(fasit)}` : ""}
+          </p>
           <div className="mt-5 flex justify-center">
             <DelKnapp tekst={delTekst} />
           </div>

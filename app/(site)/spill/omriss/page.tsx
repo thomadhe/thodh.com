@@ -16,7 +16,12 @@ export default async function Page({ searchParams }: PageProps<"/spill/omriss">)
     <SpillRamme
       spillId="omriss"
       dato={dato}
-      regler={<p>Pilen peker mot landet, og prosenten viser hvor nær du er. Kartdata: Natural Earth.</p>}
+      regler={
+        <p>
+          Pilen peker mot landet, og prosenten viser hvor nær du er. Er omrisset et territorium og ikke et land, står det på
+          kortet. Under Øving velger du bare land eller territorier også. Kartdata: Natural Earth.
+        </p>
+      }
     >
       <OmrissFaner key={dato} dato={dato} form={form} nokkel={nokkel} />
     </SpillRamme>
