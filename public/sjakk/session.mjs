@@ -1,6 +1,6 @@
 import { Chess } from './vendor/chess.mjs';
 import { colorName, pieceNames, outcome } from './game-logic.mjs';
-import { kanFlytte, lesFen, skrivFen, spinn, trekkFor, utfor } from './casino.mjs';
+import { kanFlytte, lesFen, lesRokade, nyRokade, skrivFen, spinn, trekkFor, utfor } from './casino.mjs';
 
 export const other = color => color === 'w' ? 'b' : 'w';
 export const defaults = () => ({
@@ -88,15 +88,16 @@ function fangst(state, actor, captured) {
 /** Spins the reels for the player to move. A reel showing a piece that can't move is void ("tom"). */
 function nyttSpinn(state) {
   const brett = lesFen(state.fen);
+  const rokade = lesRokade(state.fen);
   for (let forsok = 0; forsok < 12; forsok++) {
     const hjul = spinn();
-    const status = hjul.map(type => kanFlytte(brett, state.turn, type) ? 'klar' : 'tom');
+    const status = hjul.map(type => kanFlytte(brett, state.turn, type, rokade) ? 'klar' : 'tom');
     state.casino = { runde: (state.casino?.runde ?? 0) + 1, hjul, status };
     if (status.includes('klar')) return;
     // Nothing on the reels can move: the house wins this round and the turn passes.
     addNotice(state, { kind: 'casino', recipient: state.turn, title: 'Ingen gevinst 🎰', description: `${colorName(state.turn)} fikk ${hjul.map(type => pieceNames[type]).join(', ')}, men ingen av dem kan flytte. Turen går videre.`, icon: '🎰' });
     state.turn = other(state.turn);
-    state.fen = skrivFen(brett, state.turn);
+    state.fen = skrivFen(brett, state.turn, rokade);
     state.turnRemaining = state.settings.players[state.turn].deadline * 1000 || null;
   }
 }
@@ -105,33 +106,35 @@ const bokstav = { n: 'N', b: 'B', r: 'R', q: 'Q', k: 'K', p: '' };
 
 function casinoTrekk(state, action, actor, now) {
   const brett = lesFen(state.fen);
+  const rokade = lesRokade(state.fen);
   const brikke = brett[action.from];
   if (!brikke || brikke.color !== actor) throw new Error('Velg en av dine brikker.');
   const hjul = state.casino.status.findIndex((status, i) => status === 'klar' && state.casino.hjul[i] === brikke.type);
   if (hjul < 0) throw new Error(`Hjulene ga ikke ${pieceNames[brikke.type]} denne turen.`);
-  const trekk = trekkFor(brett, action.from).find(move => move.to === action.to);
+  const trekk = trekkFor(brett, action.from, rokade).find(move => move.to === action.to);
   if (!trekk) throw new Error('Trekket er ikke lovlig.');
   const forvandling = ['q', 'r', 'b', 'n'].includes(action.promotion) ? action.promotion : 'q';
   const nytt = utfor(brett, trekk, forvandling);
+  const nyeRettigheter = nyRokade(rokade, trekk);
   settle(state, now);
   state.casino.status[hjul] = 'brukt';
-  const san = `${bokstav[brikke.type] || (trekk.captured ? action.from[0] : '')}${trekk.captured ? 'x' : ''}${trekk.to}${trekk.promotion ? `=${forvandling.toUpperCase()}` : ''}`;
+  const san = trekk.castle ? (trekk.castle === 'K' ? 'O-O' : 'O-O-O') : `${bokstav[brikke.type] || (trekk.captured ? action.from[0] : '')}${trekk.captured ? 'x' : ''}${trekk.to}${trekk.promotion ? `=${forvandling.toUpperCase()}` : ''}`;
   state.moves.push({ from: trekk.from, to: trekk.to, promotion: trekk.promotion ? forvandling : undefined, captured: trekk.captured, color: actor, san });
 
   if (trekk.captured === 'k') {
-    state.fen = skrivFen(nytt, actor);
+    state.fen = skrivFen(nytt, actor, nyeRettigheter);
     win(state, actor, 'ved å slå kongen');
     return state;
   }
   if (trekk.captured) fangst(state, actor, trekk.captured);
 
   // Reels whose piece can no longer move are void; when none are left, the turn passes.
-  state.casino.status = state.casino.status.map((status, i) => status === 'klar' && !kanFlytte(nytt, actor, state.casino.hjul[i]) ? 'tom' : status);
-  if (state.casino.status.includes('klar')) state.fen = skrivFen(nytt, actor);
+  state.casino.status = state.casino.status.map((status, i) => status === 'klar' && !kanFlytte(nytt, actor, state.casino.hjul[i], nyeRettigheter) ? 'tom' : status);
+  if (state.casino.status.includes('klar')) state.fen = skrivFen(nytt, actor, nyeRettigheter);
   else {
     if (state.remaining[actor] !== null) state.remaining[actor] += state.settings.players[actor].increment * 1000;
     state.turn = other(actor);
-    state.fen = skrivFen(nytt, state.turn);
+    state.fen = skrivFen(nytt, state.turn, nyeRettigheter);
     state.turnRemaining = state.settings.players[state.turn].deadline * 1000 || null;
     nyttSpinn(state);
   }

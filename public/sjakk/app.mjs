@@ -1,7 +1,7 @@
 import { Chess } from './vendor/chess.mjs';
 import { colorName, pieceNames } from './game-logic.mjs';
 import { createSession, defaults, validateSettings, applyAction, advanceTime, clockValues, formatClock, noticeFacesOpposite, other } from './session.mjs';
-import { lesFen, trekkFor, TYPER } from './casino.mjs';
+import { lesFen, lesRokade, trekkFor, TYPER } from './casino.mjs';
 
 const $ = selector => document.querySelector(selector);
 const apiBase = $('meta[name="chess-api-base"]')?.content ?? '/api/rooms';
@@ -146,7 +146,7 @@ function casinoBrett(game) {
   const igjen = new Set((game.casino?.hjul ?? []).filter((_, i) => game.casino.status[i] === 'klar'));
   return {
     get: square => brett[square],
-    moves: ({ square }) => { const piece = brett[square]; return piece && piece.color === game.turn && igjen.has(piece.type) ? trekkFor(brett, square) : []; },
+    moves: ({ square }) => { const piece = brett[square]; return piece && piece.color === game.turn && igjen.has(piece.type) ? trekkFor(brett, square, lesRokade(game.fen)) : []; },
     isCheck: () => false,
   };
 }

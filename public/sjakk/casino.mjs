@@ -1,6 +1,7 @@
 // Casinosjakk: each turn three reels spin a piece type each (equal odds), and the player moves one piece
 // of every type that came up – up to three moves per turn. There are no check rules: you may stand in
-// check, and whoever captures the king wins. No castling or en passant; pawns promote as usual.
+// check, and whoever captures the king wins. Castling is a king move (needs a king on the reels, an
+// unmoved king and rook and empty squares between). No en passant; pawns promote as usual.
 
 export const TYPER = ['p', 'n', 'b', 'r', 'q', 'k'];
 const FILER = 'abcdefgh';
@@ -21,7 +22,13 @@ export function lesFen(fen) {
   return brett;
 }
 
-export function skrivFen(brett, tur) {
+/** Castling rights from a FEN, e.g. 'KQkq' → Set { 'K', 'Q', 'k', 'q' }. */
+export function lesRokade(fen) {
+  const felt = fen.split(' ')[2] ?? '-';
+  return new Set(felt === '-' ? [] : [...felt]);
+}
+
+export function skrivFen(brett, tur, rokade = new Set()) {
   const rader = [];
   for (let rad = 7; rad >= 0; rad--) {
     let tekst = '';
@@ -34,7 +41,8 @@ export function skrivFen(brett, tur) {
     }
     rader.push(tekst + (tomme || ''));
   }
-  return `${rader.join('/')} ${tur} - - 0 1`;
+  const rettigheter = ['K', 'Q', 'k', 'q'].filter(r => rokade.has(r)).join('') || '-';
+  return `${rader.join('/')} ${tur} ${rettigheter} - 0 1`;
 }
 
 const RETNINGER = {
@@ -47,7 +55,7 @@ RETNINGER.k = RETNINGER.q;
 const GLIDER = new Set(['b', 'r', 'q']);
 
 /** Every move the piece on `fra` can make, ignoring check. Captures may take the king. */
-export function trekkFor(brett, fra) {
+export function trekkFor(brett, fra, rokade = new Set()) {
   const brikke = brett[fra];
   if (!brikke) return [];
   const [fil, rad] = posisjon(fra);
@@ -74,6 +82,19 @@ export function trekkFor(brett, fra) {
     }
     return trekk;
   }
+  if (brikke.type === 'k') {
+    // Castling: the king jumps two squares and the rook lands on the other side of it.
+    const hvit = brikke.color === 'w';
+    const rad1 = hvit ? '1' : '8';
+    if (fra === `e${rad1}`) {
+      for (const [rett, rute, tomme] of [[hvit ? 'K' : 'k', 'h', 'fg'], [hvit ? 'Q' : 'q', 'a', 'bcd']]) {
+        const taarn = brett[`${rute}${rad1}`];
+        if (rokade.has(rett) && taarn?.type === 'r' && taarn.color === brikke.color && [...tomme].every(f => !brett[`${f}${rad1}`])) {
+          trekk.push({ from: fra, to: `${rute === 'h' ? 'g' : 'c'}${rad1}`, piece: 'k', color: brikke.color, castle: rett.toUpperCase() });
+        }
+      }
+    }
+  }
   for (const [df, dr] of RETNINGER[brikke.type]) {
     let f = fil + df;
     let r = rad + dr;
@@ -87,8 +108,8 @@ export function trekkFor(brett, fra) {
 }
 
 /** Whether `farge` has any piece of `type` that can move. */
-export function kanFlytte(brett, farge, type) {
-  return Object.entries(brett).some(([rute, b]) => b.color === farge && b.type === type && trekkFor(brett, rute).length > 0);
+export function kanFlytte(brett, farge, type, rokade) {
+  return Object.entries(brett).some(([rute, b]) => b.color === farge && b.type === type && trekkFor(brett, rute, rokade).length > 0);
 }
 
 /** Three reels, every piece type equally likely. */
@@ -102,5 +123,19 @@ export function utfor(brett, trekk, forvandling = 'q') {
   const brikke = nytt[trekk.from];
   delete nytt[trekk.from];
   nytt[trekk.to] = trekk.promotion ? { type: forvandling, color: brikke.color } : brikke;
+  if (trekk.castle) {
+    const rad = trekk.to[1];
+    const [fraT, tilT] = trekk.castle === 'K' ? [`h${rad}`, `f${rad}`] : [`a${rad}`, `d${rad}`];
+    nytt[tilT] = nytt[fraT];
+    delete nytt[fraT];
+  }
   return nytt;
+}
+
+/** Castling rights after a move: moving the king or a rook, or taking a rook at home, ends them. */
+export function nyRokade(rokade, trekk) {
+  const igjen = new Set(rokade);
+  const tap = { e1: 'KQ', h1: 'K', a1: 'Q', e8: 'kq', h8: 'k', a8: 'q' };
+  for (const rute of [trekk.from, trekk.to]) for (const r of tap[rute] ?? '') igjen.delete(r);
+  return igjen;
 }
