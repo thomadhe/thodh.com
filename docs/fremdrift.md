@@ -13,6 +13,21 @@ Vaktagenten leser og oppdaterer denne fila. Den er arbeidslisten for løpende ut
 | Optimalisering: hele thodh.com (Claude Sonnet 5.5) | pågår | – |
 | Dagsspill: 6/7-stegern | pågår | – |
 
+## Mål som ikke er nådd (går foran køen)
+
+### Online-sjakk like smooth som Lichess
+Ikke ferdig før alt dette er målt i produksjon (to nettlesere, vanlig nett) og står som oppfylt her:
+
+- [ ] Eget trekk vises i samme bilderute som du slipper brikken, med animasjon og lyd.
+- [ ] Motstanderen ser trekket innen 250 ms (p95) via push (WebSocket/Realtime), ikke polling.
+- [ ] Forhåndstrekk (premove) som Lichess, også flere på rad i hurtigsjakk.
+- [ ] Klokkene styres av serveren med lagkompensasjon; ingen hopp eller tapt tid ved forsinkelse.
+- [ ] Brudd i nettet: kobler til igjen innen 2 s uten tapte eller doble trekk; tydelig status.
+- [ ] Dra og slipp i 60 fps på mobil, ingen hakking eller layoutskift.
+- [ ] Ingen «venter på server»-følelse i noen del av partiet (start, trekk, remis/oppgi, omkamp).
+
+Hver vaktrunde: er online-strømmen ferdig og målet ikke nådd, start en ny Claude-agent med det som mangler, med målingene som utgangspunkt.
+
 ## Etterarbeid når strømmene er flettet
 
 - Rewrites i next.config.ts for `/sjakk/oppgaver` og `/sjakk/apninger`, og lenker i toppen av public/sjakk/index.html.
