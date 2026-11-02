@@ -1,5 +1,900 @@
 [
   {
+    "id": "ru-privet",
+    "title": "Hei og hyggelig å treffes",
+    "subtitle": "Hils, si navnet ditt og hvor du kommer fra.",
+    "level": "A1",
+    "icon": "hand",
+    "opening": "Привет! Меня зовут Саша. Я твой учитель.",
+    "openingTranslation": "Hei! Jeg heter Sasha. Jeg er læreren din.",
+    "openingTransliteration": "Privet! Menya zovut Sasha. Ya tvoy uchitel’.",
+    "steps": [
+      {
+        "question": "Как тебя зовут?",
+        "translation": "Hva heter du?",
+        "transliteration": "Kak tebya zovut?",
+        "expected": [
+          "Меня зовут Анна.",
+          "Я Анна."
+        ],
+        "hint": "«Меня зовут …» betyr jeg heter …",
+        "reply": "Очень приятно, Анна!",
+        "replyTranslation": "Veldig hyggelig, Anna!",
+        "replyTransliteration": "Ochen’ priyatno, Anna!"
+      },
+      {
+        "question": "Откуда ты?",
+        "translation": "Hvor kommer du fra?",
+        "transliteration": "Otkuda ty?",
+        "expected": [
+          "Я из Норвегии.",
+          "Я из Осло."
+        ],
+        "hint": "«Я из …» med genitiv: «из Норвегии».",
+        "reply": "Норвегия — красивая страна!",
+        "replyTranslation": "Norge er et vakkert land!",
+        "replyTransliteration": "Norvegiya — krasivaya strana!"
+      },
+      {
+        "question": "Как дела?",
+        "translation": "Hvordan går det?",
+        "transliteration": "Kak dela?",
+        "expected": [
+          "Хорошо, спасибо. А у тебя?",
+          "Нормально, спасибо!"
+        ],
+        "hint": "Svar «Хорошо, спасибо» og spør tilbake: «А у тебя?»",
+        "reply": "У меня тоже всё хорошо.",
+        "replyTranslation": "Hos meg går også alt bra.",
+        "replyTransliteration": "U menya tozhe vsyo khorosho."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "привет",
+        "translation": "hei",
+        "transliteration": "privet"
+      },
+      {
+        "word": "меня зовут",
+        "translation": "jeg heter",
+        "transliteration": "menya zovut"
+      },
+      {
+        "word": "очень приятно",
+        "translation": "veldig hyggelig",
+        "transliteration": "ochen’ priyatno"
+      },
+      {
+        "word": "откуда ты?",
+        "translation": "hvor er du fra?",
+        "transliteration": "otkuda ty?"
+      },
+      {
+        "word": "как дела?",
+        "translation": "hvordan går det?",
+        "transliteration": "kak dela?"
+      },
+      {
+        "word": "спасибо",
+        "translation": "takk",
+        "transliteration": "spasibo"
+      }
+    ]
+  },
+  {
+    "id": "ru-rynok",
+    "title": "Tall og priser på markedet",
+    "subtitle": "Kjøp frukt og grønnsaker, tell og betal.",
+    "level": "A1",
+    "icon": "shop",
+    "opening": "Добрый день! Вот свежие яблоки и огурцы.",
+    "openingTranslation": "God dag! Her er ferske epler og agurker.",
+    "openingTransliteration": "Dobryy den’! Vot svezhiye yabloki i ogurtsy.",
+    "steps": [
+      {
+        "question": "Сколько яблок вы хотите?",
+        "translation": "Hvor mange epler vil du ha?",
+        "transliteration": "Skol’ko yablok vy khotite?",
+        "expected": [
+          "Три яблока, пожалуйста.",
+          "Дайте, пожалуйста, пять яблок."
+        ],
+        "hint": "Etter 2–4 kommer genitiv entall («три яблока»), etter 5 og mer genitiv flertall («пять яблок»).",
+        "reply": "Пожалуйста, вот ваши яблоки.",
+        "replyTranslation": "Vær så god, her er eplene dine.",
+        "replyTransliteration": "Pozhaluysta, vot vashi yabloki."
+      },
+      {
+        "question": "Что ещё?",
+        "translation": "Noe mer?",
+        "transliteration": "Chto yeshchyo?",
+        "expected": [
+          "Ещё два огурца, пожалуйста.",
+          "Больше ничего, спасибо."
+        ],
+        "hint": "«Ещё …» betyr også / i tillegg. «Больше ничего» betyr ikke noe mer.",
+        "reply": "Хорошо.",
+        "replyTranslation": "Greit.",
+        "replyTransliteration": "Khorosho."
+      },
+      {
+        "question": "Сто двадцать рублей. Наличными или картой?",
+        "translation": "Hundre og tjue rubler. Kontant eller kort?",
+        "transliteration": "Sto dvadtsat’ rubley. Nalichnymi ili kartoy?",
+        "expected": [
+          "Картой, пожалуйста.",
+          "Наличными. Вот двести рублей."
+        ],
+        "hint": "«картой» betyr med kort, «наличными» betyr kontant.",
+        "reply": "Спасибо! Хорошего дня!",
+        "replyTranslation": "Takk! Ha en fin dag!",
+        "replyTransliteration": "Spasibo! Khoroshego dnya!"
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "сколько?",
+        "translation": "hvor mange / hvor mye?",
+        "transliteration": "skol’ko?"
+      },
+      {
+        "word": "яблоко",
+        "translation": "eple",
+        "transliteration": "yabloko"
+      },
+      {
+        "word": "огурец",
+        "translation": "agurk",
+        "transliteration": "ogurets"
+      },
+      {
+        "word": "ещё",
+        "translation": "mer / i tillegg",
+        "transliteration": "yeshchyo"
+      },
+      {
+        "word": "картой",
+        "translation": "med kort",
+        "transliteration": "kartoy"
+      },
+      {
+        "word": "наличными",
+        "translation": "kontant",
+        "transliteration": "nalichnymi"
+      }
+    ]
+  },
+  {
+    "id": "ru-chay-pozhaluysta",
+    "title": "En te, takk",
+    "subtitle": "Bestill på kafé og spør hva det koster.",
+    "level": "A1",
+    "icon": "coffee",
+    "opening": "Здравствуйте! Что будете заказывать?",
+    "openingTranslation": "Hei! Hva vil du bestille?",
+    "openingTransliteration": "Zdravstvuyte! Chto budete zakazyvat’?",
+    "steps": [
+      {
+        "question": "Что вы будете пить?",
+        "translation": "Hva vil du drikke?",
+        "transliteration": "Chto vy budete pit’?",
+        "expected": [
+          "Чай, пожалуйста.",
+          "Мне кофе с молоком, пожалуйста."
+        ],
+        "hint": "«Мне …, пожалуйста» betyr (til meg) …, takk.",
+        "reply": "Хорошо.",
+        "replyTranslation": "Greit.",
+        "replyTransliteration": "Khorosho."
+      },
+      {
+        "question": "С сахаром?",
+        "translation": "Med sukker?",
+        "transliteration": "S sakharom?",
+        "expected": [
+          "Нет, без сахара.",
+          "Да, с сахаром, пожалуйста."
+        ],
+        "hint": "«с» betyr med, «без» betyr uten. Begge styrer kasus: «с сахаром», «без сахара».",
+        "reply": "Понятно.",
+        "replyTranslation": "Skjønner.",
+        "replyTransliteration": "Ponyatno."
+      },
+      {
+        "question": "Что-нибудь ещё? У нас вкусные пирожки.",
+        "translation": "Noe mer? Vi har gode piroger.",
+        "transliteration": "Chto-nibud’ yeshchyo? U nas vkusnyye pirozhki.",
+        "expected": [
+          "Да, один пирожок с яблоком, пожалуйста.",
+          "Нет, спасибо. Сколько стоит?"
+        ],
+        "hint": "Spør om prisen: «Сколько стоит?»",
+        "reply": "Всё вместе — двести рублей.",
+        "replyTranslation": "Alt sammen blir to hundre rubler.",
+        "replyTransliteration": "Vsyo vmeste — dvesti rubley."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "здравствуйте",
+        "translation": "god dag / hei (høflig)",
+        "transliteration": "zdravstvuyte"
+      },
+      {
+        "word": "мне, пожалуйста",
+        "translation": "til meg, takk",
+        "transliteration": "mne, pozhaluysta"
+      },
+      {
+        "word": "чай",
+        "translation": "te",
+        "transliteration": "chay"
+      },
+      {
+        "word": "без сахара",
+        "translation": "uten sukker",
+        "transliteration": "bez sakhara"
+      },
+      {
+        "word": "пирожок",
+        "translation": "liten pirog",
+        "transliteration": "pirozhok"
+      },
+      {
+        "word": "сколько стоит?",
+        "translation": "hva koster det?",
+        "transliteration": "skol’ko stoit?"
+      }
+    ]
+  },
+  {
+    "id": "ru-gde-metro",
+    "title": "Hvor er metroen?",
+    "subtitle": "Spør om veien og forstå enkle retninger.",
+    "level": "A1",
+    "icon": "map",
+    "opening": "Ты в центре Москвы. Не волнуйся, я помогу.",
+    "openingTranslation": "Du er i sentrum av Moskva. Ikke vær urolig, jeg hjelper deg.",
+    "openingTransliteration": "Ty v tsentre Moskvy. Ne volnuysya, ya pomogu.",
+    "steps": [
+      {
+        "question": "Куда ты идёшь?",
+        "translation": "Hvor skal du?",
+        "transliteration": "Kuda ty idyosh’?",
+        "expected": [
+          "Я иду в музей.",
+          "Где метро, пожалуйста?"
+        ],
+        "hint": "«Куда?» betyr hvorhen: «в музей» (akkusativ). «Где …?» betyr hvor er …?",
+        "reply": "Метро рядом.",
+        "replyTranslation": "Metroen er like ved.",
+        "replyTransliteration": "Metro ryadom."
+      },
+      {
+        "question": "Иди прямо, потом налево. Понятно?",
+        "translation": "Gå rett frem, så til venstre. Forstått?",
+        "transliteration": "Idi pryamo, potom nalevo. Ponyatno?",
+        "expected": [
+          "Да, прямо и налево. Спасибо!",
+          "Повтори, пожалуйста, медленно."
+        ],
+        "hint": "«прямо» betyr rett frem, «налево» til venstre, «направо» til høyre.",
+        "reply": "Конечно: прямо, потом налево.",
+        "replyTranslation": "Selvfølgelig: rett frem, så til venstre.",
+        "replyTransliteration": "Konechno: pryamo, potom nalevo."
+      },
+      {
+        "question": "Ты пойдёшь пешком или поедешь на автобусе?",
+        "translation": "Skal du gå eller ta bussen?",
+        "transliteration": "Ty poydyosh’ peshkom ili poyedesh’ na avtobuse?",
+        "expected": [
+          "Пешком. Это далеко?",
+          "На автобусе. Где остановка?"
+        ],
+        "hint": "«пешком» betyr til fots, «на автобусе» med buss.",
+        "reply": "Нет, недалеко. Пешком пять минут.",
+        "replyTranslation": "Nei, ikke langt. Fem minutter til fots.",
+        "replyTransliteration": "Net, nedaleko. Peshkom pyat’ minut."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "где?",
+        "translation": "hvor?",
+        "transliteration": "gde?"
+      },
+      {
+        "word": "куда?",
+        "translation": "hvorhen?",
+        "transliteration": "kuda?"
+      },
+      {
+        "word": "прямо",
+        "translation": "rett frem",
+        "transliteration": "pryamo"
+      },
+      {
+        "word": "налево / направо",
+        "translation": "til venstre / til høyre",
+        "transliteration": "nalevo / napravo"
+      },
+      {
+        "word": "рядом",
+        "translation": "like ved",
+        "transliteration": "ryadom"
+      },
+      {
+        "word": "пешком",
+        "translation": "til fots",
+        "transliteration": "peshkom"
+      }
+    ]
+  },
+  {
+    "id": "ru-dni-i-chasy",
+    "title": "Dager og klokkeslett",
+    "subtitle": "Avtal en dag og et tidspunkt.",
+    "level": "A1",
+    "icon": "clock",
+    "opening": "Привет! Давай встретимся на этой неделе.",
+    "openingTranslation": "Hei! La oss møtes denne uka.",
+    "openingTransliteration": "Privet! Davay vstretimsya na etoy nedele.",
+    "steps": [
+      {
+        "question": "В какой день тебе удобно?",
+        "translation": "Hvilken dag passer for deg?",
+        "transliteration": "V kakoy den’ tebe udobno?",
+        "expected": [
+          "В понедельник.",
+          "Мне удобно в четверг."
+        ],
+        "hint": "«в» og ukedag i akkusativ: «в понедельник», «в среду», «в пятницу».",
+        "reply": "Хорошо, в понедельник.",
+        "replyTranslation": "Bra, på mandag.",
+        "replyTransliteration": "Khorosho, v ponedel’nik."
+      },
+      {
+        "question": "Во сколько?",
+        "translation": "Hva tid?",
+        "transliteration": "Vo skol’ko?",
+        "expected": [
+          "В шесть часов вечера.",
+          "В десять утра."
+        ],
+        "hint": "«в шесть часов» betyr klokka seks. «утра» og «вечера» betyr om morgenen og om kvelden.",
+        "reply": "Отлично, в шесть.",
+        "replyTranslation": "Utmerket, klokka seks.",
+        "replyTransliteration": "Otlichno, v shest’."
+      },
+      {
+        "question": "А сколько сейчас времени?",
+        "translation": "Og hva er klokka nå?",
+        "transliteration": "A skol’ko seychas vremeni?",
+        "expected": [
+          "Сейчас два часа.",
+          "Сейчас три часа."
+        ],
+        "hint": "Etter 2–4 sier man «часа», etter 5 og mer «часов».",
+        "reply": "Спасибо! До понедельника!",
+        "replyTranslation": "Takk! Vi ses på mandag!",
+        "replyTransliteration": "Spasibo! Do ponedel’nika!"
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "неделя",
+        "translation": "uke",
+        "transliteration": "nedelya"
+      },
+      {
+        "word": "понедельник",
+        "translation": "mandag",
+        "transliteration": "ponedel’nik"
+      },
+      {
+        "word": "во сколько?",
+        "translation": "hva tid?",
+        "transliteration": "vo skol’ko?"
+      },
+      {
+        "word": "час",
+        "translation": "time / klokkeslett",
+        "transliteration": "chas"
+      },
+      {
+        "word": "сейчас",
+        "translation": "nå",
+        "transliteration": "seychas"
+      },
+      {
+        "word": "до понедельника!",
+        "translation": "vi ses på mandag!",
+        "transliteration": "do ponedel’nika!"
+      }
+    ]
+  },
+  {
+    "id": "ru-gostinitsa",
+    "title": "Innsjekk på hotellet",
+    "subtitle": "Bekreft reservasjonen, spør om tider og løs et lite problem.",
+    "level": "A2",
+    "icon": "home",
+    "opening": "Добрый вечер! Добро пожаловать в нашу гостиницу. Вы бронировали номер?",
+    "openingTranslation": "God kveld! Velkommen til hotellet vårt. Har du reservert rom?",
+    "openingTransliteration": "Dobryy vecher! Dobro pozhalovat’ v nashu gostinitsu. Vy bronirovali nomer?",
+    "steps": [
+      {
+        "question": "На какое имя бронь?",
+        "translation": "I hvilket navn er reservasjonen?",
+        "transliteration": "Na kakoye imya bron’?",
+        "expected": [
+          "На имя Хансен, на две ночи.",
+          "На фамилию Хансен. Я бронировал одноместный номер."
+        ],
+        "hint": "«на имя …» betyr i navnet … En mann sier «бронировал», en kvinne «бронировала».",
+        "reply": "Да, вот ваша бронь: одноместный номер на две ночи.",
+        "replyTranslation": "Ja, her er reservasjonen din: enkeltrom for to netter.",
+        "replyTransliteration": "Da, vot vasha bron’: odnomestnyy nomer na dve nochi."
+      },
+      {
+        "question": "Завтрак с семи до десяти. У вас есть вопросы?",
+        "translation": "Frokost fra sju til ti. Har du noen spørsmål?",
+        "transliteration": "Zavtrak s semi do desyati. U vas yest’ voprosy?",
+        "expected": [
+          "Да, во сколько нужно освободить номер?",
+          "В номере есть вай-фай?"
+        ],
+        "hint": "Spør om utsjekking eller wifi. «освободить номер» betyr å sjekke ut av rommet.",
+        "reply": "Выезд до двенадцати, а вай-фай бесплатный.",
+        "replyTranslation": "Utsjekking innen tolv, og wifi er gratis.",
+        "replyTransliteration": "Vyyezd do dvenadtsati, a vay-fay besplatnyy."
+      },
+      {
+        "question": "К сожалению, лифт сегодня не работает. Номер на четвёртом этаже вам подойдёт?",
+        "translation": "Dessverre virker ikke heisen i dag. Passer et rom i fjerde etasje for deg?",
+        "transliteration": "K sozhaleniyu, lift segodnya ne rabotayet. Nomer na chetvyortom etazhe vam podoydyot?",
+        "expected": [
+          "Подойдёт, но помогите, пожалуйста, с чемоданом.",
+          "А у вас нет номера пониже?"
+        ],
+        "hint": "Godta og be om hjelp med kofferten, eller spør om noe lavere («пониже»).",
+        "reply": "Конечно, коллега отнесёт ваш чемодан.",
+        "replyTranslation": "Selvfølgelig, en kollega bærer kofferten din opp.",
+        "replyTransliteration": "Konechno, kollega otnesyot vash chemodan."
+      },
+      {
+        "question": "Вас разбудить завтра утром?",
+        "translation": "Skal vi vekke deg i morgen tidlig?",
+        "transliteration": "Vas razbudit’ zavtra utrom?",
+        "expected": [
+          "Да, в семь часов, пожалуйста.",
+          "Нет, спасибо, не нужно."
+        ],
+        "hint": "«не нужно» betyr det trengs ikke.",
+        "reply": "Хорошо. Вот ваш ключ, номер тридцать два.",
+        "replyTranslation": "Bra. Her er nøkkelen din, rom trettito.",
+        "replyTransliteration": "Khorosho. Vot vash klyuch, nomer tridtsat’ dva."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "бронь",
+        "translation": "reservasjon",
+        "transliteration": "bron’"
+      },
+      {
+        "word": "одноместный номер",
+        "translation": "enkeltrom",
+        "transliteration": "odnomestnyy nomer"
+      },
+      {
+        "word": "этаж",
+        "translation": "etasje",
+        "transliteration": "etazh"
+      },
+      {
+        "word": "чемодан",
+        "translation": "koffert",
+        "transliteration": "chemodan"
+      },
+      {
+        "word": "к сожалению",
+        "translation": "dessverre",
+        "transliteration": "k sozhaleniyu"
+      },
+      {
+        "word": "не нужно",
+        "translation": "det trengs ikke",
+        "transliteration": "ne nuzhno"
+      }
+    ]
+  },
+  {
+    "id": "ru-vykhodnye",
+    "title": "Hvordan var helgen?",
+    "subtitle": "Fortell hva du gjorde, og hva du skal gjøre.",
+    "level": "A2",
+    "icon": "wave",
+    "opening": "Привет! Как прошли выходные?",
+    "openingTranslation": "Hei! Hvordan var helgen?",
+    "openingTransliteration": "Privet! Kak proshli vykhodnyye?",
+    "steps": [
+      {
+        "question": "Что интересного было в субботу?",
+        "translation": "Hva skjedde av interessant på lørdag?",
+        "transliteration": "Chto interesnogo bylo v subbotu?",
+        "expected": [
+          "В субботу я гулял в парке с друзьями.",
+          "Я ходила в кино, а потом мы ужинали в ресторане."
+        ],
+        "hint": "Fortid: en mann sier «гулял», en kvinne «гуляла». «ходить в кино» betyr å gå på kino.",
+        "reply": "Здорово! А какой фильм вы смотрели?",
+        "replyTranslation": "Kjempefint! Og hvilken film så dere?",
+        "replyTransliteration": "Zdorovo! A kakoy fil’m vy smotreli?"
+      },
+      {
+        "question": "А воскресенье было спокойное?",
+        "translation": "Og var søndagen rolig?",
+        "transliteration": "A voskresen’ye bylo spokoynoye?",
+        "expected": [
+          "Да, я весь день читала дома.",
+          "Нет, я помогал родителям на даче."
+        ],
+        "hint": "«весь день» betyr hele dagen. «на даче» betyr på landstedet / hytta.",
+        "reply": "Дача — это очень по-русски!",
+        "replyTranslation": "Landsted – det er veldig russisk!",
+        "replyTransliteration": "Dacha — eto ochen’ po-russki!"
+      },
+      {
+        "question": "Какая была погода?",
+        "translation": "Hvordan var været?",
+        "transliteration": "Kakaya byla pogoda?",
+        "expected": [
+          "Было солнечно и тепло.",
+          "Шёл дождь, и было холодно."
+        ],
+        "hint": "«Было …» med adverb: «тепло», «холодно». «Шёл дождь» betyr det regnet.",
+        "reply": "А у нас было пасмурно, но без дождя.",
+        "replyTranslation": "Her var det overskyet, men uten regn.",
+        "replyTransliteration": "A u nas bylo pasmurno, no bez dozhdya."
+      },
+      {
+        "question": "Что ты будешь делать в следующие выходные?",
+        "translation": "Hva skal du gjøre neste helg?",
+        "transliteration": "Chto ty budesh’ delat’ v sleduyushchiye vykhodnyye?",
+        "expected": [
+          "Буду отдыхать и, может быть, поеду за город.",
+          "Ещё не знаю. Может быть, пойду в музей."
+        ],
+        "hint": "Fremtid: «буду» og infinitiv, eller perfektiv: «поеду», «пойду».",
+        "reply": "Хороший план. Потом расскажешь!",
+        "replyTranslation": "God plan. Du får fortelle etterpå!",
+        "replyTransliteration": "Khoroshiy plan. Potom rasskazhesh’!"
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "выходные",
+        "translation": "helgen",
+        "transliteration": "vykhodnyye"
+      },
+      {
+        "word": "гулять",
+        "translation": "gå tur",
+        "transliteration": "gulyat’"
+      },
+      {
+        "word": "дача",
+        "translation": "landsted / hytte",
+        "transliteration": "dacha"
+      },
+      {
+        "word": "шёл дождь",
+        "translation": "det regnet",
+        "transliteration": "shyol dozhd’"
+      },
+      {
+        "word": "за город",
+        "translation": "ut av byen",
+        "transliteration": "za gorod"
+      },
+      {
+        "word": "в следующие выходные",
+        "translation": "neste helg",
+        "transliteration": "v sleduyushchiye vykhodnyye"
+      }
+    ]
+  },
+  {
+    "id": "ru-kurtka",
+    "title": "En jakke som passer",
+    "subtitle": "Si hva du ser etter, prøv og spør om rabatt.",
+    "level": "A2",
+    "icon": "shop",
+    "opening": "Здравствуйте! Вам что-нибудь подсказать?",
+    "openingTranslation": "Hei! Kan jeg hjelpe deg med noe?",
+    "openingTransliteration": "Zdravstvuyte! Vam chto-nibud’ podskazat’?",
+    "steps": [
+      {
+        "question": "Что вы ищете?",
+        "translation": "Hva ser du etter?",
+        "transliteration": "Chto vy ishchete?",
+        "expected": [
+          "Я ищу лёгкую куртку на весну.",
+          "Мне нужна тёплая куртка."
+        ],
+        "hint": "«Я ищу …» med akkusativ: «лёгкую куртку».",
+        "reply": "Посмотрите, вот синие и зелёные.",
+        "replyTranslation": "Se her, disse er blå og grønne.",
+        "replyTransliteration": "Posmotrite, vot siniye i zelyonyye."
+      },
+      {
+        "question": "Какой у вас размер?",
+        "translation": "Hvilken størrelse har du?",
+        "transliteration": "Kakoy u vas razmer?",
+        "expected": [
+          "Обычно сорок восьмой.",
+          "Обычно размер M."
+        ],
+        "hint": "Russiske klesstørrelser er ordenstall: «сорок восьмой» (48).",
+        "reply": "Вот сорок восьмой. Примерочная там.",
+        "replyTranslation": "Her er 48. Prøverommet er der borte.",
+        "replyTransliteration": "Vot sorok vos’moy. Primerochnaya tam."
+      },
+      {
+        "question": "Ну как? Подходит?",
+        "translation": "Nå? Passer den?",
+        "transliteration": "Nu kak? Podkhodit?",
+        "expected": [
+          "Немного маловата. Есть на размер больше?",
+          "Да, подходит, но рукава длинные."
+        ],
+        "hint": "«маловата» betyr litt for liten. «на размер больше» betyr én størrelse større.",
+        "reply": "Есть. Вот, примерьте эту.",
+        "replyTranslation": "Ja. Her, prøv denne.",
+        "replyTransliteration": "Yest’. Vot, primer’te etu."
+      },
+      {
+        "question": "Эта лучше? Она стоит пять тысяч рублей.",
+        "translation": "Er denne bedre? Den koster fem tusen rubler.",
+        "transliteration": "Eta luchshe? Ona stoit pyat’ tysyach rubley.",
+        "expected": [
+          "Да, отлично. Я её возьму.",
+          "Хорошая, но дороговата. Есть скидка?"
+        ],
+        "hint": "«Я её возьму» betyr jeg tar den. «скидка» betyr rabatt.",
+        "reply": "Сегодня скидка двадцать процентов.",
+        "replyTranslation": "I dag er det tjue prosent rabatt.",
+        "replyTransliteration": "Segodnya skidka dvadtsat’ protsentov."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "куртка",
+        "translation": "jakke",
+        "transliteration": "kurtka"
+      },
+      {
+        "word": "размер",
+        "translation": "størrelse",
+        "transliteration": "razmer"
+      },
+      {
+        "word": "примерочная",
+        "translation": "prøverom",
+        "transliteration": "primerochnaya"
+      },
+      {
+        "word": "подходит",
+        "translation": "passer",
+        "transliteration": "podkhodit"
+      },
+      {
+        "word": "маловат",
+        "translation": "litt for liten",
+        "transliteration": "malovat"
+      },
+      {
+        "word": "скидка",
+        "translation": "rabatt",
+        "transliteration": "skidka"
+      }
+    ]
+  },
+  {
+    "id": "ru-u-vracha",
+    "title": "Hos legen",
+    "subtitle": "Si hvor du har vondt, hvor lenge og hva du trenger.",
+    "level": "A2",
+    "icon": "heart",
+    "opening": "Здравствуйте, проходите, садитесь.",
+    "openingTranslation": "God dag, kom inn og sett deg.",
+    "openingTransliteration": "Zdravstvuyte, prokhodite, sadites’.",
+    "steps": [
+      {
+        "question": "Что у вас болит?",
+        "translation": "Hvor har du vondt?",
+        "transliteration": "Chto u vas bolit?",
+        "expected": [
+          "У меня болит голова.",
+          "У меня болит горло, и есть небольшая температура."
+        ],
+        "hint": "«У меня болит …» med nominativ: «голова», «горло», «живот». «температура» betyr her feber.",
+        "reply": "Понятно. Давайте я вас послушаю.",
+        "replyTranslation": "Jeg forstår. La meg lytte på deg.",
+        "replyTransliteration": "Ponyatno. Davayte ya vas poslushayu."
+      },
+      {
+        "question": "Сколько дней вы болеете?",
+        "translation": "Hvor mange dager har du vært syk?",
+        "transliteration": "Skol’ko dney vy boleyete?",
+        "expected": [
+          "Уже три дня.",
+          "Со вчерашнего дня."
+        ],
+        "hint": "«уже три дня» betyr allerede i tre dager. «со вчерашнего дня» betyr siden i går.",
+        "reply": "Хорошо. Это, скорее всего, простуда.",
+        "replyTranslation": "Greit. Det er mest sannsynlig en forkjølelse.",
+        "replyTransliteration": "Khorosho. Eto, skoreye vsego, prostuda."
+      },
+      {
+        "question": "Вы принимаете какие-нибудь лекарства?",
+        "translation": "Tar du noen medisiner?",
+        "transliteration": "Vy prinimayete kakiye-nibud’ lekarstva?",
+        "expected": [
+          "Нет, никаких лекарств не принимаю.",
+          "Только парацетамол вечером."
+        ],
+        "hint": "Dobbel nektelse er vanlig på russisk: «никаких … не принимаю».",
+        "reply": "Хорошо. Пока ничего дополнительно принимать не нужно.",
+        "replyTranslation": "Bra. Foreløpig trenger du ikke ta noe mer.",
+        "replyTransliteration": "Khorosho. Poka nichego dopolnitel’no prinimat’ ne nuzhno."
+      },
+      {
+        "question": "Вам нужна справка для работы?",
+        "translation": "Trenger du legeerklæring til jobben?",
+        "transliteration": "Vam nuzhna spravka dlya raboty?",
+        "expected": [
+          "Да, нужна, пожалуйста.",
+          "Нет, спасибо, я работаю из дома."
+        ],
+        "hint": "«справка» betyr attest / erklæring.",
+        "reply": "Хорошо. Пейте больше тёплой воды и отдыхайте.",
+        "replyTranslation": "Bra. Drikk mer varmt vann og hvil deg.",
+        "replyTransliteration": "Khorosho. Peyte bol’she tyoploy vody i otdykhayte."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "что вас беспокоит?",
+        "translation": "hva plager deg?",
+        "transliteration": "chto vas bespokoit?"
+      },
+      {
+        "word": "болит",
+        "translation": "gjør vondt",
+        "transliteration": "bolit"
+      },
+      {
+        "word": "горло",
+        "translation": "hals",
+        "transliteration": "gorlo"
+      },
+      {
+        "word": "температура",
+        "translation": "feber",
+        "transliteration": "temperatura"
+      },
+      {
+        "word": "лекарство",
+        "translation": "medisin",
+        "transliteration": "lekarstvo"
+      },
+      {
+        "word": "справка",
+        "translation": "attest / legeerklæring",
+        "transliteration": "spravka"
+      }
+    ]
+  },
+  {
+    "id": "ru-v-gostyakh",
+    "title": "På besøk hos venner",
+    "subtitle": "Takk for invitasjonen, ros maten og si takk for deg.",
+    "level": "A2",
+    "icon": "utensils",
+    "opening": "Заходи, заходи! Раздевайся и проходи на кухню.",
+    "openingTranslation": "Kom inn, kom inn! Ta av deg yttertøyet og gå inn på kjøkkenet.",
+    "openingTransliteration": "Zakhodi, zakhodi! Razdevaysya i prokhodi na kukhnyu.",
+    "steps": [
+      {
+        "question": "Ты будешь чай или кофе?",
+        "translation": "Vil du ha te eller kaffe?",
+        "transliteration": "Ty budesh’ chay ili kofe?",
+        "expected": [
+          "Чай, пожалуйста. Спасибо за приглашение!",
+          "Кофе, если можно."
+        ],
+        "hint": "Takk for invitasjonen: «Спасибо за приглашение!»",
+        "reply": "Конечно. Вот, бери пирог, я сам испёк.",
+        "replyTranslation": "Selvfølgelig. Her, ta kake, jeg har bakt den selv.",
+        "replyTransliteration": "Konechno. Vot, beri pirog, ya sam ispyok."
+      },
+      {
+        "question": "Как тебе пирог?",
+        "translation": "Hva synes du om kaken?",
+        "transliteration": "Kak tebe pirog?",
+        "expected": [
+          "Очень вкусно! Можно ещё кусочек?",
+          "Вкусный пирог! Это с яблоками?"
+        ],
+        "hint": "Ros maten med «Очень вкусно!» og be om mer: «Можно ещё кусочек?»",
+        "reply": "Конечно, бери! Да, с яблоками и корицей.",
+        "replyTranslation": "Selvfølgelig, ta! Ja, med epler og kanel.",
+        "replyTransliteration": "Konechno, beri! Da, s yablokami i koritsey."
+      },
+      {
+        "question": "Тебе было легко нас найти?",
+        "translation": "Var det lett for deg å finne oss?",
+        "transliteration": "Tebe bylo legko nas nayti?",
+        "expected": [
+          "Да, легко. Я приехал на метро.",
+          "Не очень, я немного заблудилась."
+        ],
+        "hint": "«заблудиться» betyr å gå seg bort. Fortid etter kjønn: «заблудился» / «заблудилась».",
+        "reply": "В следующий раз я встречу тебя у метро.",
+        "replyTranslation": "Neste gang møter jeg deg ved metroen.",
+        "replyTransliteration": "V sleduyushchiy raz ya vstrechu tebya u metro."
+      },
+      {
+        "question": "Уже уходишь? Посиди ещё!",
+        "translation": "Går du allerede? Bli litt til!",
+        "transliteration": "Uzhe ukhodish’? Posidi yeshchyo!",
+        "expected": [
+          "Спасибо, но мне пора. Всё было очень вкусно!",
+          "Хорошо, ещё полчаса, а потом мне пора."
+        ],
+        "hint": "«мне пора» betyr jeg må gå (det er på tide).",
+        "reply": "Приходи ещё! Мы всегда рады тебя видеть.",
+        "replyTranslation": "Kom igjen! Vi er alltid glade for å se deg.",
+        "replyTransliteration": "Prikhodi yeshchyo! My vsegda rady tebya videt’."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "заходи!",
+        "translation": "kom inn!",
+        "transliteration": "zakhodi!"
+      },
+      {
+        "word": "раздевайся",
+        "translation": "ta av deg yttertøyet",
+        "transliteration": "razdevaysya"
+      },
+      {
+        "word": "пирог",
+        "translation": "kake / pai",
+        "transliteration": "pirog"
+      },
+      {
+        "word": "кусочек",
+        "translation": "lite stykke",
+        "transliteration": "kusochek"
+      },
+      {
+        "word": "заблудиться",
+        "translation": "gå seg bort",
+        "transliteration": "zabludit’sya"
+      },
+      {
+        "word": "мне пора",
+        "translation": "jeg må gå",
+        "transliteration": "mne pora"
+      }
+    ]
+  },
+  {
     "id": "ru-kafe",
     "title": "En kafé med karakter",
     "subtitle": "Forklar preferanser og sammenlign steder.",
@@ -74,6 +969,378 @@
         "word": "уютно",
         "translation": "koselig",
         "transliteration": "uyutno"
+      }
+    ]
+  },
+  {
+    "id": "ru-vystavka",
+    "title": "En utstilling å fortelle om",
+    "subtitle": "Skill mellom det som pågikk, og det du rakk å gjøre.",
+    "level": "B1",
+    "icon": "compass",
+    "opening": "Привет, это Саша. Представим, что вчера ты ходил или ходила на выставку фотографий. Расскажи, как всё прошло.",
+    "openingTranslation": "Hei, det er Sasha. La oss tenke oss at du var på en fotoutstilling i går. Fortell hvordan det gikk.",
+    "openingTransliteration": "Privet, eto Sasha. Predstavim, chto vchera ty khodil ili khodila na vystavku fotografiy. Rasskazhi, kak vsyo proshlo.",
+    "steps": [
+      {
+        "question": "Что ты делал или делала в начале посещения?",
+        "translation": "Hva holdt du på med i begynnelsen av besøket?",
+        "transliteration": "Chto ty delal ili delala v nachale poseshcheniya?",
+        "expected": [
+          "Сначала я долго рассматривал фотографии у входа.",
+          "Сначала я долго рассматривала фотографии у входа."
+        ],
+        "hint": "Beskriv noe som pågikk en stund. Bruk imperfektivt aspekt: «рассматривал» eller «рассматривала».",
+        "reply": "У входа были старые фотографии города. Потом начинался зал с современными снимками.",
+        "replyTranslation": "Ved inngangen var det gamle fotografier av byen. Deretter kom salen med nyere bilder.",
+        "replyTransliteration": "U vkhoda byli staryye fotografii goroda. Potom nachinalsya zal s sovremennymi snimkami."
+      },
+      {
+        "question": "Удалось ли тебе посмотреть всю выставку?",
+        "translation": "Rakk du å se hele utstillingen?",
+        "transliteration": "Udalos’ li tebe posmotret’ vsyu vystavku?",
+        "expected": [
+          "Нет, мне удалось посмотреть только два зала: потом музей закрылся.",
+          "Я успел посмотреть только два зала, потому что музей закрылся.",
+          "Я успела посмотреть только два зала, потому что музей закрылся."
+        ],
+        "hint": "Fortell at du bare rakk to saler før museet stengte. «Посмотреть» viser her til det avsluttede besøket i salene.",
+        "reply": "Жаль, что времени было мало. К некоторым снимкам хочется вернуться.",
+        "replyTranslation": "Synd at det var lite tid. Noen bilder får man lyst til å vende tilbake til.",
+        "replyTransliteration": "Zhal’, chto vremeni bylo malo. K nekotorym snimkam khochetsya vernut’sya."
+      },
+      {
+        "question": "Какая фотография тебе особенно запомнилась и почему?",
+        "translation": "Hvilket fotografi husker du spesielt godt, og hvorfor?",
+        "transliteration": "Kakaya fotografiya tebe osobenno zapomnilas’ i pochemu?",
+        "expected": [
+          "Мне запомнилась фотография пустой улицы, потому что она напомнила мне о детстве.",
+          "Больше всего мне запомнилась пустая улица: она напомнила мне о детстве."
+        ],
+        "hint": "Knytt et bestemt bilde til et minne med «запомнилась» og «напомнила».",
+        "reply": "Иногда даже обычное место на фотографии вызывает личные воспоминания.",
+        "replyTranslation": "Noen ganger vekker selv et vanlig sted på et fotografi personlige minner.",
+        "replyTransliteration": "Inogda dazhe obychnoye mesto na fotografii vyzyvayet lichnyye vospominaniya."
+      },
+      {
+        "question": "Что ты хочешь сделать в следующий раз?",
+        "translation": "Hva vil du gjøre neste gang?",
+        "transliteration": "Chto ty khochesh’ sdelat’ v sleduyushchiy raz?",
+        "expected": [
+          "В следующий раз я хочу прийти пораньше и посмотреть остальные залы.",
+          "Я хочу вернуться, чтобы спокойно посмотреть остальные залы."
+        ],
+        "hint": "Avslutt med en konkret plan. «Остальные залы» betyr de øvrige salene.",
+        "reply": "Тогда для следующего посещения стоит оставить больше времени.",
+        "replyTranslation": "Da er det lurt å sette av mer tid til neste besøk.",
+        "replyTransliteration": "Togda dlya sleduyushchego poseshcheniya stoit ostavit’ bol’she vremeni."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "рассматривать",
+        "translation": "betrakte / se nærmere på",
+        "transliteration": "rassmatrivat’"
+      },
+      {
+        "word": "посмотреть",
+        "translation": "se / få sett",
+        "transliteration": "posmotret’"
+      },
+      {
+        "word": "мне удалось",
+        "translation": "jeg klarte / fikk til",
+        "transliteration": "mne udalos’"
+      },
+      {
+        "word": "запомниться",
+        "translation": "feste seg i minnet",
+        "transliteration": "zapomnit’sya"
+      },
+      {
+        "word": "напомнить о детстве",
+        "translation": "minne om barndommen",
+        "transliteration": "napomnit’ o detstve"
+      },
+      {
+        "word": "остальные залы",
+        "translation": "de øvrige salene",
+        "transliteration": "ostal’nyye zaly"
+      }
+    ]
+  },
+  {
+    "id": "ru-otpusk",
+    "title": "Ferieplaner",
+    "subtitle": "Sammenlign ferieformer og fortell om en reise du husker.",
+    "level": "B1",
+    "icon": "train",
+    "opening": "Скоро лето. Давай обсудим, куда можно поехать в отпуск.",
+    "openingTranslation": "Snart er det sommer. La oss diskutere hvor man kan reise på ferie.",
+    "openingTransliteration": "Skoro leto. Davay obsudim, kuda mozhno poyekhat’ v otpusk.",
+    "steps": [
+      {
+        "question": "Ты предпочитаешь отдыхать на море или в горах? Почему?",
+        "translation": "Foretrekker du ferie ved sjøen eller i fjellet? Hvorfor?",
+        "transliteration": "Ty predpochitayesh’ otdykhat’ na more ili v gorakh? Pochemu?",
+        "expected": [
+          "Я предпочитаю горы, потому что люблю ходить в походы и плохо переношу жару.",
+          "Мне больше нравится море: там можно ничего не делать и просто отдыхать."
+        ],
+        "hint": "«предпочитать» betyr å foretrekke. Begrunn med «потому что» eller et kolon.",
+        "reply": "Понимаю. У каждого варианта свои плюсы.",
+        "replyTranslation": "Jeg forstår. Hvert alternativ har sine fordeler.",
+        "replyTransliteration": "Ponimayu. U kazhdogo varianta svoi plyusy."
+      },
+      {
+        "question": "Как ты обычно планируешь поездку: заранее или в последний момент?",
+        "translation": "Hvordan planlegger du vanligvis en reise: på forhånd eller i siste liten?",
+        "transliteration": "Kak ty obychno planiruyesh’ poyezdku: zaraneye ili v posledniy moment?",
+        "expected": [
+          "Обычно я всё бронирую заранее, чтобы не переплачивать.",
+          "Я часто решаю в последний момент, и так даже интереснее."
+        ],
+        "hint": "«заранее» betyr på forhånd. «чтобы» med infinitiv betyr for å.",
+        "reply": "Разумно. Летом билеты быстро дорожают.",
+        "replyTranslation": "Fornuftig. Om sommeren blir billettene fort dyrere.",
+        "replyTransliteration": "Razumno. Letom bilety bystro dorozhayut."
+      },
+      {
+        "question": "Расскажи о поездке, которая тебе особенно запомнилась.",
+        "translation": "Fortell om en reise du husker spesielt godt.",
+        "transliteration": "Rasskazhi o poyezdke, kotoraya tebe osobenno zapomnilas’.",
+        "expected": [
+          "Мне особенно запомнилась поездка в Италию: мы жили в маленькой деревне и каждый день купались в море.",
+          "Однажды мы поехали на север Норвегии и увидели северное сияние."
+        ],
+        "hint": "«мне запомнилась …» betyr … har festet seg i minnet mitt. Fortell hvor, med hvem og hva som skjedde.",
+        "reply": "Как здорово! Такие впечатления остаются на всю жизнь.",
+        "replyTranslation": "Så flott! Slike inntrykk varer hele livet.",
+        "replyTransliteration": "Kak zdorovo! Takiye vpechatleniya ostayutsya na vsyu zhizn’."
+      },
+      {
+        "question": "Что ты обязательно возьмёшь с собой в следующую поездку?",
+        "translation": "Hva tar du helt sikkert med deg på neste reise?",
+        "transliteration": "Chto ty obyazatel’no voz’myosh’ s soboy v sleduyushchuyu poyezdku?",
+        "expected": [
+          "Я обязательно возьму удобную обувь и хорошую книгу.",
+          "Обязательно возьму пауэрбанк, потому что телефон быстро разряжается."
+        ],
+        "hint": "«возьму с собой» betyr tar med meg. «разряжаться» betyr å gå tom for strøm.",
+        "reply": "Отличный выбор. Хорошая книга пригодится в любой поездке.",
+        "replyTranslation": "Et utmerket valg. En god bok kommer godt med på enhver reise.",
+        "replyTransliteration": "Otlichnyy vybor. Khoroshaya kniga prigoditsya v lyuboy poyezdke."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "отпуск",
+        "translation": "ferie",
+        "transliteration": "otpusk"
+      },
+      {
+        "word": "предпочитать",
+        "translation": "foretrekke",
+        "transliteration": "predpochitat’"
+      },
+      {
+        "word": "заранее",
+        "translation": "på forhånd",
+        "transliteration": "zaraneye"
+      },
+      {
+        "word": "в последний момент",
+        "translation": "i siste liten",
+        "transliteration": "v posledniy moment"
+      },
+      {
+        "word": "запомниться",
+        "translation": "feste seg i minnet",
+        "transliteration": "zapomnit’sya"
+      },
+      {
+        "word": "северное сияние",
+        "translation": "nordlys",
+        "transliteration": "severnoye siyaniye"
+      }
+    ]
+  },
+  {
+    "id": "ru-privychki",
+    "title": "Sunne vaner",
+    "subtitle": "Fortell om vanene dine og ta stilling til ansvar.",
+    "level": "B1",
+    "icon": "leaf",
+    "opening": "Все говорят о здоровом образе жизни. Но что это значит на практике?",
+    "openingTranslation": "Alle snakker om en sunn livsstil. Men hva betyr det i praksis?",
+    "openingTransliteration": "Vse govoryat o zdorovom obraze zhizni. No chto eto znachit na praktike?",
+    "steps": [
+      {
+        "question": "Что ты делаешь, чтобы хорошо себя чувствовать?",
+        "translation": "Hva gjør du for å føle deg vel?",
+        "transliteration": "Chto ty delayesh’, chtoby khorosho sebya chuvstvovat’?",
+        "expected": [
+          "Я стараюсь каждый день гулять и ложиться спать не слишком поздно.",
+          "Два раза в неделю я хожу в бассейн и стараюсь есть меньше сладкого."
+        ],
+        "hint": "«стараться» med infinitiv betyr å prøve å. «два раза в неделю» betyr to ganger i uka.",
+        "reply": "Хорошие привычки!",
+        "replyTranslation": "Gode vaner!",
+        "replyTransliteration": "Khoroshiye privychki!"
+      },
+      {
+        "question": "А что тебе даётся труднее всего?",
+        "translation": "Og hva synes du er vanskeligst?",
+        "transliteration": "A chto tebe dayotsya trudneye vsego?",
+        "expected": [
+          "Труднее всего мне отказаться от телефона перед сном.",
+          "Мне трудно найти время для спорта, когда много работы."
+        ],
+        "hint": "«отказаться от» med genitiv betyr å gi opp / avstå fra.",
+        "reply": "Это знакомо многим. Телефон мешает уснуть.",
+        "replyTranslation": "Det kjenner mange seg igjen i. Telefonen gjør det vanskelig å sovne.",
+        "replyTransliteration": "Eto znakomo mnogim. Telefon meshayet usnut’."
+      },
+      {
+        "question": "Как ты думаешь, здоровье — это личное дело каждого или забота общества?",
+        "translation": "Hva tror du: er helse den enkeltes private sak eller samfunnets ansvar?",
+        "transliteration": "Kak ty dumayesh’, zdorov’ye — eto lichnoye delo kazhdogo ili zabota obshchestva?",
+        "expected": [
+          "Я думаю, и то и другое: человек отвечает за свои привычки, но общество должно создавать условия.",
+          "По-моему, это прежде всего личное дело, но школа может многому научить."
+        ],
+        "hint": "«и то и другое» betyr både det ene og det andre. «создавать условия» betyr å legge til rette.",
+        "reply": "Согласен: без нужных условий трудно сделать правильный выбор.",
+        "replyTranslation": "Enig: uten de rette forholdene er det vanskelig å ta riktige valg.",
+        "replyTransliteration": "Soglasen: bez nuzhnykh usloviy trudno sdelat’ pravil’nyy vybor."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "образ жизни",
+        "translation": "livsstil",
+        "transliteration": "obraz zhizni"
+      },
+      {
+        "word": "стараться",
+        "translation": "prøve å",
+        "transliteration": "starat’sya"
+      },
+      {
+        "word": "привычка",
+        "translation": "vane",
+        "transliteration": "privychka"
+      },
+      {
+        "word": "даваться",
+        "translation": "falle lett / vanskelig",
+        "transliteration": "davat’sya"
+      },
+      {
+        "word": "отказаться от",
+        "translation": "gi opp / avstå fra",
+        "transliteration": "otkazat’sya ot"
+      },
+      {
+        "word": "и то и другое",
+        "translation": "både det ene og det andre",
+        "transliteration": "i to i drugoye"
+      }
+    ]
+  },
+  {
+    "id": "ru-pereezd",
+    "title": "En flytting",
+    "subtitle": "Fortell om en endring og gi råd til andre.",
+    "level": "B1",
+    "icon": "home",
+    "opening": "Мой друг недавно переехал в другой город. Давай поговорим о переездах.",
+    "openingTranslation": "Vennen min flyttet nylig til en annen by. La oss snakke om flyttinger.",
+    "openingTransliteration": "Moy drug nedavno pereyekhal v drugoy gorod. Davay pogovorim o pereyezdakh.",
+    "steps": [
+      {
+        "question": "Тебе приходилось переезжать? Расскажи, как это было.",
+        "translation": "Har du noen gang måttet flytte? Fortell hvordan det var.",
+        "transliteration": "Tebe prikhodilos’ pereyezzhat’? Rasskazhi, kak eto bylo.",
+        "expected": [
+          "Да, три года назад я переехал из Бергена в Осло из-за работы. Сначала было тяжело.",
+          "Да, в детстве мы часто переезжали, поэтому я быстро привыкаю к новым местам."
+        ],
+        "hint": "«из-за» med genitiv betyr på grunn av. «привыкать к» med dativ betyr å venne seg til.",
+        "reply": "Понимаю, первое время всегда непростое.",
+        "replyTranslation": "Jeg forstår, den første tiden er alltid vanskelig.",
+        "replyTransliteration": "Ponimayu, pervoye vremya vsegda neprostoye."
+      },
+      {
+        "question": "Что было самым трудным в переезде?",
+        "translation": "Hva var det vanskeligste med flyttingen?",
+        "transliteration": "Chto bylo samym trudnym v pereyezde?",
+        "expected": [
+          "Самым трудным было найти новых друзей.",
+          "Труднее всего было упаковать все вещи и решить, что выбросить."
+        ],
+        "hint": "«самым трудным было …» (instrumentalis). «выбросить» betyr å kaste.",
+        "reply": "Да, к новому месту привыкаешь не сразу.",
+        "replyTranslation": "Ja, man venner seg ikke til et nytt sted med en gang.",
+        "replyTransliteration": "Da, k novomu mestu privykayesh’ ne srazu."
+      },
+      {
+        "question": "Что помогает быстрее почувствовать себя дома на новом месте?",
+        "translation": "Hva hjelper deg med å føle deg hjemme raskere på et nytt sted?",
+        "transliteration": "Chto pomogayet bystreye pochuvstvovat’ sebya doma na novom meste?",
+        "expected": [
+          "Мне помогают прогулки по новому району: так я нахожу любимые места.",
+          "По-моему, важно сразу записаться на какой-нибудь курс или в спортклуб."
+        ],
+        "hint": "«записаться на курс» betyr å melde seg på et kurs.",
+        "reply": "Хороший совет. Так появляются и знакомые, и привычки.",
+        "replyTranslation": "Et godt råd. Slik får man både bekjente og vaner.",
+        "replyTransliteration": "Khoroshiy sovet. Tak poyavlyayutsya i znakomyye, i privychki."
+      },
+      {
+        "question": "Если бы можно было жить в любом городе мира, куда бы тебе хотелось переехать?",
+        "translation": "Hvis du kunne bo i hvilken som helst by i verden, hvor ville du helst flyttet?",
+        "transliteration": "Yesli by mozhno bylo zhit’ v lyubom gorode mira, kuda by tebe khotelos’ pereyekhat’?",
+        "expected": [
+          "Мне хотелось бы переехать в Лиссабон, потому что там тепло и красиво.",
+          "Я бы выбрал Токио: мне интересна японская культура."
+        ],
+        "hint": "Betinget: «мне хотелось бы …» eller «я бы выбрал» (en kvinne sier «выбрала»).",
+        "reply": "Интересный выбор! Может быть, когда-нибудь получится.",
+        "replyTranslation": "Et interessant valg! Kanskje det går en dag.",
+        "replyTransliteration": "Interesnyy vybor! Mozhet byt’, kogda-nibud’ poluchitsya."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "переезжать / переехать",
+        "translation": "flytte",
+        "transliteration": "pereyezzhat’ / pereyekhat’"
+      },
+      {
+        "word": "из-за",
+        "translation": "på grunn av",
+        "transliteration": "iz-za"
+      },
+      {
+        "word": "привыкать к",
+        "translation": "venne seg til",
+        "transliteration": "privykat’ k"
+      },
+      {
+        "word": "упаковать",
+        "translation": "pakke",
+        "transliteration": "upakovat’"
+      },
+      {
+        "word": "записаться на",
+        "translation": "melde seg på",
+        "transliteration": "zapisat’sya na"
+      },
+      {
+        "word": "если бы",
+        "translation": "hvis (betinget)",
+        "transliteration": "yesli by"
       }
     ]
   },
@@ -412,186 +1679,6 @@
     ]
   },
   {
-    "id": "ru-turizm",
-    "title": "Byen som kulisse",
-    "subtitle": "Utfordre en premiss og formuler et avveid standpunkt.",
-    "level": "C1",
-    "icon": "compass",
-    "opening": "Обсудим спорное утверждение: «Чтобы сохранить характер города, нужно ограничить туризм». Попробуем отделить цель от предлагаемых средств.",
-    "openingTranslation": "La oss drøfte en omstridt påstand: «For å bevare en bys særpreg må turismen begrenses.» La oss forsøke å skille målet fra virkemidlene.",
-    "openingTransliteration": "Obsudim spornoye utverzhdeniye: «Chtoby sokhranit’ kharakter goroda, nuzhno ogranichit’ turizm». Poprobuyem otdelit’ tsel’ ot predlagayemykh sredstv.",
-    "steps": [
-      {
-        "question": "Какую скрытую предпосылку ты видишь в этом утверждении?",
-        "translation": "Hvilken skjult forutsetning ser du i denne påstanden?",
-        "transliteration": "Kakuyu skrytuyu predposylku ty vidish’ v etom utverzhdenii?",
-        "expected": [
-          "Оно предполагает, что именно туризм разрушает характер города, хотя причин может быть несколько.",
-          "Здесь туризм представлен как главная причина изменений, хотя это ещё нужно обосновать."
-        ],
-        "hint": "Utfordre årsaksforklaringen: påstanden tar turismens rolle for gitt.",
-        "reply": "Да, прежде чем выбирать меру, стоит проверить, насколько убедительна сама причинная связь.",
-        "replyTranslation": "Ja, før man velger et tiltak, bør man undersøke hvor overbevisende selve årsakssammenhengen er.",
-        "replyTransliteration": "Da, prezhde chem vybirat’ meru, stoit proverit’, naskol’ko ubeditel’na sama prichinnaya svyaz’."
-      },
-      {
-        "question": "Как признать проблему, не соглашаясь с предложенным решением?",
-        "translation": "Hvordan kan du anerkjenne problemet uten å godta den foreslåtte løsningen?",
-        "transliteration": "Kak priznat’ problemu, ne soglashayas’ s predlozhennym resheniyem?",
-        "expected": [
-          "Не отрицая давления на городскую среду, я бы всё же не сводил решение к простому ограничению числа туристов.",
-          "Не отрицая давления на городскую среду, я бы всё же не сводила решение к простому ограничению числа туристов."
-        ],
-        "hint": "Bruk «не отрицая» for å anerkjenne, og «не сводил/сводила бы» for å avgrense konklusjonen.",
-        "reply": "Ты разграничиваешь признание проблемы и поддержку конкретного инструмента.",
-        "replyTranslation": "Du skiller mellom å anerkjenne problemet og å støtte et bestemt virkemiddel.",
-        "replyTransliteration": "Ty razgranichivayesh’ priznaniye problemy i podderzhku konkretnogo instrumenta."
-      },
-      {
-        "question": "Как сформулировать позицию с оговоркой о возможных последствиях?",
-        "translation": "Hvordan kan du formulere et standpunkt med forbehold om mulige følger?",
-        "transliteration": "Kak sformulirovat’ pozitsiyu s ogovorkoy o vozmozhnykh posledstviyakh?",
-        "expected": [
-          "Я поддерживаю адресные меры, но их следует оценивать по последствиям для жителей, а не только по сокращению потока туристов.",
-          "Адресные меры представляются оправданными, если их успех оценивают по качеству жизни жителей, а не только по числу туристов."
-        ],
-        "hint": "Argumenter for målrettede tiltak, med innbyggernes liv som vurderingsgrunnlag.",
-        "reply": "Получилась взвешенная позиция: ты обозначаешь и подход, и критерий его оценки.",
-        "replyTranslation": "Det ble et avveid standpunkt: du angir både en tilnærming og et kriterium for å vurdere den.",
-        "replyTransliteration": "Poluchilas’ vzveshennaya pozitsiya: ty oboznachayesh’ i podkhod, i kriteriy yego otsenki."
-      }
-    ],
-    "vocabulary": [
-      {
-        "word": "скрытая предпосылка",
-        "translation": "skjult forutsetning",
-        "transliteration": "skrytaya predposylka"
-      },
-      {
-        "word": "причинная связь",
-        "translation": "årsakssammenheng",
-        "transliteration": "prichinnaya svyaz’"
-      },
-      {
-        "word": "не сводить к",
-        "translation": "ikke redusere til",
-        "transliteration": "ne svodit’ k"
-      },
-      {
-        "word": "разграничивать",
-        "translation": "skille mellom",
-        "transliteration": "razgranichivat’"
-      },
-      {
-        "word": "адресные меры",
-        "translation": "målrettede tiltak",
-        "transliteration": "adresnyye mery"
-      },
-      {
-        "word": "взвешенная позиция",
-        "translation": "avveid standpunkt",
-        "transliteration": "vzveshennaya pozitsiya"
-      }
-    ]
-  },
-  {
-    "id": "ru-vystavka",
-    "title": "En utstilling å fortelle om",
-    "subtitle": "Skill mellom det som pågikk, og det du rakk å gjøre.",
-    "level": "B1",
-    "icon": "compass",
-    "opening": "Привет, это Саша. Представим, что вчера ты ходил или ходила на выставку фотографий. Расскажи, как всё прошло.",
-    "openingTranslation": "Hei, det er Sasha. La oss tenke oss at du var på en fotoutstilling i går. Fortell hvordan det gikk.",
-    "openingTransliteration": "Privet, eto Sasha. Predstavim, chto vchera ty khodil ili khodila na vystavku fotografiy. Rasskazhi, kak vsyo proshlo.",
-    "steps": [
-      {
-        "question": "Что ты делал или делала в начале посещения?",
-        "translation": "Hva holdt du på med i begynnelsen av besøket?",
-        "transliteration": "Chto ty delal ili delala v nachale poseshcheniya?",
-        "expected": [
-          "Сначала я долго рассматривал фотографии у входа.",
-          "Сначала я долго рассматривала фотографии у входа."
-        ],
-        "hint": "Beskriv noe som pågikk en stund. Bruk imperfektivt aspekt: «рассматривал» eller «рассматривала».",
-        "reply": "У входа были старые фотографии города. Потом начинался зал с современными снимками.",
-        "replyTranslation": "Ved inngangen var det gamle fotografier av byen. Deretter kom salen med nyere bilder.",
-        "replyTransliteration": "U vkhoda byli staryye fotografii goroda. Potom nachinalsya zal s sovremennymi snimkami."
-      },
-      {
-        "question": "Удалось ли тебе посмотреть всю выставку?",
-        "translation": "Rakk du å se hele utstillingen?",
-        "transliteration": "Udalos’ li tebe posmotret’ vsyu vystavku?",
-        "expected": [
-          "Нет, мне удалось посмотреть только два зала: потом музей закрылся.",
-          "Я успел посмотреть только два зала, потому что музей закрылся.",
-          "Я успела посмотреть только два зала, потому что музей закрылся."
-        ],
-        "hint": "Fortell at du bare rakk to saler før museet stengte. «Посмотреть» viser her til det avsluttede besøket i salene.",
-        "reply": "Жаль, что времени было мало. К некоторым снимкам хочется вернуться.",
-        "replyTranslation": "Synd at det var lite tid. Noen bilder får man lyst til å vende tilbake til.",
-        "replyTransliteration": "Zhal’, chto vremeni bylo malo. K nekotorym snimkam khochetsya vernut’sya."
-      },
-      {
-        "question": "Какая фотография тебе особенно запомнилась и почему?",
-        "translation": "Hvilket fotografi husker du spesielt godt, og hvorfor?",
-        "transliteration": "Kakaya fotografiya tebe osobenno zapomnilas’ i pochemu?",
-        "expected": [
-          "Мне запомнилась фотография пустой улицы, потому что она напомнила мне о детстве.",
-          "Больше всего мне запомнилась пустая улица: она напомнила мне о детстве."
-        ],
-        "hint": "Knytt et bestemt bilde til et minne med «запомнилась» og «напомнила».",
-        "reply": "Иногда даже обычное место на фотографии вызывает личные воспоминания.",
-        "replyTranslation": "Noen ganger vekker selv et vanlig sted på et fotografi personlige minner.",
-        "replyTransliteration": "Inogda dazhe obychnoye mesto na fotografii vyzyvayet lichnyye vospominaniya."
-      },
-      {
-        "question": "Что ты хочешь сделать в следующий раз?",
-        "translation": "Hva vil du gjøre neste gang?",
-        "transliteration": "Chto ty khochesh’ sdelat’ v sleduyushchiy raz?",
-        "expected": [
-          "В следующий раз я хочу прийти пораньше и посмотреть остальные залы.",
-          "Я хочу вернуться, чтобы спокойно посмотреть остальные залы."
-        ],
-        "hint": "Avslutt med en konkret plan. «Остальные залы» betyr de øvrige salene.",
-        "reply": "Тогда для следующего посещения стоит оставить больше времени.",
-        "replyTranslation": "Da er det lurt å sette av mer tid til neste besøk.",
-        "replyTransliteration": "Togda dlya sleduyushchego poseshcheniya stoit ostavit’ bol’she vremeni."
-      }
-    ],
-    "vocabulary": [
-      {
-        "word": "рассматривать",
-        "translation": "betrakte / se nærmere på",
-        "transliteration": "rassmatrivat’"
-      },
-      {
-        "word": "посмотреть",
-        "translation": "se / få sett",
-        "transliteration": "posmotret’"
-      },
-      {
-        "word": "мне удалось",
-        "translation": "jeg klarte / fikk til",
-        "transliteration": "mne udalos’"
-      },
-      {
-        "word": "запомниться",
-        "translation": "feste seg i minnet",
-        "transliteration": "zapomnit’sya"
-      },
-      {
-        "word": "напомнить о детстве",
-        "translation": "minne om barndommen",
-        "transliteration": "napomnit’ o detstve"
-      },
-      {
-        "word": "остальные залы",
-        "translation": "de øvrige salene",
-        "transliteration": "ostal’nyye zaly"
-      }
-    ]
-  },
-  {
     "id": "ru-argumenty",
     "title": "Når et argument skal holde",
     "subtitle": "Begrunn et syn på læring og møt et motargument.",
@@ -780,209 +1867,6 @@
         "word": "договориться о следующем шаге",
         "translation": "bli enige om neste steg",
         "transliteration": "dogovorit’sya o sleduyushchem shage"
-      }
-    ]
-  },
-  {
-    "id": "ru-istochniki",
-    "title": "Hva viser egentlig nyheten?",
-    "subtitle": "Undersøk belegg, årsakspåstander og usikkerhet.",
-    "level": "C1",
-    "icon": "compass",
-    "opening": "Я Саша. Возьмём вымышленную новость: «Читатели живут дольше». В заметке говорится об опросе, но не приводятся ни ссылка на исследование, ни сведения об участниках. Разберём, какие выводы пока допустимы.",
-    "openingTranslation": "Jeg er Sasha. Vi tar en oppdiktet nyhet: «Lesere lever lenger». Notisen omtaler en spørreundersøkelse, men gir verken lenke til studien eller opplysninger om deltakerne. La oss undersøke hvilke konklusjoner det foreløpig er grunnlag for.",
-    "openingTransliteration": "Ya Sasha. Voz’myom vymyshlennuyu novost’: «Chitateli zhivut dol’she». V zametke govoritsya ob oprose, no ne privodyatsya ni ssylka na issledovaniye, ni svedeniya ob uchastnikakh. Razberyom, kakiye vyvody poka dopustimy.",
-    "steps": [
-      {
-        "question": "Что стоит выяснить, прежде чем доверять заголовку?",
-        "translation": "Hva bør vi finne ut før vi stoler på overskriften?",
-        "transliteration": "Chto stoit vyyasnit’, prezhde chem doveryat’ zagolovku?",
-        "expected": [
-          "Прежде всего стоит найти первоисточник и выяснить, кого опрашивали и как измеряли продолжительность жизни.",
-          "Без первоисточника трудно оценить вывод: нужны сведения о выборке, методе и периоде наблюдения."
-        ],
-        "hint": "Etterspør originalkilden og opplysninger om utvalg og metode. Unngå å avvise studien før du har sett den.",
-        "reply": "В нашем примере этих сведений пока нет. Сам заголовок не позволяет восстановить ход исследования.",
-        "replyTranslation": "I eksempelet vårt mangler disse opplysningene foreløpig. Overskriften alene gjør det ikke mulig å forstå hvordan undersøkelsen ble gjennomført.",
-        "replyTransliteration": "V nashem primere etikh svedeniy poka net. Sam zagolovok ne pozvolyayet vosstanovit’ khod issledovaniya."
-      },
-      {
-        "question": "Допустим, связь между чтением и долголетием действительно обнаружена. Доказывает ли это причинность?",
-        "translation": "La oss anta at det faktisk er funnet en sammenheng mellom lesing og et langt liv. Beviser det en årsakssammenheng?",
-        "transliteration": "Dopustim, svyaz’ mezhdu chteniyem i dolgoletiyem deystvitel’no obnaruzhena. Dokazyvayet li eto prichinnost’?",
-        "expected": [
-          "Нет, сама по себе связь не доказывает причинности: на оба показателя могут влиять другие факторы.",
-          "Даже если связь установлена, нельзя исключать влияние образования, дохода или исходного состояния здоровья."
-        ],
-        "hint": "Skill mellom sammenheng og årsak. Presenter andre faktorer som muligheter, ikke som påviste forklaringer.",
-        "reply": "Такие факторы нужно учитывать при анализе. Пока мы лишь перечисляем возможные объяснения.",
-        "replyTranslation": "Slike faktorer må tas med i analysen. Foreløpig nevner vi bare mulige forklaringer.",
-        "replyTransliteration": "Takiye faktory nuzhno uchityvat’ pri analize. Poka my lish’ perechislyayem vozmozhnyye ob”yasneniya."
-      },
-      {
-        "question": "В соцсетях эту новость пересказывают как совет заменить спорт чтением. В чём проблема такого пересказа?",
-        "translation": "I sosiale medier gjengis nyheten som et råd om å erstatte trening med lesing. Hva er problemet med den gjengivelsen?",
-        "transliteration": "V sotssetyakh etu novost’ pereskazyvayut kak sovet zamenit’ sport chteniyem. V chyom problema takogo pereskaza?",
-        "expected": [
-          "Пересказ приписывает исследованию рекомендацию, которая из описанной связи не следует.",
-          "Здесь наблюдение превращают в практический совет, хотя для такого перехода не приведено оснований."
-        ],
-        "hint": "Påpek spranget fra et funn til en anbefaling. «Не следует из» betyr at noe ikke følger av noe annet.",
-        "reply": "В исходной заметке сравнения со спортом не было. При пересказе появился новый вывод.",
-        "replyTranslation": "Den opprinnelige notisen sammenlignet ikke med trening. Gjengivelsen har fått en ny konklusjon.",
-        "replyTransliteration": "V iskhodnoy zametke sravneniya so sportom ne bylo. Pri pereskaze poyavilsya novyy vyvod."
-      },
-      {
-        "question": "Как осторожно пересказать новость, не усиливая её выводов?",
-        "translation": "Hvordan kan du gjengi nyheten varsomt uten å gjøre konklusjonene sterkere?",
-        "transliteration": "Kak ostorozhno pereskazat’ novost’, ne usilivaya yeyo vyvodov?",
-        "expected": [
-          "По сообщению автора заметки, исследование выявило связь между чтением и долголетием; без первоисточника оценить её надёжность нельзя.",
-          "В заметке сообщается о возможной связи, однако судить о причинности и практических рекомендациях пока преждевременно."
-        ],
-        "hint": "Marker hvem opplysningen kommer fra, og hva som fortsatt er ukjent. Bruk «пока преждевременно».",
-        "reply": "До знакомства с первоисточником оставим вопрос открытым и сохраним ссылку на заметку для проверки.",
-        "replyTranslation": "Vi lar spørsmålet stå åpent til vi har sett originalkilden, og tar vare på lenken til notisen for å kontrollere den.",
-        "replyTransliteration": "Do znakomstva s pervoistochnikom ostavim vopros otkrytym i sokhranim ssylku na zametku dlya proverki."
-      }
-    ],
-    "vocabulary": [
-      {
-        "word": "первоисточник",
-        "translation": "originalkilde",
-        "transliteration": "pervoistochnik"
-      },
-      {
-        "word": "выборка",
-        "translation": "utvalg i en undersøkelse",
-        "transliteration": "vyborka"
-      },
-      {
-        "word": "причинность",
-        "translation": "kausalitet / årsakssammenheng",
-        "transliteration": "prichinnost’"
-      },
-      {
-        "word": "нельзя исключать",
-        "translation": "man kan ikke utelukke",
-        "transliteration": "nel’zya isklyuchat’"
-      },
-      {
-        "word": "не следует из",
-        "translation": "følger ikke av",
-        "transliteration": "ne sleduyet iz"
-      },
-      {
-        "word": "преждевременно",
-        "translation": "for tidlig / prematurt",
-        "transliteration": "prezhdevremenno"
-      },
-      {
-        "word": "приписывать",
-        "translation": "tillegge / tilskrive",
-        "transliteration": "pripisyvat’"
-      }
-    ]
-  },
-  {
-    "id": "ru-rasskazchik",
-    "title": "Mellom fortelleren og teksten",
-    "subtitle": "Tolk en tvetydig forteller og drøft et alternativ.",
-    "level": "C1",
-    "icon": "wave",
-    "opening": "Это Саша. Обсудим вымышленный рассказ: герой уверяет, что помог соседу из бескорыстия, но несколько раз упоминает, что ждал благодарности. Автор не объясняет, как к этому относиться.",
-    "openingTranslation": "Det er Sasha. La oss drøfte en oppdiktet fortelling: Hovedpersonen forsikrer at han hjalp naboen uselvisk, men nevner flere ganger at han ventet på takknemlighet. Forfatteren forklarer ikke hvordan vi skal forstå dette.",
-    "openingTransliteration": "Eto Sasha. Obsudim vymyshlennyy rasskaz: geroy uveryayet, chto pomog sosedu iz beskorystiya, no neskol’ko raz upominayet, chto zhdal blagodarnosti. Avtor ne ob”yasnyayet, kak k etomu otnosit’sya.",
-    "steps": [
-      {
-        "question": "Что позволяет усомниться в том, как герой описывает свои мотивы?",
-        "translation": "Hva gir grunn til å tvile på hvordan hovedpersonen beskriver motivene sine?",
-        "transliteration": "Chto pozvolyayet usomnit’sya v tom, kak geroy opisyvayet svoi motivy?",
-        "expected": [
-          "Его заявления о бескорыстии расходятся с повторяющимся ожиданием благодарности.",
-          "Сомнение вызывает противоречие между заявленным мотивом и деталями, на которых герой настаивает."
-        ],
-        "hint": "Vis til motsetningen i teksten. Ikke trekk inn fakta som ikke finnes i den korte handlingsbeskrivelsen.",
-        "reply": "Это расхождение допускает несколько прочтений: герой может оправдывать себя или не вполне понимать собственные мотивы.",
-        "replyTranslation": "Dette spriket åpner for flere lesninger: Hovedpersonen kan rettferdiggjøre seg selv eller ikke fullt ut forstå sine egne motiver.",
-        "replyTransliteration": "Eto raskhozhdeniye dopuskayet neskol’ko prochteniy: geroy mozhet opravdyvat’ sebya ili ne vpolne ponimat’ sobstvennyye motivy."
-      },
-      {
-        "question": "Обязательно ли считать героя сознательным лжецом?",
-        "translation": "Må vi nødvendigvis betrakte hovedpersonen som en bevisst løgner?",
-        "transliteration": "Obyazatel’no li schitat’ geroya soznatel’nym lzhetsom?",
-        "expected": [
-          "Не обязательно: не исключено, что он искренне считает себя бескорыстным и не замечает противоречия.",
-          "Я бы различал намеренный обман и самообман: текст пока допускает оба толкования.",
-          "Я бы различала намеренный обман и самообман: текст пока допускает оба толкования."
-        ],
-        "hint": "Skill mellom bevisst bedrag og selvbedrag. «Не исключено, что» gir rom for en mulig tolkning.",
-        "reply": "Тогда вопрос касается не только достоверности рассказа, но и того, насколько герой понимает самого себя.",
-        "replyTranslation": "Da handler spørsmålet både om fortellingens pålitelighet og om hvor godt hovedpersonen forstår seg selv.",
-        "replyTransliteration": "Togda vopros kasayetsya ne tol’ko dostovernosti rasskaza, no i togo, naskol’ko geroy ponimayet samogo sebya."
-      },
-      {
-        "question": "Как ответить читателю, который видит в герое только лицемерие?",
-        "translation": "Hvordan kan du svare en leser som bare ser hykleri hos hovedpersonen?",
-        "transliteration": "Kak otvetit’ chitatelyu, kotoryy vidit v geroye tol’ko litsemeriye?",
-        "expected": [
-          "Такое прочтение возможно, однако оно оставляет в стороне вероятность внутреннего конфликта.",
-          "Я понимаю эту трактовку, но ожидание благодарности само по себе ещё не отменяет желания помочь."
-        ],
-        "hint": "Anerkjenn den andre lesningen og vis hva den kan overse. «Само по себе» betyr i seg selv.",
-        "reply": "Возможно, напряжение между желанием помочь и потребностью в признании и делает героя неоднозначным.",
-        "replyTranslation": "Kanskje er det spenningen mellom ønsket om å hjelpe og behovet for anerkjennelse som gjør hovedpersonen tvetydig.",
-        "replyTransliteration": "Vozmozhno, napryazheniye mezhdu zhelaniyem pomoch’ i potrebnost’yu v priznanii i delayet geroya neodnoznachnym."
-      },
-      {
-        "question": "Как сформулировать итоговую интерпретацию, сохранив неоднозначность?",
-        "translation": "Hvordan kan du formulere en samlet tolkning og bevare tvetydigheten?",
-        "transliteration": "Kak sformulirovat’ itogovuyu interpretatsiyu, sokhraniv neodnoznachnost’?",
-        "expected": [
-          "Мне кажется, рассказ исследует смешанные мотивы человека, не сводя их ни к чистому бескорыстию, ни к простому расчёту.",
-          "Я понимаю этот рассказ как попытку показать, что желание помочь может сосуществовать с потребностью в признании."
-        ],
-        "hint": "Formuler en tolkning med «мне кажется» eller «я понимаю ... как». Bevar spennet mellom flere motiver.",
-        "reply": "При дальнейшем чтении можно искать детали, которые поддерживают эту интерпретацию или заставляют её пересмотреть.",
-        "replyTranslation": "Ved videre lesning kan vi lete etter detaljer som støtter denne tolkningen eller gjør at vi må revurdere den.",
-        "replyTransliteration": "Pri dal’neyshem chtenii mozhno iskat’ detali, kotoryye podderzhivayut etu interpretatsiyu ili zastavlyayut yeyo peresmotret’."
-      }
-    ],
-    "vocabulary": [
-      {
-        "word": "бескорыстие",
-        "translation": "uselviskhet",
-        "transliteration": "beskorystiye"
-      },
-      {
-        "word": "расходиться с",
-        "translation": "stå i motsetning til",
-        "transliteration": "raskhodit’sya s"
-      },
-      {
-        "word": "самообман",
-        "translation": "selvbedrag",
-        "transliteration": "samoobman"
-      },
-      {
-        "word": "прочтение",
-        "translation": "lesning / tolkning",
-        "transliteration": "prochteniye"
-      },
-      {
-        "word": "оставлять в стороне",
-        "translation": "la ligge / se bort fra",
-        "transliteration": "ostavlyat’ v storone"
-      },
-      {
-        "word": "потребность в признании",
-        "translation": "behov for anerkjennelse",
-        "transliteration": "potrebnost’ v priznanii"
-      },
-      {
-        "word": "неоднозначность",
-        "translation": "tvetydighet / flertydighet",
-        "transliteration": "neodnoznachnost’"
       }
     ]
   },
@@ -1273,6 +2157,951 @@
         "word": "при условии что",
         "translation": "forutsatt at",
         "transliteration": "pri uslovii chto"
+      }
+    ]
+  },
+  {
+    "id": "ru-turizm",
+    "title": "Byen som kulisse",
+    "subtitle": "Utfordre en premiss og formuler et avveid standpunkt.",
+    "level": "C1",
+    "icon": "compass",
+    "opening": "Обсудим спорное утверждение: «Чтобы сохранить характер города, нужно ограничить туризм». Попробуем отделить цель от предлагаемых средств.",
+    "openingTranslation": "La oss drøfte en omstridt påstand: «For å bevare en bys særpreg må turismen begrenses.» La oss forsøke å skille målet fra virkemidlene.",
+    "openingTransliteration": "Obsudim spornoye utverzhdeniye: «Chtoby sokhranit’ kharakter goroda, nuzhno ogranichit’ turizm». Poprobuyem otdelit’ tsel’ ot predlagayemykh sredstv.",
+    "steps": [
+      {
+        "question": "Какую скрытую предпосылку ты видишь в этом утверждении?",
+        "translation": "Hvilken skjult forutsetning ser du i denne påstanden?",
+        "transliteration": "Kakuyu skrytuyu predposylku ty vidish’ v etom utverzhdenii?",
+        "expected": [
+          "Оно предполагает, что именно туризм разрушает характер города, хотя причин может быть несколько.",
+          "Здесь туризм представлен как главная причина изменений, хотя это ещё нужно обосновать."
+        ],
+        "hint": "Utfordre årsaksforklaringen: påstanden tar turismens rolle for gitt.",
+        "reply": "Да, прежде чем выбирать меру, стоит проверить, насколько убедительна сама причинная связь.",
+        "replyTranslation": "Ja, før man velger et tiltak, bør man undersøke hvor overbevisende selve årsakssammenhengen er.",
+        "replyTransliteration": "Da, prezhde chem vybirat’ meru, stoit proverit’, naskol’ko ubeditel’na sama prichinnaya svyaz’."
+      },
+      {
+        "question": "Как признать проблему, не соглашаясь с предложенным решением?",
+        "translation": "Hvordan kan du anerkjenne problemet uten å godta den foreslåtte løsningen?",
+        "transliteration": "Kak priznat’ problemu, ne soglashayas’ s predlozhennym resheniyem?",
+        "expected": [
+          "Не отрицая давления на городскую среду, я бы всё же не сводил решение к простому ограничению числа туристов.",
+          "Не отрицая давления на городскую среду, я бы всё же не сводила решение к простому ограничению числа туристов."
+        ],
+        "hint": "Bruk «не отрицая» for å anerkjenne, og «не сводил/сводила бы» for å avgrense konklusjonen.",
+        "reply": "Ты разграничиваешь признание проблемы и поддержку конкретного инструмента.",
+        "replyTranslation": "Du skiller mellom å anerkjenne problemet og å støtte et bestemt virkemiddel.",
+        "replyTransliteration": "Ty razgranichivayesh’ priznaniye problemy i podderzhku konkretnogo instrumenta."
+      },
+      {
+        "question": "Как сформулировать позицию с оговоркой о возможных последствиях?",
+        "translation": "Hvordan kan du formulere et standpunkt med forbehold om mulige følger?",
+        "transliteration": "Kak sformulirovat’ pozitsiyu s ogovorkoy o vozmozhnykh posledstviyakh?",
+        "expected": [
+          "Я поддерживаю адресные меры, но их следует оценивать по последствиям для жителей, а не только по сокращению потока туристов.",
+          "Адресные меры представляются оправданными, если их успех оценивают по качеству жизни жителей, а не только по числу туристов."
+        ],
+        "hint": "Argumenter for målrettede tiltak, med innbyggernes liv som vurderingsgrunnlag.",
+        "reply": "Получилась взвешенная позиция: ты обозначаешь и подход, и критерий его оценки.",
+        "replyTranslation": "Det ble et avveid standpunkt: du angir både en tilnærming og et kriterium for å vurdere den.",
+        "replyTransliteration": "Poluchilas’ vzveshennaya pozitsiya: ty oboznachayesh’ i podkhod, i kriteriy yego otsenki."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "скрытая предпосылка",
+        "translation": "skjult forutsetning",
+        "transliteration": "skrytaya predposylka"
+      },
+      {
+        "word": "причинная связь",
+        "translation": "årsakssammenheng",
+        "transliteration": "prichinnaya svyaz’"
+      },
+      {
+        "word": "не сводить к",
+        "translation": "ikke redusere til",
+        "transliteration": "ne svodit’ k"
+      },
+      {
+        "word": "разграничивать",
+        "translation": "skille mellom",
+        "transliteration": "razgranichivat’"
+      },
+      {
+        "word": "адресные меры",
+        "translation": "målrettede tiltak",
+        "transliteration": "adresnyye mery"
+      },
+      {
+        "word": "взвешенная позиция",
+        "translation": "avveid standpunkt",
+        "transliteration": "vzveshennaya pozitsiya"
+      }
+    ]
+  },
+  {
+    "id": "ru-istochniki",
+    "title": "Hva viser egentlig nyheten?",
+    "subtitle": "Undersøk belegg, årsakspåstander og usikkerhet.",
+    "level": "C1",
+    "icon": "compass",
+    "opening": "Я Саша. Возьмём вымышленную новость: «Читатели живут дольше». В заметке говорится об опросе, но не приводятся ни ссылка на исследование, ни сведения об участниках. Разберём, какие выводы пока допустимы.",
+    "openingTranslation": "Jeg er Sasha. Vi tar en oppdiktet nyhet: «Lesere lever lenger». Notisen omtaler en spørreundersøkelse, men gir verken lenke til studien eller opplysninger om deltakerne. La oss undersøke hvilke konklusjoner det foreløpig er grunnlag for.",
+    "openingTransliteration": "Ya Sasha. Voz’myom vymyshlennuyu novost’: «Chitateli zhivut dol’she». V zametke govoritsya ob oprose, no ne privodyatsya ni ssylka na issledovaniye, ni svedeniya ob uchastnikakh. Razberyom, kakiye vyvody poka dopustimy.",
+    "steps": [
+      {
+        "question": "Что стоит выяснить, прежде чем доверять заголовку?",
+        "translation": "Hva bør vi finne ut før vi stoler på overskriften?",
+        "transliteration": "Chto stoit vyyasnit’, prezhde chem doveryat’ zagolovku?",
+        "expected": [
+          "Прежде всего стоит найти первоисточник и выяснить, кого опрашивали и как измеряли продолжительность жизни.",
+          "Без первоисточника трудно оценить вывод: нужны сведения о выборке, методе и периоде наблюдения."
+        ],
+        "hint": "Etterspør originalkilden og opplysninger om utvalg og metode. Unngå å avvise studien før du har sett den.",
+        "reply": "В нашем примере этих сведений пока нет. Сам заголовок не позволяет восстановить ход исследования.",
+        "replyTranslation": "I eksempelet vårt mangler disse opplysningene foreløpig. Overskriften alene gjør det ikke mulig å forstå hvordan undersøkelsen ble gjennomført.",
+        "replyTransliteration": "V nashem primere etikh svedeniy poka net. Sam zagolovok ne pozvolyayet vosstanovit’ khod issledovaniya."
+      },
+      {
+        "question": "Допустим, связь между чтением и долголетием действительно обнаружена. Доказывает ли это причинность?",
+        "translation": "La oss anta at det faktisk er funnet en sammenheng mellom lesing og et langt liv. Beviser det en årsakssammenheng?",
+        "transliteration": "Dopustim, svyaz’ mezhdu chteniyem i dolgoletiyem deystvitel’no obnaruzhena. Dokazyvayet li eto prichinnost’?",
+        "expected": [
+          "Нет, сама по себе связь не доказывает причинности: на оба показателя могут влиять другие факторы.",
+          "Даже если связь установлена, нельзя исключать влияние образования, дохода или исходного состояния здоровья."
+        ],
+        "hint": "Skill mellom sammenheng og årsak. Presenter andre faktorer som muligheter, ikke som påviste forklaringer.",
+        "reply": "Такие факторы нужно учитывать при анализе. Пока мы лишь перечисляем возможные объяснения.",
+        "replyTranslation": "Slike faktorer må tas med i analysen. Foreløpig nevner vi bare mulige forklaringer.",
+        "replyTransliteration": "Takiye faktory nuzhno uchityvat’ pri analize. Poka my lish’ perechislyayem vozmozhnyye ob”yasneniya."
+      },
+      {
+        "question": "В соцсетях эту новость пересказывают как совет заменить спорт чтением. В чём проблема такого пересказа?",
+        "translation": "I sosiale medier gjengis nyheten som et råd om å erstatte trening med lesing. Hva er problemet med den gjengivelsen?",
+        "transliteration": "V sotssetyakh etu novost’ pereskazyvayut kak sovet zamenit’ sport chteniyem. V chyom problema takogo pereskaza?",
+        "expected": [
+          "Пересказ приписывает исследованию рекомендацию, которая из описанной связи не следует.",
+          "Здесь наблюдение превращают в практический совет, хотя для такого перехода не приведено оснований."
+        ],
+        "hint": "Påpek spranget fra et funn til en anbefaling. «Не следует из» betyr at noe ikke følger av noe annet.",
+        "reply": "В исходной заметке сравнения со спортом не было. При пересказе появился новый вывод.",
+        "replyTranslation": "Den opprinnelige notisen sammenlignet ikke med trening. Gjengivelsen har fått en ny konklusjon.",
+        "replyTransliteration": "V iskhodnoy zametke sravneniya so sportom ne bylo. Pri pereskaze poyavilsya novyy vyvod."
+      },
+      {
+        "question": "Как осторожно пересказать новость, не усиливая её выводов?",
+        "translation": "Hvordan kan du gjengi nyheten varsomt uten å gjøre konklusjonene sterkere?",
+        "transliteration": "Kak ostorozhno pereskazat’ novost’, ne usilivaya yeyo vyvodov?",
+        "expected": [
+          "По сообщению автора заметки, исследование выявило связь между чтением и долголетием; без первоисточника оценить её надёжность нельзя.",
+          "В заметке сообщается о возможной связи, однако судить о причинности и практических рекомендациях пока преждевременно."
+        ],
+        "hint": "Marker hvem opplysningen kommer fra, og hva som fortsatt er ukjent. Bruk «пока преждевременно».",
+        "reply": "До знакомства с первоисточником оставим вопрос открытым и сохраним ссылку на заметку для проверки.",
+        "replyTranslation": "Vi lar spørsmålet stå åpent til vi har sett originalkilden, og tar vare på lenken til notisen for å kontrollere den.",
+        "replyTransliteration": "Do znakomstva s pervoistochnikom ostavim vopros otkrytym i sokhranim ssylku na zametku dlya proverki."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "первоисточник",
+        "translation": "originalkilde",
+        "transliteration": "pervoistochnik"
+      },
+      {
+        "word": "выборка",
+        "translation": "utvalg i en undersøkelse",
+        "transliteration": "vyborka"
+      },
+      {
+        "word": "причинность",
+        "translation": "kausalitet / årsakssammenheng",
+        "transliteration": "prichinnost’"
+      },
+      {
+        "word": "нельзя исключать",
+        "translation": "man kan ikke utelukke",
+        "transliteration": "nel’zya isklyuchat’"
+      },
+      {
+        "word": "не следует из",
+        "translation": "følger ikke av",
+        "transliteration": "ne sleduyet iz"
+      },
+      {
+        "word": "преждевременно",
+        "translation": "for tidlig / prematurt",
+        "transliteration": "prezhdevremenno"
+      },
+      {
+        "word": "приписывать",
+        "translation": "tillegge / tilskrive",
+        "transliteration": "pripisyvat’"
+      }
+    ]
+  },
+  {
+    "id": "ru-rasskazchik",
+    "title": "Mellom fortelleren og teksten",
+    "subtitle": "Tolk en tvetydig forteller og drøft et alternativ.",
+    "level": "C1",
+    "icon": "wave",
+    "opening": "Это Саша. Обсудим вымышленный рассказ: герой уверяет, что помог соседу из бескорыстия, но несколько раз упоминает, что ждал благодарности. Автор не объясняет, как к этому относиться.",
+    "openingTranslation": "Det er Sasha. La oss drøfte en oppdiktet fortelling: Hovedpersonen forsikrer at han hjalp naboen uselvisk, men nevner flere ganger at han ventet på takknemlighet. Forfatteren forklarer ikke hvordan vi skal forstå dette.",
+    "openingTransliteration": "Eto Sasha. Obsudim vymyshlennyy rasskaz: geroy uveryayet, chto pomog sosedu iz beskorystiya, no neskol’ko raz upominayet, chto zhdal blagodarnosti. Avtor ne ob”yasnyayet, kak k etomu otnosit’sya.",
+    "steps": [
+      {
+        "question": "Что позволяет усомниться в том, как герой описывает свои мотивы?",
+        "translation": "Hva gir grunn til å tvile på hvordan hovedpersonen beskriver motivene sine?",
+        "transliteration": "Chto pozvolyayet usomnit’sya v tom, kak geroy opisyvayet svoi motivy?",
+        "expected": [
+          "Его заявления о бескорыстии расходятся с повторяющимся ожиданием благодарности.",
+          "Сомнение вызывает противоречие между заявленным мотивом и деталями, на которых герой настаивает."
+        ],
+        "hint": "Vis til motsetningen i teksten. Ikke trekk inn fakta som ikke finnes i den korte handlingsbeskrivelsen.",
+        "reply": "Это расхождение допускает несколько прочтений: герой может оправдывать себя или не вполне понимать собственные мотивы.",
+        "replyTranslation": "Dette spriket åpner for flere lesninger: Hovedpersonen kan rettferdiggjøre seg selv eller ikke fullt ut forstå sine egne motiver.",
+        "replyTransliteration": "Eto raskhozhdeniye dopuskayet neskol’ko prochteniy: geroy mozhet opravdyvat’ sebya ili ne vpolne ponimat’ sobstvennyye motivy."
+      },
+      {
+        "question": "Обязательно ли считать героя сознательным лжецом?",
+        "translation": "Må vi nødvendigvis betrakte hovedpersonen som en bevisst løgner?",
+        "transliteration": "Obyazatel’no li schitat’ geroya soznatel’nym lzhetsom?",
+        "expected": [
+          "Не обязательно: не исключено, что он искренне считает себя бескорыстным и не замечает противоречия.",
+          "Я бы различал намеренный обман и самообман: текст пока допускает оба толкования.",
+          "Я бы различала намеренный обман и самообман: текст пока допускает оба толкования."
+        ],
+        "hint": "Skill mellom bevisst bedrag og selvbedrag. «Не исключено, что» gir rom for en mulig tolkning.",
+        "reply": "Тогда вопрос касается не только достоверности рассказа, но и того, насколько герой понимает самого себя.",
+        "replyTranslation": "Da handler spørsmålet både om fortellingens pålitelighet og om hvor godt hovedpersonen forstår seg selv.",
+        "replyTransliteration": "Togda vopros kasayetsya ne tol’ko dostovernosti rasskaza, no i togo, naskol’ko geroy ponimayet samogo sebya."
+      },
+      {
+        "question": "Как ответить читателю, который видит в герое только лицемерие?",
+        "translation": "Hvordan kan du svare en leser som bare ser hykleri hos hovedpersonen?",
+        "transliteration": "Kak otvetit’ chitatelyu, kotoryy vidit v geroye tol’ko litsemeriye?",
+        "expected": [
+          "Такое прочтение возможно, однако оно оставляет в стороне вероятность внутреннего конфликта.",
+          "Я понимаю эту трактовку, но ожидание благодарности само по себе ещё не отменяет желания помочь."
+        ],
+        "hint": "Anerkjenn den andre lesningen og vis hva den kan overse. «Само по себе» betyr i seg selv.",
+        "reply": "Возможно, напряжение между желанием помочь и потребностью в признании и делает героя неоднозначным.",
+        "replyTranslation": "Kanskje er det spenningen mellom ønsket om å hjelpe og behovet for anerkjennelse som gjør hovedpersonen tvetydig.",
+        "replyTransliteration": "Vozmozhno, napryazheniye mezhdu zhelaniyem pomoch’ i potrebnost’yu v priznanii i delayet geroya neodnoznachnym."
+      },
+      {
+        "question": "Как сформулировать итоговую интерпретацию, сохранив неоднозначность?",
+        "translation": "Hvordan kan du formulere en samlet tolkning og bevare tvetydigheten?",
+        "transliteration": "Kak sformulirovat’ itogovuyu interpretatsiyu, sokhraniv neodnoznachnost’?",
+        "expected": [
+          "Мне кажется, рассказ исследует смешанные мотивы человека, не сводя их ни к чистому бескорыстию, ни к простому расчёту.",
+          "Я понимаю этот рассказ как попытку показать, что желание помочь может сосуществовать с потребностью в признании."
+        ],
+        "hint": "Formuler en tolkning med «мне кажется» eller «я понимаю ... как». Bevar spennet mellom flere motiver.",
+        "reply": "При дальнейшем чтении можно искать детали, которые поддерживают эту интерпретацию или заставляют её пересмотреть.",
+        "replyTranslation": "Ved videre lesning kan vi lete etter detaljer som støtter denne tolkningen eller gjør at vi må revurdere den.",
+        "replyTransliteration": "Pri dal’neyshem chtenii mozhno iskat’ detali, kotoryye podderzhivayut etu interpretatsiyu ili zastavlyayut yeyo peresmotret’."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "бескорыстие",
+        "translation": "uselviskhet",
+        "transliteration": "beskorystiye"
+      },
+      {
+        "word": "расходиться с",
+        "translation": "stå i motsetning til",
+        "transliteration": "raskhodit’sya s"
+      },
+      {
+        "word": "самообман",
+        "translation": "selvbedrag",
+        "transliteration": "samoobman"
+      },
+      {
+        "word": "прочтение",
+        "translation": "lesning / tolkning",
+        "transliteration": "prochteniye"
+      },
+      {
+        "word": "оставлять в стороне",
+        "translation": "la ligge / se bort fra",
+        "transliteration": "ostavlyat’ v storone"
+      },
+      {
+        "word": "потребность в признании",
+        "translation": "behov for anerkjennelse",
+        "transliteration": "potrebnost’ v priznanii"
+      },
+      {
+        "word": "неоднозначность",
+        "translation": "tvetydighet / flertydighet",
+        "transliteration": "neodnoznachnost’"
+      }
+    ]
+  },
+  {
+    "id": "ru-pretenziya",
+    "title": "Et formelt klagebrev",
+    "subtitle": "Skriv en saklig klage i offisiell stil.",
+    "level": "C1",
+    "icon": "briefcase",
+    "opening": "Сегодня потренируем официальный стиль. Представь: рейс отменили, а авиакомпания уже три недели не отвечает на твоё обращение.",
+    "openingTranslation": "I dag øver vi på offisiell stil. Tenk deg: flyet ble kansellert, og flyselskapet har ikke svart på henvendelsen din på tre uker.",
+    "openingTransliteration": "Segodnya potreniruyem ofitsial’nyy stil’. Predstav’: reys otmenili, a aviakompaniya uzhe tri nedeli ne otvechayet na tvoyo obrashcheniye.",
+    "steps": [
+      {
+        "question": "Как ты начнёшь официальное письмо?",
+        "translation": "Hvordan vil du begynne et formelt brev?",
+        "transliteration": "Kak ty nachnyosh’ ofitsial’noye pis’mo?",
+        "expected": [
+          "Уважаемые господа! Обращаюсь к вам в связи с отменой рейса 12 марта.",
+          "Уважаемая служба поддержки! Пишу вам по поводу своего обращения от 3 марта, которое до сих пор осталось без ответа."
+        ],
+        "hint": "Formell hilsen «Уважаемые …!» og saken: «в связи с», «по поводу».",
+        "reply": "Хорошее начало: вежливо и по существу.",
+        "replyTranslation": "God start: høflig og saklig.",
+        "replyTransliteration": "Khorosheye nachalo: vezhlivo i po sushchestvu."
+      },
+      {
+        "question": "Как выразить недовольство, не переходя на резкий тон?",
+        "translation": "Hvordan uttrykke misnøye uten å bli skarp i tonen?",
+        "transliteration": "Kak vyrazit’ nedovol’stvo, ne perekhodya na rezkiy ton?",
+        "expected": [
+          "К сожалению, вынужден констатировать, что, несмотря на мои неоднократные обращения, ответа я так и не получил.",
+          "Приходится с сожалением отметить, что качество обслуживания не соответствовало заявленному уровню."
+        ],
+        "hint": "Upersonlig og saklig: «вынужден(а) констатировать», «несмотря на», «так и не».",
+        "reply": "Тон твёрдый, но безупречно корректный.",
+        "replyTranslation": "Tonen er fast, men upåklagelig korrekt.",
+        "replyTransliteration": "Ton tvyordyy, no bezuprechno korrektnyy."
+      },
+      {
+        "question": "Теперь сформулируй конкретное требование.",
+        "translation": "Formuler nå et konkret krav.",
+        "transliteration": "Teper’ sformuliruy konkretnoye trebovaniye.",
+        "expected": [
+          "В связи с вышеизложенным прошу вернуть полную стоимость билета в течение тридцати дней.",
+          "Прошу рассмотреть вопрос о компенсации в соответствии с действующими правилами."
+        ],
+        "hint": "Kanselli-uttrykk: «в связи с вышеизложенным» (med henvisning til det ovenstående), «прошу» med infinitiv, «в течение» (innen).",
+        "reply": "Отлично: требование привязано к правилам и к сроку.",
+        "replyTranslation": "Utmerket: kravet er knyttet til reglene og til en frist.",
+        "replyTransliteration": "Otlichno: trebovaniye privyazano k pravilam i k sroku."
+      },
+      {
+        "question": "И как ты завершишь письмо?",
+        "translation": "Og hvordan avslutter du brevet?",
+        "transliteration": "I kak ty zavershish’ pis’mo?",
+        "expected": [
+          "Заранее благодарю за оперативный ответ. С уважением, Анна Хансен.",
+          "Надеюсь на скорое решение вопроса. С уважением, Анна Хансен."
+        ],
+        "hint": "Avslutning: «Заранее благодарю за …» og «С уважением».",
+        "reply": "Прекрасно. Придраться не к чему.",
+        "replyTranslation": "Utmerket. Det er ingenting å utsette på det.",
+        "replyTransliteration": "Prekrasno. Pridrat’sya ne k chemu."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "обращение",
+        "translation": "henvendelse",
+        "transliteration": "obrashcheniye"
+      },
+      {
+        "word": "в связи с",
+        "translation": "i forbindelse med / på grunn av",
+        "transliteration": "v svyazi s"
+      },
+      {
+        "word": "вынужден констатировать",
+        "translation": "må konstatere",
+        "transliteration": "vynuzhden konstatirovat’"
+      },
+      {
+        "word": "неоднократный",
+        "translation": "gjentatt",
+        "transliteration": "neodnokratnyy"
+      },
+      {
+        "word": "в связи с вышеизложенным",
+        "translation": "med henvisning til det ovenstående",
+        "transliteration": "v svyazi s vysheizlozhennym"
+      },
+      {
+        "word": "с уважением",
+        "translation": "med vennlig hilsen (formelt)",
+        "transliteration": "s uvazheniyem"
+      }
+    ]
+  },
+  {
+    "id": "ru-podtekst",
+    "title": "Mellom linjene",
+    "subtitle": "Tolk et vagt svar og be høflig om klarhet.",
+    "level": "C1",
+    "icon": "hand",
+    "opening": "Руководитель пишет тебе: «Интересное предложение. Вернёмся к нему как-нибудь потом». Что бы это могло значить?",
+    "openingTranslation": "Lederen skriver til deg: «Interessant forslag. Vi kommer tilbake til det en gang senere.» Hva kan dette bety?",
+    "openingTransliteration": "Rukovoditel’ pishet tebe: «Interesnoye predlozheniye. Vernyomsya k nemu kak-nibud’ potom». Chto by eto moglo znachit’?",
+    "steps": [
+      {
+        "question": "Как ты понимаешь это сообщение?",
+        "translation": "Hvordan forstår du denne meldingen?",
+        "transliteration": "Kak ty ponimayesh’ eto soobshcheniye?",
+        "expected": [
+          "Возможно, это вежливый способ отложить вопрос на неопределённый срок.",
+          "Трудно сказать: «интересное» иногда звучит как комплимент, а иногда как вежливое дистанцирование."
+        ],
+        "hint": "Hold tolkningen åpen: «возможно, это способ …», «иногда …, а иногда …».",
+        "reply": "То есть неясно, «да» это или «нет».",
+        "replyTranslation": "Så det er uklart om det er et ja eller et nei.",
+        "replyTransliteration": "To yest’ neyasno, «da» eto ili «net»."
+      },
+      {
+        "question": "Что заставляет тебя склоняться к одному или другому толкованию?",
+        "translation": "Hva får deg til å heller mot den ene eller den andre tolkningen?",
+        "transliteration": "Chto zastavlyayet tebya sklonyat’sya k odnomu ili drugomu tolkovaniyu?",
+        "expected": [
+          "То, что не названо никаких сроков, наводит на мысль, что это не приоритет.",
+          "Многое зависит от контекста: если обычно он пишет прямо, такая расплывчатость о многом говорит."
+        ],
+        "hint": "Begrunn med konkrete tegn: «то, что …», «наводит на мысль» (får en til å tenke), «расплывчатость» (vaghet).",
+        "reply": "Тонкое наблюдение: то, чего нет в сообщении, тоже что-то сообщает.",
+        "replyTranslation": "Skarp observasjon: det som mangler i meldingen, sier også noe.",
+        "replyTransliteration": "Tonkoye nablyudeniye: to, chego net v soobshchenii, tozhe chto-to soobshchayet."
+      },
+      {
+        "question": "Как ответить, чтобы прояснить ситуацию и не поставить его в неловкое положение?",
+        "translation": "Hvordan svare for å avklare situasjonen uten å sette ham i forlegenhet?",
+        "transliteration": "Kak otvetit’, chtoby proyasnit’ situatsiyu i ne postavit’ yego v nelovkoye polozheniye?",
+        "expected": [
+          "Спасибо! Если вам удобно, давайте выделим полчаса на следующей неделе, чтобы обсудить детали.",
+          "Благодарю за отзыв. Есть ли что-то, что стоит доработать, прежде чем мы к этому вернёмся?"
+        ],
+        "hint": "Foreslå et konkret neste steg, høflig: «если вам удобно», «давайте выделим …».",
+        "reply": "Так ты вежливо подталкиваешь его к определённому ответу.",
+        "replyTranslation": "Slik dytter du ham høflig mot et klart svar.",
+        "replyTransliteration": "Tak ty vezhlivo podtalkivayesh’ yego k opredelyonnomu otvetu."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "отложить",
+        "translation": "utsette",
+        "transliteration": "otlozhit’"
+      },
+      {
+        "word": "на неопределённый срок",
+        "translation": "på ubestemt tid",
+        "transliteration": "na neopredelyonnyy srok"
+      },
+      {
+        "word": "склоняться к",
+        "translation": "helle mot",
+        "transliteration": "sklonyat’sya k"
+      },
+      {
+        "word": "наводить на мысль",
+        "translation": "få en til å tenke",
+        "transliteration": "navodit’ na mysl’"
+      },
+      {
+        "word": "расплывчатость",
+        "translation": "vaghet / uklarhet",
+        "transliteration": "rasplyvchatost’"
+      },
+      {
+        "word": "поставить в неловкое положение",
+        "translation": "sette i forlegenhet",
+        "transliteration": "postavit’ v nelovkoye polozheniye"
+      }
+    ]
+  },
+  {
+    "id": "ru-ironiya",
+    "title": "Ironi og underdrivelse",
+    "subtitle": "Svar i samme tone og forklar når ros er et stikk.",
+    "level": "C2",
+    "icon": "quote",
+    "opening": "Третий день идёт дождь, электричка опаздывает на час, а коллега говорит: «Ну и погодка сегодня, просто сказка!» Поговорим об иронии.",
+    "openingTranslation": "Det har regnet i tre dager, lokaltoget er en time forsinket, og kollegaen sier: «For et vær i dag, rene eventyret!» La oss snakke om ironi.",
+    "openingTransliteration": "Tretiy den’ idyot dozhd’, elektrichka opazdyvayet na chas, a kollega govorit: «Nu i pogodka segodnya, prosto skazka!» Pogovorim ob ironii.",
+    "steps": [
+      {
+        "question": "Ответь ему в тон, с той же иронией.",
+        "translation": "Svar ham i samme tone, med den samme ironien.",
+        "transliteration": "Otvet’ yemu v ton, s toy zhe ironiyey.",
+        "expected": [
+          "Да уж, лучше не придумаешь. Так бы здесь и остался жить.",
+          "Не то слово! Всю жизнь мечтал провести утро на мокрой платформе."
+        ],
+        "hint": "Overdriv i samme retning: «лучше не придумаешь», «не то слово!» (det kan du så si!).",
+        "reply": "Вижу, ирония тебе даётся легко.",
+        "replyTranslation": "Jeg ser at ironi faller lett for deg.",
+        "replyTransliteration": "Vizhu, ironiya tebe dayotsya legko."
+      },
+      {
+        "question": "Как объяснить иностранцу, когда русский комплимент на самом деле шпилька?",
+        "translation": "Hvordan forklare en utlending når et russisk kompliment egentlig er et stikk?",
+        "transliteration": "Kak ob”yasnit’ inostrantsu, kogda russkiy kompliment na samom dele shpil’ka?",
+        "expected": [
+          "Обычно шпильку выдают интонация и явный перебор: если похвала несоразмерна ситуации, жди подвоха.",
+          "Нужно смотреть на зазор между сказанным и тем, что очевидно всем."
+        ],
+        "hint": "«шпилька» er et stikk; «перебор» er overdrivelse; «жди подвоха» betyr vent deg en baktanke; «зазор» betyr avstand.",
+        "reply": "«Жди подвоха» — очень точно и очень по-русски.",
+        "replyTranslation": "«Vent deg en baktanke» – veldig presist og veldig russisk.",
+        "replyTransliteration": "«Zhdi podvokha» — ochen’ tochno i ochen’ po-russki."
+      },
+      {
+        "question": "А преуменьшение? Русские им пользуются?",
+        "translation": "Og underdrivelse? Bruker russere det?",
+        "transliteration": "A preumen’sheniye? Russkiye im pol’zuyutsya?",
+        "expected": [
+          "Пожалуй, реже, чем англичане, но «неплохо», сказанное о шедевре, порой стоит больше тысячи похвал.",
+          "Да, особенно когда речь идёт о собственных успехах: «да так, ничего особенного» — целое искусство."
+        ],
+        "hint": "Gi et eksempel: «неплохо» (ikke verst), «ничего особенного» (ikke noe spesielt).",
+        "reply": "Согласен: показная скромность — тоже своего рода хвастовство.",
+        "replyTranslation": "Enig: påtatt beskjedenhet er også en slags skryt.",
+        "replyTransliteration": "Soglasen: pokaznaya skromnost’ — tozhe svoyego roda khvastovstvo."
+      },
+      {
+        "question": "Последняя фраза была ироничной? Обоснуй своё прочтение.",
+        "translation": "Var den siste setningen ironisk? Begrunn tolkningen din.",
+        "transliteration": "Poslednyaya fraza byla ironichnoy? Obosnuy svoyo prochteniye.",
+        "expected": [
+          "Отчасти да: она разоблачает парадокс, но с улыбкой.",
+          "Скорее парадоксальной, чем ироничной: в ней правда высказана через противоречие."
+        ],
+        "hint": "Nyansert: «скорее …, чем …». «разоблачать» betyr å avsløre.",
+        "reply": "Отличное различие: не всякий парадокс — ирония, но ирония любит парадоксы.",
+        "replyTranslation": "En flott distinksjon: ikke ethvert paradoks er ironi, men ironi elsker paradokser.",
+        "replyTransliteration": "Otlichnoye razlichiye: ne vsyakiy paradoks — ironiya, no ironiya lyubit paradoksy."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "в тон",
+        "translation": "i samme tone",
+        "transliteration": "v ton"
+      },
+      {
+        "word": "шпилька",
+        "translation": "stikk / spydighet",
+        "transliteration": "shpil’ka"
+      },
+      {
+        "word": "перебор",
+        "translation": "overdrivelse",
+        "transliteration": "perebor"
+      },
+      {
+        "word": "подвох",
+        "translation": "felle / baktanke",
+        "transliteration": "podvokh"
+      },
+      {
+        "word": "преуменьшение",
+        "translation": "underdrivelse",
+        "transliteration": "preumen’sheniye"
+      },
+      {
+        "word": "показной",
+        "translation": "påtatt / demonstrativ",
+        "transliteration": "pokaznoy"
+      }
+    ]
+  },
+  {
+    "id": "ru-registry",
+    "title": "Fra kanselli-stil til chat",
+    "subtitle": "Si det samme i tre registre og forklar forskjellen.",
+    "level": "C2",
+    "icon": "scale",
+    "opening": "Одна новость — три регистра: завтрашнее совещание отменяется. Посмотрим, как меняется язык в зависимости от адресата.",
+    "openingTranslation": "Én nyhet – tre registre: morgendagens møte avlyses. La oss se hvordan språket endrer seg etter mottakeren.",
+    "openingTransliteration": "Odna novost’ — tri registra: zavtrashneye soveshchaniye otmenyayetsya. Posmotrim, kak menyayetsya yazyk v zavisimosti ot adresata.",
+    "steps": [
+      {
+        "question": "Напиши это как в официальном приказе.",
+        "translation": "Skriv det som i et offisielt direktiv.",
+        "transliteration": "Napishi eto kak v ofitsial’nom prikaze.",
+        "expected": [
+          "Доводим до вашего сведения, что совещание, запланированное на завтра, отменяется. О новой дате будет сообщено дополнительно.",
+          "Настоящим уведомляем сотрудников о переносе совещания на более поздний срок."
+        ],
+        "hint": "Kanselli-stil: «доводим до вашего сведения», «настоящим уведомляем», «будет сообщено дополнительно».",
+        "reply": "Чистый канцелярит: никто ничего не решал, а всё решено.",
+        "replyTranslation": "Ren kanselli-stil: ingen har bestemt noe, og likevel er alt bestemt.",
+        "replyTransliteration": "Chistyy kantselyarit: nikto nichego ne reshal, a vsyo resheno."
+      },
+      {
+        "question": "Теперь скажи то же самое коллеге, с которым ты на «ты».",
+        "translation": "Si nå det samme til en kollega du er dus med.",
+        "transliteration": "Teper’ skazhi to zhe samoye kollege, s kotorym ty na «ty».",
+        "expected": [
+          "Слушай, завтрашнее совещание отменили. Когда перенесут, скажу.",
+          "Кстати, завтра совещания не будет — его отменили."
+        ],
+        "hint": "Muntlig: ubestemt-personlig «отменили» (de har avlyst det), «кстати».",
+        "reply": "Очень естественно. А если написать лучшему другу в мессенджере?",
+        "replyTranslation": "Veldig naturlig. Og hvis du skriver til din beste venn i en meldingsapp?",
+        "replyTransliteration": "Ochen’ yestestvenno. A yesli napisat’ luchshemu drugu v messendzhere?"
+      },
+      {
+        "question": "Тогда напиши лучшему другу в мессенджере, шутливо.",
+        "translation": "Skriv da til din beste venn i en meldingsapp, spøkefullt.",
+        "transliteration": "Togda napishi luchshemu drugu v messendzhere, shutlivo.",
+        "expected": [
+          "Ура, завтра никаких совещаний! Это надо отметить!",
+          "Совещание отменили, чудеса бывают! Вечером в бар?"
+        ],
+        "hint": "Spøkefull overdrivelse: «чудеса бывают!», «это надо отметить» (det må feires).",
+        "reply": "Ха, «чудеса бывают» — идеально для такого повода.",
+        "replyTranslation": "Ha, «mirakler skjer» – perfekt for en slik anledning.",
+        "replyTransliteration": "Kha, «chudesa byvayut» — ideal’no dlya takogo povoda."
+      },
+      {
+        "question": "Что конкретно меняется от регистра к регистру в твоих вариантах?",
+        "translation": "Hva er det konkret som endrer seg fra register til register i versjonene dine?",
+        "transliteration": "Chto konkretno menyayetsya ot registra k registru v tvoikh variantakh?",
+        "expected": [
+          "Безличные канцелярские обороты уступили место прямой речи, а книжная лексика — разговорной.",
+          "Меняются синтаксис, лексика и, главное, подразумеваемые отношения с адресатом."
+        ],
+        "hint": "Nevn nivåene: syntaks, ordforråd og forholdet til mottakeren («адресат»). «уступать место» betyr å vike plassen for.",
+        "reply": "Именно: регистр — это не одежда, которую меняют, а отношения, которые выбирают.",
+        "replyTranslation": "Nettopp: et register er ikke et plagg man skifter, men en relasjon man velger.",
+        "replyTransliteration": "Imenno: registr — eto ne odezhda, kotoruyu menyayut, a otnosheniya, kotoryye vybirayut."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "доводить до сведения",
+        "translation": "gjøre kjent / informere",
+        "transliteration": "dovodit’ do svedeniya"
+      },
+      {
+        "word": "канцелярит",
+        "translation": "kanselli-stil / byråkratspråk",
+        "transliteration": "kantselyarit"
+      },
+      {
+        "word": "быть на «ты»",
+        "translation": "være dus",
+        "transliteration": "byt’ na «ty»"
+      },
+      {
+        "word": "отменили",
+        "translation": "de har avlyst",
+        "transliteration": "otmenili"
+      },
+      {
+        "word": "чудеса бывают",
+        "translation": "mirakler skjer",
+        "transliteration": "chudesa byvayut"
+      },
+      {
+        "word": "уступать место",
+        "translation": "vike plassen for",
+        "transliteration": "ustupat’ mesto"
+      }
+    ]
+  },
+  {
+    "id": "ru-frazeologizmy",
+    "title": "Idiomer i sammenheng",
+    "subtitle": "Forstå, bruk og forklar faste uttrykk.",
+    "level": "C2",
+    "icon": "wave",
+    "opening": "Сегодня играем с фразеологизмами. История такая: Марк обещал золотые горы, а в итоге остался у разбитого корыта.",
+    "openingTranslation": "I dag leker vi med faste uttrykk. Historien er slik: Mark lovet gull og grønne skoger, men endte opp med ingenting.",
+    "openingTransliteration": "Segodnya igrayem s frazeologizmami. Istoriya takaya: Mark obeshchal zolotyye gory, a v itoge ostalsya u razbitogo koryta.",
+    "steps": [
+      {
+        "question": "Объясни своими словами, что случилось с Марком.",
+        "translation": "Forklar med egne ord hva som skjedde med Mark.",
+        "transliteration": "Ob”yasni svoimi slovami, chto sluchilos’ s Markom.",
+        "expected": [
+          "Он наобещал слишком много, а в результате ничего не добился и потерял то, что имел.",
+          "Он давал невыполнимые обещания, но его затея провалилась."
+        ],
+        "hint": "Omskriv: «обещать золотые горы» betyr å love alt mulig; «остаться у разбитого корыта» betyr å stå igjen med ingenting.",
+        "reply": "Именно. А начальник, конечно, устроил ему разнос.",
+        "replyTranslation": "Nettopp. Og sjefen ga ham selvsagt en skikkelig overhaling.",
+        "replyTransliteration": "Imenno. A nachal’nik, konechno, ustroil yemu raznos."
+      },
+      {
+        "question": "Прокомментируй реакцию начальника каким-нибудь фразеологизмом.",
+        "translation": "Kommenter sjefens reaksjon med et fast uttrykk.",
+        "transliteration": "Prokommentiruy reaktsiyu nachal’nika kakim-nibud’ frazeologizmom.",
+        "expected": [
+          "Что ж, сам виноват: что посеешь, то и пожнёшь.",
+          "Начальник за словом в карман не лезет, но на этот раз он был прав."
+        ],
+        "hint": "«что посеешь, то и пожнёшь» betyr som man sår, høster man; «за словом в карман не лезет» betyr han har alltid et svar klart.",
+        "reply": "Отлично, пословица к месту.",
+        "replyTranslation": "Utmerket, et ordtak som passer.",
+        "replyTransliteration": "Otlichno, poslovitsa k mestu."
+      },
+      {
+        "question": "Марк хочет попробовать снова. Что ты ему посоветуешь, тоже образно?",
+        "translation": "Mark vil prøve igjen. Hva vil du råde ham til, også billedlig?",
+        "transliteration": "Mark khochet poprobovat’ snova. Chto ty yemu posovetuyesh’, tozhe obrazno?",
+        "expected": [
+          "Я бы посоветовал ему не делить шкуру неубитого медведя.",
+          "Пусть семь раз отмерит, а один раз отрежет."
+        ],
+        "hint": "«делить шкуру неубитого медведя» betyr å selge skinnet før bjørnen er skutt; «семь раз отмерь, один раз отрежь» betyr å tenke seg godt om før man handler.",
+        "reply": "Мудрый совет. Тише едешь — дальше будешь.",
+        "replyTranslation": "Et klokt råd. Hastverk er lastverk.",
+        "replyTransliteration": "Mudryy sovet. Tishe yedesh’ — dal’she budesh’."
+      },
+      {
+        "question": "Есть ли норвежское выражение, которое плохо переводится на русский? Объясни его.",
+        "translation": "Finnes det et norsk uttrykk som er vanskelig å oversette til russisk? Forklar det.",
+        "transliteration": "Yest’ li norvezhskoye vyrazheniye, kotoroye plokho perevoditsya na russkiy? Ob”yasni yego.",
+        "expected": [
+          "«Ut på tur, aldri sur»: дословно «в поход — и никогда не злой», а смысл в том, что прогулка на природе всегда поднимает настроение.",
+          "Мы говорим «å ta seg vann over hodet», то есть «взять воду над головой»: это примерно «взвалить на себя непосильную ношу»."
+        ],
+        "hint": "Gi den bokstavelige oversettelsen («дословно …») og deretter meningen («смысл в том, что …»).",
+        "reply": "Замечательно! Эту мудрость стоило бы перенять и нам.",
+        "replyTranslation": "Fantastisk! Den visdommen burde vi også ta til oss.",
+        "replyTransliteration": "Zamechatel’no! Etu mudrost’ stoilo by perenyat’ i nam."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "обещать золотые горы",
+        "translation": "love gull og grønne skoger",
+        "transliteration": "obeshchat’ zolotyye gory"
+      },
+      {
+        "word": "остаться у разбитого корыта",
+        "translation": "stå igjen med ingenting",
+        "transliteration": "ostat’sya u razbitogo koryta"
+      },
+      {
+        "word": "что посеешь, то и пожнёшь",
+        "translation": "som man sår, høster man",
+        "transliteration": "chto poseyesh’, to i pozhnyosh’"
+      },
+      {
+        "word": "за словом в карман не лезет",
+        "translation": "har alltid et svar klart",
+        "transliteration": "za slovom v karman ne lezet"
+      },
+      {
+        "word": "делить шкуру неубитого медведя",
+        "translation": "selge skinnet før bjørnen er skutt",
+        "transliteration": "delit’ shkuru neubitogo medvedya"
+      },
+      {
+        "word": "семь раз отмерь, один раз отрежь",
+        "translation": "tenk deg godt om før du handler",
+        "transliteration": "sem’ raz otmer’, odin raz otrezh’"
+      }
+    ]
+  },
+  {
+    "id": "ru-anonimnost",
+    "title": "Forsvar et syn du ikke deler",
+    "subtitle": "Bygg det sterkeste argumentet, finn svakheten og nå frem til en syntese.",
+    "level": "C2",
+    "icon": "scale",
+    "opening": "Упражнение высокого уровня: убедительно защитить тезис, с которым ты не согласен. Тема: анонимность в интернете следует отменить.",
+    "openingTranslation": "Øvelse på høyt nivå: forsvar overbevisende en tese du ikke er enig i. Tema: anonymitet på nettet bør avskaffes.",
+    "openingTransliteration": "Uprazhneniye vysokogo urovnya: ubeditel’no zashchitit’ tezis, s kotorym ty ne soglasen. Tema: anonimnost’ v internete sleduyet otmenit’.",
+    "steps": [
+      {
+        "question": "Сформулируй самый сильный аргумент в пользу отмены.",
+        "translation": "Formuler det sterkeste argumentet for å avskaffe den.",
+        "transliteration": "Sformuliruy samyy sil’nyy argument v pol’zu otmeny.",
+        "expected": [
+          "Можно утверждать, что ответственность за слова предполагает возможность публично за них ответить.",
+          "Самый весомый довод в том, что анонимность снижает цену агрессии и тем самым её умножает."
+        ],
+        "hint": "Presist og tungt: «предполагает», «тем самым» (dermed), «весомый довод» (tungtveiende argument).",
+        "reply": "Аргумент выстроен хорошо. Теперь разбери его.",
+        "replyTranslation": "Argumentet er godt bygd. Ta det fra hverandre nå.",
+        "replyTransliteration": "Argument vystroyen khorosho. Teper’ razberi yego."
+      },
+      {
+        "question": "Найди слабое место этого рассуждения.",
+        "translation": "Finn det svake punktet i dette resonnementet.",
+        "transliteration": "Naydi slaboye mesto etogo rassuzhdeniya.",
+        "expected": [
+          "Рассуждение исходит из того, что агрессия связана прежде всего с анонимностью, хотя многие оскорбления пишут под настоящими именами.",
+          "Оно упускает из виду тех, у кого есть веские причины не раскрываться: диссидентов, жертв, уязвимых людей."
+        ],
+        "hint": "Avslør den skjulte premissen («исходит из того, что …») eller hvem som overses («упускает из виду»).",
+        "reply": "Верно: цену отмены заплатили бы как раз самые слабые.",
+        "replyTranslation": "Riktig: det er nettopp de svakeste som ville betalt prisen for avskaffelsen.",
+        "replyTransliteration": "Verno: tsenu otmeny zaplatili by kak raz samyye slabyye."
+      },
+      {
+        "question": "Предложи промежуточную позицию, учитывающую обе стороны.",
+        "translation": "Foreslå et mellomstandpunkt som tar hensyn til begge sider.",
+        "transliteration": "Predlozhi promezhutochnuyu pozitsiyu, uchityvayushchuyu obe storony.",
+        "expected": [
+          "Можно разграничить анонимность перед публикой и идентифицируемость перед независимым органом, допустимую только в серьёзных случаях.",
+          "Вместо того чтобы отменять анонимность, разумнее сделать отслеживаемыми злоупотребления, сохранив право не раскрываться."
+        ],
+        "hint": "Skill mellom to nivåer: «разграничить … и …», «вместо того чтобы …, разумнее …».",
+        "reply": "Изящное решение, хотя остаётся вопрос, кто будет контролировать контролёров.",
+        "replyTranslation": "En elegant løsning, selv om spørsmålet gjenstår om hvem som skal kontrollere kontrollørene.",
+        "replyTransliteration": "Izyashchnoye resheniye, khotya ostayotsya vopros, kto budet kontrolirovat’ kontrolyorov."
+      },
+      {
+        "question": "Как ответить на это возражение, не уходя от него?",
+        "translation": "Hvordan svare på denne innvendingen uten å vike unna?",
+        "transliteration": "Kak otvetit’ na eto vozrazheniye, ne ukhodya ot nego?",
+        "expected": [
+          "Признаю, что риск существует; именно поэтому нужны судебные гарантии и прозрачность запросов.",
+          "Я не претендую на то, чтобы устранить риск, — я предлагаю сделать его проверяемым: каждый доступ к данным должен оставлять след."
+        ],
+        "hint": "Innrøm, og gjør innrømmelsen til et argument: «именно поэтому …», «я не претендую на то, чтобы …».",
+        "reply": "Вот: возражение превратилось в требование. Так и строится аргументация.",
+        "replyTranslation": "Sånn: innvendingen ble til et krav. Slik bygges en argumentasjon.",
+        "replyTransliteration": "Vot: vozrazheniye prevratilos’ v trebovaniye. Tak i stroitsya argumentatsiya."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "тезис",
+        "translation": "tese",
+        "transliteration": "tezis"
+      },
+      {
+        "word": "весомый довод",
+        "translation": "tungtveiende argument",
+        "transliteration": "vesomyy dovod"
+      },
+      {
+        "word": "тем самым",
+        "translation": "dermed",
+        "transliteration": "tem samym"
+      },
+      {
+        "word": "упускать из виду",
+        "translation": "overse",
+        "transliteration": "upuskat’ iz vidu"
+      },
+      {
+        "word": "разграничить",
+        "translation": "skille mellom",
+        "transliteration": "razgranichit’"
+      },
+      {
+        "word": "не уходя от",
+        "translation": "uten å vike unna",
+        "transliteration": "ne ukhodya ot"
+      }
+    ]
+  },
+  {
+    "id": "ru-stil",
+    "title": "Stil og tone i en tekst",
+    "subtitle": "Analyser en åpningssetning og skriv videre i samme stil.",
+    "level": "C2",
+    "icon": "book",
+    "opening": "Прочитаю тебе начало вымышленного рассказа: «И в то лето море пришло с опозданием, как родственник, которого не хочется огорчать». Обсудим?",
+    "openingTranslation": "Jeg leser for deg begynnelsen på en oppdiktet novelle: «Også den sommeren kom havet for sent, som en slektning man ikke vil gjøre lei seg.» Skal vi diskutere den?",
+    "openingTransliteration": "Prochitayu tebe nachalo vymyshlennogo rasskaza: «I v to leto more prishlo s opozdaniyem, kak rodstvennik, kotorogo ne khochetsya ogorchat’». Obsudim?",
+    "steps": [
+      {
+        "question": "Какое впечатление производит это сравнение?",
+        "translation": "Hvilket inntrykk gjør denne sammenligningen?",
+        "transliteration": "Kakoye vpechatleniye proizvodit eto sravneniye?",
+        "expected": [
+          "Оно обескураживает: морю приписывается почти человеческая робость, а заодно появляется намёк на семейный долг.",
+          "Мне кажется, оно одновременно ироничное и грустное, потому что делает домашним нечто огромное."
+        ],
+        "hint": "Beskriv virkningen presist: «обескураживать» (overrumple), «намёк на» (antydning om), «делать домашним» (gjøre hjemlig).",
+        "reply": "Хорошее прочтение. Теперь посмотрим на самое начало фразы.",
+        "replyTranslation": "En god tolkning. La oss nå se på selve begynnelsen av setningen.",
+        "replyTransliteration": "Khorosheye prochteniye. Teper’ posmotrim na samoye nachalo frazy."
+      },
+      {
+        "question": "Что, по-твоему, подсказывает это начальное «И в то лето»?",
+        "translation": "Hva antyder, etter din mening, den innledende «И в то лето» (også den sommeren)?",
+        "transliteration": "Chto, po-tvoyemu, podskazyvayet eto nachal’noye «I v to leto»?",
+        "expected": [
+          "Оно говорит о повторении, почти ритуале: рассказчик пережил много похожих лет.",
+          "Оно сразу вносит ноту смирения: то, что происходит, уже никого не удивляет."
+        ],
+        "hint": "Tolk et lite ord: gjentakelse, ritual, resignasjon («смирение»).",
+        "reply": "Именно: в одном слове уже целая биография.",
+        "replyTranslation": "Nettopp: i ett ord ligger det allerede en hel biografi.",
+        "replyTransliteration": "Imenno: v odnom slove uzhe tselaya biografiya."
+      },
+      {
+        "question": "Как можно описать регистр и ритм этой фразы?",
+        "translation": "Hvordan kan man beskrive registeret og rytmen i denne setningen?",
+        "transliteration": "Kak mozhno opisat’ registr i ritm etoy frazy?",
+        "expected": [
+          "Регистр литературный, но не вычурный; ритм неторопливый, с паузой, которая готовит финальное сравнение.",
+          "Это сдержанная, почти разговорная проза, где запятая служит шарниром между фактом и образом."
+        ],
+        "hint": "Analytisk ordforråd: «вычурный» (søkt / jålete), «неторопливый», «служить шарниром» (fungere som hengsel).",
+        "reply": "Тонкий анализ. Теперь твоя очередь писать.",
+        "replyTranslation": "En fin analyse. Nå er det din tur til å skrive.",
+        "replyTransliteration": "Tonkiy analiz. Teper’ tvoya ochered’ pisat’."
+      },
+      {
+        "question": "Продолжи рассказ одной фразой в том же стиле.",
+        "translation": "Fortsett fortellingen med én setning i samme stil.",
+        "transliteration": "Prodolzhi rasskaz odnoy frazoy v tom zhe stile.",
+        "expected": [
+          "Мы ждали его на берегу с терпением людей, которые давно знают, чем всё кончится.",
+          "Бабушка, как и каждый год, сделала вид, что ничего не заметила."
+        ],
+        "hint": "Hold den rolige rytmen og den lune ironien, i fortid som i åpningen.",
+        "reply": "Прекрасно: тон сохранён, и появился новый персонаж. Здесь начинается литература.",
+        "replyTranslation": "Nydelig: tonen er bevart, og en ny person har dukket opp. Her begynner litteraturen.",
+        "replyTransliteration": "Prekrasno: ton sokhranyon, i poyavilsya novyy personazh. Zdes’ nachinayetsya literatura."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "вымышленный",
+        "translation": "oppdiktet",
+        "transliteration": "vymyshlennyy"
+      },
+      {
+        "word": "сравнение",
+        "translation": "sammenligning",
+        "transliteration": "sravneniye"
+      },
+      {
+        "word": "обескураживать",
+        "translation": "overrumple / ta motet fra",
+        "transliteration": "obeskurazhivat’"
+      },
+      {
+        "word": "смирение",
+        "translation": "resignasjon / ydmykhet",
+        "transliteration": "smireniye"
+      },
+      {
+        "word": "вычурный",
+        "translation": "søkt / jålete",
+        "transliteration": "vychurnyy"
+      },
+      {
+        "word": "сдержанный",
+        "translation": "avmålt / behersket",
+        "transliteration": "sderzhannyy"
       }
     ]
   }
