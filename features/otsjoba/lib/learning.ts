@@ -1,7 +1,13 @@
-import rawCurriculum from "@/features/otsjoba/data/curriculum.json";
+import italian from "@/features/otsjoba/data/curriculum/it.json";
+import russian from "@/features/otsjoba/data/curriculum/ru.json";
 
 export type Language = "it" | "ru";
-export type Level = "A1" | "A2" | "B1" | "B2" | "C1";
+export type Level = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+export const lessonIcons = [
+  "coffee", "hand", "wave", "train", "utensils", "compass", "shop", "home", "map",
+  "clock", "heart", "book", "briefcase", "theater", "scale", "news", "quote", "leaf",
+] as const;
+export type LessonIcon = (typeof lessonIcons)[number];
 export type Word = {
   word: string;
   translation: string;
@@ -22,14 +28,14 @@ export type Lesson = {
   title: string;
   subtitle: string;
   level: Level;
-  icon: string;
+  icon: LessonIcon;
   opening: string;
   openingTranslation: string;
   openingTransliteration?: string;
   steps: Step[];
   vocabulary: Word[];
 };
-export const curriculum = rawCurriculum as Record<Language, Lesson[]>;
+export const curriculum = { it: italian, ru: russian } as Record<Language, Lesson[]>;
 export const languages = {
   it: {
     name: "Italiensk",
@@ -52,7 +58,15 @@ export const languages = {
     focus: "Diskuter, nyanser og snakk friere.",
   },
 };
-export const levels: Level[] = ["A1", "A2", "B1", "B2", "C1"];
+export const levels: Level[] = ["A1", "A2", "B1", "B2", "C1", "C2"];
+export const levelNames: Record<Level, string> = {
+  A1: "Nybegynner",
+  A2: "Grunnleggende",
+  B1: "Mellomnivå",
+  B2: "Øvre mellomnivå",
+  C1: "Avansert",
+  C2: "Nær morsmål",
+};
 export type Session = {
   id: string;
   language: Language;
@@ -207,12 +221,18 @@ export function allWords(language: Language): Word[] {
     ).values(),
   ];
 }
+// The learner's own level first, then outward; at equal distance the level
+// above comes before the level below.
+export function levelOrder(level: Level) {
+  const rank = (l: Level) => {
+    const d = levels.indexOf(l) - levels.indexOf(level);
+    return Math.abs(d) * 2 + (d < 0 ? 1 : 0);
+  };
+  return [...levels].sort((a, b) => rank(a) - rank(b));
+}
 export function orderedLessons(language: Language, level: Level) {
-  return [...curriculum[language]].sort(
-    (a, b) =>
-      Math.abs(levels.indexOf(a.level) - levels.indexOf(level)) -
-      Math.abs(levels.indexOf(b.level) - levels.indexOf(level)),
-  );
+  const order = levelOrder(level);
+  return [...curriculum[language]].sort((a, b) => order.indexOf(a.level) - order.indexOf(b.level));
 }
 export function scheduleReview(
   previous: Review | undefined,

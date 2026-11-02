@@ -2,7 +2,7 @@ import { z } from "zod";
 import { defaults, type LearningState } from "./learning";
 
 const language = z.enum(["it", "ru"]);
-const level = z.enum(["A1", "A2", "B1", "B2", "C1"]);
+const level = z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]);
 const text = z.string().max(500);
 const date = z.string().datetime({ offset: true });
 export const progressSchema = z.object({

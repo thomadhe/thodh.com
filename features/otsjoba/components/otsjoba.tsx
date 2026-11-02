@@ -1,23 +1,33 @@
 /* eslint-disable @next/next/no-img-element -- Local original portraits served directly; no image optimization service required. */
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   ArrowDownToLine,
   ArrowRight,
   BookOpen,
   Bookmark,
+  Briefcase,
   ChartNoAxesCombined,
   Check,
   ChevronRight,
+  Clock,
   Coffee,
   Compass,
+  Drama,
   Flame,
   GraduationCap,
   Headphones,
+  Heart,
   House,
+  Leaf,
+  MapPin,
   MessageCircle,
+  Newspaper,
+  Quote,
+  Scale,
   Settings,
+  ShoppingBag,
   Sparkles,
   Target,
   Train,
@@ -54,6 +64,8 @@ import {
   allWords,
   curriculum,
   languages,
+  levelNames,
+  levelOrder,
   levels,
   localDate,
   orderedLessons,
@@ -64,6 +76,7 @@ import {
   type Language,
   type LearningState,
   type Lesson,
+  type LessonIcon,
   type Level,
   type Session,
   type Word,
@@ -73,6 +86,17 @@ import { speak } from "@/features/otsjoba/lib/speech";
 import { useAccountProgress } from "@/features/otsjoba/hooks/use-account-progress";
 import { progressSchema, type ProgressSnapshot } from "@/features/otsjoba/lib/progress";
 import { signOut } from "@/lib/auth/client";
+import { BridgeEngines, BridgeSetup, BridgeStatusLine } from "@/features/otsjoba/components/local-ai";
+import {
+  checkBridge,
+  chosenEngine,
+  engineLabel,
+  readBridgeSettings,
+  saveBridgeSettings,
+  takePairingFromHash,
+  type BridgeSettings,
+  type BridgeStatus,
+} from "@/features/otsjoba/lib/local-ai";
 
 type View = "today" | "learn" | "tutors" | "words" | "progress";
 const nav = [
@@ -82,13 +106,25 @@ const nav = [
   { id: "words", label: "Ordsamling", icon: Bookmark },
   { id: "progress", label: "Min fremgang", icon: ChartNoAxesCombined },
 ] as const;
-const icons: Record<string, typeof Coffee> = {
+const icons: Record<LessonIcon, typeof Coffee> = {
   coffee: Coffee,
   hand: MessageCircle,
   wave: MessageCircle,
   train: Train,
   utensils: Utensils,
   compass: Compass,
+  shop: ShoppingBag,
+  home: House,
+  map: MapPin,
+  clock: Clock,
+  heart: Heart,
+  book: BookOpen,
+  briefcase: Briefcase,
+  theater: Drama,
+  scale: Scale,
+  news: Newspaper,
+  quote: Quote,
+  leaf: Leaf,
 };
 
 function Navigation({
@@ -233,7 +269,10 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
     mode: "guided" | "ai";
   } | null>(null);
   const [connection, setConnection] = useState(false);
-  const [aiAvailable, setAiAvailable] = useState(false);
+  const [bridge, setBridge] = useState<BridgeSettings | null>(null);
+  const [bridgeStatus, setBridgeStatus] = useState<BridgeStatus>({ state: "checking" });
+  const bridgeRef = useRef<BridgeSettings | null>(null);
+  const [levelFilter, setLevelFilter] = useState<Level | "all">("all");
   const [wordFilter, setWordFilter] = useState("all");
   const [practice, setPractice] = useState<Word[] | null>(null);
   const [flipped, setFlipped] = useState(false);
@@ -245,11 +284,47 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
       setLegacy(localStorage.getItem(storageKey));
     } catch { /* Cloud storage does not need localStorage. */ }
     if ("speechSynthesis" in window) speechSynthesis.getVoices();
-    fetch("/otsjoba/api/tutor")
-      .then((r) => r.json() as Promise<{ available?: boolean }>)
-      .then((d) => setAiAvailable(d.available === true))
-      .catch(() => {});
   }, [initial.revision]);
+  const recheckBridge = useCallback(async (settings = bridgeRef.current) => {
+    const status = await checkBridge(settings);
+    setBridgeStatus(status);
+    return status;
+  }, []);
+  const changeBridge = useCallback((settings: BridgeSettings | null) => {
+    bridgeRef.current = settings;
+    setBridge(settings);
+    saveBridgeSettings(settings);
+  }, []);
+  // The bridge prints a pairing link with `#lokal-ai=<token>`; read it once.
+  useEffect(() => {
+    const adopt = () => {
+      const paired = takePairingFromHash(bridgeRef.current);
+      if (!paired) return false;
+      changeBridge(paired);
+      void recheckBridge(paired).then((s) =>
+        s.state === "ready"
+          ? toast.success("Otsjoba er koblet til lokal AI på denne PC-en.")
+          : toast.info("Paringskoden er lagret. Start broen hvis den ikke kjører."),
+      );
+      return true;
+    };
+    if (!adopt()) {
+      const stored = readBridgeSettings();
+      bridgeRef.current = stored;
+      setBridge(stored);
+      void recheckBridge(stored);
+    }
+    const onHash = () => { adopt(); };
+    const onFocus = () => { if (bridgeRef.current) void recheckBridge(); };
+    window.addEventListener("hashchange", onHash);
+    window.addEventListener("focus", onFocus);
+    return () => {
+      window.removeEventListener("hashchange", onHash);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [changeBridge, recheckBridge]);
+  const aiChoice = chosenEngine(bridge, bridgeStatus),
+    aiAvailable = !!aiChoice;
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 30000);
     return () => clearInterval(id);
@@ -666,17 +741,68 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
                   {completed.size}/{lessons.length} gjennomført
                 </span>
               </div>
-              <div className="lesson-grid course-grid">
-                {lessons.map((l, i) => (
-                  <LessonCard
-                    key={l.id}
-                    lesson={l}
-                    index={i}
-                    complete={completed.has(l.id)}
-                    onClick={() => setActive({ lesson: l, mode: "guided" })}
-                  />
-                ))}
+              <div className="level-filter" aria-label="Vis nivå">
+                <button
+                  aria-pressed={levelFilter === "all"}
+                  onClick={() => setLevelFilter("all")}
+                >
+                  <strong>Alle nivåer</strong>
+                  <span>{curriculum[lang].length} øvelser</span>
+                </button>
+                {levels.map((level) => {
+                  const list = curriculum[lang].filter((l) => l.level === level);
+                  return (
+                    <button
+                      key={level}
+                      aria-pressed={levelFilter === level}
+                      className={level === state.levels[lang] ? "mine" : ""}
+                      onClick={() => setLevelFilter(level)}
+                    >
+                      <strong>{level}</strong>
+                      <span>
+                        {list.filter((l) => completed.has(l.id)).length}/{list.length}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
+              {(levelFilter === "all" ? levelOrder(state.levels[lang]) : [levelFilter]).map((level) => {
+                const list = curriculum[lang].filter((l) => l.level === level);
+                if (!list.length) return null;
+                const done = list.filter((l) => completed.has(l.id)).length;
+                return (
+                  <section className="level-section" key={level} aria-labelledby={`level-heading-${level}`}>
+                    <header className="level-heading">
+                      <div>
+                        <h2 id={`level-heading-${level}`}>
+                          {level} <span>· {levelNames[level]}</span>
+                        </h2>
+                        {level === state.levels[lang] && (
+                          <span className="level-badge">Anbefalt for ditt nivå</span>
+                        )}
+                      </div>
+                      <span className="level-count">
+                        {done} av {list.length} gjennomført
+                      </span>
+                      <Progress
+                        value={(done / list.length) * 100}
+                        aria-label={`Fremgang på nivå ${level}`}
+                      />
+                    </header>
+                    <div className="lesson-grid course-grid">
+                      {list.map((l, i) => (
+                        <LessonCard
+                          key={l.id}
+                          lesson={l}
+                          index={i}
+                          complete={completed.has(l.id)}
+                          onClick={() => setActive({ lesson: l, mode: "guided" })}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
             </>
           )}
           {view === "tutors" && (
@@ -735,10 +861,10 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
                         }}
                       >
                         <Sparkles size={16} />
-                        Fri AI-samtale
-                        {!aiAvailable && (
-                          <span className="small-tag">Koble til senere</span>
-                        )}
+                        Fri samtale
+                        <span className="small-tag">
+                          {aiChoice ? engineLabel(bridgeStatus, aiChoice.engine, aiChoice.model.id) : "Lokal AI"}
+                        </span>
                       </button>
                     </div>
                   </article>
@@ -962,7 +1088,7 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
                 <SelectContent>
                   {levels.map((v) => (
                     <SelectItem key={v} value={v}>
-                      {v}
+                      {v} · {levelNames[v]}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -1031,10 +1157,38 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
               </SelectContent>
             </Select>
           </div>
-          <p className="notice">
-            Fri AI-samtale: {aiAvailable ? "tilkoblet" : "ikke tilkoblet ennå"}.
-            Veiledede øvelser og ordtrening fungerer uten AI.
-          </p>
+          <section className="bridge-settings" aria-labelledby="bridge-heading">
+            <h3 id="bridge-heading">Lokal AI for fri samtale</h3>
+            <BridgeStatusLine settings={bridge} status={bridgeStatus} />
+            {bridge && bridgeStatus.state === "ready" ? (
+              <BridgeEngines
+                settings={bridge}
+                status={bridgeStatus}
+                onSettings={changeBridge}
+                onRecheck={() => recheckBridge()}
+              />
+            ) : (
+              <>
+                <p className="notice">
+                  Fri samtale bruker AI-abonnementene på din egen PC via et lite
+                  program, broen. Veiledede øvelser og ordtrening fungerer uten AI.
+                </p>
+                <BridgeSetup
+                  status={bridgeStatus}
+                  settings={bridge}
+                  onSettings={(next) => { changeBridge(next); void recheckBridge(next); }}
+                />
+              </>
+            )}
+            {bridge && (
+              <button
+                className="text-button"
+                onClick={() => { changeBridge(null); setBridgeStatus({ state: "unpaired" }); }}
+              >
+                Glem paringen i denne nettleseren
+              </button>
+            )}
+          </section>
           <button className="button outline" onClick={downloadProgress}>
             <ArrowDownToLine size={17} />
             Eksporter fremgangen din
@@ -1050,26 +1204,55 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
           <div className="connection-icon">
             <Sparkles size={28} />
           </div>
-          <DialogTitle>Fri samtale kommer med AI-tilkobling</DialogTitle>
+          <DialogTitle>Fri samtale med din egen AI</DialogTitle>
           <DialogDescription>
-            Otsjoba er klargjort for OpenAI. Når tilkoblingen aktiveres, kan du
-            snakke fritt og få personlige rettelser på italiensk og russisk.
+            Fri samtale går fra denne nettleseren til et lite program på PC-en
+            din, broen. Den bruker ChatGPT-, Claude- eller Codex-abonnementet du
+            allerede har. thodh.com sin server ser ikke samtalen.
           </DialogDescription>
-          <p className="notice">
-            Tilkoblingen er foreløpig avslått. Ingen AI-kall eller API-kostnader
-            påløper fra appen. Nå kan du bruke veiledede øvelser med
-            eksempelsvar.
-          </p>
-          <button
-            className="button primary"
-            onClick={() => {
-              setConnection(false);
-              setView("learn");
-            }}
-          >
-            Utforsk øvelsene
-            <ArrowRight size={17} />
-          </button>
+          <BridgeStatusLine settings={bridge} status={bridgeStatus} />
+          {bridge && bridgeStatus.state === "ready" ? (
+            <BridgeEngines
+              settings={bridge}
+              status={bridgeStatus}
+              onSettings={changeBridge}
+              onRecheck={() => recheckBridge()}
+            />
+          ) : (
+            <BridgeSetup
+              status={bridgeStatus}
+              settings={bridge}
+              onSettings={(next) => { changeBridge(next); void recheckBridge(next); }}
+            />
+          )}
+          <div className="connection-actions">
+            {aiChoice ? (
+              <button
+                className="button primary"
+                onClick={() => {
+                  setConnection(false);
+                  setActive({ lesson: orderedLessons(lang, state.levels[lang])[0], mode: "ai" });
+                }}
+              >
+                Start fri samtale
+                <ArrowRight size={17} />
+              </button>
+            ) : (
+              <button className="button outline" onClick={() => void recheckBridge()}>
+                Sjekk igjen
+              </button>
+            )}
+            <button
+              className="text-button"
+              onClick={() => {
+                setConnection(false);
+                setView("learn");
+              }}
+            >
+              Bruk veiledede øvelser i stedet
+              <ArrowRight size={15} />
+            </button>
+          </div>
         </DialogContent>
       </Dialog>
       <Dialog
@@ -1156,6 +1339,8 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
           onClose={() => setActive(null)}
           onFinish={finish}
           onSaveWord={saveWord}
+          bridge={bridge}
+          bridgeStatus={bridgeStatus}
         />
       )}
     </SidebarProvider>
