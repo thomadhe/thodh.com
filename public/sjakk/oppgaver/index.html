@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#171318" />
+  <meta name="description" content="Sjakkoppgaver som følger nivået ditt: dagens oppgave, rangerte oppgaver med egen rating, temaer og Lynløp på tid." />
+  <title>Sjakkoppgaver · Sjakk for to</title>
+  <link rel="canonical" href="https://thodh.com/sjakk/oppgaver" />
+  <link rel="icon" href="/sjakk/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/sjakk/styles.css" />
+  <link rel="stylesheet" href="/sjakk/oppgaver/oppgaver.css" />
+  <script type="module" src="/sjakk/oppgaver/app.mjs"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="site-header"><a class="brand" href="/sjakk/oppgaver"><span class="brand-symbol" aria-hidden="true">♞</span><span>Sjakk<i>oppgaver.</i></span></a><nav class="topplenker" aria-label="Sjakk"><a class="hub-link" href="/sjakk">Sjakk for to</a><a class="hub-link" href="/">← thodh.com</a></nav></header>
+    <div class="faner" role="tablist" aria-label="Oppgavetype">
+      <button type="button" role="tab" id="fane-dagens" data-fane="dagens" aria-controls="panel" aria-selected="false">Dagens oppgave</button>
+      <button type="button" role="tab" id="fane-rangert" data-fane="rangert" aria-controls="panel" aria-selected="false">Rangert</button>
+      <button type="button" role="tab" id="fane-lynlop" data-fane="lynlop" aria-controls="panel" aria-selected="false">Lynløp</button>
+    </div>
+    <main class="oppgave-layout">
+      <section class="brett-omrade" aria-label="Oppgavebrett">
+        <div class="oppgave-status">
+          <span id="tur-brikke" class="turn-piece" aria-hidden="true">♟</span>
+          <div><h1 id="status">Henter oppgaver …</h1><p id="status-detalj" role="status" aria-live="polite"></p></div>
+          <span id="lynlop-klokke" class="lynlop-klokke" role="timer" hidden></span>
+        </div>
+        <div class="board-frame"><div id="brett"></div></div>
+        <div id="kontroller" class="brett-kontroller"></div>
+      </section>
+      <aside id="panel" class="oppgave-panel" role="tabpanel" aria-labelledby="fane-rangert"></aside>
+    </main>
+    <footer class="kreditt"><span>Oppgaver fra <a href="https://database.lichess.org/#puzzles" rel="noopener">Lichess sin åpne database (CC0)</a>.</span><button id="lyd" class="text-button" type="button"></button></footer>
+  </div>
+  <noscript>Slå på JavaScript i nettleseren for å løse sjakkoppgaver.</noscript>
+</body>
+</html>

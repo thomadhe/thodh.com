@@ -1,0 +1,164 @@
+/* Sjakkoppgaver: builds on /sjakk/styles.css (tokens, board, buttons, modal). */
+:root { --ok: #8fd6a5; --bom: #ff8fa3; }
+.site-header { height: 96px; }
+.topplenker { display: flex; gap: 20px; }
+.liten { font-size: .8rem; line-height: 1.5; color: var(--muted); margin: 10px 0 0; }
+.lenke { color: var(--pink); text-underline-offset: 3px; }
+.lenke:hover { color: var(--text); }
+
+/* Tabs */
+.faner { display: flex; gap: 8px; padding-top: 18px; }
+.faner button { border: 1px solid #59414f; background: #ffffff03; color: var(--text); border-radius: 20px; padding: 8px 16px; font-size: .875rem; font-weight: 500; min-height: 40px; transition: background .15s, border-color .15s; }
+.faner button:hover:not(:disabled) { background: #44303e; border-color: #aa6a87; }
+.faner button[aria-selected="true"] { background: var(--pink); border-color: var(--pink); color: #1a1118; font-weight: 600; }
+.faner button:disabled { opacity: .4; }
+
+/* Layout */
+.oppgave-layout { display: grid; grid-template-columns: minmax(0, 600px) minmax(280px, 1fr); gap: 48px; padding: 14px 0 28px; align-items: start; }
+.brett-omrade { min-width: 0; }
+.oppgave-status { display: flex; align-items: center; gap: 14px; min-height: 84px; padding: 6px 2px 12px; }
+.oppgave-status h1 { font-size: clamp(1.5rem, 2.6vw, 2rem); }
+.oppgave-status p { margin: 4px 0 0; color: var(--muted); font-size: .9rem; min-height: 1.4em; }
+.oppgave-status > div { min-width: 0; flex: 1; }
+.turn-piece { width: 44px; flex: none; text-align: center; }
+.turn-piece.ok { color: var(--ok); }
+.turn-piece.bom { color: var(--bom); }
+.lynlop-klokke { font: 500 2.2rem/1 var(--sans); font-variant-numeric: tabular-nums; padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; background: #ffffff05; }
+.lynlop-klokke.urgent { color: #ff9eae; border-color: #8c3b52; }
+
+/* Board additions */
+.oppgave-brett .square { touch-action: none; cursor: pointer; }
+.oppgave-brett .square[aria-disabled="true"] { cursor: default; }
+.oppgave-brett .square[aria-disabled="true"]:hover { filter: none; }
+.square.hint::after { content: ''; position: absolute; inset: 6%; border-radius: 50%; box-shadow: 0 0 0 4px #ffd27a, 0 0 16px #ffd27a99; animation: hint-puls 1.4s ease-in-out infinite; pointer-events: none; z-index: 2; }
+.square.merket-riktig { box-shadow: inset 0 0 0 100px #5fbf7f55; }
+.square.merket-feil { box-shadow: inset 0 0 0 100px #e0405f70; }
+.square.drag-over { box-shadow: inset 0 0 0 4px #f2c5d4; }
+.square.drar-fra .piece { opacity: .3; }
+.piece.drar { position: fixed; left: 0; top: 0; z-index: 50; display: grid; place-items: center; pointer-events: none; filter: drop-shadow(0 8px 8px #0007); }
+@keyframes hint-puls { 50% { box-shadow: 0 0 0 2px #ffd27a, 0 0 6px #ffd27a55; } }
+
+.brett-kontroller { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; min-height: 44px; }
+.brett-kontroller > .button { flex: 1 1 0; white-space: nowrap; }
+.stegknapper { display: flex; gap: 6px; }
+.stegknapper .button { min-width: 48px; font-size: 1rem; }
+
+/* Panel */
+.oppgave-panel { display: grid; gap: 16px; align-content: start; padding-top: 18px; min-width: 0; }
+.kort { background: #ffffff04; border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; min-width: 0; }
+.kort h2 { font-size: .95rem; font-weight: 600; margin: 0 0 10px; }
+.kort > p { font-size: .9rem; margin: 0; color: #d7c4d0; }
+.kort .eyebrow { margin: 0 0 6px; }
+.kort > .button { width: 100%; margin-top: 14px; }
+
+.rating-topp { display: flex; justify-content: space-between; align-items: end; gap: 12px; }
+.rating-topp .eyebrow { margin: 0; }
+.rating-tall { font: 500 2.6rem/1.1 var(--serif); margin: 2px 0 0; display: flex; align-items: center; gap: 12px; font-variant-numeric: tabular-nums; }
+.endring { font: 600 .9rem/1 var(--sans); padding: 5px 9px; border-radius: 14px; background: #ffffff10; color: var(--muted); animation: appear .3s ease-out; }
+.endring.opp { color: var(--ok); background: #2f6b4430; }
+.endring.ned { color: var(--bom); background: #8c3b5240; }
+.rd { margin: 0 0 6px; text-align: right; max-width: 150px; }
+.sparkline { margin: 12px 0 0; }
+.sparkline svg { display: block; width: 100%; height: 56px; overflow: visible; }
+.sparkline polyline { fill: none; stroke: var(--pink); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.sparkline circle { fill: var(--pink); stroke: #211b22; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.sparkline figcaption { display: flex; justify-content: space-between; font-size: .75rem; color: var(--muted); margin-top: 4px; }
+.tall-rad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--line); }
+.tall-rad dt { font-size: .75rem; color: var(--muted); }
+.tall-rad dd { margin: 2px 0 0; font-weight: 600; font-size: 1.05rem; }
+.tall-rad small { font-weight: 400; color: var(--muted); font-size: .75rem; }
+
+.segment { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+.segment button { border: 1px solid #59414f; background: #ffffff03; color: var(--text); border-radius: 6px; padding: 7px 2px; font-size: .78rem; line-height: 1.25; display: flex; flex-direction: column; align-items: center; min-height: 48px; justify-content: center; }
+.segment button:hover { background: #44303e; }
+.segment button small { color: var(--muted); font-size: .7rem; }
+.segment button[aria-pressed="true"] { background: var(--pink); border-color: var(--pink); color: #1a1118; font-weight: 600; }
+.segment button[aria-pressed="true"] small { color: #4a2b3c; }
+.felt { display: flex; flex-direction: column; gap: 6px; font-size: .875rem; margin-top: 14px; }
+.felt select { min-height: 42px; background: #191319; color: var(--text); border: 1px solid #775267; border-radius: 5px; font: inherit; padding: 6px 8px; }
+.felt select:focus-visible, .segment button:focus-visible, .faner button:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+.oppgave-info p { font-size: .875rem; margin: 0 0 8px; }
+.oppgave-info a { font-size: .875rem; }
+
+.dagens-kort { background: linear-gradient(135deg, #4c293d, #2e202c); border-color: #74415b; }
+.dagens-kort h2 { font: 500 1.45rem/1.3 var(--serif); margin: 4px 0 8px; }
+.resultat { font: 500 1.15rem/1.4 var(--serif) !important; margin: 14px 0 0 !important; color: var(--text) !important; }
+.resultat.ok { color: var(--ok) !important; }
+.del-rad { margin-top: 12px; }
+.del-rad .button { width: 100%; }
+.del-forhand { font: .8rem/1.5 var(--sans); white-space: pre-wrap; background: #191319; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; margin: 12px 0 0; color: #d7c4d0; }
+.rekke-topp { display: flex; justify-content: space-between; align-items: center; }
+.rekke-topp h2 { margin: 0; }
+.rekke-tall { font: 500 1.5rem/1 var(--serif); }
+.uke { list-style: none; display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; padding: 0; margin: 14px 0 0; }
+.uke li { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.uke li > span:first-child { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); color: var(--muted); font-size: .85rem; }
+.uke li.lost > span:first-child { background: var(--pink); border-color: var(--pink); color: #1a1118; font-weight: 700; }
+.uke li.feilet > span:first-child { border-color: #8c3b52; color: var(--bom); }
+.uke li.i-dag > span:first-child { outline: 2px solid #f2c5d4; outline-offset: 2px; }
+.uke small { font-size: .7rem; color: var(--muted); }
+.plassering { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 14px; }
+.plassering span { height: 6px; border-radius: 3px; background: #503446; }
+.plassering .ferdig { background: var(--pink); }
+.plassering .na { background: #a26583; }
+
+.lynlop-kort h2 { font: 500 1.45rem/1.3 var(--serif); margin: 4px 0 10px; }
+.rekord { margin-top: 14px !important; }
+.lynlop-tall { display: flex; align-items: center; gap: 34px; margin: 6px 0 4px; }
+.lynlop-tall > div:not(.feil-merker) { display: flex; flex-direction: column; }
+.stort { font: 500 3rem/1 var(--serif); font-variant-numeric: tabular-nums; }
+.lynlop-tall small { color: var(--muted); font-size: .8rem; }
+.feil-merker { display: flex; gap: 6px; margin-left: auto; font-size: 1.4rem; font-weight: 700; }
+.feil-merker span { color: #4a3846; }
+.feil-merker span.brukt { color: var(--bom); }
+.lynlop-logg { list-style: none; display: flex; flex-wrap: wrap; gap: 5px; padding: 0; margin: 14px 0 0; }
+.lynlop-logg a { display: block; font-size: .72rem; padding: 3px 7px; border-radius: 10px; text-decoration: none; font-variant-numeric: tabular-nums; }
+.lynlop-logg .ok a { background: #2f6b4440; color: var(--ok); }
+.lynlop-logg .bom a { background: #8c3b5240; color: var(--bom); }
+
+footer.kreditt { display: flex; justify-content: space-between; align-items: center; gap: 15px; font-size: .8rem; }
+footer.kreditt a { color: var(--muted); text-underline-offset: 3px; }
+footer.kreditt a:hover { color: var(--text); }
+footer.kreditt .text-button { padding: 8px 0; }
+
+@media (min-width: 1000px) and (max-height: 850px) { .site-header { height: 76px; } .oppgave-layout { grid-template-columns: minmax(0, 520px) minmax(280px, 1fr); } .oppgave-status { min-height: 70px; } }
+@media (max-width: 850px) {
+  .app-shell { max-width: 640px; }
+  .site-header { height: 80px; }
+  .oppgave-layout { grid-template-columns: minmax(0, 1fr); gap: 8px; padding-top: 6px; }
+  .oppgave-panel { padding-top: 10px; }
+}
+@media (max-width: 520px) {
+  .site-header { height: 64px; flex-wrap: nowrap; }
+  .brand { font-size: 1.3rem; }
+  .brand-symbol { font-size: 2rem; }
+  .topplenker { gap: 12px; }
+  .topplenker .hub-link { font-size: .78rem; }
+  .faner { padding-top: 10px; gap: 6px; }
+  .faner button { flex: 1; padding: 7px 6px; font-size: .82rem; }
+  .oppgave-status { min-height: 66px; padding: 4px 0 8px; gap: 10px; }
+  .oppgave-status h1 { font-size: 1.3rem; }
+  .oppgave-status p { font-size: .8rem; line-height: 1.4; }
+  .turn-piece { font-size: 1.8rem; width: 30px; }
+  .lynlop-klokke { font-size: 1.6rem; padding: 6px 10px; }
+  .brett-kontroller { margin-top: 10px; gap: 8px; }
+  .brett-kontroller > .button { padding: 10px 8px; }
+  .stegknapper { flex: 1 0 100%; }
+  .stegknapper .button { flex: 1; }
+  .kort { padding: 14px; }
+  .segment button { font-size: .7rem; }
+  footer.kreditt { font-size: .75rem; }
+}
+@media (prefers-reduced-motion: reduce) { .square.hint::after { animation: none; } }
+/* Keep the board and its buttons inside the window on laptops. */
+@media (min-width: 851px) { .brett-omrade { max-width: max(420px, calc(100dvh - 350px)); } }
+.brett-kontroller:empty { display: none; }
+.faner button { white-space: nowrap; }
+.lynlop-klokke { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.lynlop-klokke small { font-size: .72rem; color: var(--muted); letter-spacing: .02em; }
+@media (max-width: 520px) {
+  .faner button { flex: 1 1 auto; padding: 7px 10px; }
+  .segment { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .segment button { grid-column: span 2; font-size: .78rem; }
+  .segment button:nth-child(n + 4) { grid-column: span 3; }
+}
