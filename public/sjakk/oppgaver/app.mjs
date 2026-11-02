@@ -46,7 +46,7 @@ async function finnOppgave(id, b) {
 // ---- The board and one puzzle at a time ----
 
 const brett = lagBrett($('#brett'), {
-  kanFlytte: () => Boolean(okt?.losning?.spillerTur) && (okt.status === 'spiller' || okt.status === 'feil'),
+  kanFlytte: () => Boolean(okt?.losning?.spillerTur) && (okt.status === 'spiller' || okt.status === 'feil') && (okt.type !== 'lynlop' || lynlop.status === 'spiller'),
   vedTrekk,
 });
 
@@ -64,20 +64,27 @@ async function startOppgave(o, oppgave) {
   await spillForste(o);
 }
 
+// Each async sequence (opening move, reply, solution playback) carries a generation; a newer one
+// or the end of a Lynløp makes older sequences stop after their next await.
+const nyGenerasjon = o => (o.gen = (o.gen ?? 0) + 1)
+const gjelder = (o, g) => okt === o && o.gen === g && (o.type !== 'lynlop' || lynlop.status === 'spiller')
+
 /** Shows the starting position, then slides in the opponent's move so the player sees what happened. */
 async function spillForste(o) {
   const L = o.losning;
+  const g = nyGenerasjon(o);
   L.start();
   o.status = 'motstander';
   o.riktig = false;
   visStilling();
   vis();
   await vent(o.type === 'lynlop' ? 200 : 550);
-  if (okt !== o) return;
+  if (!gjelder(o, g)) return;
   await brett.animer(L.neste.slice(0, 2), L.neste.slice(2, 4));
-  if (okt !== o) return;
+  if (!gjelder(o, g)) return;
   const m = L.motstander();
   o.forste = m.san;
+  o.svar = null;
   trekklyd(m, L.chess);
   o.status = 'spiller';
   visStilling();
@@ -95,12 +102,14 @@ async function vedTrekk(trekk) {
   o.riktig = true;
   visStilling({ markering: { felt: r.trekk.to, type: 'riktig' } });
   if (r.resultat === 'løst') { lost(o); return; }
+  const g = o.gen;
   vis();
   await vent(o.type === 'lynlop' ? 150 : 380);
-  if (okt !== o) return;
+  if (!gjelder(o, g)) return;
   await brett.animer(L.neste.slice(0, 2), L.neste.slice(2, 4), 220);
-  if (okt !== o) return;
+  if (!gjelder(o, g)) return;
   const m = L.motstander();
+  o.svar = m.san;
   trekklyd(m, L.chess);
   o.status = 'spiller';
   visStilling();
@@ -119,9 +128,10 @@ async function feilTrekk(o, trekk) {
   o.status = 'viser-feil';
   brett.vis({ chess: vist, siste: { from: trekk.from, to: trekk.to }, hint: null, markering: { felt: trekk.to, type: 'feil' } });
   if (o.type === 'lynlop') { lynlopFeil(o); return; }
+  const g = o.gen;
   vis();
   await vent(850);
-  if (okt !== o) return;
+  if (!gjelder(o, g)) return;
   o.status = 'feil';
   visStilling();
   vis();
@@ -160,6 +170,7 @@ async function visLosning() {
   if (['rangert', 'plassering'].includes(o.type) && !o.registrert) registrerResultat(o, false);
   if (o.type === 'dagens') { const d = dagensData(); if (d.status === 'åpen') { d.status = 'feilet'; lagre(t); } }
   const L = o.losning;
+  const g = nyGenerasjon(o);
   o.status = 'løsning';
   if (L.ply === 0) L.ga(1);
   visStilling();
@@ -167,9 +178,9 @@ async function visLosning() {
   // Play the rest of the line once, slowly; the arrows step through it afterwards.
   while (L.ply < L.oppgave.moves.length) {
     await vent(700);
-    if (okt !== o || o.status !== 'løsning' || o.manuell) return;
+    if (!gjelder(o, g) || o.status !== 'løsning' || o.manuell) return;
     await brett.animer(L.neste.slice(0, 2), L.neste.slice(2, 4), 240);
-    if (okt !== o || o.manuell) return;
+    if (!gjelder(o, g) || o.status !== 'løsning' || o.manuell) return;
     trekklyd(L.motstander(), L.chess);
     visStilling();
     vis();
@@ -239,8 +250,12 @@ async function startDagens() {
   vis();
   try {
     let oppgave;
-    if (d) oppgave = lesRad((await hentBandene(bandForNiva(d.niva))).find(r => r[0] === d.id) ?? []);
-    else {
+    if (d) {
+      const rader = await hentBandene(bandForNiva(d.niva));
+      const rad = rader.find(r => r[0] === d.id);
+      oppgave = rad ? lesRad(rad) : dagensOppgave(dato, d.niva, rader);
+      if (!rad && d.status === 'åpen') { d.id = oppgave.id; lagre(t); }
+    } else {
       const niva = nivaFor(t.spiller.rating);
       oppgave = dagensOppgave(dato, niva, await hentBandene(bandForNiva(niva)));
       d = t.dagens[dato] = { id: oppgave.id, niva, forsok: 0, hint: false, status: 'åpen' };
@@ -318,6 +333,7 @@ async function nesteLynlop() {
 }
 
 async function lynlopLost(o) {
+  if (lynlop.status !== 'spiller') return;
   lynlop.poeng++;
   lynlop.logg.push({ id: o.oppgave.id, rating: o.oppgave.rating, lost: true });
   vis();
@@ -326,12 +342,14 @@ async function lynlopLost(o) {
 }
 
 async function lynlopFeil(o) {
+  if (lynlop.status !== 'spiller') return;
+  const lop = lynlop;
   lynlop.feil++;
   lynlop.logg.push({ id: o.oppgave.id, rating: o.oppgave.rating, lost: false });
   vis();
-  if (lynlop.feil >= LYNLOP_FEIL) { await vent(700); if (lynlop.status === 'spiller') avsluttLynlop('feil'); return; }
+  if (lynlop.feil >= LYNLOP_FEIL) { await vent(700); if (lynlop === lop && lynlop.status === 'spiller') avsluttLynlop('feil'); return; }
   await vent(650);
-  if (okt === o) nesteLynlop();
+  if (okt === o && lynlop === lop) nesteLynlop();
 }
 
 function avsluttLynlop(grunn) {
@@ -464,7 +482,7 @@ function statusTekst(o) {
   if (o.status === 'viser-feil') return ['Ikke det trekket', o.type === 'lynlop' ? 'Neste oppgave kommer.' : ''];
   if (o.status === 'spiller') {
     const hint = o.hint ? ` Hint: flytt brikken på ${L.hintFelt}.` : '';
-    return [o.riktig ? 'Riktig! Fortsett.' : 'Din tur', `${o.forste && !o.riktig ? `${stor(motpart)} spilte ${o.forste}. ` : ''}Finn det beste trekket for ${farge}.${hint}`];
+    return [o.riktig ? 'Riktig! Fortsett.' : 'Din tur', `${o.riktig ? (o.svar ? `${stor(motpart)} svarte ${o.svar}. ` : '') : o.forste ? `${stor(motpart)} spilte ${o.forste}. ` : ''}Finn det beste trekket for ${farge}.${hint}`];
   }
   if (o.status === 'feil') {
     const rating = o.type !== 'dagens' && o.endring !== null && o.feil === 1 ? ` ${fortegn(o.endring)} i rating.` : '';

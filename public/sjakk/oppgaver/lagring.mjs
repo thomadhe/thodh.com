@@ -48,7 +48,7 @@ export function les(lager = globalThis.localStorage) {
     }
   }
   const l = objekt(lagret.lynlop);
-  t.lynlop = { beste: tall(l.beste, 0, 9999, 0), spilt: tall(l.spilt, 0, 1e9, 0), besteDato: typeof l.besteDato === 'string' ? l.besteDato : null };
+  t.lynlop = { beste: tall(l.beste, 0, 9999, 0), spilt: tall(l.spilt, 0, 1e9, 0), besteDato: typeof l.besteDato === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(l.besteDato) ? l.besteDato : null };
   return t;
 }
 
