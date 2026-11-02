@@ -2648,6 +2648,12 @@ img {
   .pair-form {
     flex-direction: column;
   }
+  .pair-form input {
+    flex: none;
+  }
+  .level-filter {
+    scrollbar-width: none;
+  }
   .engine-select {
     min-width: 0;
     max-width: 190px;

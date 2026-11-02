@@ -103,7 +103,7 @@ export function chosenEngine(settings: BridgeSettings | null, status: BridgeStat
 export function engineLabel(status: BridgeStatus, engine: BridgeEngine, model: string) {
   const info = status.state === "ready" ? status.health[engine] : undefined;
   const name = info?.navn || { chatgpt: "ChatGPT", claude: "Claude", codex: "Codex" }[engine];
-  return `${name} · ${info?.modeller.find((m) => m.id === model)?.name || model}`;
+  return `${name} ${info?.modeller.find((m) => m.id === model)?.name || model}`;
 }
 
 async function call(settings: BridgeSettings, path: string, body: unknown, signal?: AbortSignal) {
