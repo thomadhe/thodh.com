@@ -2,7 +2,7 @@
 
 Vaktagenten leser og oppdaterer denne fila. Den er arbeidslisten for løpende utvidelser.
 
-Eier «hovedtråd» = hovedsamtalen styrer strømmen; vaktagenten rører den ikke. Eier «vakt» = vaktagenten styrer den. Køen nedenfor er vaktens.
+Vaktagenten kjører i hovedtråden hvert 30. minutt og åpner aldri nye chatter. Alle strømmene i tabellen er publisert; køen og «Mål som ikke er nådd» er vaktens.
 
 ## Arbeidsstrømmer (startet 2. nov. 2026)
 
