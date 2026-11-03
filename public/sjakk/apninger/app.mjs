@@ -1,0 +1,358 @@
+import { Chess } from '../vendor/chess.mjs';
+import { lesApning, trekkNummer } from './modell.mjs';
+import { lagBrett, piler } from './brett.mjs';
+import { TRENER, AVATAR, norsk, medNummer, forklaring, feilKommentar, ROS, esc, hilsen } from './trener.mjs';
+import * as rep from './repetisjon.mjs';
+
+const DATA = '/sjakk/apninger/data/';
+const main = document.querySelector('#innhold');
+const lager = (() => { try { return window.localStorage; } catch { return { getItem: () => null, setItem() {} }; } })();
+const FARGE = { w: 'Hvit', b: 'Svart' };
+const NIVA = { lett: 'Lett', middels: 'Middels', vanskelig: 'Krevende' };
+let manifest = null;
+const apninger = new Map();
+let fremgang = rep.lesFremgang(lager);
+let fargeFilter = 'alle';
+let timer = null;
+let brett = null;
+let tilstand = {};
+let tastLytter = null;
+let ventende = null;
+
+const lagre = () => rep.lagreFremgang(lager, fremgang);
+const tilfeldig = liste => liste[Math.floor(Math.random() * liste.length)];
+const stopp = () => { clearTimeout(timer); timer = null; };
+const flertall = (n, en, flere) => `${n} ${n === 1 ? en : flere}`;
+
+function startNotasjon(apning) {
+  const chess = new Chess();
+  return apning.startTrekk.map(san => { const nr = trekkNummer(chess.fen()); const m = chess.move(san); return (m.color === 'w' ? nr : '') + norsk(m.san); }).join(' ');
+}
+const stiTekst = noder => noder.map((n, i) => (n.farge === 'w' || i === 0 ? n.nummer : '') + norsk(n.san)).join(' ');
+const veiTil = node => { const vei = []; for (let n = node; n?.sti; n = n.forelder) vei.unshift(n); return vei; };
+const trenerBoble = (innhold, { stemning = '', live = true } = {}) => `<div class="ap-boble ${stemning}"><span class="ap-avatar">${AVATAR}</span><div class="ap-boble-tekst" ${live ? 'aria-live="polite"' : ''}>${innhold}</div></div>`;
+
+async function last() {
+  const svar = await fetch(`${DATA}manifest.json`);
+  manifest = await svar.json();
+  const filer = await Promise.all(manifest.apninger.map(id => fetch(`${DATA}${id}.json`).then(r => r.json())));
+  for (const data of filer) {
+    const { apning, feil } = lesApning(data);
+    if (feil.length) console.warn(`Åpningen ${data.id} har feil:`, feil);
+    if (apning) apninger.set(apning.id, apning);
+  }
+}
+
+// ---------- Library ----------
+function visBibliotek() {
+  stopp();
+  brett = null;
+  document.title = 'Åpninger · Sjakk for to';
+  const naa = Date.now();
+  let forfalt = 0, laert = 0, totalt = 0;
+  for (const apning of apninger.values()) { const s = rep.statusFor(apning, fremgang, naa); forfalt += s.forfaller; laert += s.laert; totalt += s.totalt; }
+  const vansker = rep.vansker(fremgang).map(v => { const apning = apninger.get(v.apningId); const node = apning?.noder.get(v.sti); const riktig = node?.barn[0]; return riktig ? `<li><a href="#/a/${apning.id}/ov">${esc(apning.navn)}: ${esc(medNummer(riktig))}</a> <span>(${flertall(v.antall, 'bom', 'bom')})</span></li>` : ''; }).join('');
+  const intro = laert === 0
+    ? `${hilsen(new Date().getHours())}! Jeg er ${TRENER.navn}, ${TRENER.rolle}. Velg en åpning, så går vi gjennom hvert trekk sammen – hva det gjør, hvorfor vi spiller det og hva du må passe på. Når du er klar, øver vi til det sitter.`
+    : `${hilsen(new Date().getHours())} igjen! Du har lært ${flertall(laert, 'linje', 'linjer')} av ${totalt}. ${forfalt ? `${flertall(forfalt, 'linje venter', 'linjer venter')} på repetisjon – la oss ta dem først.` : 'Ingen linjer venter på repetisjon akkurat nå. Lær noe nytt, eller prøv en felle!'}`;
+  const grupper = manifest.grupper.filter(g => fargeFilter === 'alle' || g.farge === fargeFilter);
+  main.innerHTML = `
+    <section class="ap-hero">${trenerBoble(`<p class="eyebrow">${TRENER.navn.toUpperCase()} · ÅPNINGSTRENER</p><h1>Åpninger med angrepslyst</h1><p>${esc(intro)}</p>${vansker ? `<p class="ap-vansker-tittel">Dette sliter du mest med:</p><ul class="ap-vansker">${vansker}</ul>` : ''}`, { live: false })}</section>
+    <div class="ap-filter" role="group" aria-label="Velg farge">${[['alle', 'Alle'], ['w', 'Som hvit'], ['b', 'Som svart']].map(([v, t]) => `<button type="button" data-farge="${v}" aria-pressed="${fargeFilter === v}">${t}</button>`).join('')}</div>
+    ${grupper.map(g => `<section class="ap-gruppe" aria-labelledby="g-${g.id}"><h2 id="g-${g.id}">${esc(g.navn)}</h2><p class="ap-gruppe-tekst">${esc(g.tekst)}</p><div class="ap-kortliste">${g.apninger.map(id => apninger.get(id)).filter(Boolean).map(kort).join('')}</div></section>`).join('')}
+    <p class="ap-fotnote">Alle linjer er spilt gjennom og sjekket med sjakkmotoren Stockfish. Gambiter er ofte litt tvilsomme objektivt – ${TRENER.navn} sier fra om det, trekk for trekk.</p>`;
+  main.querySelectorAll('[data-farge]').forEach(knapp => knapp.addEventListener('click', () => { fargeFilter = knapp.dataset.farge; visBibliotek(); main.querySelector(`[data-farge="${fargeFilter}"]`)?.focus(); }));
+}
+
+function kort(apning) {
+  const s = rep.statusFor(apning, fremgang);
+  const andel = s.totalt ? Math.round(s.laert / s.totalt * 100) : 0;
+  return `<a class="ap-kort" href="#/a/${apning.id}/laer">
+    <span class="ap-kort-topp"><span class="ap-farge ${apning.farge}">${FARGE[apning.farge]}</span><span class="ap-eco">${esc(apning.eco ?? '')}</span></span>
+    <h3>${esc(apning.navn)}</h3>
+    <p>${esc(apning.kort)}</p>
+    <span class="ap-merker"><span>${NIVA[apning.niva]}</span><span>${esc(apning.karakter)}</span><span class="ap-skarphet" aria-label="Skarphet ${apning.skarphet} av 5">${'<i class="på"></i>'.repeat(apning.skarphet)}${'<i></i>'.repeat(5 - apning.skarphet)}</span></span>
+    <span class="ap-fremdrift"><span class="ap-spor"><span style="width:${andel}%"></span></span><span>${s.laert}/${s.totalt} linjer lært${s.forfaller ? ` · <b>${s.forfaller} til repetisjon</b>` : ''}</span></span>
+  </a>`;
+}
+
+// ---------- Opening view ----------
+function visApning(id, fane) {
+  stopp();
+  const apning = apninger.get(id);
+  if (!apning) { location.hash = '#/'; return; }
+  document.title = `${apning.navn} · Åpninger`;
+  const faner = [['om', 'Om åpningen'], ['laer', 'Lær'], ['ov', 'Øv'], ['feller', `Feller${apning.feller.length ? ` (${apning.feller.length})` : ''}`]];
+  const nyVisning = tilstand.apningId !== id || !main.querySelector('.ap-oppsett');
+  if (nyVisning) {
+    main.innerHTML = `
+      <nav class="ap-tilbake"><a href="#/">← Alle åpninger</a></nav>
+      <header class="ap-apning-topp"><p class="eyebrow">${FARGE[apning.farge].toUpperCase()}${apning.eco ? ` · ${esc(apning.eco)}` : ''}</p><h1>${esc(apning.navn)}</h1><p class="ap-startlinje">${apning.startTrekk.length ? `Starter etter ${esc(startNotasjon(apning))}` : 'Fra utgangsstillingen'}</p></header>
+      <nav class="ap-faner" aria-label="Del av åpningen">${faner.map(([f, t]) => `<a href="#/a/${id}/${f}" data-fane="${f}">${t}</a>`).join('')}</nav>
+      <div class="ap-oppsett"><section class="ap-brettsone" aria-label="Brett"><div id="ap-brett"></div><p id="ap-linje" class="ap-linje"></p></section><aside id="ap-panel" class="ap-panel"></aside></div>`;
+    brett = lagBrett(main.querySelector('#ap-brett'), { naarTrekk: trekk => tilstand.naarTrekk?.(trekk) });
+  }
+  main.querySelectorAll('[data-fane]').forEach(a => { if (a.dataset.fane === fane) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  tilstand = { apningId: id, fane, apning };
+  const etter = ventende;
+  ventende = null;
+  if (etter) etter();
+  else if (fane === 'om') visOm(apning);
+  else if (fane === 'ov') startOv(apning);
+  else if (fane === 'feller') visFeller(apning);
+  else visLaer(apning, apning.rot);
+}
+
+// Switch tab and then show a specific view (hashchange fires after microtasks, so the view waits for it).
+function gaaTil(hash, vis) {
+  if (location.hash === hash) { vis(); return; }
+  ventende = vis;
+  location.hash = hash;
+}
+
+// Keep keyboard focus on the equivalent control when the panel re-renders.
+const FOKUSNOKLER = ['data-nav', 'data-barn', 'data-ov', 'data-f', 'data-s', 'data-felle', 'data-gaa', 'data-side'];
+function fokusNokkel() {
+  const el = document.activeElement;
+  if (!el || !panel()?.contains(el)) return null;
+  const attr = FOKUSNOKLER.find(a => el.hasAttribute(a));
+  return attr ? `[${attr}="${el.getAttribute(attr)}"]` : 'button';
+}
+function gjenopprettFokus(nokkel) {
+  if (nokkel) (panel().querySelector(nokkel) ?? panel().querySelector('button:not([disabled])'))?.focus({ preventScroll: true });
+}
+
+const panel = () => main.querySelector('#ap-panel');
+const linjeFelt = () => main.querySelector('#ap-linje');
+
+function settLinje(apning, noder, aktiv, klikk) {
+  const start = apning.startTrekk.length ? `<span class="ap-start">${esc(startNotasjon(apning))}</span> ` : '';
+  linjeFelt().innerHTML = start + noder.map((n, i) => `<button type="button" class="ap-trekk${n === aktiv ? ' aktiv' : ''}" data-i="${i}">${esc((n.farge === 'w' || i === 0 ? n.nummer : '') + norsk(n.san))}</button>`).join(' ');
+  if (klikk) linjeFelt().querySelectorAll('[data-i]').forEach(k => k.addEventListener('click', () => klikk(noder[Number(k.dataset.i)])));
+  else linjeFelt().querySelectorAll('[data-i]').forEach(k => { k.disabled = true; });
+  linjeFelt().scrollLeft = linjeFelt().scrollWidth;
+}
+
+function visOm(apning) {
+  brett.sett({ fen: apning.startFen, orientering: apning.farge, laast: true });
+  settLinje(apning, [], null);
+  const i = apning.intro;
+  panel().innerHTML = `
+    ${trenerBoble(`<p>${esc(i.karakter)}</p>`, { live: false })}
+    <section class="ap-seksjon"><h2>Historien</h2><p>${esc(i.historie)}</p></section>
+    <section class="ap-seksjon"><h2>Passer for deg som …</h2><p>${esc(i.passer)}</p></section>
+    <section class="ap-seksjon"><h2>Typiske planer</h2><ul>${apning.planer.map(p => `<li>${esc(p)}</li>`).join('')}</ul></section>
+    <section class="ap-seksjon"><h2>Modellideer</h2><ul>${apning.modellideer.map(p => `<li>${esc(p)}</li>`).join('')}</ul></section>
+    ${apning.sidelinjer.length ? `<section class="ap-seksjon"><h2>Sidelinjer og beslektede ideer</h2>${apning.sidelinjer.map((s, n) => `<div class="ap-sidelinje"><h3>${esc(s.navn)}</h3><p class="ap-notasjon">${esc(startNotasjon(apning))} ${esc(stiFraTrekk(apning, s.trekk))}</p><p>${esc(s.tekst)}</p>${s.kilde ? `<p class="ap-kilde">Kilde: ${esc(s.kilde)}</p>` : ''}<button type="button" class="button secondary" data-side="${n}">Spill gjennom</button></div>`).join('')}</section>` : ''}
+    <section class="ap-seksjon"><h2>I tall</h2><p>${flertall(apning.linjer.length, 'linje', 'linjer')} å øve på, ${apning.stillinger} ulike stillinger og ${flertall(apning.feller.length, 'felle', 'feller')}.</p></section>
+    <a class="button primary ap-bred" href="#/a/${apning.id}/laer">Start å lære</a>`;
+  panel().querySelectorAll('[data-side]').forEach(k => k.addEventListener('click', () => { gaaTil(`#/a/${apning.id}/laer`, () => visSidelinje(apning, apning.sidelinjer[Number(k.dataset.side)], 0)); }));
+}
+
+function stiFraTrekk(apning, trekk) {
+  const chess = new Chess(apning.startFen);
+  return trekk.map((m, i) => { const nr = trekkNummer(chess.fen()); chess.move(m.san); return (m.color === 'w' || i === 0 ? nr : '') + norsk(m.san); }).join(' ');
+}
+
+// ---------- Learn ----------
+function visLaer(apning, node, melding = '') {
+  const fokus = fokusNokkel();
+  stopp();
+  tilstand.fane = 'laer';
+  const neste = node.barn;
+  const vaarTur = neste.length === 1 && neste[0].rep;
+  const plan = [...piler(node.entry?.piler), ...piler(node.entry?.fare, 'fare')];
+  if (vaarTur) plan.push({ fra: neste[0].fra, til: neste[0].til, type: 'hint' });
+  brett.sett({ fen: node.fen, orientering: apning.farge, sist: node.san ? { from: node.fra, to: node.til } : null, piler: plan, merket: node.entry?.felt ?? [], laast: !neste.length });
+  const vei = veiTil(node);
+  settLinje(apning, vei, node, n => visLaer(apning, n));
+  tilstand.naarTrekk = trekk => {
+    const treff = neste.find(b => b.san === trekk.san);
+    if (treff) visLaer(apning, treff);
+    else { brett.rist(); visLaer(apning, node, `${norsk(trekk.san)} er ikke med i repertoaret her. ${vaarTur ? `Vi spiller ${medNummer(neste[0])} – prøv det, eller trykk Neste.` : 'Velg et av motstanderens svar under.'}`); }
+  };
+  let tekst;
+  if (!node.san) tekst = `<p class="ap-sier">${esc(apning.intro.karakter)}</p><p>${apning.startTrekk.length ? `Vi starter etter ${esc(startNotasjon(apning))}. ` : ''}Grønne piler viser planer, oransje viser trusler, og den rosa pilen er neste trekk i repertoaret. Du kan også spille trekket selv på brettet.</p>`;
+  else tekst = forklaring(node, apning.farge);
+  if (node.overgang) tekst += `<p class="ap-overgang"><span class="ap-etikett plan">Omstilling</span>Samme stilling oppstår etter ${esc(stiTekst(veiTil(node.overgang)))}. Vi fortsetter derfra.</p>`;
+  if (melding) tekst = `<p class="ap-varsel" role="alert">${esc(melding)}</p>` + tekst;
+  const valg = !neste.length
+    ? (node.overgang ? `<button type="button" class="button primary" data-gaa="overgang">Gå til ${esc(medNummer(node.overgang))} ▶</button>` : `<p class="ap-slutt">Slutten av denne linjen.</p><a class="button primary" href="#/a/${apning.id}/ov">Øv på åpningen</a>`)
+    : vaarTur
+      ? `<button type="button" class="button primary ap-neste" data-barn="0">Neste: ${esc(medNummer(neste[0]))} ▶</button>`
+      : `<p class="ap-valg-tittel">${neste.length > 1 ? 'Motstanderen kan svare:' : 'Motstanderen svarer:'}</p><div class="ap-valg">${[...neste].map((b, i) => ({ b, i })).sort((x, y) => (y.b.entry.vekt ?? 1) - (x.b.entry.vekt ?? 1)).map(({ b, i }, plass) => `<button type="button" class="button ${plass === 0 ? 'primary' : 'secondary'}" data-barn="${i}"><b>${esc(medNummer(b))}</b>${b.entry.navn ? ` · ${esc(b.entry.navn)}` : ''}${plass === 0 && neste.length > 1 ? ' <small>vanligst</small>' : ''}</button>`).join('')}</div>`;
+  panel().innerHTML = `${trenerBoble(tekst)}<div class="ap-kontroller">${valg}</div><div class="ap-navigasjon"><button type="button" class="button secondary" data-nav="start" ${node.san ? '' : 'disabled'} aria-label="Til start">⏮</button><button type="button" class="button secondary" data-nav="tilbake" ${node.san ? '' : 'disabled'}>◀ Tilbake</button><button type="button" class="button secondary" data-nav="frem" ${neste.length ? '' : 'disabled'}>Frem ▶</button></div><p class="ap-tips">Tips: piltastene ← → blar når brettet ikke har fokus.</p>`;
+  gjenopprettFokus(fokus);
+  const frem = () => { if (!neste.length) return; const mest = [...neste].sort((x, y) => (y.entry.vekt ?? 1) - (x.entry.vekt ?? 1))[0]; visLaer(apning, mest); };
+  panel().querySelectorAll('[data-barn]').forEach(k => k.addEventListener('click', () => visLaer(apning, neste[Number(k.dataset.barn)])));
+  panel().querySelector('[data-gaa]')?.addEventListener('click', () => visLaer(apning, node.overgang));
+  panel().querySelector('[data-nav="start"]').addEventListener('click', () => visLaer(apning, apning.rot));
+  panel().querySelector('[data-nav="tilbake"]').addEventListener('click', () => visLaer(apning, node.forelder ?? apning.rot));
+  panel().querySelector('[data-nav="frem"]').addEventListener('click', frem);
+  tastLytter = event => {
+    if (event.target.closest?.('.ap-brett, input, select, textarea')) return;
+    if (event.key === 'ArrowRight') { event.preventDefault(); frem(); }
+    if (event.key === 'ArrowLeft' && node.san) { event.preventDefault(); visLaer(apning, node.forelder); }
+  };
+}
+
+function visSidelinje(apning, linje, i) {
+  const fokus = fokusNokkel();
+  stopp();
+  tilstand.fane = 'laer';
+  const chess = new Chess(apning.startFen);
+  for (const m of linje.trekk.slice(0, i)) chess.move(m.san);
+  const sist = linje.trekk[i - 1];
+  brett.sett({ fen: chess.fen(), orientering: apning.farge, sist: sist ? { from: sist.from, to: sist.to } : null, laast: true });
+  linjeFelt().textContent = `${startNotasjon(apning)} ${stiFraTrekk(apning, linje.trekk.slice(0, i))}`;
+  linjeFelt().scrollLeft = linjeFelt().scrollWidth;
+  tilstand.naarTrekk = null;
+  panel().innerHTML = `${trenerBoble(`<p class="eyebrow">SIDELINJE</p><p class="ap-sier"><strong>${esc(linje.navn)}</strong></p><p>${esc(linje.tekst)}</p>${linje.kilde ? `<p class="ap-kilde">Kilde: ${esc(linje.kilde)}</p>` : ''}<p>Trekk ${i} av ${linje.trekk.length}.</p>`)}<div class="ap-navigasjon to"><button type="button" class="button secondary" data-s="-1" ${i ? '' : 'disabled'}>◀ Tilbake</button><button type="button" class="button secondary" data-s="1" ${i < linje.trekk.length ? '' : 'disabled'}>Frem ▶</button></div><a class="button secondary ap-bred" href="#/a/${apning.id}/om">Tilbake til åpningen</a>`;
+  panel().querySelectorAll('[data-s]').forEach(k => k.addEventListener('click', () => visSidelinje(apning, linje, i + Number(k.dataset.s))));
+  gjenopprettFokus(fokus);
+  tastLytter = event => {
+    if (event.key === 'ArrowRight' && i < linje.trekk.length) visSidelinje(apning, linje, i + 1);
+    if (event.key === 'ArrowLeft' && i) visSidelinje(apning, linje, i - 1);
+  };
+}
+
+// ---------- Practice ----------
+function startOv(apning, forrigeId = null) {
+  stopp();
+  const { linje, grunn } = rep.velgLinje(apning, fremgang, Date.now(), forrigeId);
+  tilstand = { ...tilstand, fane: 'ov', ov: { linje, grunn, i: 0, feil: 0, forsok: 0, vist: false, melding: null, stemning: '' } };
+  spillOv(apning);
+}
+
+function ovStatus(apning) {
+  const s = rep.statusFor(apning, fremgang);
+  return `<div class="ap-ovstatus"><span><b>${s.laert}</b>/${s.totalt} lært</span><span><b>${s.forfaller}</b> til repetisjon</span><span><b>${s.nye}</b> nye</span></div>`;
+}
+
+function spillOv(apning) {
+  const fokus = fokusNokkel();
+  const ov = tilstand.ov;
+  const { linje } = ov;
+  const forrige = ov.i ? linje.noder[ov.i - 1] : apning.rot;
+  const neste = linje.noder[ov.i];
+  const ferdig = !neste;
+  const ekstraPiler = ov.feilPil ? [ov.feilPil] : [];
+  if (ov.vist && neste) ekstraPiler.push({ fra: neste.fra, til: neste.til, type: 'hint' });
+  brett.sett({ fen: forrige.fen, orientering: apning.farge, sist: forrige.san ? { from: forrige.fra, to: forrige.til } : null, piler: ekstraPiler, laast: ferdig || !neste.rep });
+  settLinje(apning, linje.noder.slice(0, ov.i), forrige, null);
+  const grunn = { repetisjon: 'Repetisjon', ny: 'Ny linje', ekstra: 'Ekstrarunde' }[ov.grunn];
+  let tekst;
+  if (ferdig) {
+    const post = rep.linjePost(fremgang, apning.id, linje.id);
+    const nar = post.boks === 0 ? 'Den kommer tilbake snart, så vi får den til å sitte.' : `Neste repetisjon om ${flertall(rep.dagerTil(post.forfall), 'dag', 'dager')}.`;
+    const siste = linje.noder.at(-1);
+    tekst = `<p class="eyebrow">${esc(grunn)} · ${esc(linje.navn)}</p><p class="ap-sier"><strong>${ov.feil ? `Linjen er gjennomført med ${flertall(ov.feil, 'feil', 'feil')}.` : 'Feilfritt! Linjen sitter.'}</strong> ${nar}</p>${siste.entry.plan ? `<p><span class="ap-etikett plan">Planen videre</span>${esc(siste.entry.plan)}</p>` : ''}${siste.overgang ? `<p><span class="ap-etikett plan">Omstilling</span>Her går vi over i ${esc(stiTekst(veiTil(siste.overgang)))} – den øver vi på i en annen linje.</p>` : ''}`;
+  } else if (ov.melding) tekst = ov.melding;
+  else if (neste.rep) tekst = `<p class="eyebrow">${esc(grunn)} · ${esc(linje.navn)}</p><p class="ap-sier">${ov.i === 0 ? 'Vi begynner.' : ''} Din tur – hva spiller vi i repertoaret her?</p>`;
+  else tekst = `<p class="eyebrow">${esc(grunn)} · ${esc(linje.navn)}</p><p class="ap-sier">Motstanderen tenker …</p>`;
+  const knapper = ferdig
+    ? `<button type="button" class="button primary" data-ov="neste">Neste linje ▶</button><button type="button" class="button secondary" data-ov="laer">Se linjen i Lær</button>`
+    : neste.rep ? `<button type="button" class="button secondary" data-ov="vis">${ov.vist ? 'Trekket vises' : 'Vis trekket'}</button><button type="button" class="button secondary" data-ov="hopp">Ny linje</button>` : '';
+  const egne = rep.vansker({ feil: { [apning.id]: fremgang.feil[apning.id] ?? {} } }, 2).map(v => apning.noder.get(v.sti)?.barn[0]).filter(Boolean);
+  panel().innerHTML = `${trenerBoble(tekst, { stemning: ov.stemning })}<div class="ap-kontroller ap-rad">${knapper}</div>${ovStatus(apning)}${egne.length ? `<p class="ap-tips">${TRENER.navn} har lagt merke til at du oftest bommer på ${egne.map(n => esc(medNummer(n))).join(' og ')}.</p>` : ''}`;
+  panel().querySelector('[data-ov="neste"]')?.addEventListener('click', () => startOv(apning, linje.id));
+  panel().querySelector('[data-ov="hopp"]')?.addEventListener('click', () => startOv(apning, linje.id));
+  panel().querySelector('[data-ov="laer"]')?.addEventListener('click', () => gaaTil(`#/a/${apning.id}/laer`, () => visLaer(apning, linje.noder.at(-1))));
+  panel().querySelector('[data-ov="vis"]')?.addEventListener('click', () => { if (!ov.vist) { ov.vist = true; ov.feil += 1; rep.noterFeil(fremgang, apning.id, forrige.sti, '(vis)'); lagre(); } spillOv(apning); });
+  gjenopprettFokus(fokus);
+  tastLytter = null;
+  tilstand.naarTrekk = trekk => {
+    if (ferdig || !neste.rep) return;
+    if (trekk.san === neste.san) {
+      ov.i += 1; ov.forsok = 0; ov.vist = false; ov.feilPil = null; ov.stemning = 'bra';
+      ov.melding = `<p class="ap-sier"><strong>${tilfeldig(ROS)}</strong> ${esc(medNummer(neste))} – ${esc(neste.entry.hva)}</p>`;
+      if (ov.i >= linje.noder.length) { rep.vurderLinje(fremgang, apning.id, linje.id, ov.feil); lagre(); }
+      spillOv(apning);
+      return;
+    }
+    ov.forsok += 1;
+    ov.feil += 1;
+    ov.stemning = 'feil';
+    rep.noterFeil(fremgang, apning.id, forrige.sti, trekk.san);
+    lagre();
+    ov.feilPil = { fra: trekk.from, til: trekk.to, type: 'fare' };
+    if (ov.forsok >= 2) ov.vist = true;
+    ov.melding = `<p class="ap-sier">${esc(feilKommentar(trekk.san, neste))}</p><p>${ov.vist ? 'Den rosa pilen viser trekket. Spill det på brettet.' : 'Prøv igjen!'}</p>`;
+    brett.rist();
+    spillOv(apning);
+  };
+  if (!ferdig && !neste.rep) {
+    timer = setTimeout(() => {
+      ov.i += 1; ov.feilPil = null;
+      const svar = linje.noder[ov.i];
+      ov.stemning = '';
+      ov.melding = svar ? `<p class="eyebrow">${esc(grunn)} · ${esc(linje.navn)}</p><p class="ap-sier">Motstanderen spilte <strong>${esc(medNummer(neste))}</strong>. ${esc(neste.entry.hva)}</p><p>Din tur.</p>` : null;
+      if (!svar) { rep.vurderLinje(fremgang, apning.id, linje.id, ov.feil); lagre(); }
+      spillOv(apning);
+    }, ov.i === 0 ? 700 : 550);
+  }
+}
+
+// ---------- Traps ----------
+function visFeller(apning, valgt = null) {
+  const fokus = fokusNokkel();
+  stopp();
+  tastLytter = null;
+  tilstand.naarTrekk = null;
+  if (!valgt) {
+    brett.sett({ fen: apning.startFen, orientering: apning.farge, laast: true });
+    settLinje(apning, [], null);
+    panel().innerHTML = apning.feller.length
+      ? `${trenerBoble(`<p class="ap-sier">Feller er korte drill: finn trekkene som straffer en vanlig feil – eller unngå fella selv.</p>`, { live: false })}<div class="ap-felleliste">${apning.feller.map((f, i) => `<button type="button" class="ap-felle" data-felle="${i}"><span>${f.type === 'unngå' ? 'Unngå' : 'Slå til'}${fremgang.feller?.[`${apning.id}|${f.id}`] ? ' · ✓ løst' : ''}</span><b>${esc(f.navn)}</b></button>`).join('')}</div>`
+      : trenerBoble('<p>Ingen feller for denne åpningen ennå.</p>', { live: false });
+    panel().querySelectorAll('[data-felle]').forEach(k => k.addEventListener('click', () => visFeller(apning, { felle: apning.feller[Number(k.dataset.felle)], i: 0, feil: 0, melding: '' })));
+    gjenopprettFokus(fokus);
+    return;
+  }
+  const { felle } = valgt;
+  const chess = new Chess(felle.fen);
+  for (const m of felle.losning.slice(0, valgt.i)) chess.move(m.san);
+  const sist = valgt.i ? felle.losning[valgt.i - 1] : felle.forTrekk.at(-1);
+  const ferdig = valgt.i >= felle.losning.length;
+  const minTur = !ferdig && felle.losning[valgt.i].color === felle.side;
+  brett.sett({ fen: chess.fen(), orientering: felle.side, sist: sist ? { from: sist.from, to: sist.to } : null, laast: !minTur, piler: valgt.vis && !ferdig ? [{ fra: felle.losning[valgt.i].from, til: felle.losning[valgt.i].to, type: 'hint' }] : [] });
+  linjeFelt().textContent = `${startNotasjon(apning)} ${stiFraTrekk(apning, [...felle.forTrekk, ...felle.losning.slice(0, valgt.i)])}`;
+  linjeFelt().scrollLeft = linjeFelt().scrollWidth;
+  const tekst = ferdig
+    ? `<p class="ap-sier"><strong>${valgt.feil ? 'Løst!' : 'Perfekt – rett i fella!'}</strong></p><p>${esc(felle.forklaring)}</p>`
+    : `<p class="eyebrow">${felle.type === 'unngå' ? 'UNNGÅ FELLA' : 'SLÅ TIL'} · ${esc(felle.navn)}</p>${valgt.melding || `<p class="ap-sier">${esc(felle.tekst)}</p>`}`;
+  panel().innerHTML = `${trenerBoble(tekst, { stemning: valgt.stemning ?? '' })}<div class="ap-kontroller ap-rad">${ferdig ? '<button type="button" class="button primary" data-f="liste">Flere feller</button><button type="button" class="button secondary" data-f="igjen">Ta den igjen</button>' : '<button type="button" class="button secondary" data-f="vis">Vis trekket</button><button type="button" class="button secondary" data-f="liste">Alle feller</button>'}</div>`;
+  panel().querySelector('[data-f="liste"]').addEventListener('click', () => visFeller(apning));
+  panel().querySelector('[data-f="igjen"]')?.addEventListener('click', () => visFeller(apning, { felle, i: 0, feil: 0 }));
+  panel().querySelector('[data-f="vis"]')?.addEventListener('click', () => visFeller(apning, { ...valgt, vis: true, feil: valgt.feil + 1 }));
+  gjenopprettFokus(fokus);
+  if (ferdig) { (fremgang.feller ??= {})[`${apning.id}|${felle.id}`] = { lost: Date.now(), feil: valgt.feil }; lagre(); return; }
+  if (!minTur) { timer = setTimeout(() => visFeller(apning, { ...valgt, i: valgt.i + 1, vis: false, melding: `<p class="ap-sier">Motstanderen svarte ${esc(norsk(felle.losning[valgt.i].san))}. Fortsett!</p>` }), 600); return; }
+  tilstand.naarTrekk = trekk => {
+    const riktig = felle.losning[valgt.i];
+    // Single-move 'avoid' drills may accept other safe moves.
+    if (valgt.i === 0 && felle.losning.length === 1 && felle.godta?.includes(trekk.san)) { visFeller(apning, { ...valgt, i: 1, stemning: 'bra' }); return; }
+    if (trekk.san === riktig.san) visFeller(apning, { ...valgt, i: valgt.i + 1, vis: false, stemning: 'bra', melding: `<p class="ap-sier"><strong>${tilfeldig(ROS)}</strong> ${esc(norsk(trekk.san))}.</p>` });
+    else { brett.rist(); visFeller(apning, { ...valgt, feil: valgt.feil + 1, vis: valgt.feil >= 1, stemning: 'feil', melding: `<p class="ap-sier">${esc(norsk(trekk.san))} er ikke det sterkeste her. ${valgt.feil >= 1 ? 'Den rosa pilen viser veien.' : 'Se etter sjakker, slag og trusler.'}</p>` }); }
+  };
+}
+
+// ---------- Routing ----------
+function rute() {
+  const [, side, id, fane] = location.hash.split('/');
+  tastLytter = null;
+  if (side === 'a' && id) visApning(id, ['om', 'laer', 'ov', 'feller'].includes(fane) ? fane : 'laer');
+  else { tilstand = {}; visBibliotek(); }
+}
+
+document.addEventListener('keydown', event => tastLytter?.(event));
+window.addEventListener('hashchange', () => { rute(); main.focus({ preventScroll: true }); window.scrollTo({ top: 0 }); });
+window.addEventListener('storage', event => { if (event.key === rep.NOKKEL) fremgang = rep.lesFremgang(lager); });
+
+try {
+  await last();
+  rute();
+} catch (error) {
+  console.error(error);
+  main.innerHTML = '<p class="form-error" role="alert">Klarte ikke å hente åpningene. Prøv å laste siden på nytt.</p>';
+}

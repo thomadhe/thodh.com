@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "id": "beograd-gambitt",
+  "navn": "Beograd-gambitt",
+  "farge": "w",
+  "eco": "C47",
+  "niva": "vanskelig",
+  "karakter": "Lumsk firespringer",
+  "skarphet": 4,
+  "kort": "4.d4 exd4 5.Sd5!? – i stedet for å ta tilbake hopper springeren inn på d5. Fullt av feller i et rolig åpningssystem.",
+  "start": "e4 e5 Nf3 Nc6 Nc3 Nf6",
+  "intro": {
+    "historie": "Gambitten ble analysert av serbiske spillere i Beograd på 1940-tallet og spilt av blant andre Gligorić og Tal. Den gjør det fredelige firespringerspillet til en felleskog.",
+    "karakter": "Springeren på d5 bytter bort svarts beste forsvarer på f6 og hindrer naturlig utvikling. Hvit vinner ofte bonden tilbake på d4; svart må vite hvilke trekk som er trygge.",
+    "passer": "… vil spille firespringer, men ønsker å overraske og gi motstanderen problemer fra trekk fem."
+  },
+  "planer": [
+    "Lc4, 0-0 og Te1 mot svarts konge i sentrum.",
+    "Vinn d4-bonden tilbake med Sxd4 eller Dxd4 når det passer.",
+    "Bytt springeren på d5 mot f6 hvis svart ikke kan slå tilbake med en bonde."
+  ],
+  "modellideer": [
+    "Springeren på d5 er en torn: den angriper c7, e7 og f6.",
+    "Etter …Sxe4 åpnes e-linjen for hvit med Ld3 og 0-0.",
+    "Mot …Sb4 skal løperen til c4 – den slår tilbake på d5 med sjakk eller binding."
+  ],
+  "feller": [],
+  "sidelinjer": [
+    { "navn": "Rubinsteins idé i speil", "sti": "d4 exd4 Nd5 Be7 Bf4 d6 Nxd4 Nxd5 exd5 Nxd4 Qxd4", "tekst": "Mot 5…Le7 6.Lf4 d6 7.Sxd4 kan svart bytte av to ganger. Hvit har litt mer plass og løperpar-muligheter; motoren regner det som likt." }
+  ],
+  "trekk": [
+    { "sti": "d4", "hva": "Vi åpner sentrum.", "ide": "etter …exd4 kan vi gambittere med Sd5 i stedet for å ta tilbake.", "pass": "Svart kan også spille 4…Lb4 med press mot e4. Da slår vi på e5.", "motor": { "cp": 14, "tap": 1, "best": "Bb5", "dybde": 16 } },
+    { "sti": "d4 exd4", "vekt": 5, "hva": "Svart slår." },
+    { "sti": "d4 exd4 Nd5", "navn": "Beograd-gambitt", "hva": "Springeren hopper inn på d5.", "ide": "springeren angriper f6 og c7 og forstyrrer svarts utvikling; d4-bonden kan vi ta senere.", "pass": "Svart har flere gode svar (…Le7, …Sb4, …Sxe4). Ingen av dem gir svart fordel hvis vi kjenner planen.", "vurdering": "Motoren gir svart en liten fordel (ca. −0,2) etter de beste svarene – omtrent likt. Mange naturlige svarte trekk taper.", "piler": ["d5f6", "d5c7"], "motor": { "cp": -23, "tap": 38, "best": "Nxd4", "dybde": 16 } },
+    { "sti": "d4 exd4 Nd5 Be7", "vekt": 3, "hva": "Svart utvikler og dekker f6." },
+    { "sti": "d4 exd4 Nd5 Be7 Bf4", "hva": "Løperen kommer ut med press mot c7.", "ide": "Lf4 forsterker trusselen Sxc7+ og gjør klart for Sxd4.", "pass": "Etter …d6 dekker svart c7. Da tar vi d4.", "motor": { "cp": -18, "tap": 7, "best": "Bc4", "dybde": 16 } },
+    { "sti": "d4 exd4 Nd5 Be7 Bf4 d6", "hva": "Svart dekker c7." },
+    { "sti": "d4 exd4 Nd5 Be7 Bf4 d6 Nxd4", "hva": "Vi tar tilbake bonden.", "ide": "materiellet er likt, og springerne på d4 og d5 står sentralt.", "pass": "Svart kan bytte på d5 og d4. Etter …0-0 slår vi på e7 og spiller Ld3.", "plan": "Sxe7+ og Ld3, eller Lb5 og 0-0. Hvit har plass og fritt spill; motoren: likt.", "motor": { "cp": -25, "tap": 0, "best": "Nxd4", "dybde": 16 } },
+    { "sti": "d4 exd4 Nd5 Nb4", "vekt": 3, "hva": "Svart angriper c2 og utfordrer d5-springeren." },
+    { "sti": "d4 exd4 Nd5 Nb4 Bc4", "hva": "Løperen dekker d5.", "ide": "løperen støtter springeren på d5 og peker mot f7.", "pass": "Etter …Sbxd5 slår vi tilbake med bonden og får plass. Svart vil sjakke på b4 og e7.", "motor": { "cp": -30, "tap": 3, "best": "Nxf6+", "dybde": 16 } },
+    { "sti": "d4 exd4 Nd5 Nb4 Bc4 Nbxd5", "hva": "Svart bytter på d5." },
+    { "sti": "d4 exd4 Nd5 Nb4 Bc4 Nbxd5 exd5", "hva": "Bonden slår tilbake.", "ide": "bonden på d5 tar plass, og e-linjen åpnes.", "pass": "Etter …Lb4+ dekker vi med Ld2.", "motor": { "cp": -28, "tap": 0, "best": "exd5", "dybde": 16 } },
+    { "sti": "d4 exd4 Nd5 Nb4 Bc4 Nbxd5 exd5 Bb4+", "hva": "Svart sjakker." },
+    { "sti": "d4 exd4 Nd5 Nb4 Bc4 Nbxd5 exd5 Bb4+ Bd2", "hva": "Løperen dekker.", "ide": "vi tilbyr bytte og holder kongen i sentrum en stund.", "pass": "Etter …De7+ må vi dekke med damen.", "motor": { "cp": -27, "tap": 7, "best": "Kf1", "dybde": 16 } },
+    { "sti": "d4 exd4 Nd5 Nb4 Bc4 Nbxd5 exd5 Bb4+ Bd2 Qe7+", "hva": "Svart sjakker på e-linjen." },
+    { "sti": "d4 exd4 Nd5 Nb4 Bc4 Nbxd5 exd5 Bb4+ Bd2 Qe7+ Qe2", "hva": "Damen dekker sjakken.", "ide": "vi tilbyr dronningbytte; sluttspillet er sunt fordi d4-bonden faller.", "pass": "Kf1 er dårligere. Etter byttet tar vi d4 med springeren.", "plan": "Etter dronningbytte: Sxd4 og 0-0-0 eller Ke2 med aktiv konge. Motoren: omtrent likt.", "motor": { "cp": -23, "tap": 0, "best": "Qe2", "dybde": 16 } },
+    { "sti": "d4 exd4 Nd5 Nxe4", "vekt": 2, "hva": "Svart tar e4." },
+    { "sti": "d4 exd4 Nd5 Nxe4 Bd3", "hva": "Løperen angriper springeren og ser mot h7.", "ide": "vi utvikler med tempo og forbereder 0-0 og Te1 på den åpne e-linjen.", "pass": "Etter …Sc5 rokerer vi; ikke ta på d4 for tidlig.", "plan": "0-0, Te1 og Lf4. Svarts konge står i midten på den åpne e-linjen. Motoren: likt.", "motor": { "cp": 11, "tap": 0, "best": "Bd3", "dybde": 16 } },
+    { "sti": "d4 exd4 Nd5 Nxd5", "vekt": 1, "hva": "Svart bytter springerne – mindre presist." },
+    { "sti": "d4 exd4 Nd5 Nxd5 exd5", "hva": "Bonden slår tilbake og angriper springeren.", "ide": "springeren på c6 må flytte, og vi tar d4 senere.", "pass": "Etter …Sb4 kommer Lc4 for å holde d5.", "motor": { "cp": 56, "tap": 0, "best": "exd5", "dybde": 16 } },
+    { "sti": "d4 exd4 Nd5 Nxd5 exd5 Nb4", "hva": "Springeren går til b4." },
+    { "sti": "d4 exd4 Nd5 Nxd5 exd5 Nb4 Bc4", "hva": "Løperen dekker d5.", "ide": "vi utvikler og truer a3 som fanger springeren eller Sxd4.", "pass": "Etter …De7+ går kongen til f1 – det er greit her.", "plan": "Kf1/0-0, Sxd4 og a3. Motoren gir hvit en liten fordel (ca. +0,5).", "motor": { "cp": 62, "tap": 0, "best": "Bc4", "dybde": 16 } },
+    { "sti": "d4 Bb4", "vekt": 2, "hva": "Svart binder springeren i stedet for å slå." },
+    { "sti": "d4 Bb4 Nxe5", "hva": "Vi tar bonden.", "ide": "e5 er ubeskyttet; svart må bytte på c3 og bruke tid på å vinne e4.", "pass": "Etter …Lxc3+ bxc3 er strukturen vår litt svekket, men vi har løperparet.", "plan": "Ld3, 0-0 og Te1. Hvit har løperpar og sentrum; motoren: ca. +0,4.", "motor": { "cp": 35, "tap": 0, "best": "Nxe5", "dybde": 16 } }
+  ]
+}

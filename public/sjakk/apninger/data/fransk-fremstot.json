@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "id": "fransk-fremstot",
+  "navn": "Fransk: fremstøt og Milner-Barry",
+  "farge": "w",
+  "eco": "C02",
+  "niva": "middels",
+  "karakter": "Plass og en gambitt",
+  "skarphet": 4,
+  "kort": "Mot 1…e6: 3.e5 med plass, og mot …Db6 Milner-Barry-gambitten 6.Ld3!? – med en kjent damefelle.",
+  "start": "e4 e6",
+  "intro": {
+    "historie": "Fremstøtsvarianten (3.e5) ble forfektet av Nimzowitsch og senere Sveshnikov. Milner-Barry-gambitten er oppkalt etter Stuart Milner-Barry, britisk kodeknekker i Bletchley Park og sterk sjakkspiller.",
+    "karakter": "Hvit låser sentrum med e5 og spiller på kongesiden; svart angriper d4 med …c5, …Sc6 og …Db6. I Milner-Barry ofrer hvit d4-bonden for utvikling og angrep mot svarts konge.",
+    "passer": "… vil ha plass og et klart angrepsmål mot fransk, og liker en bondeoffer-felle i tillegg."
+  },
+  "planer": [
+    "e5-bonden er kilen: den tar f6 fra springeren og gir plass på kongesiden.",
+    "Støtt d4 med c3 og Sf3; mot …Db6 kommer Ld3 og 0-0 (Milner-Barry).",
+    "I gambitten: Sc3, De2, Kh1 og f4–f5 mot svarts konge."
+  ],
+  "modellideer": [
+    "Lb5+ vinner damen hvis den står ubeskyttet på d4.",
+    "Te1 og Sb5 mot en svart dame som har grådd e5.",
+    "Lxh7+-offeret (gresk gave) dukker ofte opp når svart har rokert kort."
+  ],
+  "feller": [
+    { "id": "milner-barry-lb5", "type": "slå", "navn": "Damen på d4 faller", "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Nxd4 Nxd4 Qxd4", "trekk": "Bb5+", "tekst": "Svart grådde to bønder og damen står på d4 – uten dekning. Finn sjakken!", "forklaring": "9.Lb5+! Løperen sjakker kongen og avdekker samtidig damen på d1 mot damen på d4. Svart taper damen (motoren ca. +9)." }
+  ],
+  "sidelinjer": [
+    { "navn": "Hovedlinjen 6.a3", "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 a3", "tekst": "Det sunne alternativet til gambitten: 6.a3 forbereder b4 og holder d4. Velg det hvis du vil ha et rolig plasspress i stedet for et bondeoffer." }
+  ],
+  "trekk": [
+    { "sti": "d4", "hva": "Vi tar hele sentrum.", "ide": "med bønder på e4 og d4 står vi med mer plass; svart vil utfordre med …d5.", "pass": "Etter …d5 må vi bestemme oss for e4-bonden. Vi går fram med e5.", "motor": { "cp": 24, "tap": 0, "best": "d4", "dybde": 16 } },
+    { "sti": "d4 d5", "vekt": 5, "hva": "Svart angriper e4." },
+    { "sti": "d4 d5 e5", "navn": "Fremstøt", "hva": "Bonden går fram.", "ide": "e5 låser sentrum og tar f6 fra springeren; vi får plass på kongesiden.", "pass": "Svart angriper bondekjeden med …c5 og …f6. Hold d4 sterk.", "felt": ["e5"], "motor": { "cp": 25, "tap": 0, "best": "e5", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5", "vekt": 5, "hva": "Svart angriper basen d4." },
+    { "sti": "d4 d5 e5 c5 c3", "hva": "Vi støtter d4.", "ide": "c3 holder kjeden; etter …cxd4 slår vi tilbake med c-bonden.", "pass": "Svart vil legge press på d4 med …Sc6 og …Db6.", "motor": { "cp": 18, "tap": 0, "best": "c3", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5 c3 Nc6", "vekt": 4, "hva": "Svart presser d4." },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3", "hva": "Springeren dekker d4.", "ide": "Sf3 forsvarer d4 og e5.", "pass": "Etter …Db6 er d4 angrepet tre ganger. Da kommer Ld3!? – gambitten.", "motor": { "cp": 19, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6", "vekt": 3, "hva": "Damen presser d4 og b2." },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3", "navn": "Milner-Barry", "hva": "Vi lar d4 falle.", "ide": "løperen utvikles mot h7, og etter …cxd4 cxd4 kan svart bare ta d4 med store risikoer.", "pass": "Etter 6…cxd4 7.cxd4 Sxd4?? 8.Sxd4 Dxd4?? kommer 9.Lb5+ og damen faller.", "vurdering": "Objektivt tvilsomt: motoren gir svart ca. 0,8 bonde i fordel med beste spill (…Ld7, …Sxd4 og …a6). Det sunne alternativet er 6.a3.", "motor": { "cp": 22, "tap": 9, "best": "a3", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4", "hva": "Svart slår." },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4", "hva": "Vi slår tilbake.", "ide": "d4 er nå angrepet tre ganger og dekket to – vi gir den bevisst.", "pass": "Etter …Ld7 rokerer vi; etter …Sxd4 slår vi med springeren og ser etter Lb5+.", "motor": { "cp": 0, "tap": 19, "best": "O-O", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Bd7", "vekt": 3, "hva": "Svart forbereder …Sxd4 ved å dekke b5." },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Bd7 O-O", "hva": "Rokade – gambitten.", "ide": "vi ofrer d4-bonden for utvikling og åpne linjer.", "pass": "Etter …Sxd4 Sxd4 Dxd4 kommer Sc3 med trusler som Sb5 og Te1.", "motor": { "cp": -9, "tap": 9, "best": "Be2", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Bd7 O-O Nxd4", "hva": "Svart tar d4." },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Bd7 O-O Nxd4 Nxd4", "hva": "Vi bytter springerne.", "ide": "damen må slå tilbake og havner på et utsatt felt.", "pass": "Etter …Dxd4 kommer Sc3 – ikke ta på b7 eller lignende.", "motor": { "cp": -40, "tap": 30, "best": "Nbd2", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Bd7 O-O Nxd4 Nxd4 Qxd4", "hva": "Damen tar." },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Bd7 O-O Nxd4 Nxd4 Qxd4 Nc3", "hva": "Utvikling med tanke på Sb5.", "ide": "Sc3 truer Sb5 og Te1; svart er en bonde over, men langt bak i utvikling.", "pass": "Svart spiller …a6 for å stoppe Sb5. Da kommer De2, Kh1 og f4.", "motor": { "cp": -74, "tap": 23, "best": "Qe2", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Bd7 O-O Nxd4 Nxd4 Qxd4 Nc3 a6", "vekt": 3, "hva": "Svart dekker b5 – det beste." },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Bd7 O-O Nxd4 Nxd4 Qxd4 Nc3 a6 Qe2", "hva": "Damen til e2.", "ide": "damen støtter e5 og forbereder Kh1 og f4–f5.", "pass": "Svart vil utvikle med …Se7 og …Sc6. Ikke la damen på d4 bli for aktiv.", "motor": { "cp": -82, "tap": 0, "best": "g3", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Bd7 O-O Nxd4 Nxd4 Qxd4 Nc3 a6 Qe2 Ne7", "hva": "Svart utvikler." },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Bd7 O-O Nxd4 Nxd4 Qxd4 Nc3 a6 Qe2 Ne7 Kh1", "hva": "Kongen ut av diagonalen.", "ide": "Kh1 forbereder f4 uten at …Dxf4/…Lc5+ kommer med sjakk.", "pass": "Svart spiller …Sc6. Da kommer f4.", "plan": "f4–f5, Le3 og Tad1 med angrep. Svart har en bonde mer og står objektivt bedre (motoren ca. −0,8).", "motor": { "cp": -80, "tap": 0, "best": "Kh1", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Bd7 O-O Nxd4 Nxd4 Qxd4 Nc3 Qxe5", "vekt": 1, "hva": "Svart grådder e5 også." },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Bd7 O-O Nxd4 Nxd4 Qxd4 Nc3 Qxe5 Re1", "hva": "Tårnet jager damen.", "ide": "e-linjen åpnes mot svarts konge og dame.", "pass": "Etter …Dd6 kommer Sb5 med tempo.", "plan": "Sb5, Le3 og Tc1. Svart har to bønder mer, men et voldsomt angrep venter; motoren: omtrent likt.", "motor": { "cp": -3, "tap": 0, "best": "Re1", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Nxd4", "navn": "Fella", "vekt": 1, "hva": "Svart tar d4 med en gang – en feil." },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Nxd4 Nxd4", "hva": "Vi bytter springerne.", "ide": "etter …Dxd4?? kommer Lb5+ med avdekkende angrep på damen.", "pass": "Hvis svart ikke tar tilbake, er vi bare en brikke over.", "motor": { "cp": 496, "tap": 0, "best": "Nxd4", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Nxd4 Nxd4 Qxd4", "hva": "Damen tar – og går i fella." },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Nxd4 Nxd4 Qxd4 Bb5+", "hva": "Sjakk – og et avdekkende angrep!", "ide": "løperen sjakker, og damen på d1 angriper damen på d4.", "pass": "Etter …Ld7 slår vi Dxd4.", "plan": "Dxd4 neste trekk – hvit er en hel dame over.", "motor": { "cp": 908, "tap": 0, "best": "Bb5+", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Bd7", "vekt": 1, "hva": "Svart utvikler løperen først." },
+    { "sti": "d4 d5 e5 c5 c3 Nc6 Nf3 Bd7 Be2", "hva": "Løperen til e2.", "ide": "rolig utvikling; uten …Db6 er det ikke tid for gambitten.", "pass": "Svart kan spille …Sge7–f5 mot d4. Ha Sa3–c2 eller 0-0 klart.", "plan": "0-0, Sa3–c2 og dxc5/b4. Plassfordel; motoren: ca. +0,3.", "motor": { "cp": 19, "tap": 0, "best": "Be2", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5 c3 Qb6", "vekt": 1, "hva": "Damen ut før springeren." },
+    { "sti": "d4 d5 e5 c5 c3 Qb6 Nf3", "hva": "Springeren dekker d4.", "ide": "normal utvikling.", "pass": "Etter …Ld7 spiller vi Le2.", "motor": { "cp": 30, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5 c3 Qb6 Nf3 Bd7", "hva": "Svart vil bytte løperne med …Lb5." },
+    { "sti": "d4 d5 e5 c5 c3 Qb6 Nf3 Bd7 Be2", "hva": "Løperen til e2.", "ide": "etter …Lb5 kan vi bytte eller spille c4.", "pass": "Pass på b2 når damen står på b6.", "plan": "0-0, dxc5 og b4, eller a3 og b4. Motoren: ca. +0,4.", "motor": { "cp": 31, "tap": 0, "best": "Be2", "dybde": 16 } }
+  ]
+}

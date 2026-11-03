@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "id": "wienergambitt",
+  "navn": "Wienergambitt",
+  "farge": "w",
+  "eco": "C25–C29",
+  "niva": "middels",
+  "karakter": "Kongegambitt med springeren først",
+  "skarphet": 4,
+  "kort": "2.Sc3 og 3.f4 – kongegambittens ideer, men tryggere fordi springeren allerede dekker d5 og e4.",
+  "start": "e4 e5",
+  "intro": {
+    "historie": "Wienerpartiet fikk navnet sitt etter Wiens sjakkmiljø på 1800-tallet. Steinitz, Spielmann og Mieses spilte det med glede, og i moderne tid har bl.a. Nakamura og mange nettstrømmere gjort Wienergambitten populær igjen.",
+    "karakter": "Med 2.Sc3 forbereder hvit f4 under bedre forhold enn i kongegambitten: springeren dekker e4 og d5, og etter 3…d5 4.fxe5 får hvit en sterk bonde på e5 og angrep på kongesiden.",
+    "passer": "… liker kongegambittens angrepsideer, men vil ha litt mer sikkerhet og færre forpliktende bondeoffer."
+  },
+  "planer": [
+    "Mot 2…Sf6: 3.f4! og etter 3…d5 4.fxe5 Sxe4 5.Sf3 – sentrum og f-linje for angrep.",
+    "Bonden på e5 er en kile: den tar f6 fra springeren og gir plass til et kongeangrep.",
+    "Mot 2…Sc6 og 2…Lc5 spiller vi rolig utvikling – angrepet kommer senere med f4."
+  ],
+  "modellideer": [
+    "d4, Ld3 og 0-0 med tårnet på f-linjen er standardoppstillingen i Wienergambitten.",
+    "Sa4 mot en løper på c5 vinner løperparet.",
+    "Etter …f5 exf6 åpnes f-linjen for hvits tårn."
+  ],
+  "feller": [],
+  "sidelinjer": [
+    { "navn": "Frankenstein–Dracula 3.Lc4 Sxe4", "sti": "Nc3 Nf6 Bc4 Nxe4 Qh5 Nd6 Bb3 Nc6 Nb5 g6 Qf3 f5 Qd5 Qe7 Nxc7+ Kd8 Nxa8 b6", "tekst": "Etter 3.Lc4 kan svart spille 3…Sxe4!? med vill komplikasjon der svart ofrer tårnet på a8. Med 3.f4 unngår vi dette helt." }
+  ],
+  "trekk": [
+    { "sti": "Nc3", "navn": "Wienerparti", "hva": "Springeren utvikles og dekker d5.", "ide": "Sc3 kontrollerer d5 og e4 og forbereder f4 uten at e4-bonden henger.", "pass": "Svart kan svare …Sf6, …Sc6 eller …Lc5. Hver av dem har sitt svar her.", "piler": ["f2f4"], "motor": { "cp": 17, "tap": 27, "best": "Nf3", "dybde": 16 } },
+    { "sti": "Nc3 Nf6", "vekt": 5, "hva": "Svart utvikler og angriper e4." },
+    { "sti": "Nc3 Nf6 f4", "navn": "Wienergambitt", "hva": "Vi ofrer f-bonden – kongegambittens idé.", "ide": "tar svart på f4, får vi e5 med tempo; slår svart …d5, får vi en sterk kilebonde på e5.", "pass": "Etter 3…d5! er 4.fxe5 riktig. 4.exd5? gir svart for godt spill etter …e4.", "vurdering": "Motoren kaller stillingen etter 3…d5 4.fxe5 Sxe4 5.Sf3 omtrent lik (−0,1). Spillet er rikt og praktisk godt for hvit.", "motor": { "cp": -14, "tap": 37, "best": "Nf3", "dybde": 16 } },
+    { "sti": "Nc3 Nf6 f4 d5", "vekt": 4, "hva": "Svart slår til i sentrum – det beste svaret." },
+    { "sti": "Nc3 Nf6 f4 d5 fxe5", "hva": "Vi slår på e5 og vinner en sentrumsbonde.", "ide": "bonden på e5 jager springeren og gir oss plass på kongesiden.", "pass": "Svart svarer …Sxe4. Ikke slå på e4 med springeren – utvikle med Sf3.", "vanligeFeil": { "exd5": "4.exd5 e4! gir svart et grep om sentrum og et godt spill." }, "motor": { "cp": -16, "tap": 0, "best": "fxe5", "dybde": 16 } },
+    { "sti": "Nc3 Nf6 f4 d5 fxe5 Nxe4", "hva": "Springeren slår på e4 og står sentralt." },
+    { "sti": "Nc3 Nf6 f4 d5 fxe5 Nxe4 Nf3", "hva": "Springeren utvikles.", "ide": "Sf3 dekker e5 og gjør klart for d4, Ld3 og 0-0.", "pass": "Pass på …Lg4 (binding) og …Lc5 mot g1. 5.Df3 er en annen idé, men Sf3 er sunnest.", "motor": { "cp": -15, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "Nc3 Nf6 f4 d5 fxe5 Nxe4 Nf3 Be7", "vekt": 3, "hva": "Svart utvikler og forbereder rokade." },
+    { "sti": "Nc3 Nf6 f4 d5 fxe5 Nxe4 Nf3 Be7 d4", "hva": "Vi tar sentrum.", "ide": "d4 støtter e5 og åpner diagonalen for løperen på c1.", "pass": "Etter …0-0 kommer Ld3 – vi vil utfordre springeren på e4.", "motor": { "cp": -10, "tap": 0, "best": "d4", "dybde": 16 } },
+    { "sti": "Nc3 Nf6 f4 d5 fxe5 Nxe4 Nf3 Be7 d4 O-O", "hva": "Svart rokerer." },
+    { "sti": "Nc3 Nf6 f4 d5 fxe5 Nxe4 Nf3 Be7 d4 O-O Bd3", "hva": "Løperen angriper springeren på e4.", "ide": "Ld3 bytter bort svarts sterkeste brikke og peker mot h7.", "pass": "Svart kan forsvare e4 med …f5. Da slår vi en passant: exf6.", "motor": { "cp": 8, "tap": 0, "best": "Bd3", "dybde": 16 } },
+    { "sti": "Nc3 Nf6 f4 d5 fxe5 Nxe4 Nf3 Be7 d4 O-O Bd3 f5", "hva": "Svart støtter springeren med f-bonden." },
+    { "sti": "Nc3 Nf6 f4 d5 fxe5 Nxe4 Nf3 Be7 d4 O-O Bd3 f5 exf6", "hva": "En passant!", "ide": "vi åpner f-linjen for tårnet vårt og tar bort støtten til e4-springeren.", "pass": "Etter …Lxf6 eller …Sxf6 må vi rokere før vi angriper.", "motor": { "cp": 16, "tap": 0, "best": "exf6", "dybde": 16 } },
+    { "sti": "Nc3 Nf6 f4 d5 fxe5 Nxe4 Nf3 Be7 d4 O-O Bd3 f5 exf6 Bxf6", "hva": "Svart slår tilbake med løperen." },
+    { "sti": "Nc3 Nf6 f4 d5 fxe5 Nxe4 Nf3 Be7 d4 O-O Bd3 f5 exf6 Bxf6 O-O", "hva": "Rokade.", "ide": "kongen er trygg og tårnet står på den åpne f-linjen.", "pass": "Svart har press mot d4. Hold den dekket med Le3 eller Se2.", "plan": "Sxe4 og Lxe4 eller Se2, deretter c3 og Lf4/Lg5. Stillingen er åpen og omtrent lik.", "motor": { "cp": 7, "tap": 0, "best": "O-O", "dybde": 16 } },
+    { "sti": "Nc3 Nf6 f4 d5 fxe5 Nxe4 Nf3 Bc5", "vekt": 2, "hva": "Svart setter løperen mot g1-feltet." },
+    { "sti": "Nc3 Nf6 f4 d5 fxe5 Nxe4 Nf3 Bc5 d4", "hva": "Vi tar sentrum med tempo mot løperen.", "ide": "d4 angriper løperen og stenger diagonalen mot g1.", "pass": "Etter …Lb4 binder svart springeren. Ld2 bryter bindingen.", "plan": "Ld2 eller Ld3, 0-0 og spill på f-linjen. Hvit har plass; motoren: likt.", "motor": { "cp": -11, "tap": 0, "best": "d4", "dybde": 16 } },
+    { "sti": "Nc3 Nf6 f4 d5 fxe5 Nxe4 Nf3 Nc6", "vekt": 1, "hva": "Svart presser e5." },
+    { "sti": "Nc3 Nf6 f4 d5 fxe5 Nxe4 Nf3 Nc6 Bb5", "hva": "Løperen binder springeren.", "ide": "Lb5 binder springeren på c6, så den ikke kan angripe e5 med full styrke, og vi kan rokere raskt.", "pass": "Svart vil ofte spille …Lc5 eller …Lg4. Vent med d4 til c5-løperen kan jages med tempo – 6.d4 med en gang gir svart lett spill.", "vanligeFeil": { "d4": "6.d4 ser naturlig ut, men etter …Lb4 og …Lg4 blir sentrum et mål; motoren regner det som ca. 1 bonde dårligere enn 6.Lb5." }, "plan": "0-0, De1 eller De2 mot springeren på e4, og d3 eller d4 når det passer. Motoren: omtrent likt.", "motor": { "cp": 9, "tap": 0, "best": "Bb5", "dybde": 16 } },
+    { "sti": "Nc3 Nf6 f4 exf4", "vekt": 2, "hva": "Svart tar bonden." },
+    { "sti": "Nc3 Nf6 f4 exf4 e5", "hva": "Bonden jager springeren.", "ide": "springeren må tilbake til g8, og vi tar f4 senere med enkel utvikling.", "pass": "Etter …Sg8 er …Dh4+ mulig hvis vi ikke spiller Sf3 raskt.", "motor": { "cp": 48, "tap": 0, "best": "e5", "dybde": 16 } },
+    { "sti": "Nc3 Nf6 f4 exf4 e5 Ng8", "hva": "Springeren går tilbake." },
+    { "sti": "Nc3 Nf6 f4 exf4 e5 Ng8 Nf3", "hva": "Springeren stopper …Dh4+.", "ide": "Sf3 dekker h4 og gjør klart for d4 og Lxf4.", "pass": "Svart vil angripe e5 med …d6.", "motor": { "cp": 59, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "Nc3 Nf6 f4 exf4 e5 Ng8 Nf3 d6", "hva": "Svart angriper e5." },
+    { "sti": "Nc3 Nf6 f4 exf4 e5 Ng8 Nf3 d6 d4", "hva": "Vi dekker e5 og åpner for løperen.", "ide": "d4 holder sentrum, og Lxf4 vinner bonden tilbake.", "pass": "Etter …dxe5 slår vi tilbake med damen eller springeren; damen på e5 kan bli et mål.", "plan": "Lxf4, De2 og 0-0-0 eller Ld3 og 0-0. Hvit har bedre utvikling og mer plass.", "motor": { "cp": 53, "tap": 0, "best": "d4", "dybde": 16 } },
+    { "sti": "Nc3 Nf6 f4 d6", "vekt": 1, "hva": "Svart støtter e5 rolig." },
+    { "sti": "Nc3 Nf6 f4 d6 Nf3", "hva": "Utvikling og press på e5.", "ide": "vi går mot en avslått kongegambitt med Sc3 allerede utviklet; Lc4 og d3 følger.", "pass": "Svart kan spille …Sc6 og …Lg4. Hold f-bonden klar til fxe5 eller f5.", "plan": "Lc4, d3 og 0-0, deretter fxe5 eller f5 med spill på f-linjen.", "motor": { "cp": 35, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "Nc3 Nc6", "vekt": 3, "hva": "Svart utvikler springeren speilvendt." },
+    { "sti": "Nc3 Nc6 Bc4", "hva": "Løperen mot f7.", "ide": "mot …Sc6 er 3.f4 risikabelt; Lc4 med d3 og f4 senere er sunnere.", "pass": "Etter …Sf6 er 4.d3 trygt. Etter …Lc5 holder vi oss til normal utvikling.", "vanligeFeil": { "f4": "3.f4 exf4 4.Sf3 g5 fører til Hamppe–Allgaier og Pierce-gambitter – morsomt, men objektivt tvilsomt. Vi holder oss til Lc4." }, "motor": { "cp": 3, "tap": 15, "best": "Nf3", "dybde": 16 } },
+    { "sti": "Nc3 Nc6 Bc4 Nf6", "vekt": 2, "hva": "Svart utvikler." },
+    { "sti": "Nc3 Nc6 Bc4 Nf6 d3", "hva": "Vi dekker e4.", "ide": "d3 holder e4 solid og åpner for løperen på c1; f4 kan komme senere.", "pass": "Svart kan bytte løperen med …Sa5. La den gå – vi får det åpne b- eller a-spillet.", "plan": "Sf3 eller f4, Le3 og 0-0. Rolig, men med kongegambittens ideer i bakhånd.", "motor": { "cp": 8, "tap": 0, "best": "d3", "dybde": 16 } },
+    { "sti": "Nc3 Nc6 Bc4 Bc5", "vekt": 2, "hva": "Svart speiler." },
+    { "sti": "Nc3 Nc6 Bc4 Bc5 Nf3", "hva": "Utvikling.", "ide": "Sf3 legger press på e5 og gjør klart for d3 og 0-0.", "pass": "Etter …Sf6 er vi i et italiensk firespringerparti. Pass på …Sxe4-gaffeltrikset hvis løperen står ubeskyttet.", "plan": "d3, 0-0 og Sa4 eller Le3 mot c5-løperen. Rolig utvikling, likt spill.", "motor": { "cp": 22, "tap": 2, "best": "Qh5", "dybde": 16 } },
+    { "sti": "Nc3 Bc5", "vekt": 2, "hva": "Svart utvikler løperen først." },
+    { "sti": "Nc3 Bc5 Nf3", "hva": "Springeren angriper e5.", "ide": "vi utvikler og legger press på e5; Sa4 mot løperen ligger i luften.", "pass": "Svart dekker med …d6. Da kommer Sa4!", "motor": { "cp": 38, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "Nc3 Bc5 Nf3 d6", "hva": "Svart dekker e5." },
+    { "sti": "Nc3 Bc5 Nf3 d6 Na4", "hva": "Springeren jakter løperen.", "ide": "vi bytter springeren mot løperen og får løperparet.", "pass": "Svart trekker seg gjerne med …Lb6. Da tar vi på b6 og får løperparet.", "plan": "Sxc5 eller Sxb6, d4 og Lc4. Løperparet gir hvit en liten, varig fordel.", "piler": ["a4c5"], "motor": { "cp": 36, "tap": 0, "best": "Na4", "dybde": 16 } }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "id": "skandinavisk",
+  "navn": "Mot skandinavisk",
+  "farge": "w",
+  "eco": "B01",
+  "niva": "lett",
+  "karakter": "Tempo mot damen",
+  "skarphet": 3,
+  "kort": "Mot 1…d5: slå, jag damen med Sc3, og bygg et sunt sentrum med d4 og Sf3.",
+  "start": "e4 d5",
+  "intro": {
+    "historie": "Skandinavisk er en av de eldste åpningene vi kjenner (Castellví–Vinyoles 1475). Den ble populær i Norden på 1800-tallet – derav navnet – og Magnus Carlsen har brukt den i VM-sammenheng.",
+    "karakter": "Svart henter bonden tilbake med damen, og hvit vinner tempo ved å jage den. Hvit får en behagelig utviklingsfordel og et sunt sentrum.",
+    "passer": "… vil ha en enkel og sunn plan mot et forsvar som ofte brukes for å slippe teori."
+  },
+  "planer": [
+    "exd5, Sc3 med tempo, d4 og Sf3 – sunn utvikling.",
+    "Mot 2…Sf6: d4 og Sf3; mot 3…Lg4 (portugisisk) f3 og g4 med tempo.",
+    "Bruk tempoet: Lc4, 0-0 og Te1, eventuelt Se5 og g4 mot løperen."
+  ],
+  "modellideer": [
+    "Damen på a5 kan bli plaget av Ld2, Sd5 og b4.",
+    "g4 mot løperen på f5 vinner plass og tempo.",
+    "Mot …Lg4 er f3 ofte bedre enn Le2 – løperen må bestemme seg."
+  ],
+  "feller": [],
+  "sidelinjer": [],
+  "trekk": [
+    { "sti": "exd5", "hva": "Vi slår.", "ide": "svart må bruke damen eller en springer for å ta tilbake, og vi får tempo.", "pass": "Ikke prøv å holde bonden med c4 – utvikle i stedet.", "motor": { "cp": 70, "tap": 0, "best": "exd5", "dybde": 16 } },
+    { "sti": "exd5 Qxd5", "vekt": 4, "hva": "Damen slår tilbake." },
+    { "sti": "exd5 Qxd5 Nc3", "hva": "Tempo på damen.", "ide": "springeren utvikles og jager damen.", "pass": "Damen går til a5, d6 eller d8. Hver har sin plan.", "motor": { "cp": 67, "tap": 0, "best": "Nc3", "dybde": 16 } },
+    { "sti": "exd5 Qxd5 Nc3 Qa5", "vekt": 4, "hva": "Damen til a5." },
+    { "sti": "exd5 Qxd5 Nc3 Qa5 d4", "hva": "Vi tar sentrum.", "ide": "d4 åpner for løperen på c1 og kontrollerer e5.", "pass": "Etter …Sf6 kommer Sf3.", "motor": { "cp": 68, "tap": 0, "best": "d4", "dybde": 16 } },
+    { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6", "hva": "Svart utvikler." },
+    { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6 Nf3", "hva": "Springeren utvikles.", "ide": "Sf3 dekker d4 og gjør klart for Lc4 og 0-0.", "pass": "Etter …c6 kommer Lc4.", "motor": { "cp": 65, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6 Nf3 c6", "hva": "Svart gir damen en retrett." },
+    { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6 Nf3 c6 Bc4", "hva": "Løperen til c4.", "ide": "løperen peker mot f7 og hindrer …Lf5–e6.", "pass": "Etter …Lf5 kommer Se5 med g4-ideer.", "motor": { "cp": 66, "tap": 0, "best": "Bd2", "dybde": 16 } },
+    { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6 Nf3 c6 Bc4 Bf5", "hva": "Svart utvikler løperen." },
+    { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6 Nf3 c6 Bc4 Bf5 Ne5", "hva": "Springeren til e5.", "ide": "springeren truer f7 og forbereder g4 mot løperen.", "pass": "Etter …e6 spiller vi g4.", "motor": { "cp": 66, "tap": 5, "best": "Bd2", "dybde": 16 } },
+    { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6 Nf3 c6 Bc4 Bf5 Ne5 e6", "hva": "Svart åpner for løperen." },
+    { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6 Nf3 c6 Bc4 Bf5 Ne5 e6 g4", "hva": "Bonden jager løperen.", "ide": "g4 vinner tempo og plass; h4–h5 følger.", "pass": "Kongesiden blir litt svekket. Rokér langt senere.", "plan": "h4, Ld2 og De2 med 0-0-0. Motoren: ca. +0,7.", "motor": { "cp": 71, "tap": 0, "best": "g4", "dybde": 16 } },
+    { "sti": "exd5 Qxd5 Nc3 Qd6", "vekt": 2, "hva": "Damen til d6." },
+    { "sti": "exd5 Qxd5 Nc3 Qd6 d4", "hva": "Vi tar sentrum.", "ide": "d4 og Sf3; senere Sb5 eller Se4 med tempo på damen.", "pass": "Damen på d6 kan bli angrepet av Sb5 eller Lf4.", "motor": { "cp": 71, "tap": 4, "best": "Nf3", "dybde": 16 } },
+    { "sti": "exd5 Qxd5 Nc3 Qd6 d4 Nf6", "hva": "Svart utvikler." },
+    { "sti": "exd5 Qxd5 Nc3 Qd6 d4 Nf6 Nf3", "hva": "Springeren utvikles.", "ide": "Sf3 og deretter Lc4/g3, 0-0 og Te1.", "pass": "Etter …a6 eller …c6 kan Se5 eller Sb5-ideer komme.", "plan": "g3, Lg2 og 0-0, eller Lc4 og 0-0. Motoren: ca. +0,6.", "motor": { "cp": 68, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "exd5 Qxd5 Nc3 Qd8", "vekt": 1, "hva": "Damen tilbake til d8." },
+    { "sti": "exd5 Qxd5 Nc3 Qd8 d4", "hva": "Vi tar sentrum.", "ide": "uten damen i spill har vi fri utvikling og et ekstra tempo.", "pass": "Svart spiller …Sf6 og …Lf5 eller …g6.", "plan": "Sf3, Lc4 og 0-0. Klar utviklingsfordel for hvit.", "motor": { "cp": 75, "tap": 0, "best": "d4", "dybde": 16 } },
+    { "sti": "exd5 Nf6", "vekt": 2, "hva": "Svart vil ta tilbake med springeren." },
+    { "sti": "exd5 Nf6 d4", "hva": "Vi tar sentrum.", "ide": "d4 forbereder c4 og Sf3; vi holder ikke d5 for enhver pris.", "pass": "Etter 3…Lg4 (portugisisk) spiller vi f3.", "motor": { "cp": 62, "tap": 0, "best": "d4", "dybde": 16 } },
+    { "sti": "exd5 Nf6 d4 Nxd5", "vekt": 3, "hva": "Springeren slår tilbake." },
+    { "sti": "exd5 Nf6 d4 Nxd5 Nf3", "hva": "Springeren utvikles.", "ide": "vi utvikler og spiller c4 og Le2 når det passer.", "pass": "Etter …g6 eller …Lg4 kommer c4 med tempo på springeren.", "plan": "c4, Le2 og 0-0. Plassfordel med sunt sentrum; motoren: ca. +0,7.", "motor": { "cp": 70, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "exd5 Nf6 d4 Bg4", "navn": "Portugisisk", "vekt": 1, "hva": "Svart ofrer bonden for utvikling." },
+    { "sti": "exd5 Nf6 d4 Bg4 f3", "hva": "Vi jager løperen.", "ide": "f3 vinner tempo; g4 følger med plass på kongesiden.", "pass": "Etter …Lf5 er g4 sterkt.", "piler": ["g2g4"], "motor": { "cp": 73, "tap": 0, "best": "f3", "dybde": 16 } },
+    { "sti": "exd5 Nf6 d4 Bg4 f3 Bf5", "hva": "Løperen går til f5." },
+    { "sti": "exd5 Nf6 d4 Bg4 f3 Bf5 g4", "hva": "Bonden jager løperen igjen.", "ide": "g4 vinner tempo; c4 følger og holder d5-bonden.", "pass": "Kongesiden er svekket. Ikke rokér kort for tidlig.", "plan": "c4, Sc3 og Lg2 eller Ld3. Bonden mer og plass; motoren: ca. +1.", "motor": { "cp": 98, "tap": 0, "best": "g4", "dybde": 16 } }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "id": "sg5-angrepet",
+  "navn": "Sg5-angrepet og Fried Liver",
+  "farge": "w",
+  "eco": "C57–C59",
+  "niva": "lett",
+  "karakter": "Angrep på f7",
+  "skarphet": 5,
+  "kort": "Mot tospringerforsvaret går vi rett på f7 med 4.Sg5 – og straffer 5…Sxd5? med springeroffer.",
+  "start": "e4 e5 Nf3 Nc6 Bc4 Nf6",
+  "intro": {
+    "historie": "Angrepet 4.Sg5 er analysert siden Polerio på 1500-tallet. Navnet Fried Liver («stekt lever») kommer fra den italienske «fegatello», og springerofferet 6.Sxf7 er en av de mest kjente fellene i sjakk. Svarts sunne svar 5…Sa5 har vært hovedlinjen siden Morphys tid.",
+    "karakter": "Vi angriper f7 med to brikker på trekk 4. Mot et uforsiktig svar vinner hvit raskt; mot det beste forsvaret får hvit en ekstra bonde mens svart får tempo og aktivitet.",
+    "passer": "… vil ha direkte, forståelige angrepsstillinger og liker at motstanderen må vite teori fra trekk 4. Passer godt for nybegynnere og klubbspillere i hurtigsjakk."
+  },
+  "planer": [
+    "Sett press på f7 og d5 – svarts svake punkter i denne åpningen.",
+    "Mot 5…Sa5 (hovedlinjen): behold bonden, trekk løperen til e2 og springeren til e5, og spill d4.",
+    "Mot 5…Sxd5?: ofre på f7 og jag kongen ut i sentrum med Df3+, Sc3 og d4.",
+    "Mot Traxler (4…Lc5): ta en trygg bonde med 5.Lxf7+ og rokér deretter i ro."
+  ],
+  "modellideer": [
+    "Df3+ er nøkkelen i Fried Liver: damen sjakker og binder springeren på d5 samtidig.",
+    "Etter Sxf7 og Df3+ åpner d4 og Te1 sentrum mens svarts konge står på e6.",
+    "I hovedlinjen er Se5 et sterkt utpostfelt – svart har gitt bort f- og d-bønder for aktivitet, og hvit må tåle et visst press."
+  ],
+  "feller": [
+    { "id": "fried-liver", "type": "slå", "navn": "Fried Liver: springeren på f7", "sti": "Ng5 d5 exd5 Nxd5", "trekk": "Nxf7 Kxf7 Qf3+", "tekst": "Svart slo tilbake på d5 med springeren. Nå er kongen på e8 og springeren på d5 svake samtidig. Finn angrepet!", "forklaring": "6.Sxf7! Kxf7 7.Df3+ tvinger kongen til e6 for å dekke springeren på d5. Etter 8.Sc3 kommer tre angripere mot d5, og svarts konge står midt på brettet. Motoren gir hvit klar fordel." },
+    { "id": "traxler-trygt", "type": "unngå", "navn": "Ingen kaos mot Traxler", "sti": "Ng5 Bc5", "trekk": "Bxf7+", "tekst": "Svart svarte 4…Lc5 og ofrer f7. 5.Sxf7 fører til et vilt motangrep etter 5…Lxf2+. Finn den trygge veien til en ekstra bonde.", "forklaring": "5.Lxf7+! Ke7 og løperen trekker seg (6.Lb3). Hvit har en bonde mer, og svarts konge kan ikke rokere. Motoren gir hvit ca. +1." }
+  ],
+  "sidelinjer": [
+    { "navn": "Lolli-angrepet 6.d4", "sti": "Ng5 d5 exd5 Nxd5 d4", "tekst": "Mot 5…Sxd5 er 6.d4! minst like sterkt som springerofferet ifølge moderne analyse: sentrum åpnes før svart rekker å konsolidere, og ofte følger Sxf7 eller Lxd5 senere." }
+  ],
+  "trekk": [
+    { "sti": "Ng5", "navn": "Sg5-angrepet", "hva": "Springeren angriper f7 sammen med løperen.", "ide": "f7 er bare dekket av kongen. To angripere mot én forsvarer tvinger svart til å reagere med en gang.", "pass": "Vi flytter samme brikke to ganger. Svart får tempo, og etter 4…d5 5.exd5 Sa5 får svart godt spill for bonden.", "vurdering": "Objektivt omtrent likt med best spill. Praktisk er det sterkt fordi det naturlige 5…Sxd5? taper.", "piler": ["g5f7", "c4f7"], "felt": ["f7"], "motor": { "cp": 21, "tap": 0, "best": "Ng5", "dybde": 16 } },
+    { "sti": "Ng5 d5", "vekt": 5, "hva": "Svart stenger diagonalen mot f7 – det beste svaret." },
+    { "sti": "Ng5 d5 exd5", "hva": "Vi slår på d5.", "ide": "bonden vinnes, og nå må svart vise hvordan bonden skal vinnes tilbake.", "pass": "Etter 5…Sxd5? er Sxf7! mulig. Etter 5…Sa5 er løperen angrepet.", "motor": { "cp": 12, "tap": 0, "best": "exd5", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Na5", "navn": "Hovedlinjen 5…Sa5", "vekt": 5, "hva": "Svart angriper løperen i stedet for å slå tilbake – sunt og godt." },
+    { "sti": "Ng5 d5 exd5 Na5 Bb5+", "hva": "Løperen går med sjakk.", "ide": "løperen unnslipper med tempo, og etter …c6 slår vi på c6 og står to bønder over en stund.", "pass": "Svart får tid til …h6 og …e4. Hvit må være klar til å gi tilbake én bonde for å få brikkene i spill.", "vanligeFeil": { "d3": "6.d3 er spillbart, men etter …h6 7.Sf3 e4 får svart lett spill. Lb5+ er hovedlinjen." }, "motor": { "cp": 23, "tap": 0, "best": "Bb5+", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Na5 Bb5+ c6", "hva": "Svart ofrer enda en bonde for rask utvikling." },
+    { "sti": "Ng5 d5 exd5 Na5 Bb5+ c6 dxc6", "hva": "Vi tar bonden på c6.", "ide": "vi har to bønder mer; etter …bxc6 må løperen tilbake, men svarts bondestruktur er splittet.", "pass": "Svart truer …bxc6 med angrep på løperen. Den skal til e2 – ikke a4, der den blir stående utenfor.", "motor": { "cp": 19, "tap": 0, "best": "dxc6", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Na5 Bb5+ c6 dxc6 bxc6", "hva": "Svart slår tilbake og angriper løperen." },
+    { "sti": "Ng5 d5 exd5 Na5 Bb5+ c6 dxc6 bxc6 Be2", "hva": "Løperen trekker seg til e2.", "ide": "e2 er trygt, dekker kongestillingen og stopper …Dd4/…Lg4-ideer. Vi er en bonde over.", "pass": "Springeren på g5 blir snart jaget med …h6. Den skal til f3 og så e5.", "motor": { "cp": 4, "tap": 2, "best": "Bd3", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Na5 Bb5+ c6 dxc6 bxc6 Be2 h6", "hva": "Svart jager springeren." },
+    { "sti": "Ng5 d5 exd5 Na5 Bb5+ c6 dxc6 bxc6 Be2 h6 Nf3", "hva": "Springeren går tilbake til f3.", "ide": "den angriper e5 og dekker kongen. Etter …e4 hopper den til e5.", "pass": "Etter …e4 er feltet e5 ledig for springeren – ikke gå til d4 eller g1.", "motor": { "cp": 3, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Na5 Bb5+ c6 dxc6 bxc6 Be2 h6 Nf3 e4", "hva": "Svart vinner terreng med tempo." },
+    { "sti": "Ng5 d5 exd5 Na5 Bb5+ c6 dxc6 bxc6 Be2 h6 Nf3 e4 Ne5", "hva": "Springeren til det sentrale feltet e5.", "ide": "på e5 står springeren trygt midt på brettet og blokkerer svarts spill.", "pass": "Svart vil jage den med …Ld6 og …Dc7. Støtt den med d4.", "felt": ["e5"], "motor": { "cp": 0, "tap": 0, "best": "Ne5", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Na5 Bb5+ c6 dxc6 bxc6 Be2 h6 Nf3 e4 Ne5 Bd6", "vekt": 3, "hva": "Svart utvikler og presser springeren på e5." },
+    { "sti": "Ng5 d5 exd5 Na5 Bb5+ c6 dxc6 bxc6 Be2 h6 Nf3 e4 Ne5 Bd6 d4", "hva": "Vi støtter springeren med d-bonden.", "ide": "d4 holder springeren på e5 og åpner diagonalen for løperen på c1.", "pass": "Svart kan slå en passant med …exd3. Da slår vi tilbake med springeren: Sxd3.", "plan": "0-0, c4 og Sc3 (eller Sd2). Hvit har en bonde mer og en solid stilling; svart har aktivitet og løperpar. Motoren gir hvit en liten fordel.", "piler": ["c1f4", "e1g1"], "motor": { "cp": -1, "tap": 0, "best": "d4", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Nxd5", "navn": "5…Sxd5? – fella", "vekt": 2, "hva": "Svart slår tilbake med springeren – naturlig, men unøyaktig." },
+    { "sti": "Ng5 d5 exd5 Nxd5 Nxf7", "navn": "Fried Liver", "hva": "Springeren ofres på f7!", "ide": "kongen trekkes ut i sentrum der dame, løper og springer kan angripe den.", "pass": "Etter …Kxf7 må Df3+ komme straks, ellers organiserer svart forsvaret.", "vurdering": "Motoren gir hvit ca. +1 etter springerofferet. 6.d4! er også meget sterkt (se sidelinjer).", "piler": ["d1f3"], "felt": ["f7"], "motor": { "cp": 110, "tap": 0, "best": "Nxf7", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Nxd5 Nxf7 Kxf7", "hva": "Svart tar springeren." },
+    { "sti": "Ng5 d5 exd5 Nxd5 Nxf7 Kxf7 Qf3+", "hva": "Sjakk fra f3.", "ide": "damen sjakker og angriper samtidig springeren på d5, som er bundet mot kongen.", "pass": "Etter …Ke6 kommer Sc3 for å presse d5 enda mer. Etter …Kg8?? eller …Ke8? vinner hvit materiell.", "piler": ["f3d5", "c4d5"], "motor": { "cp": 80, "tap": 0, "best": "Qf3+", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Nxd5 Nxf7 Kxf7 Qf3+ Ke6", "vekt": 4, "hva": "Kongen dekker d5 – det eneste trekket som holder brikken." },
+    { "sti": "Ng5 d5 exd5 Nxd5 Nxf7 Kxf7 Qf3+ Ke6 Nc3", "hva": "Tredje angriper på d5.", "ide": "springeren øker presset på den bundne springeren; svart må finne …Sb4 eller …Sce7.", "pass": "Ikke slå Lxd5+ for tidlig – presset er sterkere enn byttet.", "piler": ["c3d5"], "motor": { "cp": 82, "tap": 0, "best": "Nc3", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Nxd5 Nxf7 Kxf7 Qf3+ Ke6 Nc3 Nb4", "vekt": 3, "hva": "Svart dekker d5 med den andre springeren og truer …Sxc2+." },
+    { "sti": "Ng5 d5 exd5 Nxd5 Nxf7 Kxf7 Qf3+ Ke6 Nc3 Nb4 O-O", "hva": "Kongen i sikkerhet før vi åpner sentrum.", "ide": "etter rokaden kommer d4 og Te1 – alle hvite brikker går mot den nakne kongen på e6.", "pass": "…Sxc2 vinner et tårn på a1, men koster så mye tid at angrepet blir sterkere. Ikke få panikk.", "piler": ["d2d4", "f1e1"], "motor": { "cp": 79, "tap": 0, "best": "O-O", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Nxd5 Nxf7 Kxf7 Qf3+ Ke6 Nc3 Nb4 O-O c6", "hva": "Svart støtter springeren på d5." },
+    { "sti": "Ng5 d5 exd5 Nxd5 Nxf7 Kxf7 Qf3+ Ke6 Nc3 Nb4 O-O c6 d4", "hva": "Sentrum åpnes.", "ide": "kongen på e6 kan ikke bli stående når e- og d-linjen åpnes; Te1 og dxe5 er neste.", "pass": "Svart prøver å bytte damer med …Df6. Unngå byttet med Dd1 eller De4.", "plan": "Te1, dxe5 og a3 for å jage springeren på b4. Svarts konge er permanent utsatt – hvit står klart bedre.", "motor": { "cp": 87, "tap": 0, "best": "d4", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Nxd5 Nxf7 Kxf7 Qf3+ Ke6 Nc3 Ne7", "vekt": 1, "hva": "Svart dekker d5 med springeren fra e7." },
+    { "sti": "Ng5 d5 exd5 Nxd5 Nxf7 Kxf7 Qf3+ Ke6 Nc3 Ne7 d4", "hva": "Vi åpner sentrum.", "ide": "e5-bonden er bundet; etter dxe5 åpnes linjene mot kongen på e6.", "pass": "Svart spiller …c6 for å holde d5. Fortsett med Lg5 og 0-0-0 eller 0-0 og Te1.", "plan": "Lg5, 0-0-0 og Te1-ideer – hvit har sterkt initiativ og motoren gir over +2.", "motor": { "cp": 188, "tap": 0, "best": "d4", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Nd4", "navn": "Fritz", "vekt": 1, "hva": "Svart angriper c2 og ofrer en bonde for tempo." },
+    { "sti": "Ng5 d5 exd5 Nd4 c3", "hva": "Vi jager springeren med en gang.", "ide": "c3 stopper …Sxc2+ og tvinger svart til å vise kortene.", "pass": "Svart svarer gjerne …b5 med angrep på løperen. Den går til f1!", "motor": { "cp": 57, "tap": 0, "best": "c3", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Nd4 c3 b5", "hva": "Svart angriper løperen." },
+    { "sti": "Ng5 d5 exd5 Nd4 c3 b5 Bf1", "hva": "Løperen trekker seg helt tilbake.", "ide": "f1 virker passivt, men fra der dekker løperen kongen og kan slå på b5 senere.", "pass": "Etter …Sxd5 8.cxd4 Dxg5 9.Lxb5+ må vi vite at Df3 er neste.", "motor": { "cp": 58, "tap": 0, "best": "Bf1", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Nd4 c3 b5 Bf1 Nxd5", "hva": "Svart slår tilbake på d5." },
+    { "sti": "Ng5 d5 exd5 Nd4 c3 b5 Bf1 Nxd5 cxd4", "hva": "Vi tar springeren på d4.", "ide": "vi vinner en brikke for to bønder; svart får tilbake materiell med …Dxg5.", "pass": "Etter …Dxg5 tar vi b5 med sjakk.", "motor": { "cp": 62, "tap": 0, "best": "cxd4", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Nd4 c3 b5 Bf1 Nxd5 cxd4 Qxg5", "hva": "Svart vinner springeren tilbake." },
+    { "sti": "Ng5 d5 exd5 Nd4 c3 b5 Bf1 Nxd5 cxd4 Qxg5 Bxb5+", "hva": "Sjakk og en bonde til.", "ide": "løperen tar b5 med sjakk og svarts konge mister rokaden.", "pass": "Svart går til d8. Da er Df3 med angrep på springeren d5 og tårnet a8 sterkt.", "motor": { "cp": 53, "tap": 0, "best": "Bxb5+", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 Nd4 c3 b5 Bf1 Nxd5 cxd4 Qxg5 Bxb5+ Kd8", "hva": "Kongen går til d8." },
+    { "sti": "Ng5 d5 exd5 Nd4 c3 b5 Bf1 Nxd5 cxd4 Qxg5 Bxb5+ Kd8 Qf3", "hva": "Damen angriper d5 og a8.", "ide": "dobbelangrep: svart må passe både springeren på d5 og tårnet på a8.", "pass": "Svarts dame på g5 truer g2. Hold den dekket.", "plan": "0-0, Lc6 eller dxe5. Materielt har hvit en bonde mer; stillingen er skarp og motoren kaller den omtrent lik.", "piler": ["f3d5", "f3a8"], "motor": { "cp": 0, "tap": 58, "best": "O-O", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 b5", "navn": "Ulvestad", "vekt": 1, "hva": "Svart ofrer b-bonden for å avlede løperen." },
+    { "sti": "Ng5 d5 exd5 b5 Bf1", "hva": "Løperen går til f1.", "ide": "som mot Fritz: løperen dekker kongen og kan slå b5 senere.", "pass": "Ikke 6.Lxb5? Dxd5 – da står svart godt.", "motor": { "cp": 51, "tap": 0, "best": "Bf1", "dybde": 16 } },
+    { "sti": "Ng5 d5 exd5 b5 Bf1 Nd4", "hva": "Svart angriper c2." },
+    { "sti": "Ng5 d5 exd5 b5 Bf1 Nd4 c3", "hva": "Vi jager springeren – og er i Fritz-varianten.", "ide": "stillingen er den samme som etter 5…Sd4 6.c3 b5 7.Lf1 – en omstilling.", "pass": "Fortsett som i Fritz: etter …Sxd5 kommer cxd4.", "overgang": "Ng5 d5 exd5 Nd4 c3 b5 Bf1", "motor": { "cp": 55, "tap": 0, "best": "c3", "dybde": 16 } },
+    { "sti": "Ng5 Bc5", "navn": "Traxler", "vekt": 2, "hva": "Svart ofrer f7 og planlegger …Lxf2+ – et vilt motangrep." },
+    { "sti": "Ng5 Bc5 Bxf7+", "hva": "Vi tar en trygg bonde med sjakk.", "ide": "vi unngår kaoset etter 5.Sxf7 Lxf2+, og svarts konge mister retten til å rokere.", "pass": "Svart går til e7 og jager deretter brikkene våre. Trekk løperen til b3 og hold springeren unna …h6-jaget.", "vurdering": "Motoren gir hvit ca. +0,9 – en ren bonde og bedre konge. 5.Sxf7 Lxf2+ er objektivt like bra, men svært farlig å spille.", "motor": { "cp": 101, "tap": 0, "best": "Bxf7+", "dybde": 16 } },
+    { "sti": "Ng5 Bc5 Bxf7+ Ke7", "hva": "Kongen går til e7 – den eneste måten." },
+    { "sti": "Ng5 Bc5 Bxf7+ Ke7 Bb3", "hva": "Løperen trekker seg til b3.", "ide": "løperen står trygt, ser mot g8 og kan ikke angripes med …d5 eller …Sa5 med tempo.", "pass": "Svart vil spille …Tf8, …d6 og …h6. Spill d3 og Sc3, og trekk springeren til f3 når den jages.", "plan": "d3, Sc3, 0-0 og Sf3. Hvit har en bonde mer og bedre konge; svart har noe press på f-linjen.", "motor": { "cp": 89, "tap": 5, "best": "Bc4", "dybde": 16 } }
+  ]
+}

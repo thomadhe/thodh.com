@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "id": "caro-kann-fremstot",
+  "navn": "Caro-Kann: fremstøt",
+  "farge": "w",
+  "eco": "B12",
+  "niva": "middels",
+  "karakter": "Plass og kongesideangrep",
+  "skarphet": 3,
+  "kort": "Mot 1…c6: 3.e5 og Shorts system med Sf3, Le2 og 0-0 – enkelt, sunt og med mye plass.",
+  "start": "e4 c6",
+  "intro": {
+    "historie": "Fremstøtet mot Caro-Kann ble lenge regnet som ufarlig, men Nigel Short viste på 1990-tallet at den enkle oppstillingen Sf3, Le2 og 0-0 gir hvit et varig press. Siden har den vært et av de mest populære våpnene mot Caro-Kann.",
+    "karakter": "Hvit låser sentrum med e5 og får plass på kongesiden. Svart utvikler løperen til f5 før …e6 og angriper sentrum med …c5.",
+    "passer": "… vil ha en sunn og forståelig stilling mot et solid forsvar, med mulighet for kongeangrep senere."
+  },
+  "planer": [
+    "Sf3, Le2, 0-0 og c3 eller Le3 – Shorts system.",
+    "Mot …c5: Le3 og dxc5 når det passer, eller c3 og fast sentrum.",
+    "Senere Sh4 mot løperen på f5/g6 eller c4 for å åpne dameflanken."
+  ],
+  "modellideer": [
+    "Sh4 jakter løperen på f5 og vinner løperparet.",
+    "e5-bonden tar f6 fra svarts springer, så svart utvikler ofte via e7.",
+    "Le3 og dxc5 gir hvit et sterkt felt på d4."
+  ],
+  "feller": [],
+  "sidelinjer": [],
+  "trekk": [
+    { "sti": "d4", "hva": "Vi tar sentrum.", "ide": "bønder på e4 og d4 gir mest plass; svart vil utfordre med …d5.", "pass": "Etter …d5 går vi fram med e5.", "motor": { "cp": 32, "tap": 0, "best": "d4", "dybde": 16 } },
+    { "sti": "d4 d5", "vekt": 5, "hva": "Svart angriper e4." },
+    { "sti": "d4 d5 e5", "navn": "Fremstøt", "hva": "Bonden går fram.", "ide": "e5 låser sentrum og gir plass på kongesiden.", "pass": "Svart får utvikle løperen til f5 utenfor kjeden. Det er greit – vi jager den senere.", "motor": { "cp": 42, "tap": 0, "best": "e5", "dybde": 16 } },
+    { "sti": "d4 d5 e5 Bf5", "vekt": 4, "hva": "Løperen ut før …e6." },
+    { "sti": "d4 d5 e5 Bf5 Nf3", "hva": "Springeren utvikles.", "ide": "Sf3 dekker d4 og e5 og gjør klart for Le2 og 0-0.", "pass": "Etter …e6 kommer Le2.", "motor": { "cp": 40, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "d4 d5 e5 Bf5 Nf3 e6", "hva": "Svart åpner for løperen på f8." },
+    { "sti": "d4 d5 e5 Bf5 Nf3 e6 Be2", "hva": "Løperen til e2.", "ide": "rolig utvikling og rask rokade; løperen kan senere gå til d3 eller f3.", "pass": "Etter …c5 er Le3 det mest presise.", "motor": { "cp": 31, "tap": 0, "best": "Be2", "dybde": 16 } },
+    { "sti": "d4 d5 e5 Bf5 Nf3 e6 Be2 c5", "vekt": 3, "hva": "Svart angriper d4." },
+    { "sti": "d4 d5 e5 Bf5 Nf3 e6 Be2 c5 Be3", "hva": "Løperen dekker d4.", "ide": "Le3 holder d4 og gjør dxc5 mulig med en sterk løper på d4.", "pass": "Etter …cxd4 tar springeren tilbake.", "plan": "0-0, c3 eller dxc5 med Sbd2–b3. Hvit har plass; motoren: ca. +0,3.", "motor": { "cp": 15, "tap": 5, "best": "O-O", "dybde": 16 } },
+    { "sti": "d4 d5 e5 Bf5 Nf3 e6 Be2 Nd7", "vekt": 2, "hva": "Svart utvikler springeren." },
+    { "sti": "d4 d5 e5 Bf5 Nf3 e6 Be2 Nd7 O-O", "hva": "Rokade.", "ide": "kongen trygg; c3, Sbd2 og Sh4 følger.", "pass": "Svart spiller …Se7 og …h6. Pass på …c5-bruddet.", "plan": "c3, Sbd2–b3 og Sh4 mot løperen. Motoren: ca. +0,4.", "motor": { "cp": 43, "tap": 0, "best": "O-O", "dybde": 16 } },
+    { "sti": "d4 d5 e5 c5", "vekt": 1, "hva": "Svart angriper d4 straks." },
+    { "sti": "d4 d5 e5 c5 dxc5", "hva": "Vi slår.", "ide": "svart må bruke tid på å vinne bonden tilbake.", "pass": "Etter …e6 utvikler vi Sf3 og Ld3.", "plan": "Sf3, Ld3 og 0-0. Fin utvikling og et sterkt e5; motoren: ca. +0,3.", "motor": { "cp": 31, "tap": 15, "best": "Nf3", "dybde": 16 } }
+  ]
+}
