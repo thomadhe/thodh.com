@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { defaults, type LearningState } from "./learning";
 
-const language = z.enum(["it", "ru", "es"]);
+const language = z.enum(["it", "ru", "es", "fr", "de"]);
 const level = z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]);
 const text = z.string().max(500);
 const date = z.string().datetime({ offset: true });
@@ -17,7 +17,7 @@ export const progressSchema = z.object({
   version: z.literal(1),
   language,
   // Languages added later default, so progress saved before them still loads.
-  levels: byLanguage({ it: level, ru: level, es: level.default("A1") }, z.string().max(10)),
+  levels: byLanguage({ it: level, ru: level, es: level.default("A1"), fr: level.default("A1"), de: level.default("A1") }, z.string().max(10)),
   goal: z.union([z.literal(5), z.literal(10), z.literal(15), z.literal(20), z.literal(30)]),
   translations: z.boolean(), transliteration: z.boolean(), autoSpeak: z.boolean(),
   correction: z.enum(["gentle", "balanced", "detailed"]),
@@ -27,7 +27,8 @@ export const progressSchema = z.object({
     turns: z.number().int().min(0).max(1000), mode: z.enum(["guided", "ai"]),
   }).strict()).max(1000),
   saved: byLanguage(
-    { it: z.array(text).max(1000), ru: z.array(text).max(1000), es: z.array(text).max(1000).default([]) },
+    { it: z.array(text).max(1000), ru: z.array(text).max(1000), es: z.array(text).max(1000).default([]),
+      fr: z.array(text).max(1000).default([]), de: z.array(text).max(1000).default([]) },
     z.array(text).max(1000),
   ),
   reviews: z.record(z.string().max(600), z.object({ due: z.number().finite().min(0), interval: z.number().finite().min(0).max(30) }).strict())

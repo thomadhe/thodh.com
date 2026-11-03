@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-label="Jonas">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d3e6d7"/>
+      <stop offset="1" stop-color="#7fa98c"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.35" r="0.6">
+      <stop offset="0" stop-color="#f4fbf5" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#f4fbf5" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bg)"/>
+  <rect width="800" height="1000" fill="url(#glow)"/>
+  <circle cx="650" cy="160" r="72" fill="#eaf4ec" opacity="0.55"/>
+  <!-- sweater and shirt collar -->
+  <path d="M110 1000c12-196 116-306 240-336h100c124 30 228 140 240 336Z" fill="#d6a03c"/>
+  <path d="M160 1000c14-120 60-200 120-250M640 1000c-14-120-60-200-120-250" fill="none" stroke="#bf8b2c" stroke-width="10" stroke-linecap="round"/>
+  <path d="M344 664l56 60 56-60 26 34-82 46-82-46Z" fill="#f4f6f3"/>
+  <!-- neck -->
+  <path d="M352 556h96l6 108c-30 28-78 28-108 0Z" fill="#d9a07c"/>
+  <!-- ears -->
+  <ellipse cx="262" cy="432" rx="24" ry="36" fill="#e0a882"/>
+  <ellipse cx="538" cy="432" rx="24" ry="36" fill="#e0a882"/>
+  <!-- face -->
+  <ellipse cx="400" cy="420" rx="140" ry="168" fill="#eab896"/>
+  <!-- beard -->
+  <path d="M262 436c4 112 62 172 138 172s134-60 138-172c-18 42-50 64-80 66-20-18-38-24-58-24s-38 6-58 24c-30-2-62-24-80-66Z" fill="#a8743f"/>
+  <!-- mouth -->
+  <path d="M366 520q34 28 68 0q-34 10-68 0Z" fill="#7a3a2e"/>
+  <!-- hair, short and side-swept -->
+  <path d="M262 392c-12-124 52-200 142-200 94 0 150 70 136 194-22-62-62-98-124-106-50 22-108 52-154 112Z" fill="#b9854a"/>
+  <!-- brows -->
+  <path d="M314 372q30-12 60-2M426 370q30-10 60 2" fill="none" stroke="#7d5427" stroke-width="10" stroke-linecap="round"/>
+  <!-- eyes -->
+  <ellipse cx="346" cy="420" rx="12" ry="15" fill="#2a2420"/>
+  <ellipse cx="454" cy="420" rx="12" ry="15" fill="#2a2420"/>
+  <circle cx="350" cy="414" r="4" fill="#fff"/>
+  <circle cx="458" cy="414" r="4" fill="#fff"/>
+  <!-- glasses -->
+  <g fill="none" stroke="#2e3a35" stroke-width="8">
+    <circle cx="346" cy="420" r="42"/>
+    <circle cx="454" cy="420" r="42"/>
+    <path d="M388 416q12-10 24 0M304 412l-40 6M496 412l40 6" stroke-linecap="round"/>
+  </g>
+  <!-- nose -->
+  <path d="M402 440q-12 32 6 42" fill="none" stroke="#c8906c" stroke-width="6" stroke-linecap="round"/>
+  <!-- cheeks -->
+  <circle cx="314" cy="482" r="24" fill="#e98a72" opacity="0.28"/>
+  <circle cx="486" cy="482" r="24" fill="#e98a72" opacity="0.28"/>
+</svg>

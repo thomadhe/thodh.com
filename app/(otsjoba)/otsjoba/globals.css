@@ -535,6 +535,34 @@ img {
 .es .hero-portrait {
   background: #e9a552;
 }
+.conversation-hero.fr {
+  background: #f5e1e6;
+}
+.fr .hero-kicker,
+.fr .hero-copy h2 {
+  color: #5e1f34;
+}
+.fr .hero-copy > p,
+.fr .hero-footnote {
+  color: #84505f;
+}
+.fr .hero-portrait {
+  background: #c97b92;
+}
+.conversation-hero.de {
+  background: #dfece2;
+}
+.de .hero-kicker,
+.de .hero-copy h2 {
+  color: #1f4630;
+}
+.de .hero-copy > p,
+.de .hero-footnote {
+  color: #4a6a56;
+}
+.de .hero-portrait {
+  background: #7fa98c;
+}
 .section-heading {
   display: flex;
   align-items: center;

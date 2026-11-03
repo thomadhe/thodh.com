@@ -1,9 +1,11 @@
 import italian from "@/features/otsjoba/data/curriculum/it.json";
 import russian from "@/features/otsjoba/data/curriculum/ru.json";
 import spanish from "@/features/otsjoba/data/curriculum/es.json";
+import french from "@/features/otsjoba/data/curriculum/fr.json";
+import german from "@/features/otsjoba/data/curriculum/de.json";
 
-export type Language = "it" | "ru" | "es";
-export const languageCodes: Language[] = ["it", "ru", "es"];
+export type Language = "it" | "ru" | "es" | "fr" | "de";
+export const languageCodes: Language[] = ["it", "ru", "es", "fr", "de"];
 export type Level = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
 export const lessonIcons = [
   "coffee", "hand", "wave", "train", "utensils", "compass", "shop", "home", "map",
@@ -37,7 +39,7 @@ export type Lesson = {
   steps: Step[];
   vocabulary: Word[];
 };
-export const curriculum = { it: italian, ru: russian, es: spanish } as Record<Language, Lesson[]>;
+export const curriculum = { it: italian, ru: russian, es: spanish, fr: french, de: german } as Record<Language, Lesson[]>;
 export type TutorProfile = {
   name: string;
   native: string;
@@ -107,6 +109,40 @@ export const languages: Record<Language, TutorProfile> = {
     placeholder: "Escribe aquí… eller bruk mikrofonen",
     startLevel: "A1",
   },
+  fr: {
+    name: "Fransk",
+    native: "Français",
+    tutor: "Camille",
+    locale: "fr-FR",
+    flag: "🇫🇷",
+    image: "/otsjoba/tutors/camille.svg",
+    greeting: "Bonjour ! Contente de te voir !",
+    focus: "Finn ordene, tonen og det rette registeret.",
+    adjective: "franske",
+    hero: ["Allez, on se lance ?", "Ett ord om gangen."],
+    heroText: "Camille har satt av tid til en ny samtale.",
+    about: "Presis, varm og glad i en god formulering. Øv på kafébestilling, tu og vous, og etter hvert skarpe resonnementer og ironi.",
+    theme: "Hverdag & nyanser",
+    placeholder: "Écris ici… eller bruk mikrofonen",
+    startLevel: "A1",
+  },
+  de: {
+    name: "Tysk",
+    native: "Deutsch",
+    tutor: "Jonas",
+    locale: "de-DE",
+    flag: "🇩🇪",
+    image: "/otsjoba/tutors/jonas.svg",
+    greeting: "Hallo! Schön, dich zu sehen!",
+    focus: "Bygg setningene trygt og si det du mener.",
+    adjective: "tyske",
+    hero: ["Na, wie geht’s?", "Litt tysk hver dag."],
+    heroText: "Jonas har nye spørsmål klare, fra bakeriet til debatten.",
+    about: "Rolig, strukturert og med tørr humor. Øv på hverdagsprat, du og Sie, og etter hvert presise argumenter og skifte av register.",
+    theme: "Struktur & samtale",
+    placeholder: "Schreib hier… eller bruk mikrofonen",
+    startLevel: "A1",
+  },
 };
 export const levels: Level[] = ["A1", "A2", "B1", "B2", "C1", "C2"];
 export const levelNames: Record<Level, string> = {
@@ -157,14 +193,14 @@ export type LearningState = {
 export const defaults: LearningState = {
   version: 1,
   language: "it",
-  levels: { it: "B1", ru: "B2", es: "A1" },
+  levels: { it: "B1", ru: "B2", es: "A1", fr: "A1", de: "A1" },
   goal: 15,
   translations: false,
   transliteration: false,
   autoSpeak: false,
   correction: "balanced",
   sessions: [],
-  saved: { it: [], ru: [], es: [] },
+  saved: { it: [], ru: [], es: [], fr: [], de: [] },
   reviews: {},
   activities: [],
   mistakes: [],
