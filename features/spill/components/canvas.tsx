@@ -55,7 +55,7 @@ export function Canvas({ dato, nokkel }: { dato: string; nokkel: string }) {
     })
   }
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
+  if (!lastet) return <div key="laster" className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   const delTekst = [
     `Canvas · ${formaterDato(dato, "kort")} · ${verdi.resultat.status === "vunnet" ? gjettet.length : "X"}/${FORSOK}`,

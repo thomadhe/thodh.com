@@ -185,11 +185,13 @@ function SkrivebordIkon({
   valgt,
   velg,
   apne,
+  forvarsel,
 }: {
   p: Program
   valgt: boolean
   velg: () => void
   apne: () => void
+  forvarsel: () => void
 }) {
   return (
     <button
@@ -203,6 +205,8 @@ function SkrivebordIkon({
       }}
       onDoubleClick={apne}
       onKeyDown={(e) => e.key === "Enter" && apne()}
+      onPointerEnter={forvarsel}
+      onFocus={forvarsel}
     >
       <span className="os-ikon-bilde transition duration-150 group-hover:-translate-y-0.5 group-hover:-rotate-3">
         <ProgramIkon p={p} storrelse={40} />
@@ -220,7 +224,7 @@ const status: Record<string, [string, string]> = {
 }
 
 /** Desktop gadget with today's games, their status and the time left until new ones. */
-function DagensSpill({ apne }: { apne: (mal: string) => void }) {
+function DagensSpill({ apne, forvarsel }: { apne: (mal: string) => void; forvarsel: (mal: string) => void }) {
   const resultater = useAlleResultater()
   const dato = useIDag()
   const nedtelling = useNedtelling()
@@ -246,6 +250,7 @@ function DagensSpill({ apne }: { apne: (mal: string) => void }) {
               <button
                 type="button"
                 onClick={() => apne(p.mal)}
+                onPointerEnter={() => forvarsel(p.mal)}
                 className="flex w-full items-center gap-2 px-2 py-1.5 text-left text-[12px] hover:bg-[var(--os-tittel)] hover:text-white"
               >
                 <ProgramIkon p={p} storrelse={20} />
@@ -338,6 +343,21 @@ export function Skrivebord() {
     })
   }, [router])
 
+  // Warms up the page behind an icon before it is opened (production only; a no-op for chess).
+  const forvarsel = useCallback(
+    (mal: string) => {
+      if (mal.startsWith("/") && !mal.startsWith("/sjakk")) router.prefetch(mal)
+    },
+    [router],
+  )
+
+  // The daily games are all on screen, so they are prefetched like visible links would be.
+  useEffect(() => {
+    if ((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData) return
+    const id = window.setTimeout(() => dagligeProgrammer.forEach((p) => forvarsel(p.mal)), 1500)
+    return () => window.clearTimeout(id)
+  }, [forvarsel])
+
   const endre = (mal: string, endring: Partial<Vindu>) =>
     setVinduer((vs) => vs.map((v) => (v.mal === mal ? { ...v, ...endring } : v)))
 
@@ -388,7 +408,14 @@ export function Skrivebord() {
   const innhold = (v: Vindu) => (v.mal === "om" ? <OmThodh lukk={() => lukk(v.mal)} /> : <Papirkurv />)
 
   const ikon = (p: Program) => (
-    <SkrivebordIkon key={p.id} p={p} valgt={valgt === p.id} velg={() => setValgt(p.id)} apne={() => apne(p.mal)} />
+    <SkrivebordIkon
+      key={p.id}
+      p={p}
+      valgt={valgt === p.id}
+      velg={() => setValgt(p.id)}
+      apne={() => apne(p.mal)}
+      forvarsel={() => forvarsel(p.mal)}
+    />
   )
 
   return (
@@ -426,7 +453,7 @@ export function Skrivebord() {
 
         {!liten ? (
           <div className="absolute top-3 right-3">
-            <DagensSpill apne={apne} />
+            <DagensSpill apne={apne} forvarsel={forvarsel} />
           </div>
         ) : null}
 

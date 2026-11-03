@@ -163,7 +163,7 @@ export function Tilkoblinger({ dato, slag, brikker }: { dato: string; slag: "lan
     }
   }
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
+  if (!lastet) return <div key="laster" className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   // At the end, groups not found are shown too, in difficulty order.
   const visteGrupper: Funnet[] = [

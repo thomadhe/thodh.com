@@ -514,7 +514,7 @@ export function Sanglos({ dato, sanger }: { dato: string; sanger: SangValg[] }) 
   )
   const oppdaterValgt = useMemo(() => oppdaterRunde(kategori), [oppdaterRunde, kategori])
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
+  if (!lastet) return <div key="laster" className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   const alleFerdige = SANG_KATEGORIER.every((k) => verdi.runder[k.id].status !== "pagar")
   const delTekst = [

@@ -188,7 +188,7 @@ export function Emovi({ dato, emoji }: { dato: string; emoji: string }) {
     }
   }
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
+  if (!lastet) return <div key="laster" className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   // Lives lost by asking for a hint, as opposed to by a wrong guess.
   const viaHint = Math.max(0, tapt - verdi.gjetninger.filter((g) => !g.riktig).length)

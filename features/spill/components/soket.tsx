@@ -100,7 +100,7 @@ export function Soket({ dato, prompt, lengde }: { dato: string; prompt: string; 
     return () => window.removeEventListener("keydown", ved)
   }, [])
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
+  if (!lastet) return <div key="laster" className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   const tasteFarge = new Map<string, Bokstavsvar>()
   for (const r of verdi.rader) {

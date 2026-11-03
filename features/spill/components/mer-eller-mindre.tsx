@@ -234,7 +234,7 @@ export function MerEllerMindre({ dato, kategorier }: { dato: string; kategorier:
     return () => window.removeEventListener("keydown", ved)
   }, [])
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
+  if (!lastet) return <div key="laster" className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   if (ferdig) return <Resultater dato={dato} kategorier={kategorier} svar={verdi.svar} />
 

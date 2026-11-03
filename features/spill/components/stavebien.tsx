@@ -240,7 +240,7 @@ export function Stavebien({ dato, ord }: { dato: string; ord: StaveOrd[] }) {
     if (indeks < ord.length && igjen > 0) les(ord[indeks], "ord")
   }
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
+  if (!lastet) return <div key="laster" className="h-96 animate-pulse rounded-3xl bg-white/5" />
   if (ferdig) return <Resultat dato={dato} ord={ord} svar={verdi.svar} />
 
   const svart = tilbakemelding !== null ? verdi.svar[tilbakemelding] : undefined
