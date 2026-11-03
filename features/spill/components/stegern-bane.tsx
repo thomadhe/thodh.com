@@ -5,7 +5,8 @@ import { MAKS_DM, NIVAAER, type Nivaa } from "../lib/stegern"
 
 // The course: Stegern, a lime bean in sneakers, jumps along a track marked in metres. One jump per answer,
 // its length and arc set by the score. Everything moves in one animation loop that writes straight to the SVG,
-// so React only renders when a jump is added.
+// so React only renders when a jump is added. The loop stops once Stegern stands still and the camera has
+// arrived, and starts again with the next jump.
 
 export type Hopp = { dm: number; nivaa: Nivaa; type: "vanlig" | "gjenta" | "finale" }
 
@@ -68,7 +69,8 @@ function poseIHopp(a: number, b: number, h: Hopp, t: number): Pose | null {
   return null
 }
 
-function hvilePose(x: number, tid: number): Pose {
+function hvilePose(x: number, tid: number, stille = false): Pose {
+  if (stille) return { x, y: 0, rot: 0, sx: 1, sy: 1, tuck: 0, armer: [0, 0], opp: 0 }
   // The 6–7 hands: palms up, weighing one against the other.
   const s = Math.sin(tid * 7)
   return { x, y: 0, rot: 0, sx: 1 + 0.015 * Math.sin(tid * 3), sy: 1 - 0.015 * Math.sin(tid * 3), tuck: 0, armer: [0.11 * s, -0.11 * s], opp: 0 }
@@ -109,6 +111,8 @@ export function Bane({ hopp, oversikt = false }: { hopp: Hopp[]; oversikt?: bool
   const spilt = useRef(hopp.length)
   const aktivt = useRef<{ a: number; b: number; h: Hopp; start: number } | null>(null)
   const kamera = useRef<{ x: number; b: number } | null>(null)
+  /** Starts the loop if it has stopped. */
+  const vekk = useRef<() => void>(() => {})
   const sisteHopp = hopp.at(-1)
   const sisteStart = landinger.at(-2) ?? 0
 
@@ -116,16 +120,18 @@ export function Bane({ hopp, oversikt = false }: { hopp: Hopp[]; oversikt?: bool
     if (hopp.length > spilt.current && sisteHopp) aktivt.current = { a: sisteStart, b: total, h: sisteHopp, start: -1 }
     else if (hopp.length < spilt.current) aktivt.current = null
     spilt.current = hopp.length
+    vekk.current()
   }, [hopp.length, sisteHopp, sisteStart, total])
 
   useEffect(() => {
+    // With reduced motion the course is drawn once per change: no jumps, no idle movement, no gliding camera.
     const redusert = matchMedia("(prefers-reduced-motion: reduce)").matches
     kamera.current ??= { x: oversikt ? -2 : Math.max(-2, total - 3), b: bredde }
     let forrige = performance.now()
     let ramme = 0
     let landet = -1
 
-    const tegn = (p: Pose, tid: number) => {
+    const tegn = (p: Pose, tid: number, stille: boolean) => {
       const s = skala
       figur.current?.setAttribute("transform", `translate(${p.x} ${p.y}) scale(${s}) rotate(${p.rot} 0 -0.6) scale(${p.sx} ${p.sy})`)
       const lav = 1 / (1 - p.y * 0.35)
@@ -140,7 +146,7 @@ export function Bane({ hopp, oversikt = false }: { hopp: Hopp[]; oversikt?: bool
         bein.current?.setAttribute("d", `M${hx} -0.42 Q${kx} ${ky} ${fx} ${fy}`)
         sko.current?.setAttribute("transform", `translate(${fx} ${fy}) rotate(${-p.tuck * 25})`)
       }
-      const blunk = tid % 3.6 < 0.12 ? 0.15 : 1
+      const blunk = !stille && tid % 3.6 < 0.12 ? 0.15 : 1
       pupiller.current?.setAttribute("transform", `translate(0.035 0) scale(1 ${blunk})`)
       for (const [arm, hand, side, i] of [[armV, handV, -1, 0], [armH, handH, 1, 1]] as const) {
         const sx = side * 0.27
@@ -168,13 +174,14 @@ export function Bane({ hopp, oversikt = false }: { hopp: Hopp[]; oversikt?: bool
           pose = p
           mal = { x: Math.min(akt.a, akt.b) - 2.5, b: Math.max(SYN, m + 6) }
         } else {
-          aktivt.current = null
           pose = hvilePose(akt.b, tid)
         }
-        // The distance floats up from the landing spot once Stegern touches down.
+        // The distance floats up from the landing spot once Stegern touches down; the jump is over when it
+        // has faded.
         const etter = tid - akt.start - 0.14 - varighet(m)
         const e = etikett.current
-        if (e && etter >= 0 && etter < 1.6 && !redusert) {
+        const merkeIgjen = !redusert && etter < 1.6
+        if (e && etter >= 0 && merkeIgjen) {
           if (landet !== spilt.current) {
             landet = spilt.current
             e.textContent = `+${m.toLocaleString("nb-NO", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} m`
@@ -183,6 +190,10 @@ export function Bane({ hopp, oversikt = false }: { hopp: Hopp[]; oversikt?: bool
           e.setAttribute("x", String(akt.b))
           e.setAttribute("y", String(-1.55 - etter * 0.5))
           e.setAttribute("opacity", String(etter < 1.1 ? 1 : 1 - (etter - 1.1) / 0.5))
+        }
+        if (!p && !merkeIgjen) {
+          aktivt.current = null
+          e?.setAttribute("opacity", "0")
         }
       } else {
         pose = hvilePose(total, tid)
@@ -193,13 +204,29 @@ export function Bane({ hopp, oversikt = false }: { hopp: Hopp[]; oversikt?: bool
       const kam = kamera.current!
       kam.x += (mal.x - kam.x) * k
       kam.b += (mal.b - kam.b) * k
+      // Idle: no jump playing and the camera has arrived. Draw Stegern standing still and stop.
+      const hviler = !aktivt.current && Math.abs(mal.x - kam.x) < 0.002 && Math.abs(mal.b - kam.b) < 0.002
+      if (hviler) {
+        kam.x = mal.x
+        kam.b = mal.b
+        pose = hvilePose(total, tid, true)
+      }
       const h = kam.b * FORHOLD
       svg.current?.setAttribute("viewBox", `${kam.x} ${-h * BAKKE} ${kam.b} ${h}`)
-      tegn(pose, tid)
+      tegn(pose, tid, hviler)
+      ramme = hviler ? 0 : requestAnimationFrame(steg)
+    }
+    vekk.current = () => {
+      if (ramme) return
+      forrige = performance.now()
       ramme = requestAnimationFrame(steg)
     }
-    ramme = requestAnimationFrame(steg)
-    return () => cancelAnimationFrame(ramme)
+    vekk.current()
+    return () => {
+      cancelAnimationFrame(ramme)
+      ramme = 0
+      vekk.current = () => {}
+    }
   }, [total, bredde, skala, oversikt])
 
   const strek = { vectorEffect: "non-scaling-stroke" } as const
