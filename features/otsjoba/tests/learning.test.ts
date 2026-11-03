@@ -26,10 +26,16 @@ import {
 } from "../lib/tutor-profile.mjs";
 import { progressSchema } from "../lib/progress";
 import { parsePairing } from "../lib/local-ai";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import {
   allowedOrigin,
+  ChatGpt,
   chatGptError,
+  engineOrder,
   extractJson,
+  modelList,
   parseConversation,
   readEvents,
 } from "../../../scripts/lokal-ai.mjs";
@@ -313,4 +319,57 @@ test("pairing links are read from the hash and anything else is refused", () => 
   assert.equal(parsePairing("#lokal-ai=short"), null);
   assert.equal(parsePairing("<script>"), null);
   assert.equal(parsePairing(`#lokal-ai=${token}&port=80`)?.port, 4747);
+});
+test("the bridge reads both model list shapes and only tries ready engines", () => {
+  assert.deepEqual(modelList({ models: [
+    { slug: "gpt-6.1-sol", display_name: "GPT-6.1-Sol", visibility: "list" },
+    { slug: "hidden", visibility: "hide" },
+  ] }), [{ id: "gpt-6.1-sol", name: "GPT-6.1-Sol" }]);
+  assert.deepEqual(modelList({ object: "list", data: [{ id: "gpt-6-luna", object: "model" }, { id: "bad id" }, { id: "gpt-6-luna" }] }),
+    [{ id: "gpt-6-luna", name: "gpt-6-luna" }]);
+  assert.deepEqual(modelList(null), []);
+  const onlyClaude = (key: string) => key === "claude";
+  assert.deepEqual(engineOrder("chatgpt", true, onlyClaude), ["claude"]);
+  assert.deepEqual(engineOrder("chatgpt", false, onlyClaude), []);
+  assert.deepEqual(engineOrder("auto", false, () => true), ["chatgpt", "claude"]);
+  assert.equal(parseConversation({ profil: "otsjoba-tutor", backend: "codex", innhold: { language: "it", level: "A1", correction: "balanced", topic: "", messages: [{ role: "user", content: "ciao" }] } }).ok, false);
+});
+test("signing out waits for a running refresh and an old refresh never saves", async () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "lokal-ai-test-"));
+  const realFetch = globalThis.fetch;
+  const revoked: string[] = [];
+  let release: () => void = () => {};
+  globalThis.fetch = (async (url: string, init?: RequestInit) => {
+    const json = (data: unknown) => new Response(JSON.stringify(data), { headers: { "Content-Type": "application/json" } });
+    if (String(url).includes("openid-configuration")) return json({ revocation_endpoint: "https://auth.example/revoke" });
+    if (String(url).includes("revoke")) { revoked.push(new URLSearchParams(String(init?.body)).get("token")!); return json({}); }
+    await new Promise<void>((r) => { release = r; });
+    return json({ access_token: "a2", refresh_token: "r2", expires_in: 3600 });
+  }) as typeof fetch;
+  try {
+    const chat = new ChatGpt(path.join(dir, "chat.json"), 4747);
+    chat.data.clientId = "client";
+    chat.data.tokens = { access: "a1", refresh: "r1", expiresAt: 0 };
+    const refresh = chat.accessToken().catch((e: Error) => e);
+    const signOut = chat.signOut();
+    assert.equal(chat.signedIn, false);
+    release();
+    assert.equal(await signOut, true);
+    assert.ok(await refresh instanceof Error);
+    assert.deepEqual(revoked, ["r2"]);
+    assert.equal(chat.data.tokens, null);
+
+    // A sign-in while a refresh is running wins over the refresh.
+    chat.data.tokens = { access: "a1", refresh: "r1", expiresAt: 0 };
+    const stale = chat.accessToken().catch((e: Error) => e);
+    await Promise.resolve();
+    chat.generation++;
+    chat.data.tokens = { access: "new", refresh: "new-r", expiresAt: Date.now() + 3600000 };
+    release();
+    assert.ok(await stale instanceof Error);
+    assert.equal(chat.data.tokens.refresh, "new-r");
+  } finally {
+    globalThis.fetch = realFetch;
+    rmSync(dir, { recursive: true, force: true });
+  }
 });

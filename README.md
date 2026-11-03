@@ -31,7 +31,7 @@ På Windows kan `npm.cmd` brukes i stedet for `npm`. Prosjektet er koblet til Ve
 
 ## Lokal AI for Otsjoba
 
-Fri samtale i Otsjoba bruker eierens egne abonnementer (ChatGPT, Claude Code eller Codex) via en lokal bro, ikke serveren:
+Fri samtale i Otsjoba bruker eierens egne abonnementer (ChatGPT eller Claude Code) via en lokal bro, ikke serveren:
 
 ```sh
 node scripts/lokal-ai.mjs

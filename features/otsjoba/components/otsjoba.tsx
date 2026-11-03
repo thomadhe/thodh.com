@@ -1189,7 +1189,7 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
           <DialogTitle>Fri samtale med din egen AI</DialogTitle>
           <DialogDescription>
             Fri samtale går fra denne nettleseren til et lite program på PC-en
-            din, broen. Den bruker ChatGPT-, Claude- eller Codex-abonnementet du
+            din, broen. Den bruker ChatGPT- eller Claude-abonnementet du
             allerede har. thodh.com sin server ser ikke samtalen.
           </DialogDescription>
           <BridgeStatusLine settings={bridge} status={bridgeStatus} />

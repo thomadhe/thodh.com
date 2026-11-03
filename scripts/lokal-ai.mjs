@@ -1,25 +1,28 @@
 // Local AI bridge: lets the owner's own browser on thodh.com use AI subscriptions
 // on this PC: ChatGPT (Sign in with ChatGPT, plan usage for locally run personal
-// projects), and the Claude Code and Codex CLIs that are already logged in.
+// projects) and the Claude Code CLI that is already logged in.
 // Plain Node 24, no dependencies. Listens on 127.0.0.1 only.
 //
 //   node scripts/lokal-ai.mjs [--port 4747] [--ny-kode]
 //
-// Learner text is untrusted: the CLIs run without tools, MCP servers or project
-// settings, in an empty temporary directory. Tokens stay in ~/.thodh and never
-// reach the browser, URLs or logs; the browser only holds the pairing token.
+// Learner text is untrusted: the CLI runs without tools, MCP servers or project
+// settings, in an empty temporary directory. Codex is not an engine: `codex exec`
+// keeps tools (code mode, sub-agents) even with its features disabled.
+// Tokens stay in ~/.thodh and never reach the browser, URLs or logs; the
+// browser only holds the pairing token.
 import http from "node:http";
 import { spawn, spawnSync } from "node:child_process";
 import { createHash, createPublicKey, randomBytes, randomUUID, timingSafeEqual, verify } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm } from "node:fs/promises";
 import { homedir, tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as tutor from "../features/otsjoba/lib/tutor-profile.mjs";
 
 export const defaultPort = 4747;
-const limits = { body: 256 * 1024, perMinute: 20, requestsPerMinute: 120, concurrent: 2, runMs: 75000, totalMs: 140000 };
+// totalMs stays below the browser's 150 s deadline and covers every step of a reply.
+const limits = { body: 256 * 1024, perMinute: 20, requestsPerMinute: 120, openPerMinute: 60, callbacksPerMinute: 20, concurrent: 2, runMs: 75000, totalMs: 140000 };
 const home = path.join(homedir(), ".thodh");
 
 // A profile owns its input validation, prompts and output check. Add new
@@ -35,7 +38,8 @@ export const profiles = {
   },
 };
 
-// ChatGPT's models come from the signed-in account; the CLI lists are fixed.
+// ChatGPT's models come from the signed-in account; the Claude list is fixed
+// and its first entry is the default.
 export const backends = {
   chatgpt: { name: "ChatGPT", models: [] },
   claude: {
@@ -46,14 +50,8 @@ export const backends = {
       { id: "claude-opus-5-5", name: "Opus 5.5" },
     ],
   },
-  codex: {
-    name: "Codex",
-    models: [
-      { id: "gpt-6-luna", name: "GPT-6-Luna" },
-      { id: "gpt-6.1-sol", name: "GPT-6.1-Sol" },
-    ],
-  },
 };
+const cliEngines = ["claude"];
 
 export function allowedOrigin(origin) {
   if (origin === "https://thodh.com" || origin === "https://www.thodh.com") return true;
@@ -122,8 +120,13 @@ function openBrowser(url) {
   const [command, args] = process.platform === "win32"
     ? ["rundll32.exe", ["url.dll,FileProtocolHandler", url]]
     : process.platform === "darwin" ? ["open", [url]] : ["xdg-open", [url]];
-  try { spawn(command, args, { detached: true, stdio: "ignore", windowsHide: true }).unref(); return true; }
-  catch { return false; }
+  try {
+    const child = spawn(command, args, { detached: true, stdio: "ignore", windowsHide: true });
+    // A missing opener (for example no xdg-open) must not crash the bridge.
+    child.on("error", (error) => log(`Kunne ikke åpne nettleseren: ${error.code || error.message}`));
+    child.unref();
+    return true;
+  } catch { return false; }
 }
 
 // --- ChatGPT: Sign in with ChatGPT (plan usage), loopback OAuth with PKCE. ---
@@ -184,8 +187,11 @@ export class ChatGpt {
     this.pending = null;
     this.refreshing = null;
     this.models = null;
-    this.signingOut = false;
+    this.leaving = null;
+    // Bumped on every sign-in and sign-out; a refresh from an older generation never saves.
+    this.generation = 0;
   }
+  get signingOut() { return !!this.leaving; }
   save() { writePrivate(this.file, this.data); }
   get signedIn() { return !!this.data.tokens?.refresh && !this.signingOut; }
   get redirectUri() { return `http://127.0.0.1:${this.port}/auth/callback`; }
@@ -274,6 +280,7 @@ export class ChatGpt {
       const claims = await this.verifyIdToken(tokens.id_token, clientId, pending.nonce);
       const scopes = String(tokens.scope || "").split(" ").filter(Boolean);
       if (!scopes.includes("chatgpt.tokens.use.direct")) return [400, "Du godtok ikke bruk av ChatGPT-abonnementet. Prøv igjen og godta bruken."];
+      this.generation++;
       this.data.account = { email: claims.email || "", subject: claims.sub };
       this.data.tokens = this.tokens(tokens, null);
       this.models = null;
@@ -299,18 +306,20 @@ export class ChatGpt {
 
   // Refresh tokens rotate: one refresh at a time, always storing the newest.
   async accessToken(force = false) {
-    if (!this.signedIn) throw failure("Logg inn med ChatGPT først.", { status: 401, fatal: true, melding: "Logg inn med ChatGPT først." });
+    const signedOut = () => failure("Logg inn med ChatGPT først.", { status: 401, fatal: true, melding: "Logg inn med ChatGPT først." });
+    if (!this.signedIn) throw signedOut();
     if (!force && this.data.tokens.expiresAt - Date.now() > 120000) return this.data.tokens.access;
     this.refreshing ??= (async () => {
-      const previous = this.data.tokens;
+      const previous = this.data.tokens, generation = this.generation;
       try {
         const response = await postForm(openai.token, {
           grant_type: "refresh_token", client_id: this.data.clientId, refresh_token: previous.refresh, resource: openai.resource,
         });
+        if (generation !== this.generation) throw signedOut();
         this.data.tokens = this.tokens(response, previous);
         this.save();
       } catch (error) {
-        if (terminalRefresh.includes(error.code)) {
+        if (generation === this.generation && terminalRefresh.includes(error.code)) {
           this.data.tokens = null;
           this.save();
           throw failure("ChatGPT-innloggingen er utløpt. Logg inn med ChatGPT på nytt.", { status: 401, fatal: true, melding: "ChatGPT-innloggingen er utløpt. Logg inn med ChatGPT på nytt." });
@@ -321,24 +330,27 @@ export class ChatGpt {
       }
     })();
     await this.refreshing;
+    if (!this.signedIn) throw signedOut();
     return this.data.tokens.access;
   }
 
-  async listModels() {
+  async listModels(signal) {
     if (this.models && Date.now() - this.models.at < 600000) return this.models.list;
     const response = await fetch(`${openai.api}/models`, {
       headers: { Authorization: `Bearer ${await this.accessToken()}` },
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.any([AbortSignal.timeout(15000), ...(signal ? [signal] : [])]),
     });
     if (!response.ok) throw failure(`Kunne ikke hente ChatGPT-modellene (HTTP ${response.status}).`);
-    const data = await response.json();
-    const list = (data.models || []).filter((m) => m.visibility === "list" && typeof m.slug === "string")
-      .map((m) => ({ id: m.slug, name: m.display_name || m.slug }));
+    const list = modelList(await response.json());
     this.models = { at: Date.now(), list };
     return list;
   }
 
-  async respond({ model, system, prompt, schema, schemaName, signal, timeout }, retried = false) {
+  // `deadline` is absolute, so the structured-output and 401 retries share one budget.
+  async respond({ model, system, prompt, schema, schemaName, signal, deadline }, retried = false) {
+    if (signal?.aborted) throw failure("Avbrutt.", { aborted: true });
+    const left = deadline - Date.now();
+    if (left < 1000) throw failure("Tidsavbrudd.", { timeout: true });
     const body = {
       model,
       instructions: system,
@@ -352,27 +364,36 @@ export class ChatGpt {
       method: "POST",
       headers: { Authorization: `Bearer ${await this.accessToken(retried)}`, "Content-Type": "application/json", Accept: "text/event-stream" },
       body: JSON.stringify(body),
-      signal: AbortSignal.any([AbortSignal.timeout(timeout), ...(signal ? [signal] : [])]),
+      signal: AbortSignal.any([AbortSignal.timeout(left), ...(signal ? [signal] : [])]),
     });
     if (!response.ok) {
       const data = await response.json().catch(() => null);
       const code = data?.error?.code;
       if (code === "subscription_sharing_unsupported_capability" && String(data.error.param || "").startsWith("text") && this.structured !== false) {
         this.structured = false;
-        return this.respond({ model, system, prompt, schema, schemaName, signal, timeout }, retried);
+        return this.respond({ model, system, prompt, schema, schemaName, signal, deadline }, retried);
       }
       if (response.status === 401 && !retried && (!code || code === "subscription_sharing_invalid_user")) {
-        return this.respond({ model, system, prompt, schema, schemaName, signal, timeout }, true);
+        return this.respond({ model, system, prompt, schema, schemaName, signal, deadline }, true);
       }
       throw chatGptError(code, response.status);
     }
     return extractJson(await readEvents(response.body));
   }
 
-  async signOut() {
+  // Concurrent sign-outs share one run.
+  signOut() {
+    this.leaving ??= this.revoke().finally(() => { this.leaving = null; });
+    return this.leaving;
+  }
+
+  async revoke() {
+    // New requests stop first (signedIn is false while leaving). A running
+    // refresh finishes so its newest refresh token is the one revoked; after
+    // the generation bump no older refresh can save tokens.
+    await this.refreshing?.catch(() => {});
+    const generation = ++this.generation;
     const tokens = this.data.tokens;
-    // Stop new requests first, then revoke, then clear local tokens.
-    this.signingOut = true;
     let confirmed = !tokens?.refresh;
     try {
       if (tokens?.refresh) {
@@ -392,16 +413,32 @@ export class ChatGpt {
         }
       }
     } finally {
-      // The registration (client ID) and host ID are kept for a later sign-in.
-      this.data.tokens = null;
-      this.data.account = null;
-      this.models = null;
-      this.save();
-      this.signingOut = false;
+      // The registration (client ID) and host ID are kept for a later sign-in,
+      // and a sign-in that completed meanwhile is kept as well.
+      if (generation === this.generation) {
+        this.data.tokens = null;
+        this.data.account = null;
+        this.models = null;
+        this.save();
+      }
     }
     log(confirmed ? "Logget ut av ChatGPT." : "Logget ut lokalt; OpenAI bekreftet ikke tilbakekallingen.");
     return confirmed;
   }
+}
+
+// Accepts both the plan-usage shape (`models[].slug`, listed when visibility is
+// "list") and the standard `/v1/models` shape (`data[].id`).
+export function modelList(data) {
+  const entries = Array.isArray(data?.models) ? data.models : Array.isArray(data?.data) ? data.data : [];
+  const seen = new Set();
+  return entries.flatMap((m) => {
+    if (!isObject(m) || (m.visibility ?? "list") !== "list") return [];
+    const id = typeof m.slug === "string" ? m.slug : m.id;
+    if (typeof id !== "string" || !/^[\w.:-]{1,80}$/.test(id) || seen.has(id)) return [];
+    seen.add(id);
+    return [{ id, name: typeof m.display_name === "string" && m.display_name ? m.display_name.slice(0, 80) : id }];
+  });
 }
 
 // Server-sent events from /v1/responses: the text is final only after response.completed.
@@ -456,12 +493,17 @@ function resolveCommand(name) {
   }
   const exe = findOnPath([`${name}.exe`]);
   if (exe) return { file: exe, prefix: [] };
+  // An npm install leaves a .cmd shim; run its target directly instead.
   const shim = findOnPath([`${name}.cmd`]);
-  if (name === "codex" && shim) {
-    const script = path.join(path.dirname(shim), "node_modules", "@openai", "codex", "bin", "codex.js");
-    if (existsSync(script)) return { file: process.execPath, prefix: [script] };
-  }
-  return null;
+  if (!shim) return null;
+  let text = "";
+  try { text = readFileSync(shim, "utf8"); } catch { return null; }
+  const targets = [...text.matchAll(/"%~?dp0%?\\([^"%]+?\.(?:exe|js|cjs|mjs))"/gi)]
+    .map((m) => path.join(path.dirname(shim), m[1]))
+    .filter((file) => !/[\\/]node\.exe$/i.test(file) && existsSync(file));
+  const target = targets.at(-1);
+  if (!target) return null;
+  return /\.exe$/i.test(target) ? { file: target, prefix: [] } : { file: process.execPath, prefix: [target] };
 }
 
 function kill(child) {
@@ -472,6 +514,8 @@ function kill(child) {
 
 function run(command, args, { cwd, input, signal, timeout }) {
   return new Promise((resolve, reject) => {
+    if (signal?.aborted) return reject(failure("Avbrutt.", { aborted: true }));
+    if (!(timeout > 0)) return reject(failure("Tidsavbrudd.", { timeout: true }));
     const child = spawn(command.file, [...command.prefix, ...args], { cwd, env: childEnv(), windowsHide: true, stdio: ["pipe", "pipe", "pipe"] });
     let stdout = "", stderr = "", done = false;
     const finish = (error, value) => {
@@ -507,66 +551,71 @@ const runners = {
     if (data.is_error) throw new Error(typeof data.result === "string" ? data.result.slice(0, 300) : "Claude meldte en feil.");
     return data.structured_output ?? extractJson(data.result);
   },
-  async codex({ command, model, system, prompt, schema, cwd, signal, timeout }) {
-    const schemaFile = path.join(cwd, "schema.json"), outFile = path.join(cwd, "svar.txt");
-    await writeFile(schemaFile, JSON.stringify(schema));
-    const args = [
-      "exec", "--ephemeral", "--skip-git-repo-check", "--ignore-user-config", "--ignore-rules",
-      "--sandbox", "read-only", "--color", "never", "-C", cwd, "-m", model,
-      "-c", 'model_reasoning_effort="low"', "--output-schema", schemaFile, "-o", outFile, "-",
-    ];
-    const input = `${system}\n\nAnswer directly. Do not run shell commands, read files or use any tools.\n\n${prompt}`;
-    await run(command, args, { cwd, input, signal, timeout });
-    return extractJson(await readFile(outFile, "utf8"));
-  },
 };
 
-const status = { checked: 0, commands: {} };
-async function refreshCommands(force = false) {
+const status = { checked: 0, commands: {}, pending: null };
+async function refreshCommands(force = false, timeout = 20000) {
   if (!force && Date.now() - status.checked < 60000) return status.commands;
-  const entries = await Promise.all(["claude", "codex"].map(async (key) => {
+  status.pending ??= Promise.all(cliEngines.map(async (key) => {
     const command = resolveCommand(key);
     if (!command) return [key, null];
     try {
-      await run(command, ["--version"], { cwd: tmpdir(), input: "", timeout: 20000 });
+      await run(command, ["--version"], { cwd: tmpdir(), input: "", timeout });
       return [key, command];
     } catch { return [key, null]; }
-  }));
-  status.commands = Object.fromEntries(entries);
-  status.checked = Date.now();
-  return status.commands;
+  })).then((entries) => {
+    status.commands = Object.fromEntries(entries);
+    status.checked = Date.now();
+    return status.commands;
+  }).finally(() => { status.pending = null; });
+  return status.pending;
 }
 
-async function engineModels(key, chat) {
+async function engineModels(key, chat, signal) {
   if (key !== "chatgpt") return backends[key].models;
-  return chat?.signedIn ? chat.listModels() : [];
+  return chat?.signedIn ? chat.listModels(signal) : [];
+}
+
+// Picks the engines to try: the chosen one first, then (with `reserve`) the
+// others; "auto" tries all. Only ready engines are kept.
+export function engineOrder(backend, reserve, ready) {
+  const keys = Object.keys(backends);
+  const wanted = backend === "auto" ? keys : [backend, ...(reserve ? keys.filter((k) => k !== backend) : [])];
+  return wanted.filter(ready);
 }
 
 export async function converse({ profile, input, backend, reserve, models }, signal, chat) {
-  const commands = await refreshCommands();
+  // One budget for every step (command check, model list, attempts, retries),
+  // shorter than the browser's own deadline.
+  const deadline = Date.now() + limits.totalMs;
+  const aborted = () => failure("Avbrutt.", { aborted: true });
+  const budget = AbortSignal.any([AbortSignal.timeout(limits.totalMs), ...(signal ? [signal] : [])]);
+  if (signal?.aborted) throw aborted();
+  const commands = await refreshCommands(false, Math.min(20000, deadline - Date.now()));
+  if (signal?.aborted) throw aborted();
   const ready = (key) => (key === "chatgpt" ? !!chat?.signedIn : !!commands[key]);
-  // "auto" tries every engine in order; `reserve` falls back to the others.
-  const others = Object.keys(backends).filter((k) => k !== backend && ready(k));
-  const order = backend === "auto" ? others : [backend, ...(reserve ? others : [])];
-  if (!order.length || !ready(order[0])) {
+  const order = engineOrder(backend, reserve, ready);
+  if (!order.length) {
     throw failure(backend === "chatgpt" ? "Logg inn med ChatGPT i Otsjoba-innstillingene først."
       : backend === "auto" ? "Ingen AI-motor er klar på denne PC-en."
         : `${backends[backend].name} er ikke installert eller svarer ikke på denne PC-en.`, { status: 503 });
   }
-  const deadline = Date.now() + limits.totalMs;
   let last = null, message = null;
   for (const key of order) {
+    if (signal?.aborted) throw aborted();
     let model;
     try {
-      const list = await engineModels(key, chat);
+      const list = await engineModels(key, chat, budget);
       model = (list.find((m) => m.id === models[key]) || list[0])?.id;
       if (!model) throw failure(`${backends[key].name} har ingen tilgjengelige modeller.`);
     } catch (error) {
+      if (signal?.aborted) throw aborted();
       last = error;
       message ??= error.melding;
       continue;
     }
     for (let attempt = 0; attempt < 2; attempt++) {
+      if (signal?.aborted) throw aborted();
       const left = deadline - Date.now();
       if (left < 5000) break;
       const cwd = key === "chatgpt" ? null : await mkdtemp(path.join(tmpdir(), "lokal-ai-"));
@@ -574,13 +623,14 @@ export async function converse({ profile, input, backend, reserve, models }, sig
       try {
         const raw = await runners[key]({
           chat, command: commands[key], model, system: profile.system(input), prompt: profile.prompt(input),
-          schema: profile.schema, schemaName: profile.schemaName, cwd, signal, timeout: Math.min(limits.runMs, left),
+          schema: profile.schema, schemaName: profile.schemaName, cwd, signal,
+          timeout: Math.min(limits.runMs, left), deadline: Date.now() + Math.min(limits.runMs, left),
         });
         const checked = profile.check(raw);
         if (checked.ok) return { svar: checked.value, backend: key, modell: model, ms: Date.now() - started };
         last = new Error(checked.error);
       } catch (error) {
-        if (error.aborted || signal?.aborted) throw failure("Avbrutt.", { aborted: true });
+        if (error.aborted || signal?.aborted) throw aborted();
         last = error;
         if (error.melding) message ??= error.melding;
         if (error.fatal) break;
@@ -655,7 +705,12 @@ function page(res, code, message) {
 }
 
 export function createServer({ token, port, chat }) {
+  // Only paired requests count against the owner's limits. Sign-in callbacks
+  // and unpaired requests (preflights, wrong token) have their own small
+  // windows, and other sites are refused without touching any of them.
   const requests = new Window(limits.requestsPerMinute), conversations = new Window(limits.perMinute);
+  const callbacks = new Window(limits.callbacksPerMinute), open = new Window(limits.openPerMinute);
+  const busy = { feil: "For mange forespørsler. Vent litt." };
   let running = 0;
   const server = http.createServer(async (req, res) => {
     const origin = req.headers.origin;
@@ -669,17 +724,20 @@ export function createServer({ token, port, chat }) {
     };
     // The Host check stops DNS rebinding; the Origin check stops other sites.
     if (![`127.0.0.1:${port}`, `localhost:${port}`].includes(req.headers.host || "")) return send(421, { feil: "Ukjent vertsnavn." });
-    if (!requests.take()) return send(429, { feil: "For mange forespørsler. Vent litt." });
     const url = new URL(req.url || "/", `http://${req.headers.host}`);
     // The OAuth redirect is a top-level navigation without Origin or pairing
     // token; it is accepted only for a pending sign-in with a matching state.
     if (req.method === "GET" && url.pathname === "/auth/callback") {
+      // The real redirect carries the pending state and is never throttled.
+      const expected = !!chat.pending && url.searchParams.get("state") === chat.pending.state;
+      if (!expected && !callbacks.take()) return page(res, 429, "For mange forsøk. Vent et minutt og prøv igjen.");
       if (req.headers.host !== `127.0.0.1:${port}`) return page(res, 400, "Bruk 127.0.0.1 for innloggingen.");
       const [code, message] = await chat.callback(url);
       return page(res, code, message);
     }
     if (!allowedOrigin(origin)) return send(403, { feil: "Denne nettsiden har ikke tilgang til lokal AI." });
     if (req.method === "OPTIONS") {
+      if (!open.take()) return send(429, busy);
       res.writeHead(204, {
         "Access-Control-Allow-Origin": origin,
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -690,7 +748,11 @@ export function createServer({ token, port, chat }) {
       });
       return res.end();
     }
-    if (!sameToken(req.headers.authorization, token)) return send(401, { feil: "Paringskoden stemmer ikke. Åpne lenken som broen skrev ut på nytt." });
+    if (!sameToken(req.headers.authorization, token)) {
+      if (!open.take()) return send(429, busy);
+      return send(401, { feil: "Paringskoden stemmer ikke. Åpne lenken som broen skrev ut på nytt." });
+    }
+    if (!requests.take()) return send(429, busy);
     if (req.method === "GET" && url.pathname === "/v1/helse") {
       const commands = await refreshCommands();
       let chatgpt = { navn: "ChatGPT", tilgjengelig: true, innlogget: chat.signedIn, modeller: [] };
@@ -706,7 +768,7 @@ export function createServer({ token, port, chat }) {
         ok: true, versjon: 2, profiler: Object.keys(profiles),
         backends: {
           chatgpt,
-          ...Object.fromEntries(["claude", "codex"].map((key) => [key, { navn: backends[key].name, tilgjengelig: !!commands[key], modeller: backends[key].models }])),
+          ...Object.fromEntries(cliEngines.map((key) => [key, { navn: backends[key].name, tilgjengelig: !!commands[key], modeller: backends[key].models }])),
         },
       });
     }
@@ -772,7 +834,7 @@ async function main() {
     const suffix = port === defaultPort ? "" : `&port=${port}`;
     console.log(`\nLokal AI for thodh.com kjører på http://127.0.0.1:${port}`);
     console.log(`  ChatGPT: ${chat.signedIn ? "logget inn" : "ikke logget inn (logg inn fra Otsjoba-innstillingene)"}`);
-    for (const key of ["claude", "codex"]) console.log(`  ${backends[key].name}: ${commands[key] ? "tilgjengelig" : "ikke funnet"}`);
+    for (const key of cliEngines) console.log(`  ${backends[key].name}: ${commands[key] ? "tilgjengelig" : "ikke funnet"}`);
     console.log(`\n${created ? "Ny paringskode lagret" : "Paringskode"} i ${file}`);
     console.log("Åpne en av lenkene én gang i nettleseren for å koble Otsjoba til broen:");
     console.log(`  https://thodh.com/otsjoba#lokal-ai=${token}${suffix}`);

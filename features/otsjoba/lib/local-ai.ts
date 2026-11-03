@@ -4,7 +4,7 @@ import { validateTutorResponse, type TutorRequest, type TutorResponse } from "./
 // 127.0.0.1. The pairing token and engine choice are per device, not per account.
 export const bridgeStorageKey = "otsjoba.lokal-ai.v1";
 export const defaultBridgePort = 4747;
-export const engines = ["chatgpt", "claude", "codex"] as const;
+export const engines = ["chatgpt", "claude"] as const;
 export type BridgeEngine = (typeof engines)[number];
 export type BridgeSettings = { token: string; port: number; engine: BridgeEngine; model: string; reserve: boolean };
 export type BridgeModel = { id: string; name: string };
@@ -58,11 +58,18 @@ export function pair(value: string, previous: BridgeSettings | null): BridgeSett
 }
 
 // Reads `#lokal-ai=<token>` once and removes it from the address bar and history.
+// A link with another token than the stored one replaces the pairing only after
+// the owner confirms, so a planted link cannot silently redirect the bridge.
 export function takePairingFromHash(previous: BridgeSettings | null): BridgeSettings | null {
-  if (!window.location.hash.includes("lokal-ai=")) return null;
-  const settings = pair(window.location.hash, previous);
+  const hash = window.location.hash;
+  if (!hash.includes("lokal-ai=")) return null;
   history.replaceState(history.state, "", window.location.pathname + window.location.search);
-  return settings;
+  const pairing = parsePairing(hash);
+  if (!pairing) return null;
+  if (previous && previous.token !== pairing.token && !window.confirm(
+    "Lenken har en annen paringskode enn den Otsjoba allerede er koblet til. Vil du erstatte koblingen til lokal AI?",
+  )) return null;
+  return pair(hash, previous);
 }
 
 const base = (s: BridgeSettings) => `http://127.0.0.1:${s.port}/v1`;
@@ -102,7 +109,7 @@ export function chosenEngine(settings: BridgeSettings | null, status: BridgeStat
 
 export function engineLabel(status: BridgeStatus, engine: BridgeEngine, model: string) {
   const info = status.state === "ready" ? status.health[engine] : undefined;
-  const name = info?.navn || { chatgpt: "ChatGPT", claude: "Claude", codex: "Codex" }[engine];
+  const name = info?.navn || { chatgpt: "ChatGPT", claude: "Claude" }[engine];
   return `${name} ${info?.modeller.find((m) => m.id === model)?.name || model}`;
 }
 

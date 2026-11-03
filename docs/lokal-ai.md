@@ -10,7 +10,8 @@ Broen er bare for deg. Den skal ikke deles med eller betjene andre: abonnementen
 | --- | --- | --- |
 | ChatGPT | ChatGPT-abonnement, innlogging fra Otsjoba | Foretrukket. Bruker «Sign in with ChatGPT» for lokalt kjørte personlige prosjekter, uten CLI. |
 | Claude | `claude` (Claude Code) installert og innlogget | Kjøres som `claude -p` uten verktøy, MCP og innstillinger, i en tom midlertidig mappe. |
-| Codex | `codex` installert og innlogget | Kjøres som `codex exec` i skrivebeskyttet sandkasse, uten brukeroppsett, uten lagret økt. |
+
+Codex er ikke med som motor. `codex exec` beholder verktøy (kodemodus og underagenter) selv med alle funksjoner slått av, og da kan ikke elevtekst kjøres trygt gjennom den.
 
 Velg motor og modell under Innstillinger → Lokal AI i Otsjoba. Med «Prøv en annen motor hvis den valgte feiler» går broen videre til neste klare motor.
 
@@ -41,11 +42,11 @@ Logg ut fra samme sted. Broen tilbakekaller tokenet hos OpenAI og sletter det lo
 
 - Lytter bare på `127.0.0.1`. `Host` må være `127.0.0.1:<port>` eller `localhost:<port>`, noe som stopper DNS-rebinding.
 - Godtar bare `Origin` `https://thodh.com`, `https://www.thodh.com`, `http://localhost:<port>` og `http://127.0.0.1:<port>`.
-- Hver forespørsel må ha paringskoden som `Authorization: Bearer …`. Koden ligger i `~/.thodh/lokal-ai.json`, aldri i repoet.
+- Hver forespørsel må ha paringskoden som `Authorization: Bearer …`. Koden ligger i `~/.thodh/lokal-ai.json`, aldri i repoet. En lenke med en annen kode enn den lagrede erstatter koblingen først etter at du har bekreftet det.
 - ChatGPT-tokenene ligger i `~/.thodh/lokal-ai-chatgpt.json`, med tilgang bare for din bruker (på Windows via `icacls`). De sendes aldri til nettleseren, i URL-er eller i logger. Refresh-tokenet roterer og fornyes ett om gangen.
-- Grenser: 256 KiB per forespørsel, 20 svar i minuttet, to samtidige kjøringer og tidsavbrudd per kjøring.
+- Grenser: 256 KiB per forespørsel, 120 forespørsler og 20 svar i minuttet, to samtidige kjøringer og tidsavbrudd per kjøring. Bare forespørsler med riktig paringskode teller mot disse grensene; andre nettsider avvises uten å bruke av dem.
 - Innholdet valideres med de samme reglene som appen (`features/otsjoba/lib/tutor-profile.mjs`), og svaret valideres mot tutorskjemaet. Et ugyldig svar prøves én gang til.
-- Broen fjerner `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` og lignende fra miljøet til CLI-ene, slik at bruken aldri går over til betalt API.
+- Broen fjerner `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` og lignende fra miljøet til Claude Code, slik at bruken aldri går over til betalt API.
 
 Nye bruksområder, som en sjakktrener, legges til som en ny profil i `profiles` i `scripts/lokal-ai.mjs`.
 
