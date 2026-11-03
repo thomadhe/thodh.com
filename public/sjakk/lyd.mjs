@@ -17,6 +17,12 @@ function kontekst() {
   return ctx;
 }
 
+/** Creates the audio context ahead of time; doing it on the first move would delay that move. */
+export function forbered() {
+  if (!lydPa()) return;
+  try { kontekst(); } catch { /* Audio may be blocked until the first click. */ }
+}
+
 function tone(frekvens, start, varighet, { type = 'sine', volum = 0.15, til } = {}) {
   const c = kontekst();
   const t0 = c.currentTime + start;
@@ -78,5 +84,13 @@ export const casinolyd = {
   tap: () => spill(() => {
     [392, 370, 349].forEach((f, i) => tone(f, i * 0.28, 0.26, { type: 'sawtooth', volum: 0.06 }));
     tone(330, 0.84, 0.6, { type: 'sawtooth', volum: 0.06, til: 300 });
+  }),
+};
+
+export const sjakklyd = {
+  /** A wooden tap for a move; a capture knocks a little harder. */
+  trekk: (slag = false) => spill(() => {
+    stoy(0, slag ? 0.07 : 0.045, slag ? 0.9 : 0.6, slag ? 900 : 1300, 'lowpass');
+    tone(slag ? 140 : 210, 0, slag ? 0.09 : 0.06, { volum: slag ? 0.22 : 0.14, til: slag ? 90 : 150 });
   }),
 };

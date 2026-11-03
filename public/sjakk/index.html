@@ -8,6 +8,7 @@
   <title>Sjakk for to</title>
   <link rel="canonical" href="https://thodh.com/sjakk" />
   <meta name="chess-api-base" content="/sjakk/api/rooms" />
+  <meta name="chess-push" content="wss://beikvwnttqnebwuticgv.supabase.co/realtime/v1/websocket?apikey=sb_publishable_6Dx1GnX4jmwWJT6Qz_EbcQ_Czr7SViP&amp;vsn=1.0.0" />
   <link rel="icon" href="/sjakk/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="/sjakk/styles.css" />
   <script type="module" src="/sjakk/app.mjs"></script>
@@ -29,7 +30,7 @@
         <section id="invite-panel" class="invite-panel" hidden aria-label="Invitasjon"><h2>Inviter en venn</h2><label for="invite-link" class="sr-only">Spill-lenke</label><input id="invite-link" readonly /><button id="copy-invite" class="button primary" type="button">Kopier lenke</button><p id="invite-feedback" role="status"></p></section>
         <section id="casino-panel" class="casino-panel" hidden aria-label="Spilleautomat"><div class="automat"><div class="hjulrad"><span class="hjul" data-hjul="0"></span><span class="hjul" data-hjul="1"></span><span class="hjul" data-hjul="2"></span></div><button id="spak" class="spak" type="button" aria-label="Trekk i spaken"><span class="spak-stang"></span><span class="spak-kule"></span></button></div><p id="casino-tekst" role="status"></p><button id="lyd-av" class="lyd-av" type="button" aria-label="Lyd av eller på">🔊</button></section><div class="twist-card"><span class="eyebrow" id="variant-label" hidden>EN LITEN VRI</span><span class="devil" id="variant-icon" aria-hidden="true">😈</span><h2 id="variant-title">En brikke mindre.<br> Et plagg mindre.</h2><p id="variant-description">Mister du en brikke? Ta av ett plagg!</p><div class="prize" hidden><span aria-hidden="true">♔</span><span id="variant-prize">Vinneren? Massasjetid.</span></div></div>
         <section class="history-panel" aria-labelledby="history-title"><div class="section-heading"><h2 id="history-title">Trekk</h2><span id="move-count">0 trekk</span></div><div id="history" class="history"></div></section>
-        <div class="game-controls"><button id="flip" class="button secondary" type="button">⇅ Snu brettet</button><button id="settings" class="button secondary" type="button">Nytt parti</button><button id="resign" class="button secondary" type="button" hidden>Gi opp</button></div>
+        <div class="game-controls"><button id="flip" class="button secondary" type="button">⇅ Snu brettet</button><button id="settings" class="button secondary" type="button">Nytt parti</button><button id="resign" class="button secondary" type="button" hidden>Gi opp</button><button id="rematch" class="button secondary" type="button" hidden>Omkamp</button></div>
       </aside>
     </main>
     <footer hidden><span id="seat-help"></span></footer>

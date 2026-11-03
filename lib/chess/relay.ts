@@ -6,6 +6,25 @@ const getPath = new RegExp(`^/sjakk/api/rooms/${room}$`, "i");
 const postPath = new RegExp(`^/sjakk/api/rooms(?:/${room}/(?:preview|join|action))?$`, "i");
 const responseHeaders = { "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" };
 const error = (message: string, status: number) => Response.json({ error: message }, { status, headers: responseHeaders });
+const roomId = new RegExp(`^${room}$`, "i");
+
+/**
+ * Seat holders get a realtime topic for move hints. Only the gateway can derive it, so the room ID alone
+ * is not enough to listen in. Hints are untrusted; the game server stays authoritative.
+ */
+export function pushTopic(id: string, gatewayKey: string) {
+  return `sjakk-${createHmac("sha256", gatewayKey).update(`push:${id.toLowerCase()}`).digest("hex").slice(0, 32)}`;
+}
+
+function withPushTopic(text: string, gatewayKey: string) {
+  let body: unknown;
+  try { body = JSON.parse(text); } catch { return text; }
+  // A player snapshot (create, join, state, action or conflict) carries the seat's colour and the state.
+  if (!body || typeof body !== "object" || Array.isArray(body)) return text;
+  const snapshot = body as Record<string, unknown>;
+  if (typeof snapshot.roomId !== "string" || !roomId.test(snapshot.roomId) || !snapshot.state || !["w", "b"].includes(snapshot.color as string)) return text;
+  return JSON.stringify({ ...snapshot, push: pushTopic(snapshot.roomId, gatewayKey) });
+}
 
 export async function relayChess(request: Request): Promise<Response> {
   const url = new URL(request.url);
@@ -56,7 +75,7 @@ export async function relayChess(request: Request): Promise<Response> {
       return error("Spillserveren svarer ikke akkurat nå. Prøv igjen om litt.", 502);
     }
     // No upstream cookies, redirects or authentication headers leave this gateway.
-    return new Response(await result.text(), { status: result.status, headers: { ...responseHeaders, "Content-Type": "application/json" } });
+    return new Response(withPushTopic(await result.text(), gatewayKey), { status: result.status, headers: { ...responseHeaders, "Content-Type": "application/json" } });
   } catch {
     return error("Mistet forbindelsen til spillserveren. Prøv igjen om litt.", 502);
   }
