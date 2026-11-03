@@ -353,6 +353,7 @@ export function Skrivebord() {
 
   // The daily games are all on screen, so they are prefetched like visible links would be.
   useEffect(() => {
+    if ((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData) return
     const id = window.setTimeout(() => dagligeProgrammer.forEach((p) => forvarsel(p.mal)), 1500)
     return () => window.clearTimeout(id)
   }, [forvarsel])
