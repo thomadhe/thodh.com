@@ -7,7 +7,7 @@ export const dager8 = [
       "Nevn en thailandsk rett",
       "pad thai, grønn karri, tom yum, rød karri | massaman/massamankarri, panang/panangkarri, tom kha/tom kha gai, satay, vårruller, gul karri, som tam/papayasalat, larb, khao pad/thai stekt ris | pad kra pao/pad krapow, pad see ew, khao soi, mango sticky rice/klebrig ris med mango, cashewkylling, jungelkarri/kaeng pa, pad prik king, yam nua | moo ping, gai yang, khao man gai, tod mun pla/fiskekaker, nam prik, boat noodles/kuay teow reua, rad na, pad woon sen | khanom jeen, kaeng som, kaeng hang lay, sai ua, mu kratha, khao niao, yam som o, kai jeow, hor mok, miang kham, pla rad prik, khao tom, jok, tub tim grob, khanom krok",
     ),
-    sp("Nevn et land der fransk er offisielt språk", "#FR, #BE, #CH | #CA, #LU, #MC, #HT | #SN, #CI, #CD, #CM, #MG | #BJ, #TG, #GN, #TD, #CF, #GA, #CG, #BI, #RW, #DJ, #KM, #SC, #VU, #GQ | #ML, #BF, #NE", { nei: "Marokko, Algerie, Tunisia, Vietnam, Libanon" }),
+    sp("Nevn et land der fransk er offisielt språk", "#FR, #BE, #CH | #CA, #LU, #MC, #HT | #SN, #CI, #CD, #CM, #MG | #BJ, #TG, #GN, #TD, #CF, #GA, #CG, #BI, #RW, #DJ, #KM, #SC, #VU, #GQ | ", { nei: "Mali, Burkina Faso, Niger, Marokko, Algerie, Tunisia, Vietnam, Libanon" }),
     sp(
       "Nevn en antilope",
       "impala, gnu, springbok, gaselle | oryx, kudu, eland, thomsongaselle, nyala | bongo, dik-dik, topi, hartebeest/kongoni, vannbukk, sabelantilope, hestantilope, saiga, gerenuk | klippespringer, duiker, sitatunga, blesbok, bontebok, lechwe, puku, reedbuck/sivbukk, oribi, steenbok, grant-gaselle, dorkasgaselle, hjorteantilope/hjortegeit/blackbuck, nilgau, chiru | addax, beira, suni, dibatag, korrigum, rheboks, sumpbukk, gaffelantilope",

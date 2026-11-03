@@ -358,6 +358,10 @@ test("6/7-stegern: hver dag i banken er velformet", () => {
       assert.ok(o.alternativer.some((a) => a.nivaa === 1), hvor)
       assert.ok(o.alternativer.every((a) => a.nokler.length > 0), hvor)
       assert.deepEqual(konflikter(s), [], hvor)
+      // A listed wrong answer is never also a right one, and no answer is listed twice.
+      assert.deepEqual([...o.nei].filter((k) => o.indeks.has(k)), [], hvor)
+      const viste = o.alternativer.map((a) => normaliser(a.vis))
+      assert.equal(new Set(viste).size, viste.length, `${hvor}: samme svar to ganger`)
       // Every answer is found from its own name.
       for (const [j, a] of o.alternativer.entries()) assert.equal(finnAlternativ(o, a.vis), j, `${hvor}: ${a.vis}`)
       // A wrong answer never slips through.

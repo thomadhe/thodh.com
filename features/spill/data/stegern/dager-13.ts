@@ -14,8 +14,8 @@ export const dager13 = [
     ),
     sp(
       "Nevn et nordisk land eller selvstyrt område",
-      "Norge, Sverige, Danmark | Finland, Island | Grønland, Færøyene | Åland | Svalbard, Jan Mayen",
-      { nei: "Estland, Skottland, Russland, Tyskland, Baltikum" },
+      "Norge, Sverige, Danmark | Finland, Island | Grønland, Færøyene | Åland | ",
+      { nei: "Estland, Skottland, Russland, Tyskland, Baltikum, Svalbard, Jan Mayen" },
     ),
     sp(
       "Nevn en kjent bro",
@@ -83,8 +83,8 @@ export const dager13 = [
     sp("Nevn et land som grenser til Belgia", "#FR, #NL, #DE | #LU | | | @naboer:BE"),
     sp(
       "Nevn et land som har deltatt i Eurovision",
-      "#NO, #SE, #DK, #GB, #FI | #IE, #FR, #DE, #IT, #ES, #NL, #IS, #UA, #IL, #CH, #AT, #PT, #GR | #BE, #EE, #LV, #LT, #PL, #RU, #RS, #HR, #TR, #CY, #MT, #RO, #HU, #CZ, #AU, #LU, #MC | #SI, #BA, #MK, #AL, #ME, #BG, #MD, #BY, #GE, #AM, #AZ, #SK, #AD, #SM, #MA | #XK",
-      { nei: "USA, Canada, Kina, Japan, Brasil" },
+      "#NO, #SE, #DK, #GB, #FI | #IE, #FR, #DE, #IT, #ES, #NL, #IS, #UA, #IL, #CH, #AT, #PT, #GR | #BE, #EE, #LV, #LT, #PL, #RU, #RS, #HR, #TR, #CY, #MT, #RO, #HU, #CZ, #AU, #LU, #MC | #SI, #BA, #MK, #AL, #ME, #BG, #MD, #BY, #GE, #AM, #AZ, #SK, #AD, #SM, #MA | ",
+      { nei: "USA, Canada, Kina, Japan, Brasil, Kosovo" },
     ),
     sp(
       "Nevn en ting som er gul",

@@ -20,8 +20,8 @@ export const dager11 = [
     ),
     sp(
       "Nevn en av Jesu tolv apostler",
-      "Peter/Simon Peter/Petrus, Judas/Judas Iskariot, Johannes, Tomas/Thomas | Jakob, Andreas, Matteus | Filip, Bartolomeus, Simon/Simon seloten | Taddeus/Judas Taddeus, Jakob den yngre/Jakob Alfeussønn, Matthias | Paulus",
-      { nei: "Jesus, Maria, Josef, Moses, Lukas, Markus" },
+      "Peter/Simon Peter/Petrus, Judas/Judas Iskariot, Johannes, Tomas/Thomas | Jakob, Andreas, Matteus | Filip, Bartolomeus, Simon/Simon seloten | Taddeus/Judas Taddeus, Jakob den yngre/Jakob Alfeussønn, Matthias | ",
+      { nei: "Jesus, Maria, Josef, Moses, Lukas, Markus, Paulus" },
     ),
     sp(
       "Nevn en by i Tyskland",

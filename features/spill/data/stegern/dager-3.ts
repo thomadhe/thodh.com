@@ -10,15 +10,15 @@ export const dager3 = [
     sp("Nevn et land som grenser til Italia", "#FR, #CH, #AT | #SI | #VA, #SM | | @naboer:IT"),
     sp(
       "Nevn et hjortedyr",
-      "elg, rådyr, hjort/kronhjort, reinsdyr/rein | dåhjort/dådyr, villrein, karibu, wapiti | sikahjort, muntjak, vannrådyr, sambarhjort, aksishjort, damhjort, mulehjort, hvithalehjort | sumphjort, pampashjort, pudu, sørlig pudu, nordlig pudu, davidshjort/milu, barasingha, moskushjort, elghjort, kinesisk vannhjort | huemul, brockethjort, timorhjort, tufthjort, gaffelhjort, axishjort, mazama",
-      { nei: "antilope, gaselle, gnu, impala, moskus, moskusokse" },
+      "elg, rådyr, hjort/kronhjort, reinsdyr/rein/villrein/karibu | dåhjort/dådyr/damhjort, wapiti/elghjort | sikahjort, muntjak, vannrådyr/kinesisk vannhjort, sambarhjort, aksishjort/axishjort, mulehjort, hvithalehjort | sumphjort, pampashjort, pudu, sørlig pudu, nordlig pudu, davidshjort/milu, barasingha | huemul/gaffelhjort, brockethjort/mazama, timorhjort, tufthjort",
+      { nei: "antilope, gaselle, gnu, impala, moskus, moskusokse, moskushjort, moskusdyr" },
     ),
     sp(
       "Nevn en figur fra Thorbjørn Egners fortellinger",
-      "Kasper, Jesper, Jonatan, Karius, Baktus | Mikkel Rev, Klatremus, Bamse Brakar, Politimester Bastian/Bastian, Tante Sofie/Sofie | Morten Skogmus, Kamomilla, Tobias, Pinnsvinet | | ",
+      "Kasper, Jesper, Jonatan, Karius, Baktus | Mikkel Rev, Klatremus, Bamse Brakar, Politimester Bastian/Bastian, Tante Sofie/Sofie | Morten Skogmus, Kamomilla, Tobias, Pinnsvinet, Løven, Bakermester Harepus/Harepus | Trikkefører Syversen/Syversen/Syvertsen, Barberer Sørensen/Sørensen, Fru Bastian, Kamelen, Bestemor Skogmus, Jens | Pølsemakeren, Bakeren, Tommy, Remo, Haremor",
     ),
     sp(
-      "Nevn en bydel i Oslo",
+      "Nevn en av Oslos 15 bydeler",
       "Grünerløkka, Frogner, Gamle Oslo | Sagene, St. Hanshaugen, Nordre Aker, Vestre Aker, Ullern | Grorud, Stovner, Bjerke, Alna, Østensjø, Nordstrand | Søndre Nordstrand | ",
       { nei: "Majorstuen, Grønland, Tøyen, Holmenkollen, Bislett" },
     ),
@@ -44,7 +44,7 @@ export const dager3 = [
     ),
     sp(
       "Nevn et tegnsettingstegn",
-      "punktum, komma, spørsmålstegn, utropstegn | kolon, semikolon, bindestrek, apostrof, anførselstegn/hermetegn/sitattegn/gåseøyne | tankestrek, parentes, skråstrek, tre prikker/ellipse/prikk prikk prikk, klammeparentes | bakstrek/omvendt skråstrek, krøllparentes, asterisk/stjerne, et-tegn/krøllalfa, ampersand/og-tegn | ",
+      "punktum, komma, spørsmålstegn, utropstegn | kolon, semikolon, bindestrek, apostrof, anførselstegn/hermetegn/sitattegn/gåseøyne | tankestrek, parentes, skråstrek, tre prikker/ellipse/prikk prikk prikk, klammeparentes | bakstrek/omvendt skråstrek, krøllparentes, asterisk/stjerne, et-tegn/ampersand/og-tegn, krøllalfa | ",
     ),
     sp(
       "Nevn en klubb som har spilt i Premier League",

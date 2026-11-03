@@ -19,7 +19,7 @@ export const dager1 = [
     ),
     sp(
       "Nevn en norsk by",
-      "Oslo, Bergen, Trondheim, Stavanger | Kristiansand, Tromsø, Drammen, Fredrikstad, Bodø, Ålesund | Sandnes, Sarpsborg, Skien, Tønsberg, Hamar, Lillehammer, Moss, Haugesund, Larvik, Halden, Arendal, Gjøvik, Molde, Harstad, Kongsberg, Porsgrunn, Narvik, Alta, Hammerfest, Kristiansund, Sandefjord, Lillestrøm | Steinkjer, Grimstad, Mandal, Elverum, Kongsvinger, Horten, Holmestrand, Hønefoss, Mo i Rana/Mo, Mosjøen, Vadsø, Kirkenes, Levanger, Namsos, Stjørdal, Førde, Florø, Egersund, Flekkefjord, Notodden, Kragerø, Risør, Lillesand, Farsund, Svolvær, Sortland, Finnsnes, Ski, Jessheim, Askim, Drøbak, Leirvik, Odda, Bryne, Fauske, Brumunddal, Ulsteinvik, Orkanger | Vardø, Honningsvåg, Brekstad, Kolvereid, Åkrehamn, Fosnavåg, Rørvik, Kopervik, Skudeneshavn, Tvedestrand, Brevik, Langesund, Moelv, Sandnessjøen, Brønnøysund, Stokmarknes, Leknes, Mysen, Åndalsnes, Otta, Lyngdal",
+      "Oslo, Bergen, Trondheim, Stavanger | Kristiansand, Tromsø, Drammen, Fredrikstad, Bodø, Ålesund | Sandnes, Sarpsborg, Skien, Tønsberg, Hamar, Lillehammer, Moss, Haugesund, Larvik, Halden, Arendal, Gjøvik, Molde, Harstad, Kongsberg, Porsgrunn, Narvik, Alta, Hammerfest, Kristiansund, Sandefjord, Lillestrøm, Røros | Steinkjer, Grimstad, Mandal, Elverum, Kongsvinger, Horten, Holmestrand, Hønefoss, Mo i Rana/Mo, Mosjøen, Vadsø, Kirkenes, Levanger, Namsos, Stjørdal, Førde, Florø, Egersund, Flekkefjord, Notodden, Kragerø, Risør, Lillesand, Farsund, Svolvær, Sortland, Finnsnes, Ski, Jessheim, Askim, Drøbak, Leirvik/Stord, Sandvika, Rjukan, Stavern, Verdalsøra/Verdal, Odda, Bryne, Fauske, Brumunddal, Ulsteinvik, Orkanger | Vardø, Honningsvåg, Brekstad, Kolvereid, Åkrehamn, Fosnavåg, Rørvik, Kopervik, Skudeneshavn, Tvedestrand, Brevik, Langesund, Moelv, Sandnessjøen, Brønnøysund, Stokmarknes, Leknes, Mysen, Åndalsnes, Otta, Lyngdal, Svelvik, Sauda, Hokksund, Fagernes, Jørpeland, Stathelle, Stjørdalshalsen",
     ),
     sp(
       "Nevn et grunnstoff",
@@ -38,7 +38,7 @@ export const dager1 = [
     ),
     sp(
       "Nevn en Pixar-film",
-      "Toy Story, Biler/Cars, Oppdrag Nemo/Finding Nemo/Nemo, Monsterbedriften/Monsters Inc | Up/Se opp, Ratatouille, WALL-E, De utrolige/The Incredibles, Innsiden ut/Inside Out | Coco, Luca, Soul, Modig/Brave, Toy Story 2, Oppdrag Doris/Finding Dory, Småkryp/A Bug's Life, Rød/Turning Red, Monsteruniversitetet/Monsters University | Elemental, Onward/Videre, Lightyear, Den gode dinosauren/The Good Dinosaur, Toy Story 3, Toy Story 4, Biler 2/Cars 2, Biler 3/Cars 3, De utrolige 2/Incredibles 2, Innsiden ut 2/Inside Out 2 | Elio",
+      "Toy Story, Biler/Cars, Oppdrag Nemo/Finding Nemo/Nemo, Monsterbedriften/Monsters Inc | Up/Se opp, Ratatouille, WALL-E, De utrolige/The Incredibles, Innsiden ut/Inside Out | Coco, Luca, Soul, Modig/Brave, Toy Story 2, Oppdrag Doris/Finding Dory, Småkryp/A Bug's Life, Rød/Turning Red, Monsteruniversitetet/Monsters University | Elemental, Onward/Videre, Lightyear, Den gode dinosauren/The Good Dinosaur, Toy Story 3, Toy Story 4, Biler 2/Cars 2, Biler 3/Cars 3, De utrolige 2/Incredibles 2, Innsiden ut 2/Inside Out 2, Toy Story 5 | Elio, Hoppers",
     ),
     sp(
       "Nevn et norsk fylke, dagens eller et tidligere",
@@ -105,7 +105,7 @@ export const dager1 = [
     sp("Nevn et land i Afrika", "#EG, #ZA, #NG, #KE | #MA, #GH, #ET, #SN, #TZ, #DZ, #TN | #UG, #CM, #CI, #MG, #SO, #SD, #LY, #CD, #AO, #RW, #ZW, #ZM, #NA, #BW, #MZ, #ML | #ER, #NE, #TD, #MW, #BJ, #TG, #BF, #GN, #SL, #LR, #GA, #CG, #CF, #SS, #MR, #CV, #MU, #SC, #GM | @kontinent:Afrika"),
     sp(
       "Nevn et kattedyr",
-      "løve, tiger, gaupe, leopard | gepard, puma, jaguar, katt/huskatt, snøleopard | panter/svart panter, ozelot, serval, karakal, villkatt, kuguar/fjelløve | manul/pallaskatt, jaguarundi, margay, fiskekatt, sandkatt, oncilla, kodkod, rustkatt, marmorkatt, leopardkatt, gullkatt, skyleopard | liger, tigon, sabeltanntiger/smilodon, jungelkatt, kanadagaupe, rødgaupe, iberiagaupe, geoffroykatt, pampaskatt, svartfotkatt",
+      "løve, tiger, gaupe, leopard/panter/svart panter | gepard, puma/kuguar/fjelløve, jaguar, katt/huskatt, snøleopard | ozelot, serval, karakal, villkatt | manul/pallaskatt, jaguarundi, margay, fiskekatt, sandkatt, oncilla, kodkod, rustkatt, marmorkatt, leopardkatt, gullkatt, skyleopard | liger, tigon, sabeltanntiger/smilodon, jungelkatt, kanadagaupe, rødgaupe, iberiagaupe, geoffroykatt, pampaskatt, svartfotkatt",
     ),
     sp(
       "Nevn en figur fra Donald Duck-bladet",
@@ -118,7 +118,7 @@ export const dager1 = [
     ),
     sp(
       "Nevn et organ i menneskekroppen",
-      "hjerte, lunge/lunger, hjerne, lever | nyre/nyrer, mage/magesekk, hud, tarm/tarmer, øye/øyne | bukspyttkjertel, milt, galleblære, urinblære/blære, tynntarm, tykktarm, livmor, skjoldbruskkjertel, spiserør, strupe | eggstokk/eggstokker, testikkel/testikler, prostata, binyre/binyrer, hypofyse, blindtarm, tolvfingertarm, endetarm, luftrør, tunge, mandler, thymus/brissel | lymfeknute/lymfeknuter, beinmarg/benmarg, epifyse/konglekjertel, hypotalamus, mellomgulv, bronkier, livmorhals, eggleder, urinleder, urinrør, bitestikkel, spyttkjertel/spyttkjertler",
+      "hjerte, lunge/lunger, hjerne, lever | nyre/nyrer, mage/magesekk, hud, tarm/tarmer, øye/øyne, øre/ører | bukspyttkjertel/pankreas, nese, milt, galleblære, urinblære/blære, tynntarm, tykktarm, livmor, skjoldbruskkjertel, spiserør, strupe | eggstokk/eggstokker, testikkel/testikler, prostata, binyre/binyrer, hypofyse, blindtarm/appendiks/appendix, penis, skjede/vagina, tolvfingertarm, endetarm, luftrør, tunge, mandler, thymus/brissel | lymfeknute/lymfeknuter, beinmarg/benmarg, epifyse/konglekjertel, hypotalamus, mellomgulv, bronkier, livmorhals, eggleder, urinleder, urinrør, bitestikkel, spyttkjertel/spyttkjertler, ryggmarg, brystkjertel",
     ),
   ),
 ]

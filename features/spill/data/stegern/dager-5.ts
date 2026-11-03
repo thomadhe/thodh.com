@@ -10,8 +10,8 @@ export const dager5 = [
     sp("Nevn et land som grenser til Brasil", "#AR, #UY, #PY | #CO, #VE, #PE, #BO | #GY, #SR | | #FR, @naboer:BR"),
     sp(
       "Nevn en gnager",
-      "mus, rotte, ekorn, marsvin | hamster, bever, lemen, hulepinnsvin, chinchilla, ørkenrotte/gerbil, degu | murmeldyr, præriehund, jordekorn, sjusover, flygeekorn, kapybara/flodsvin, mara, aguti, nutria/beverrotte, bisamrotte/moskusrotte, vånd, markmus, skogmus, husmus, brunrotte, svartrotte, hasselmus, klatremus | springmus/jerboa, nakenrotte/nakenmulldyr, kengururotte, lommerotte/gopher, bambusrotte, paka, viskasja/viscacha, blindmus, mulldyr, hamsterarter, dverghamster, dvergmus, buskrotte, risrotte, vandrerotte, bomullsrotte| piggmus, lemming, stekelsvin",
-      { nei: "kanin, hare, pinnsvin, piggsvin, spissmus, muldvarp, flaggermus, opossum" },
+      "mus, rotte, ekorn, marsvin | hamster, bever, lemen/lemming, hulepinnsvin/piggsvin, chinchilla, ørkenrotte/gerbil, degu | murmeldyr, præriehund, jordekorn, sjusover, flygeekorn, kapybara/flodsvin, mara, aguti, nutria/beverrotte, bisamrotte/moskusrotte, vånd, markmus, skogmus, husmus, brunrotte/vandrerotte, svartrotte, hasselmus, klatremus | springmus/jerboa, nakenrotte/nakenmulldyr, kengururotte, lommerotte/gopher, bambusrotte, paka, viskasja/viscacha, blindmus, mulldyr, hamsterarter, dverghamster, dvergmus, buskrotte, risrotte, bomullsrotte| piggmus",
+      { nei: "kanin, hare, pinnsvin, spissmus, muldvarp, flaggermus, opossum" },
     ),
     sp(
       "Nevn en Beatles-låt",
@@ -23,7 +23,7 @@ export const dager5 = [
     ),
     sp(
       "Nevn en verdensmester i Formel 1",
-      "Lewis Hamilton/Hamilton, Michael Schumacher/Schumacher, Max Verstappen/Verstappen, Ayrton Senna/Senna | Sebastian Vettel/Vettel, Fernando Alonso/Alonso, Kimi Räikkönen/Räikkönen/Raikkonen, Niki Lauda/Lauda, Alain Prost/Prost, Mika Häkkinen/Häkkinen/Hakkinen, Nico Rosberg/Rosberg | Nigel Mansell/Mansell, Juan Manuel Fangio/Fangio, Jenson Button/Button, Damon Hill, Jacques Villeneuve/Villeneuve, Nelson Piquet/Piquet, James Hunt/Hunt, Jackie Stewart/Stewart, Emerson Fittipaldi/Fittipaldi, Lando Norris/Norris | Graham Hill, Jim Clark/Clark, Jack Brabham/Brabham, Alberto Ascari/Ascari, Jochen Rindt/Rindt, Mario Andretti/Andretti, Jody Scheckter/Scheckter, Alan Jones, Keke Rosberg, John Surtees/Surtees, Denny Hulme/Hulme, Phil Hill, Mike Hawthorn/Hawthorn | Giuseppe Farina/Nino Farina/Farina",
+      "Lewis Hamilton/Hamilton, Michael Schumacher/Schumacher, Max Verstappen/Verstappen, Ayrton Senna/Senna | Sebastian Vettel/Vettel, Fernando Alonso/Alonso, Kimi Räikkönen/Räikkönen/Raikkonen, Niki Lauda/Lauda, Alain Prost/Prost, Mika Häkkinen/Häkkinen/Hakkinen, Nico Rosberg/Rosberg | Nigel Mansell/Mansell, Juan Manuel Fangio/Fangio, Jenson Button/Button, Damon Hill, Jacques Villeneuve/Villeneuve, Nelson Piquet/Piquet, James Hunt/Hunt, Jackie Stewart/Stewart, Emerson Fittipaldi/Fittipaldi, Lando Norris/Norris, Kimi Antonelli/Andrea Kimi Antonelli/Antonelli | Graham Hill, Jim Clark/Clark, Jack Brabham/Brabham, Alberto Ascari/Ascari, Jochen Rindt/Rindt, Mario Andretti/Andretti, Jody Scheckter/Scheckter, Alan Jones, Keke Rosberg, John Surtees/Surtees, Denny Hulme/Hulme, Phil Hill, Mike Hawthorn/Hawthorn | Giuseppe Farina/Nino Farina/Farina",
       { nei: "Charles Leclerc, Leclerc, Oscar Piastri, Piastri, Gilles Villeneuve, Stirling Moss, Moss" },
     ),
   ),
@@ -39,7 +39,7 @@ export const dager5 = [
     ),
     sp(
       "Nevn en figur fra Ringenes herre",
-      "Frodo/Frodo Lommelun, Gandalf, Gollum/Sméagol, Aragorn, Legolas | Sam/Samvis/Sam Gamgod, Gimli, Bilbo/Bilbo Lommelun, Sauron, Saruman, Boromir, Pippin, Merry | Arwen, Galadriel, Elrond, Éowyn, Théoden, Faramir, Treskjegg/Treebeard, Ormetunge/Gríma/Wormtongue, Denethor, Heksekongen/Nazgûl/Ringåndene, Tom Bombadil, Éomer, Balrog, Celeborn, Lurtz, Shelob | Radagast, Glorfindel, Haldir, Isildur, Elendil, Gil-galad, Bard, Thorin, Smaug, Beorn, Fatty Bolger, Barliman Butterbur/Barliman, Rosie, Gamling, Háma, Grishnákh, Uglúk, Gorbag, Shagrat, Azog, Bolg, Thranduil, Glóin, Balin, Dwalin, Kíli, Fíli, Bombur, Dáin, Shadowfax | Círdan, Fëanor, Morgoth/Melkor, Lúthien, Beren, Túrin, Húrin, Ungoliant, Eärendil, Goldberry, Gamle Pil/Old Man Willow, Lobelia, Gaffer, Bifur, Bofur, Dori, Nori, Ori, Óin",
+      "Frodo/Frodo Lommelun, Gandalf, Gollum/Sméagol, Aragorn, Legolas | Sam/Samvis/Sam Gamgod, Gimli, Bilbo/Bilbo Lommelun, Sauron, Saruman, Boromir, Pippin, Merry | Arwen, Galadriel, Elrond, Éowyn, Théoden, Faramir, Treskjegg/Treebeard, Ormetunge/Gríma/Wormtongue, Denethor, Heksekongen/Nazgûl/Ringåndene, Tom Bombadil, Éomer, Balrog, Celeborn, Shelob | Radagast, Glorfindel, Haldir, Isildur, Elendil, Gil-galad, Fatty Bolger, Barliman Butterbur/Barliman, Rosie, Gamling, Háma, Grishnákh, Uglúk, Gorbag, Shagrat, Glóin, Shadowfax | Círdan, Goldberry, Gamle Pil/Old Man Willow, Lobelia, Gaffer",
     ),
     sp(
       "Nevn et værfenomen",
@@ -56,7 +56,7 @@ export const dager5 = [
       "reker, krabbe, hummer, blåskjell | kongekrabbe, østers, kamskjell, sjøkreps/scampi/langustine, blekksprut, kreps | hjerteskjell, sandskjell, knivskjell, strandsnegl, kalmar, akkar, sepia, languster, snøkrabbe, taskekrabbe, kråkebolle, tigerreke, kongereke | teppeskjell, oskjell, hestereke, dypvannsreke, abalone/øreskjell, krill, sjøpølse, vinbergsnegl/escargot, trollhummer, kuskjell, havsnegl | albueskjell, eremittkreps, pæreskjell, venusskjell, sjøtroll, conch",
       { nei: "torsk, laks, tunfisk, sild" },
     ),
-    sp("Nevn et land som grenser til Spania", "#PT, #FR | #AD | #MA | | @naboer:ES"),
+    sp("Nevn et land som grenser til Spania", "#PT, #FR | #AD | #MA | #GB/Gibraltar | @naboer:ES"),
     sp(
       "Nevn en fugl som ikke kan fly",
       "pingvin, struts, emu, kiwi | dronte/dodo, kasuar, nandu | kakapo, moa, geirfugl, keiserpingvin, kongepingvin | takahe, weka, galapagosskarv/flygeløs skarv, elefantfugl, adeliepingvin, eselpingvin/gentoopingvin, humboldtpingvin, brillepingvin, magellanpingvin | inaccessiblerikse, aucklandand",
@@ -64,9 +64,9 @@ export const dager5 = [
     ),
     sp(
       "Nevn en Disney-tegnefilm (ikke Pixar)",
-      "Løvenes konge/The Lion King, Frost/Frozen, Snøhvit og de syv dvergene/Snøhvit/Snow White, Askepott/Cinderella, Aladdin, Den lille havfruen/The Little Mermaid | Skjønnheten og udyret/Beauty and the Beast, Bambi, Dumbo, Pinocchio, Peter Pan, Jungelboken/The Jungle Book, Tornerose/Sleeping Beauty, Mulan, Pocahontas, Tarzan, Herkules/Hercules, Lady og Landstrykeren/Lady and the Tramp, 101 dalmatinere, Robin Hood, Aristokattene/The Aristocats, To på rømmen/Rapunzel/Tangled, Vaiana/Moana, Zootropolis/Zootopia, Encanto, Big Hero 6, Frost 2/Frozen 2 | Bernard og Bianca/The Rescuers, Sverdet i steinen/The Sword in the Stone, Prinsessen og frosken/The Princess and the Frog, Lilo og Stitch/Lilo & Stitch | Keiserens nye stil/The Emperor's New Groove, Ringeren i Notre Dame/The Hunchback of Notre Dame, Atlantis, Skatteplaneten/Treasure Planet, Brother Bear, Bolt, Wreck-It Ralph, Raya og den siste dragen/Raya, Wish, Fantasia, Oliver og vennene/Oliver & Company, Dinosaur, Alice i Eventyrland/Alice in Wonderland | Fox and the Hound, The Black Cauldron, Meet the Robinsons, Chicken Little, Home on the Range, Bernard og Bianca i Australia/The Rescuers Down Under, Basil/The Great Mouse Detective, Saludos Amigos, The Three Caballeros, Make Mine Music, Fun and Fancy Free, Melody Time, Winnie the Pooh/Ole Brumm, Strange World, Mufasa",
+      "Løvenes konge/The Lion King, Frost/Frozen, Snøhvit og de syv dvergene/Snøhvit/Snow White, Askepott/Cinderella, Aladdin, Den lille havfruen/The Little Mermaid | Skjønnheten og udyret/Beauty and the Beast, Bambi, Dumbo, Pinocchio, Peter Pan, Jungelboken/The Jungle Book, Tornerose/Sleeping Beauty, Mulan, Pocahontas, Tarzan, Herkules/Hercules, Lady og Landstrykeren/Lady and the Tramp, 101 dalmatinere, Robin Hood, Aristokattene/The Aristocats, To på rømmen/Rapunzel/Tangled, Vaiana/Moana, Zootropolis/Zootopia, Encanto, Big Hero 6, Frost 2/Frozen 2 | Bernard og Bianca/The Rescuers, Sverdet i steinen/The Sword in the Stone, Prinsessen og frosken/The Princess and the Frog, Lilo og Stitch/Lilo & Stitch, Vaiana 2/Moana 2, Zootropolis 2/Zootopia 2 | Keiserens nye stil/The Emperor's New Groove, Ringeren i Notre Dame/The Hunchback of Notre Dame, Atlantis, Skatteplaneten/Treasure Planet, Brother Bear, Bolt, Wreck-It Ralph, Ralph rasker Internett/Ralph Breaks the Internet, Raya og den siste dragen/Raya, Wish, Fantasia, Oliver og vennene/Oliver & Company, Dinosaur, Alice i Eventyrland/Alice in Wonderland | Fox and the Hound, The Black Cauldron, Meet the Robinsons, Chicken Little, Home on the Range, Bernard og Bianca i Australia/The Rescuers Down Under, Basil/The Great Mouse Detective, Saludos Amigos, The Three Caballeros, Make Mine Music, Fun and Fancy Free, Melody Time, Winnie the Pooh/Ole Brumm, Strange World, Mufasa",
     ),
-    sp("Nevn en kroppsdel med tre bokstaver", "arm, fot, øye, øre | kne, hår, ben | lår, hud, hæl | ræv | ", { streng: true, nei: "tå, nese, bein, munn, hals" }),
+    sp("Nevn en kroppsdel med tre bokstaver", "arm, fot, øye, øre | kne, hår, ben | lår, hud, hæl | ræv, lem | vom, bak", { streng: true, nei: "tå, nese, bein, munn, hals" }),
     sp("Nevn en hovedstad i Afrika", "$EG, $KE, $ZA | $NG, $MA, $ET, $GH, $SN, $TN, $DZ | $UG, $TZ, $SO, $SD, $ZW, $AO, $CD, $RW, $LY, $ML, $MG | @hovedstad:Afrika | "),
   ),
   dag(
@@ -110,8 +110,8 @@ export const dager5 = [
     ),
     sp(
       "Nevn et sosialt medium eller en meldingsapp",
-      "Facebook, Instagram, Snapchat, TikTok | X/Twitter, YouTube, WhatsApp, Messenger, LinkedIn, Pinterest, Reddit, Discord | Tumblr, BeReal, Threads, Telegram, Signal, Twitch, Bluesky, Mastodon, WeChat, Vimeo, Strava, Flickr, Tinder | MySpace, Nettby, Google+, Vine, Periscope, Ask.fm, Kik, Viber, LINE, Weibo, VK/VKontakte, QQ, Clubhouse, Yik Yak, Jodel, Letterboxd, Goodreads, Bumble, Hinge, Truth Social | Biip, Blink, Hi5, Bebo, Friendster, Orkut, Parler, Gab, Underskog",
+      "Facebook, Instagram, Snapchat, TikTok | X/Twitter, YouTube, WhatsApp, Messenger, LinkedIn, Pinterest, Reddit, Discord | Tumblr, BeReal, Threads, Telegram, Signal, Twitch, Bluesky, Mastodon, WeChat, Vimeo, Strava, Flickr, Tinder, iMessage, Skype | MySpace, Nettby, Google+, Vine, Periscope, Ask.fm, Kik, Viber, LINE, Weibo, VK/VKontakte, QQ, Clubhouse, Yik Yak, Jodel, Letterboxd, Goodreads, Bumble, Hinge, Truth Social, Slack, Microsoft Teams/Teams, MSN Messenger/MSN | Biip, Blink, Hi5, Bebo, Friendster, Orkut, Parler, Gab, Underskog, ICQ, Google Hangouts/Hangouts, Threema, Wire, KakaoTalk",
     ),
-    sp("Nevn et land som har vunnet fotball-VM for menn", "#BR, #DE/Vest-Tyskland, #AR | #FR, #IT | #ES, #UY | #GB/England | ", { nei: "Nederland, Portugal, Kroatia, Norge, Sverige" }),
+    sp("Nevn et land som har vunnet fotball-VM for menn", "#BR, #DE/Vest-Tyskland, #AR | #FR, #IT, #ES | #UY | #GB/England | ", { nei: "Nederland, Portugal, Kroatia, Norge, Sverige" }),
   ),
 ]
