@@ -19,6 +19,9 @@ export function normaliser(s: string) {
     .replace(/æ/g, "ae")
     .replace(/ø/g, "o")
     .replace(/ß/g, "ss")
+    // Keep "C#" and "C++" apart from "C".
+    .replace(/#/g, " sharp")
+    .replace(/\+/g, " pluss")
     .replace(/[^a-z0-9]+/g, " ")
     .trim()
     .replace(/^(?:en|ei|et) (?=\S)/, "")
