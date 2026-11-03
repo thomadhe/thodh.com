@@ -146,6 +146,8 @@ footer { border-top: 1px solid var(--line); padding: 23px 0 28px; display: flex;
 @media (max-width: 850px) { .invite-panel { grid-column: 1 / -1; margin: 0; } }
 @media (max-width: 520px) { .setup-modal { padding: 20px 14px; } .setup-options, .time-columns { grid-template-columns: 1fr; } .time-player + .time-player { padding-top: 15px; border-top: 1px solid var(--line); } .setup-modal fieldset { padding: 12px; } .player-clock { font-size: 1.15rem; } .captured-pieces { max-width: 80px; } }
 
+.hub-links { display: flex; gap: 18px; }
+@media (max-width: 520px) { .hub-links { gap: 12px; } }
 .hub-link { color: var(--muted); font-size: .85rem; text-decoration: none; white-space: nowrap; }
 .hub-link:hover { color: var(--text); }
 .site-header { flex-wrap: wrap; gap: 12px; }
