@@ -61,3 +61,42 @@ test('premove targets follow piece movement on an open board, like Lichess', () 
   assert.deepEqual(premoveTargets(at, 'e7', 'w'), []);
   assert.deepEqual(premoveTargets(at, 'e7', 'b').sort(), ['d6', 'e5', 'e6', 'f6']);
 });
+
+test('a stored action only replays on the position it was made from', () => {
+  const server = createSession(defaults(), 0);
+  applyAction(server, move('e2', 'e4'), 'w', 500);
+  applyAction(server, move('e7', 'e5'), 'b', 600);
+  // Saved after 1. e4 e5 as "Nf3 at revision 3"; the server got 1. e4 c5 instead, and Nf3 would still be legal.
+  const other = createSession(defaults(), 0);
+  applyAction(other, move('e2', 'e4'), 'w', 500);
+  applyAction(other, move('c7', 'c5'), 'b', 600);
+  const saved = { ...entry(3, move('g1', 'f3'), 'w', 2), fen: server.fen };
+  assert.equal(applyPending(structuredClone(other), saved), false);
+  assert.deepEqual(rebuild(other, 3, [saved]).kept, []);
+  assert.equal(applyPending(structuredClone(server), saved), true);
+  assert.deepEqual(rebuild(server, 3, [saved]).kept, [saved]);
+  // The wrong move count is refused too, even on the same pieces.
+  assert.equal(applyPending(structuredClone(server), { ...saved, index: 3 }), false);
+});
+
+test('a confirmed promotion must have the same piece', () => {
+  const server = createSession(defaults(), 0);
+  server.moves = [{ from: 'b7', to: 'b8', promotion: 'n', color: 'w', san: 'b8=N' }];
+  assert.equal(containsAction(server, { action: { type: 'move', from: 'b7', to: 'b8', promotion: 'n' }, actor: 'w', index: 0 }), true);
+  assert.equal(containsAction(server, { action: { type: 'move', from: 'b7', to: 'b8', promotion: 'q' }, actor: 'w', index: 0 }), false);
+  assert.equal(containsAction(server, { action: { type: 'move', from: 'b7', to: 'b8' }, actor: 'w', index: 0 }), false);
+});
+
+test('only our own resignation counts as confirming our resign', () => {
+  const resigned = createSession(defaults(), 0);
+  applyAction(resigned, { type: 'resign' }, 'w', 500);
+  assert.equal(containsAction(resigned, { action: { type: 'resign' }, actor: 'w', index: 0 }), true);
+  // The opponent resigned at the same time: the game is finished, but not by us.
+  assert.equal(containsAction(resigned, { action: { type: 'resign' }, actor: 'b', index: 0 }), false);
+  // Finished by a move after the one we resigned on.
+  assert.equal(containsAction(resigned, { action: { type: 'resign' }, actor: 'w', index: 1 }), false);
+  const mated = createSession(defaults(), 0);
+  for (const [from, to, color] of [['f2', 'f3', 'w'], ['e7', 'e5', 'b'], ['g2', 'g4', 'w'], ['d8', 'h4', 'b']]) applyAction(mated, move(from, to), color, 500);
+  assert.equal(mated.status, 'finished');
+  assert.equal(containsAction(mated, { action: { type: 'resign' }, actor: 'w', index: 4 }), false);
+});

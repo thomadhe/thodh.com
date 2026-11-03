@@ -217,8 +217,16 @@ export function formatClock(ms) {
 
 export function noticeFacesOpposite(notice, mode) { return mode === 'local' && notice?.recipient === 'b'; }
 
-/** Applies an unconfirmed online action. Returns false when it no longer fits the position. */
+// Pieces, side to move and castling. The en passant field is left out, since chess.js versions write it differently.
+const position = fen => fen.split(' ').slice(0, 3).join(' ');
+
+/**
+ * Applies an unconfirmed online action. Returns false when it no longer fits the position, including when
+ * the entry records a position (`fen`, `index`) and the state is somewhere else.
+ */
 export function applyPending(state, entry, chessAt) {
+  if (typeof entry.fen === 'string' && position(entry.fen) !== position(state.fen)) return false;
+  if (Number.isInteger(entry.index) && entry.index !== state.moves.length) return false;
   const moves = state.moves.length, status = state.status;
   const noticed = state.notices.some(notice => notice.id === entry.action.noticeId);
   try { applyAction(state, entry.action, entry.actor, entry.at, entry.action.type === 'move' ? chessAt?.(state) : undefined); } catch { return false; }
@@ -249,7 +257,8 @@ export function rebuild(snapshotState, revision, pending, chessAt) {
 /** True when the server's state already contains this own action, e.g. after a retried request. */
 export function containsAction(state, entry) {
   const { action } = entry;
-  if (action.type === 'move') { const move = state.moves[entry.index]; return Boolean(move) && move.from === action.from && move.to === action.to && move.color === entry.actor; }
+  if (action.type === 'move') { const move = state.moves[entry.index]; return Boolean(move) && move.from === action.from && move.to === action.to && (move.promotion ?? null) === (action.promotion ?? null) && move.color === entry.actor; }
   if (action.type === 'ack') return !state.notices.some(notice => notice.id === action.noticeId) && state.nextNotice > action.noticeId;
-  return state.status === 'finished';
+  // Only our own resignation: the opponent won, with no move played after it, and the result says so.
+  return state.status === 'finished' && state.moves.length === entry.index && state.result?.kind === 'win' && state.result.recipient === other(entry.actor) && /ga opp/.test(state.result.description ?? '');
 }
