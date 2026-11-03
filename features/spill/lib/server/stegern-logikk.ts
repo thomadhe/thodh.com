@@ -7,11 +7,8 @@ import { dagNummer, erGyldigDato, iDagOslo, tilfeldig } from "../dag"
 import { land, omrader, type Kontinent } from "../geografi"
 import { NORMALE, STEGERN_START, type Nivaa, type Vurdering } from "../stegern"
 
-/**
- * Lowercase letters and digits only: "Côte d'Ivoire" → "cotedivoire", "Østerrike" → "osterrike",
- * "Ålesund" = "Aalesund" → "alesund". A leading "en", "ei" or "et" is dropped ("en banan" → "banan").
- */
-export function normaliser(s: string) {
+/** The words of a text in lowercase letters and digits, with the leading article dropped ("en banan" → ["banan"]). */
+function ord(s: string) {
   const t = s
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
@@ -25,7 +22,36 @@ export function normaliser(s: string) {
     .replace(/[^a-z0-9]+/g, " ")
     .trim()
     .replace(/^(?:en|ei|et) (?=\S)/, "")
-  return t.replace(/ /g, "").replace(/aa/g, "a")
+  return t ? t.split(" ") : []
+}
+
+/**
+ * Lowercase letters and digits only: "Côte d'Ivoire" → "cotedivoire", "Østerrike" → "osterrike",
+ * "Ålesund" = "Aalesund" → "alesund". A leading "en", "ei" or "et" is dropped ("en banan" → "banan").
+ */
+export function normaliser(s: string) {
+  return ord(s).join("").replace(/aa/g, "a")
+}
+
+const ROMERSK = /^x{0,3}(?:ix|iv|v?i{0,3})$/
+const ROMERTALL: Record<string, number> = { i: 1, v: 5, x: 10 }
+function romersk(t: string) {
+  let n = 0
+  for (let i = 0; i < t.length; i++) {
+    const v = ROMERTALL[t[i]]
+    n += i + 1 < t.length && v < ROMERTALL[t[i + 1]] ? -v : v
+  }
+  return n
+}
+
+/**
+ * The numbers in a text, Roman numerals after the first word included: "Rocky II" and "Rocky 2" → "2",
+ * "Henrik VIII" → "8". A lone "i" is the preposition, not 1. Numbers are never typos of each other.
+ */
+export function tallIOrd(s: string) {
+  return ord(s)
+    .flatMap((w, i) => (/^\d+$/.test(w) ? [String(Number(w))] : i > 0 && w !== "i" && ROMERSK.test(w) ? [String(romersk(w))] : []))
+    .join(" ")
 }
 
 /** Damerau-Levenshtein distance (optimal string alignment), giving up once it exceeds `maks`. */
@@ -55,7 +81,8 @@ export function toleranse(lengde: number) {
   return lengde <= 3 ? 0 : lengde <= 8 ? 1 : 2
 }
 
-// Plural and definite endings tried when the bare stem is an answer ("katter" → "katt", "eplet" → "eple").
+// Plural and definite endings tried when the bare stem is a common noun in the list ("katter" → "katt",
+// "eplet" → "eple"). A single letter only comes off a stem of five letters or more.
 const ENDELSER = ["ene", "ane", "er", "ar", "en", "et", "r", "s", "e"]
 
 type Alternativ = { vis: string; nokler: string[]; nivaa: Exclude<Nivaa, 0>; geo: boolean }
@@ -63,6 +90,10 @@ export type Oppgave = {
   tekst: string
   alternativer: Alternativ[]
   indeks: Map<string, number>
+  /** Keys of lowercase common nouns, the only answers that are inflected. */
+  boyelige: Map<string, number>
+  /** The numbers in each key (see `tallIOrd`). */
+  tall: Map<string, string>
   streng: boolean
   nei: Set<string>
 }
@@ -70,10 +101,13 @@ export type Oppgave = {
 const kontinenter = new Set<string>(["Europa", "Asia", "Afrika", "Nord-Amerika", "Sør-Amerika", "Oseania"])
 const landEtterId = new Map(omrader.map((o) => [o.id, o]))
 
+// Common misspellings that are real words elsewhere in the bank, so the typo rule would not catch them.
+const EKSTRA_LANDNAVN: Record<string, string[]> = { LI: ["Lichtenstein"] }
+
 function landNavn(id: string) {
   const o = landEtterId.get(id)
   if (!o) throw new Error(`Ukjent land: ${id}`)
-  return { vis: o.navn, navn: [o.navn, o.en, ...o.svar] }
+  return { vis: o.navn, navn: [o.navn, o.en, ...o.svar, ...(EKSTRA_LANDNAVN[id] ?? [])] }
 }
 
 function hovedstadNavn(id: string) {
@@ -154,14 +188,25 @@ export function byggOppgave(s: StegernSporsmal): Oppgave {
   }
 
   const indeks = new Map<string, number>()
+  const boyelige = new Map<string, number>()
+  const tall = new Map<string, string>()
   alternativer.forEach((a, i) => {
     if (forbokstav && !normaliser(a.vis).startsWith(forbokstav)) a.vis = a.nokler.find((n) => normaliser(n).startsWith(forbokstav!)) ?? a.vis
-    a.nokler = [...new Set(a.nokler.map(normaliser).filter((k) => k && (!forbokstav || k.startsWith(forbokstav))))]
-    // The first answer to claim a text keeps it ("Kongo" stays with whichever Congo came first).
-    for (const k of a.nokler) if (!indeks.has(k)) indeks.set(k, i)
+    const nokler: string[] = []
+    for (const n of a.nokler) {
+      const k = normaliser(n)
+      if (!k || (forbokstav && !k.startsWith(forbokstav)) || nokler.includes(k)) continue
+      nokler.push(k)
+      // The first answer to claim a text keeps it ("Kongo" stays with whichever Congo came first).
+      if (indeks.has(k)) continue
+      indeks.set(k, i)
+      tall.set(k, tallIOrd(n))
+      if (!a.geo && /^[a-zæøå]/.test(n)) boyelige.set(k, i)
+    }
+    a.nokler = nokler
   })
   const nei = new Set((s.nei ?? "").split(",").map(normaliser).filter(Boolean))
-  return { tekst: s.tekst, alternativer, indeks, streng: s.streng ?? false, nei }
+  return { tekst: s.tekst, alternativer, indeks, boyelige, tall, streng: s.streng ?? false, nei }
 }
 
 /** Hand-written texts claimed by two different answers in one prompt, which would make matching ambiguous. */
@@ -202,27 +247,28 @@ function kjente() {
   return (kjenteOrd = ord)
 }
 
-/** Index of the answer a text matches, or null. Exact first, then inflected forms, then small typos. */
+/**
+ * Index of the answer a text matches, or null. Exact first, then inflected forms of common nouns, then small
+ * typos. A real word from elsewhere in the bank ("Irak" when only Iran fits) is never inflected or a typo.
+ */
 export function finnAlternativ(o: Oppgave, tekst: string): number | null {
   const t = normaliser(tekst)
   if (!t) return null
   const direkte = o.indeks.get(t)
   if (direkte !== undefined) return direkte
-  if (o.nei.has(t) || o.streng) return null
+  if (o.nei.has(t) || o.streng || kjente().has(t)) return null
   for (const e of ENDELSER) {
-    if (!t.endsWith(e) || t.length - e.length < 4) continue
-    const i = o.indeks.get(t.slice(0, -e.length))
+    if (!t.endsWith(e) || t.length - e.length < (e.length === 1 ? 5 : 4)) continue
+    const i = o.boyelige.get(t.slice(0, -e.length))
     if (i !== undefined) return i
   }
-  // A real word from elsewhere ("Irak" when only Iran fits) is not a typo; only long words one letter off
-  // ("Lichtenstein") still count.
-  const kjent = kjente().has(t)
+  const tall = tallIOrd(tekst)
   let best: number | null = null
   let bestAvstand = Infinity
   for (const [k, i] of o.indeks) {
     // Typos rarely hit the first letter, and requiring it keeps "Mali" from passing as "Bali".
-    if (k[0] !== t[0]) continue
-    const tol = kjent ? (k.length >= 9 ? 1 : 0) : toleranse(k.length)
+    if (k[0] !== t[0] || o.tall.get(k) !== tall) continue
+    const tol = toleranse(k.length)
     if (tol === 0) continue
     const d = avstand(t, k, tol)
     if (d > tol) continue
@@ -292,7 +338,7 @@ export function erGjentatt(dato: string, tidligere: string, svar: string) {
   const o = oppgave(s)
   const ia = finnAlternativ(o, tidligere)
   if (ia !== null && ia === finnAlternativ(o, svar)) return true
-  return b[0] === a[0] && avstand(a, b, toleranse(a.length)) <= toleranse(a.length)
+  return b[0] === a[0] && tallIOrd(tidligere) === tallIOrd(svar) && avstand(a, b, toleranse(a.length)) <= toleranse(a.length)
 }
 
 export function finaleTekst(dato: string) {

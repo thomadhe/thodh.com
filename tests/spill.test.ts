@@ -24,6 +24,7 @@ import {
   konflikter,
   normaliser,
   sjetteNr,
+  tallIOrd,
   vurderSvar,
 } from "../features/spill/lib/server/stegern-logikk"
 
@@ -211,6 +212,59 @@ test("6/7-stegern: alias, skrivefeil og bøyning godtas", () => {
   assert.equal(treff("kantarell | | | | ", "kantarel"), "kantarell")
   assert.equal(treff("Python, C, C#, C++ | | | | ", "c#"), "C#")
   assert.equal(treff("Python, C, C#, C++ | | | | ", "C++"), "C++")
+  assert.equal(treff("zorbik | | | | ", "zorbiker"), "zorbik")
+  assert.equal(treff("zorbik | | | | ", "zorbiken"), "zorbik")
+})
+
+test("6/7-stegern: bare vanlige substantiv bøyes, og ekte ord er aldri skrivefeil", () => {
+  // Names and places are not inflected: "Bergenen" is not Bergen.
+  assert.equal(treff("Bergen, Oslo | | | | ", "Bergenen"), null)
+  assert.equal(treff("#PE | | | | ", "Peruene"), null)
+  // One letter only comes off a stem of five letters or more.
+  assert.equal(treff("bil | | | | ", "bils"), null)
+  assert.equal(treff("tre | | | | ", "tree"), null)
+  // A word that is itself an answer elsewhere is not stripped: the country Sveits is not a "sveit".
+  assert.equal(treff("sveit | | | | ", "Sveits"), null)
+  assert.equal(treff("sveit | | | | ", "sveiten"), "sveit")
+  // Long real words one letter off are not typos either: Kingston is not Kingstown.
+  assert.equal(treff("$VC | | | | ", "Kingston"), null)
+  assert.equal(treff("$VC | | | | ", "Kingstwon"), "Kingstown")
+})
+
+test("6/7-stegern: tall og romertall må stemme nøyaktig", () => {
+  assert.equal(tallIOrd("Rocky II"), "2")
+  assert.equal(tallIOrd("Rocky 2"), "2")
+  assert.equal(tallIOrd("Henrik VIII"), "8")
+  assert.equal(tallIOrd("Mannen i månen"), "")
+  assert.equal(tallIOrd("Vi over 60"), "60")
+  const rocky = "Rocky, Rocky II, Rocky III | Rocky IV | | | "
+  assert.equal(treff(rocky, "Rocky VII"), null)
+  assert.equal(treff(rocky, "Rocky V"), null)
+  assert.equal(treff(rocky, "Rocky IIII"), null)
+  assert.equal(treff(rocky, "Rokcy II"), "Rocky II")
+  assert.equal(treff(rocky, "rocky iv"), "Rocky IV")
+  assert.equal(treff("Henrik VIII | | | | ", "Henrik VII"), null)
+  assert.equal(treff("Apollo 11 | | | | ", "Apollo 13"), null)
+  assert.equal(treff("Apollo 11 | | | | ", "Apolo 11"), "Apollo 11")
+  assert.equal(treff("Ocean's Eleven | | | | ", "Ocean's 11"), null)
+})
+
+test("6/7-stegern: svar fra andre spørsmål i banken godtas ikke ved et uhell", () => {
+  // Reviewed exceptions as "day.question: key → accepted answer". Add one only after checking that the
+  // text really is a right answer to that question (then it should rather be listed there as an alias).
+  const godkjent = new Set<string>([])
+  const alle = stegernDager.flatMap((d, i) => [...d.sporsmal, d.finale].map((s, j) => ({ hvor: `${i + 1}.${j === 5 ? 7 : j + 1}`, o: byggOppgave(s) })))
+  const nokler = new Set(alle.flatMap(({ o }) => [...o.indeks.keys(), ...o.nei]))
+  const feil: string[] = []
+  for (const { hvor, o } of alle) {
+    for (const k of nokler) {
+      if (o.indeks.has(k) || o.nei.has(k)) continue
+      const i = finnAlternativ(o, k)
+      const linje = `${hvor}: ${k} → ${i === null ? "" : o.alternativer[i].vis}`
+      if (i !== null && !godkjent.has(linje)) feil.push(linje)
+    }
+  }
+  assert.deepEqual(feil, [])
 })
 
 test("6/7-stegern: nesten-treff på andre ord, delstrenger og lister avvises", () => {
