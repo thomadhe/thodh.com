@@ -7,9 +7,12 @@ export function speak(text: string, language: Language) {
     );
     return;
   }
-  const voice = speechSynthesis
-    .getVoices()
-    .find((v) => v.lang.toLowerCase().startsWith(language));
+  // Prefer the tutor's own variety (fr-FR, de-DE) over fr-CA or de-CH.
+  const locale = languages[language].locale.toLowerCase();
+  const voices = speechSynthesis.getVoices();
+  const voice =
+    voices.find((v) => v.lang.toLowerCase().replace("_", "-") === locale) ??
+    voices.find((v) => v.lang.toLowerCase().startsWith(language));
   if (!voice) {
     toast.info(
       `Ingen ${languages[language].name.toLowerCase()} stemme er installert. Legg til en stemme i nettleseren eller Windows.`,

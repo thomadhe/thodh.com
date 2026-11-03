@@ -535,6 +535,34 @@ img {
 .es .hero-portrait {
   background: #e9a552;
 }
+.conversation-hero.fr {
+  background: #f5e1e6;
+}
+.fr .hero-kicker,
+.fr .hero-copy h2 {
+  color: #5e1f34;
+}
+.fr .hero-copy > p,
+.fr .hero-footnote {
+  color: #84505f;
+}
+.fr .hero-portrait {
+  background: #c97b92;
+}
+.conversation-hero.de {
+  background: #dfece2;
+}
+.de .hero-kicker,
+.de .hero-copy h2 {
+  color: #1f4630;
+}
+.de .hero-copy > p,
+.de .hero-footnote {
+  color: #4a6a56;
+}
+.de .hero-portrait {
+  background: #7fa98c;
+}
 .section-heading {
   display: flex;
   align-items: center;
@@ -905,10 +933,38 @@ img {
   font-size: 12px;
 }
 .tutor-grid {
+  --tutor-gap: 25px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 25px;
+  gap: var(--tutor-gap);
   max-width: 950px;
+}
+/* An odd tutor out sits centred, the same width as the others. */
+@media (min-width: 481px) {
+  .tutor-grid > .tutor-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc((100% - var(--tutor-gap)) / 2);
+  }
+}
+/* Three per row on wide screens; a short last row is centred. */
+@media (min-width: 1500px) {
+  .tutor-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    max-width: 1300px;
+  }
+  .tutor-grid > .tutor-card,
+  .tutor-grid > .tutor-card:last-child:nth-child(odd) {
+    grid-column: span 2;
+    justify-self: stretch;
+    width: auto;
+  }
+  .tutor-grid > .tutor-card:nth-child(3n + 1):nth-last-child(2) {
+    grid-column: 2 / span 2;
+  }
+  .tutor-grid > .tutor-card:nth-child(3n + 1):last-child {
+    grid-column: 3 / span 2;
+  }
 }
 .tutor-card {
   background: #fff;
@@ -1879,7 +1935,7 @@ img {
     padding: 16px;
   }
   .tutor-grid {
-    gap: 17px;
+    --tutor-gap: 17px;
   }
   .tutor-info > p:not(.eyebrow) {
     font-size: 14px;

@@ -72,7 +72,7 @@ export const buildingProjects: Project[] = [
     id: "otsjoba",
     name: "Otsjoba",
     href: "/otsjoba",
-    description: "Øv på italiensk og russisk med veiledede samtaler og ordtrening.",
+    description: "Øv på fem språk fra A1 til C2 med veiledede samtaler og ordtrening.",
     category: "Web app · Språk",
     status: "building",
     startedAt: "2026-09-01T10:00:00+02:00",

@@ -1,0 +1,2343 @@
+[
+  {
+    "id": "fr-bonjour",
+    "title": "Hei, hvem er du?",
+    "subtitle": "Hils, si navnet ditt og hvor du kommer fra.",
+    "level": "A1",
+    "icon": "hand",
+    "opening": "Bonjour ! Je m’appelle Camille. Enchantée !",
+    "openingTranslation": "Hei! Jeg heter Camille. Hyggelig å treffe deg!",
+    "steps": [
+      {
+        "question": "Comment tu t’appelles ?",
+        "translation": "Hva heter du?",
+        "expected": [
+          "Je m’appelle Anna.",
+          "Moi, c’est Anna."
+        ],
+        "hint": "Si navnet ditt: «Je m’appelle …».",
+        "reply": "Enchantée, Anna !",
+        "replyTranslation": "Hyggelig å treffe deg, Anna!"
+      },
+      {
+        "question": "Tu viens d’où ?",
+        "translation": "Hvor kommer du fra?",
+        "expected": [
+          "Je viens de Norvège, d’Oslo.",
+          "Je suis norvégien, de Bergen.",
+          "Je suis norvégienne, de Bergen."
+        ],
+        "hint": "«Je viens de …» betyr jeg kommer fra … En kvinne sier «norvégienne», en mann «norvégien».",
+        "reply": "La Norvège ! C’est un beau pays.",
+        "replyTranslation": "Norge! Det er et vakkert land."
+      },
+      {
+        "question": "Ça va ?",
+        "translation": "Går det bra?",
+        "expected": [
+          "Ça va bien, merci. Et toi ?",
+          "Très bien, merci. Et toi ?"
+        ],
+        "hint": "Svar «Ça va bien, merci» og spør tilbake: «Et toi ?»",
+        "reply": "Moi aussi, ça va bien, merci.",
+        "replyTranslation": "Det går bra med meg også, takk."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "bonjour",
+        "translation": "hei / god dag"
+      },
+      {
+        "word": "je m’appelle",
+        "translation": "jeg heter"
+      },
+      {
+        "word": "enchanté / enchantée",
+        "translation": "hyggelig å treffe deg"
+      },
+      {
+        "word": "tu viens d’où ?",
+        "translation": "hvor kommer du fra?"
+      },
+      {
+        "word": "ça va ?",
+        "translation": "går det bra?"
+      },
+      {
+        "word": "merci",
+        "translation": "takk"
+      }
+    ]
+  },
+  {
+    "id": "fr-boulangerie",
+    "title": "I bakeriet",
+    "subtitle": "Bestill brød og bakst, tell og betal.",
+    "level": "A1",
+    "icon": "shop",
+    "opening": "Bonjour ! Aujourd’hui, je joue la boulangère. Le pain est tout chaud !",
+    "openingTranslation": "Hei! I dag spiller jeg baker. Brødet er nystekt og varmt!",
+    "steps": [
+      {
+        "question": "Qu’est-ce que vous désirez ?",
+        "translation": "Hva skal det være?",
+        "expected": [
+          "Une baguette, s’il vous plaît.",
+          "Je voudrais une baguette, s’il vous plaît."
+        ],
+        "hint": "«Je voudrais …» betyr jeg skulle gjerne hatt … Avslutt med «s’il vous plaît».",
+        "reply": "Très bien, une baguette.",
+        "replyTranslation": "Fint, en baguette."
+      },
+      {
+        "question": "Et avec ceci ?",
+        "translation": "Noe mer?",
+        "expected": [
+          "Deux croissants, s’il vous plaît.",
+          "Trois croissants aussi, s’il vous plaît."
+        ],
+        "hint": "Tell: un, deux, trois, quatre, cinq. «Et avec ceci ?» betyr noe mer?",
+        "reply": "D’accord, voilà vos croissants.",
+        "replyTranslation": "Greit, her er croissantene dine."
+      },
+      {
+        "question": "Vous payez comment ?",
+        "translation": "Hvordan vil du betale?",
+        "expected": [
+          "Par carte, s’il vous plaît.",
+          "En espèces. Voilà."
+        ],
+        "hint": "«par carte» = med kort, «en espèces» = kontant.",
+        "reply": "Merci, bonne journée !",
+        "replyTranslation": "Takk, ha en fin dag!"
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "une baguette",
+        "translation": "en baguette (langt, smalt brød)"
+      },
+      {
+        "word": "je voudrais",
+        "translation": "jeg skulle gjerne hatt"
+      },
+      {
+        "word": "s’il vous plaît",
+        "translation": "vær så snill / takk (høflig, når du ber om noe)"
+      },
+      {
+        "word": "et avec ceci ?",
+        "translation": "noe mer?"
+      },
+      {
+        "word": "par carte",
+        "translation": "med kort"
+      },
+      {
+        "word": "en espèces",
+        "translation": "kontant"
+      }
+    ]
+  },
+  {
+    "id": "fr-cafe",
+    "title": "En kaffe på terrassen",
+    "subtitle": "Bestill noe å drikke og spør om prisen.",
+    "level": "A1",
+    "icon": "coffee",
+    "opening": "Bonjour ! Une table en terrasse ? Installez-vous.",
+    "openingTranslation": "Hei! Et bord ute? Vær så god og sett deg.",
+    "steps": [
+      {
+        "question": "Qu’est-ce que je vous sers ?",
+        "translation": "Hva kan jeg servere deg?",
+        "expected": [
+          "Un café, s’il vous plaît.",
+          "Un thé, s’il vous plaît."
+        ],
+        "hint": "«Un café» er en liten, sterk espresso. Vil du ha melk, sier du «un café crème».",
+        "reply": "Tout de suite !",
+        "replyTranslation": "Kommer straks!"
+      },
+      {
+        "question": "Vous voulez aussi un croissant ?",
+        "translation": "Vil du også ha en croissant?",
+        "expected": [
+          "Oui, merci.",
+          "Non, merci, ça va."
+        ],
+        "hint": "«Oui, merci» = ja takk, «Non, merci» = nei takk.",
+        "reply": "Très bien.",
+        "replyTranslation": "Fint."
+      },
+      {
+        "question": "Autre chose ?",
+        "translation": "Noe annet?",
+        "expected": [
+          "Non, merci. C’est combien ?",
+          "Non, c’est tout. Ça fait combien ?"
+        ],
+        "hint": "«C’est combien ?» og «Ça fait combien ?» betyr hvor mye blir det?",
+        "reply": "Ça fait trois euros cinquante. Je vous apporte l’addition.",
+        "replyTranslation": "Det blir tre euro og femti cent. Jeg kommer med regningen."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "un café",
+        "translation": "en espresso"
+      },
+      {
+        "word": "un thé",
+        "translation": "en te"
+      },
+      {
+        "word": "tout de suite",
+        "translation": "straks"
+      },
+      {
+        "word": "autre chose ?",
+        "translation": "noe annet?"
+      },
+      {
+        "word": "c’est combien ?",
+        "translation": "hvor mye koster det?"
+      },
+      {
+        "word": "l’addition",
+        "translation": "regningen"
+      }
+    ]
+  },
+  {
+    "id": "fr-ou-est",
+    "title": "Hvor er stasjonen?",
+    "subtitle": "Spør om veien og forstå enkle retninger.",
+    "level": "A1",
+    "icon": "map",
+    "opening": "Bonjour ! Vous cherchez quelque chose ?",
+    "openingTranslation": "Hei! Ser du etter noe?",
+    "steps": [
+      {
+        "question": "Je peux vous aider ?",
+        "translation": "Kan jeg hjelpe deg?",
+        "expected": [
+          "Oui, pardon, où est la gare ?",
+          "Excusez-moi, la gare, c’est où ?"
+        ],
+        "hint": "«Où est …?» betyr hvor er …? «la gare» er jernbanestasjonen.",
+        "reply": "La gare ? C’est tout près.",
+        "replyTranslation": "Stasjonen? Den er like i nærheten."
+      },
+      {
+        "question": "Allez tout droit, puis tournez à gauche. D’accord ?",
+        "translation": "Gå rett fram, og ta så til venstre. Er du med?",
+        "expected": [
+          "Tout droit, puis à gauche. C’est loin ?",
+          "D’accord, à gauche. C’est loin d’ici ?"
+        ],
+        "hint": "Gjenta retningen og spør «C’est loin ?» (er det langt?).",
+        "reply": "Non, c’est à cinq minutes à pied.",
+        "replyTranslation": "Nei, det er fem minutter å gå."
+      },
+      {
+        "question": "Vous voyez le grand bâtiment là-bas ?",
+        "translation": "Ser du den store bygningen der borte?",
+        "expected": [
+          "Oui, je le vois. Merci beaucoup !",
+          "Ah oui, je vois. Merci !"
+        ],
+        "hint": "«Je vois» = jeg ser. Takk: «Merci beaucoup !»",
+        "reply": "C’est la gare. Bon voyage !",
+        "replyTranslation": "Det er stasjonen. God tur!"
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "où est … ?",
+        "translation": "hvor er …?"
+      },
+      {
+        "word": "la gare",
+        "translation": "jernbanestasjonen"
+      },
+      {
+        "word": "tout droit",
+        "translation": "rett fram"
+      },
+      {
+        "word": "à gauche / à droite",
+        "translation": "til venstre / til høyre"
+      },
+      {
+        "word": "c’est loin ?",
+        "translation": "er det langt?"
+      },
+      {
+        "word": "à pied",
+        "translation": "til fots"
+      }
+    ]
+  },
+  {
+    "id": "fr-heure",
+    "title": "Når møtes vi?",
+    "subtitle": "Avtal en dag og et klokkeslett.",
+    "level": "A1",
+    "icon": "clock",
+    "opening": "Salut ! On va au cinéma ensemble cette semaine ?",
+    "openingTranslation": "Hei! Skal vi gå på kino sammen denne uka?",
+    "steps": [
+      {
+        "question": "Tu es libre quel jour ?",
+        "translation": "Hvilken dag har du tid?",
+        "expected": [
+          "Je suis libre samedi.",
+          "Samedi, c’est possible."
+        ],
+        "hint": "Ukedager: lundi, mardi, mercredi, jeudi, vendredi, samedi, dimanche.",
+        "reply": "Samedi, parfait !",
+        "replyTranslation": "Lørdag, perfekt!"
+      },
+      {
+        "question": "Le film commence à dix-huit heures ou à vingt heures. Tu préfères quelle séance ?",
+        "translation": "Filmen begynner klokka 18 eller klokka 20. Hvilken visning vil du helst ta?",
+        "expected": [
+          "À vingt heures, c’est mieux.",
+          "Je préfère vingt heures."
+        ],
+        "hint": "Franskmenn bruker ofte 24-timersklokka: «dix-huit heures» = 18.00, «vingt heures» = 20.00.",
+        "reply": "D’accord, à vingt heures.",
+        "replyTranslation": "Greit, klokka 20."
+      },
+      {
+        "question": "On se retrouve où ?",
+        "translation": "Hvor møtes vi?",
+        "expected": [
+          "Devant le cinéma.",
+          "Devant le cinéma, c’est simple."
+        ],
+        "hint": "«devant» = foran. «À samedi !» betyr vi ses på lørdag.",
+        "reply": "Super, à samedi !",
+        "replyTranslation": "Supert, vi ses på lørdag!"
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "samedi",
+        "translation": "lørdag"
+      },
+      {
+        "word": "libre",
+        "translation": "ledig / har tid"
+      },
+      {
+        "word": "à quelle heure ?",
+        "translation": "når? / hvilket klokkeslett?"
+      },
+      {
+        "word": "la séance",
+        "translation": "visningen (på kino)"
+      },
+      {
+        "word": "devant",
+        "translation": "foran"
+      },
+      {
+        "word": "à samedi !",
+        "translation": "vi ses på lørdag!"
+      }
+    ]
+  },
+  {
+    "id": "fr-hotel",
+    "title": "Innsjekk på hotellet",
+    "subtitle": "Bekreft reservasjonen, spør om frokost og løs et lite problem.",
+    "level": "A2",
+    "icon": "home",
+    "opening": "Bonsoir et bienvenue à l’hôtel du Parc ! Vous avez une réservation ?",
+    "openingTranslation": "God kveld og velkommen til Hôtel du Parc! Har du en reservasjon?",
+    "steps": [
+      {
+        "question": "À quel nom, s’il vous plaît ?",
+        "translation": "Hvilket navn står den på?",
+        "expected": [
+          "Au nom de Hansen, pour deux nuits.",
+          "C’est au nom de Hansen. J’ai réservé une chambre double."
+        ],
+        "hint": "«au nom de …» = i navnet … «une nuit» = en natt, «une chambre double» = et dobbeltrom.",
+        "reply": "Parfait, j’ai bien votre réservation. Vous êtes dans la chambre 212, au deuxième étage.",
+        "replyTranslation": "Perfekt, jeg har reservasjonen din. Du har rom 212 i tredje etasje."
+      },
+      {
+        "question": "Vous avez des questions ?",
+        "translation": "Har du noen spørsmål?",
+        "expected": [
+          "Oui, le petit-déjeuner est à quelle heure ?",
+          "À quelle heure est le petit-déjeuner ?"
+        ],
+        "hint": "«le petit-déjeuner» = frokosten. Merk: «le rez-de-chaussée» er første etasje, og «le deuxième étage» er tredje etasje.",
+        "reply": "De sept heures à dix heures, au rez-de-chaussée.",
+        "replyTranslation": "Fra sju til ti, i første etasje."
+      },
+      {
+        "question": "Voici votre clé. L’ascenseur est à droite.",
+        "translation": "Her er nøkkelen din. Heisen er til høyre.",
+        "expected": [
+          "Merci. Quel est le mot de passe du wifi ?",
+          "Merci. Il y a le wifi dans la chambre ?"
+        ],
+        "hint": "«le mot de passe» = passordet. «Il y a …?» = finnes det …?",
+        "reply": "Le wifi est gratuit dans tout l’hôtel. Le mot de passe est écrit sur cette carte.",
+        "replyTranslation": "Wifien er gratis på hele hotellet. Passordet står på dette kortet."
+      },
+      {
+        "question": "(Une heure plus tard) Allô, la réception, bonsoir. Je vous écoute.",
+        "translation": "(En time senere) Hallo, resepsjonen, god kveld. Hva kan jeg hjelpe med?",
+        "expected": [
+          "Bonsoir, il n’y a pas de serviettes dans ma chambre.",
+          "Bonsoir, le chauffage ne marche pas dans ma chambre."
+        ],
+        "hint": "«il n’y a pas de …» = det er ingen …; «… ne marche pas» = … virker ikke.",
+        "reply": "Je suis désolée. Quelqu’un monte tout de suite.",
+        "replyTranslation": "Det beklager jeg. Det kommer noen opp med en gang."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "au nom de",
+        "translation": "i navnet"
+      },
+      {
+        "word": "le petit-déjeuner",
+        "translation": "frokosten"
+      },
+      {
+        "word": "le rez-de-chaussée",
+        "translation": "første etasje (gateplan)"
+      },
+      {
+        "word": "le deuxième étage",
+        "translation": "tredje etasje"
+      },
+      {
+        "word": "le mot de passe",
+        "translation": "passordet"
+      },
+      {
+        "word": "ne marche pas",
+        "translation": "virker ikke"
+      }
+    ]
+  },
+  {
+    "id": "fr-week-end",
+    "title": "Hvordan var helgen?",
+    "subtitle": "Fortell hva du gjorde, og hva du skal gjøre.",
+    "level": "A2",
+    "icon": "wave",
+    "opening": "Salut ! Alors, c’était comment, ton week-end ?",
+    "openingTranslation": "Hei! Nå, hvordan var helgen din?",
+    "steps": [
+      {
+        "question": "Qu’est-ce que tu as fait samedi ?",
+        "translation": "Hva gjorde du på lørdag?",
+        "expected": [
+          "Samedi, j’ai fait une randonnée avec des amis.",
+          "J’ai fait du vélo et j’ai vu un film."
+        ],
+        "hint": "Passé composé: «j’ai fait», «j’ai vu», «j’ai mangé».",
+        "reply": "Ça a l’air sympa !",
+        "replyTranslation": "Det høres hyggelig ut!"
+      },
+      {
+        "question": "Et dimanche, tu as fait quoi ?",
+        "translation": "Og på søndag, hva gjorde du da?",
+        "expected": [
+          "Dimanche, j’ai dormi tard et j’ai lu un livre.",
+          "Dimanche, je suis resté à la maison.",
+          "Dimanche, je suis restée à la maison."
+        ],
+        "hint": "Med «avoir»: «j’ai dormi», «j’ai lu». Med «être» bøyes partisippet etter kjønn: en mann sier «je suis resté», en kvinne «je suis restée».",
+        "reply": "Un dimanche tranquille, c’est parfait.",
+        "replyTranslation": "En rolig søndag, det er perfekt."
+      },
+      {
+        "question": "Tu as passé un bon week-end, alors ?",
+        "translation": "Hadde du en fin helg, da?",
+        "expected": [
+          "Oui, j’ai passé un très bon week-end.",
+          "Oui, c’était super, mais trop court !"
+        ],
+        "hint": "«passer un bon week-end» = ha en fin helg; «c’était» = det var.",
+        "reply": "Les week-ends sont toujours trop courts !",
+        "replyTranslation": "Helgene er alltid for korte!"
+      },
+      {
+        "question": "Et le week-end prochain, qu’est-ce que tu vas faire ?",
+        "translation": "Og neste helg, hva skal du gjøre?",
+        "expected": [
+          "Je vais rendre visite à mes parents.",
+          "Je vais aller à un concert avec une amie."
+        ],
+        "hint": "Nær framtid: «je vais» + infinitiv, for eksempel «je vais voir», «je vais partir».",
+        "reply": "Super, profite bien !",
+        "replyTranslation": "Supert, kos deg!"
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "le week-end",
+        "translation": "helgen"
+      },
+      {
+        "word": "j’ai fait",
+        "translation": "jeg gjorde"
+      },
+      {
+        "word": "je suis resté(e)",
+        "translation": "jeg ble (hjemme)"
+      },
+      {
+        "word": "c’était super",
+        "translation": "det var supert"
+      },
+      {
+        "word": "je vais + infinitiv",
+        "translation": "jeg skal …"
+      },
+      {
+        "word": "profite bien !",
+        "translation": "kos deg!"
+      }
+    ]
+  },
+  {
+    "id": "fr-pharmacie",
+    "title": "På apoteket",
+    "subtitle": "Si hva som er galt, hvor lenge, og hva du trenger.",
+    "level": "A2",
+    "icon": "heart",
+    "opening": "Bonjour, je suis pharmacienne. Qu’est-ce qui ne va pas ?",
+    "openingTranslation": "Hei, jeg er farmasøyt. Hva er problemet?",
+    "steps": [
+      {
+        "question": "Où avez-vous mal ?",
+        "translation": "Hvor har du vondt?",
+        "expected": [
+          "J’ai mal à la gorge.",
+          "J’ai mal à la tête et je tousse."
+        ],
+        "hint": "«J’ai mal à la tête / à la gorge / au ventre» = jeg har vondt i hodet / halsen / magen.",
+        "reply": "D’accord, je vais vous poser quelques questions.",
+        "replyTranslation": "Greit, jeg skal stille deg noen spørsmål."
+      },
+      {
+        "question": "Depuis quand ?",
+        "translation": "Hvor lenge har du hatt det sånn?",
+        "expected": [
+          "Depuis deux jours.",
+          "Depuis hier soir."
+        ],
+        "hint": "«depuis» + tid = siden / i (om noe som fortsatt varer): «depuis trois jours» = i tre dager.",
+        "reply": "Bon, ça ne fait pas très longtemps.",
+        "replyTranslation": "Greit, det er ikke så lenge siden."
+      },
+      {
+        "question": "Vous avez de la fièvre ?",
+        "translation": "Har du feber?",
+        "expected": [
+          "Non, je n’ai pas de fièvre.",
+          "Un peu, trente-huit, je crois."
+        ],
+        "hint": "Nektelse: «je n’ai pas de fièvre». 38 grader = «trente-huit».",
+        "reply": "D’accord. Je vous donne quelque chose.",
+        "replyTranslation": "Greit. Jeg skal gi deg noe."
+      },
+      {
+        "question": "Je vous conseille ce sirop, trois fois par jour. Autre chose ?",
+        "translation": "Jeg anbefaler denne miksturen, tre ganger om dagen. Noe mer?",
+        "expected": [
+          "Non, merci. C’est combien ?",
+          "Non, c’est tout. Ça fait combien ?"
+        ],
+        "hint": "«trois fois par jour» = tre ganger om dagen. Spør om prisen: «C’est combien ?»",
+        "reply": "Six euros cinquante. Et si ça ne va pas mieux dans trois jours, allez chez le médecin.",
+        "replyTranslation": "Seks euro og femti cent. Og hvis det ikke blir bedre om tre dager, gå til legen."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "j’ai mal à …",
+        "translation": "jeg har vondt i …"
+      },
+      {
+        "word": "la gorge",
+        "translation": "halsen"
+      },
+      {
+        "word": "la tête",
+        "translation": "hodet"
+      },
+      {
+        "word": "depuis",
+        "translation": "siden / i (om tid)"
+      },
+      {
+        "word": "la fièvre",
+        "translation": "feber"
+      },
+      {
+        "word": "aller mieux",
+        "translation": "bli bedre"
+      }
+    ]
+  },
+  {
+    "id": "fr-bistro",
+    "title": "Middag på bistro",
+    "subtitle": "Bestill fra dagens meny, spør om retter og be om regningen.",
+    "level": "A2",
+    "icon": "utensils",
+    "opening": "Bonsoir et bienvenue ! Ce soir, il y a un menu du jour à dix-neuf euros.",
+    "openingTranslation": "God kveld og velkommen! I kveld har vi dagens meny til 19 euro.",
+    "steps": [
+      {
+        "question": "Vous êtes combien ?",
+        "translation": "Hvor mange er dere?",
+        "expected": [
+          "Nous sommes deux.",
+          "Une table pour deux, s’il vous plaît."
+        ],
+        "hint": "«Nous sommes deux» = vi er to. «Une table pour deux» = et bord til to.",
+        "reply": "Très bien, suivez-moi.",
+        "replyTranslation": "Fint, bli med meg."
+      },
+      {
+        "question": "Vous avez choisi ?",
+        "translation": "Har dere bestemt dere?",
+        "expected": [
+          "Oui, deux menus du jour, s’il vous plaît.",
+          "Qu’est-ce que vous nous conseillez ?"
+        ],
+        "hint": "«Qu’est-ce que vous nous conseillez ?» = hva anbefaler du oss?",
+        "reply": "Le menu du jour est délicieux ce soir : soupe à l’oignon, puis bœuf bourguignon.",
+        "replyTranslation": "Dagens meny er nydelig i kveld: løksuppe, og så bœuf bourguignon."
+      },
+      {
+        "question": "Et comme boisson ?",
+        "translation": "Og hva vil dere drikke?",
+        "expected": [
+          "Une carafe d’eau et deux verres de vin rouge.",
+          "Juste une carafe d’eau, s’il vous plaît."
+        ],
+        "hint": "«Une carafe d’eau» er gratis springvann i karaffel, og det er helt vanlig å be om det i Frankrike.",
+        "reply": "Je vous apporte ça tout de suite.",
+        "replyTranslation": "Jeg kommer med det med en gang."
+      },
+      {
+        "question": "Tout s’est bien passé ?",
+        "translation": "Var alt i orden?",
+        "expected": [
+          "C’était délicieux, merci. L’addition, s’il vous plaît.",
+          "Très bien, merci. On peut payer séparément ?"
+        ],
+        "hint": "«L’addition, s’il vous plaît» = regningen, takk. «payer séparément» = betale hver for oss.",
+        "reply": "Avec plaisir. Je reviens tout de suite avec le terminal de paiement.",
+        "replyTranslation": "Gjerne. Jeg kommer straks tilbake med kortterminalen."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "le menu du jour",
+        "translation": "dagens meny"
+      },
+      {
+        "word": "vous avez choisi ?",
+        "translation": "har dere bestemt dere?"
+      },
+      {
+        "word": "conseiller",
+        "translation": "anbefale"
+      },
+      {
+        "word": "une carafe d’eau",
+        "translation": "en karaffel vann"
+      },
+      {
+        "word": "l’addition",
+        "translation": "regningen"
+      },
+      {
+        "word": "payer séparément",
+        "translation": "betale hver for seg"
+      }
+    ]
+  },
+  {
+    "id": "fr-train",
+    "title": "Billett til Lyon",
+    "subtitle": "Kjøp billett, spør om tider og finn riktig spor.",
+    "level": "A2",
+    "icon": "train",
+    "opening": "Bonjour, bienvenue au guichet. Je peux vous aider ?",
+    "openingTranslation": "Hei, velkommen til billettluka. Kan jeg hjelpe deg?",
+    "steps": [
+      {
+        "question": "Vous allez où ?",
+        "translation": "Hvor skal du?",
+        "expected": [
+          "Je voudrais un billet pour Lyon, s’il vous plaît.",
+          "Un aller-retour pour Lyon, s’il vous plaît."
+        ],
+        "hint": "«un aller simple» = enkeltbillett, «un aller-retour» = tur-retur.",
+        "reply": "Pour Lyon, très bien.",
+        "replyTranslation": "Til Lyon, fint."
+      },
+      {
+        "question": "Vous voulez partir quand ?",
+        "translation": "Når vil du reise?",
+        "expected": [
+          "Demain matin, si possible.",
+          "Demain, vers neuf heures."
+        ],
+        "hint": "«demain matin» = i morgen tidlig; «vers neuf heures» = rundt ni.",
+        "reply": "Il y a un TGV à neuf heures quatre.",
+        "replyTranslation": "Det går et TGV-tog klokka 9.04."
+      },
+      {
+        "question": "En première ou en seconde classe ?",
+        "translation": "På første eller andre klasse?",
+        "expected": [
+          "En seconde, s’il vous plaît.",
+          "En seconde. C’est combien ?"
+        ],
+        "hint": "I «seconde» uttales c-en som g: «segond». «C’est combien ?» = hva koster det?",
+        "reply": "Ça fait quarante-cinq euros, s’il vous plaît.",
+        "replyTranslation": "Det blir 45 euro."
+      },
+      {
+        "question": "Voici votre billet. Bon voyage !",
+        "translation": "Her er billetten din. God tur!",
+        "expected": [
+          "Merci. Le train part de quelle voie ?",
+          "Merci beaucoup. Il part de quelle voie ?"
+        ],
+        "hint": "«la voie» = sporet / plattformen. «le départ» = avgangen.",
+        "reply": "La voie est affichée sur le grand écran, environ vingt minutes avant le départ.",
+        "replyTranslation": "Sporet vises på den store skjermen, omtrent tjue minutter før avgang."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "un billet",
+        "translation": "en billett"
+      },
+      {
+        "word": "un aller-retour",
+        "translation": "en tur-retur-billett"
+      },
+      {
+        "word": "partir",
+        "translation": "reise / dra"
+      },
+      {
+        "word": "en seconde classe",
+        "translation": "på andre klasse"
+      },
+      {
+        "word": "la voie",
+        "translation": "sporet"
+      },
+      {
+        "word": "le départ",
+        "translation": "avgangen"
+      }
+    ]
+  },
+  {
+    "id": "fr-voyage",
+    "title": "Reisen du husker",
+    "subtitle": "Fortell om en reise med passé composé og imparfait.",
+    "level": "B1",
+    "icon": "compass",
+    "opening": "J’adore écouter des récits de voyage. Tu me racontes un voyage que tu n’as jamais oublié ?",
+    "openingTranslation": "Jeg elsker å høre reisefortellinger. Vil du fortelle meg om en reise du aldri har glemt?",
+    "steps": [
+      {
+        "question": "C’était où, et tu étais avec qui ?",
+        "translation": "Hvor var det, og hvem var du sammen med?",
+        "expected": [
+          "C’était au Portugal, il y a deux ans, avec ma sœur.",
+          "Je suis parti en Italie avec des amis l’été dernier.",
+          "Je suis partie en Italie avec des amis l’été dernier."
+        ],
+        "hint": "Bakgrunn i imparfait («c’était», «j’étais»), handlinger i passé composé («je suis parti», for en kvinne «je suis partie»).",
+        "reply": "Belle destination !",
+        "replyTranslation": "For et flott reisemål!"
+      },
+      {
+        "question": "Qu’est-ce que tu as le plus aimé là-bas ?",
+        "translation": "Hva likte du best der?",
+        "expected": [
+          "Les gens étaient très accueillants, et on mangeait super bien.",
+          "Les paysages : on se baignait tous les jours dans la mer."
+        ],
+        "hint": "Imparfait for det som var vanlig eller varte: «on mangeait», «on se baignait».",
+        "reply": "On dirait un voyage parfait.",
+        "replyTranslation": "Det høres ut som en perfekt reise."
+      },
+      {
+        "question": "Et il y a eu un problème pendant le voyage ?",
+        "translation": "Og var det noe problem underveis?",
+        "expected": [
+          "Oui, un jour, on a raté le dernier bus et on a dû marcher deux heures.",
+          "Oui, j’ai perdu mon passeport, mais quelqu’un l’a rapporté à l’hôtel."
+        ],
+        "hint": "En plutselig hendelse står i passé composé: «on a raté», «j’ai perdu».",
+        "reply": "Ce sont souvent ces moments-là qu’on raconte le plus.",
+        "replyTranslation": "Det er ofte akkurat slike øyeblikk man forteller mest om."
+      },
+      {
+        "question": "Tu y retournerais ?",
+        "translation": "Ville du reist dit igjen?",
+        "expected": [
+          "Oui, sans hésiter ! Mais cette fois, je resterais plus longtemps.",
+          "Peut-être, mais j’aimerais d’abord découvrir d’autres pays."
+        ],
+        "hint": "Kondisjonalis: «je resterais», «j’aimerais». «y» = dit.",
+        "reply": "Je comprends tout à fait.",
+        "replyTranslation": "Det forstår jeg godt."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "un récit",
+        "translation": "en fortelling"
+      },
+      {
+        "word": "accueillant",
+        "translation": "gjestfri / imøtekommende"
+      },
+      {
+        "word": "rater",
+        "translation": "gå glipp av (buss, tog)"
+      },
+      {
+        "word": "se baigner",
+        "translation": "bade"
+      },
+      {
+        "word": "sans hésiter",
+        "translation": "uten å nøle"
+      },
+      {
+        "word": "découvrir",
+        "translation": "oppdage"
+      }
+    ]
+  },
+  {
+    "id": "fr-colocation",
+    "title": "Bofellesskap",
+    "subtitle": "Forklar et problem og finn en løsning sammen.",
+    "level": "B1",
+    "icon": "home",
+    "opening": "On partage un appartement, toi et moi. Il faut qu’on parle un peu de la cuisine…",
+    "openingTranslation": "Vi deler leilighet, du og jeg. Vi må snakke litt om kjøkkenet …",
+    "steps": [
+      {
+        "question": "La vaisselle s’accumule depuis une semaine. Qu’est-ce qu’on fait ?",
+        "translation": "Oppvasken har hopet seg opp i en uke. Hva gjør vi?",
+        "expected": [
+          "On pourrait faire un planning : chacun fait la vaisselle deux jours par semaine.",
+          "Je propose qu’on la fasse tout de suite après chaque repas."
+        ],
+        "hint": "Forslag: «on pourrait …» (vi kunne …), «je propose qu’on …» + subjonctif.",
+        "reply": "Bonne idée, il nous faut une règle claire.",
+        "replyTranslation": "God idé, vi trenger en klar regel."
+      },
+      {
+        "question": "Et pour le bruit ? Ton invité est resté jusqu’à deux heures du matin mardi.",
+        "translation": "Og bråket? Gjesten din ble her til to om natta på tirsdag.",
+        "expected": [
+          "Tu as raison, pardon. Ça ne se reproduira pas.",
+          "Tu as raison, je suis désolé. Ça ne se reproduira pas.",
+          "Tu as raison, je suis désolée. Ça ne se reproduira pas.",
+          "Pardon, on n’a pas fait attention. En semaine, on arrêtera à onze heures."
+        ],
+        "hint": "Be om unnskyldning: «tu as raison», «je suis désolé(e)», «ça ne se reproduira pas» (det skal ikke skje igjen).",
+        "reply": "Merci, j’apprécie que tu le prennes bien.",
+        "replyTranslation": "Takk, jeg setter pris på at du tar det så fint."
+      },
+      {
+        "question": "Bon, et si on faisait les courses ensemble une fois par semaine ?",
+        "translation": "Ok, og hva om vi handlet sammen én gang i uka?",
+        "expected": [
+          "Avec plaisir ! Le samedi matin, ça te va ?",
+          "Pourquoi pas ? On pourrait aussi avoir une cagnotte commune."
+        ],
+        "hint": "«ça te va ?» = passer det for deg? «une cagnotte» = en felles pengepott.",
+        "reply": "Parfait, on teste ça dès cette semaine.",
+        "replyTranslation": "Perfekt, vi prøver det allerede denne uka."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "la colocation",
+        "translation": "bofellesskap / det å dele leilighet"
+      },
+      {
+        "word": "la vaisselle",
+        "translation": "oppvasken"
+      },
+      {
+        "word": "s’accumuler",
+        "translation": "hope seg opp"
+      },
+      {
+        "word": "ça ne se reproduira pas",
+        "translation": "det skal ikke skje igjen"
+      },
+      {
+        "word": "faire les courses",
+        "translation": "handle (dagligvarer)"
+      },
+      {
+        "word": "une cagnotte",
+        "translation": "en felles pott"
+      }
+    ]
+  },
+  {
+    "id": "fr-travail",
+    "title": "Hva er viktig i en jobb?",
+    "subtitle": "Beskriv hva som betyr noe for deg, og begrunn det.",
+    "level": "B1",
+    "icon": "briefcase",
+    "opening": "On passe une grande partie de notre vie au travail. Alors, pour toi, c’est quoi, un bon travail ?",
+    "openingTranslation": "Vi tilbringer en stor del av livet på jobben. Så, hva er en god jobb for deg?",
+    "steps": [
+      {
+        "question": "Qu’est-ce qui compte le plus pour toi : le salaire, les collègues ou le sens de ton travail ?",
+        "translation": "Hva betyr mest for deg: lønna, kollegene eller meningen med jobben?",
+        "expected": [
+          "Pour moi, le plus important, c’est le sens : je veux être utile.",
+          "Les collègues, parce qu’une bonne ambiance change tout."
+        ],
+        "hint": "Begrunn med «parce que» eller kolon. «le sens» = meningen.",
+        "reply": "Je te comprends : sans ça, même un bon salaire ne suffit pas.",
+        "replyTranslation": "Jeg forstår deg: uten det holder ikke engang en god lønn."
+      },
+      {
+        "question": "Et le télétravail, tu es pour ou contre ?",
+        "translation": "Og hjemmekontor, er du for eller mot?",
+        "expected": [
+          "Je suis pour, mais deux jours par semaine, pas plus.",
+          "Plutôt contre : je trouve qu’on perd le contact avec l’équipe."
+        ],
+        "hint": "Nyanser med «plutôt» (heller), «pas plus» (ikke mer), «je trouve que …» (jeg synes at …).",
+        "reply": "C’est un vrai débat en France aussi.",
+        "replyTranslation": "Det er en ordentlig debatt i Frankrike også."
+      },
+      {
+        "question": "Si tu pouvais changer une chose dans ton travail ou tes études, ce serait quoi ?",
+        "translation": "Hvis du kunne endre én ting i jobben eller studiene dine, hva skulle det vært?",
+        "expected": [
+          "J’aimerais avoir des horaires plus flexibles.",
+          "Je voudrais qu’on ait moins de réunions inutiles."
+        ],
+        "hint": "«si» + imparfait, så kondisjonalis: «si je pouvais, je changerais …». Etter «je voudrais que» kommer subjonctif: «qu’on ait».",
+        "reply": "Voilà un souhait que beaucoup de gens partagent.",
+        "replyTranslation": "Det er et ønske mange deler."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "le salaire",
+        "translation": "lønna"
+      },
+      {
+        "word": "le sens",
+        "translation": "meningen"
+      },
+      {
+        "word": "l’ambiance",
+        "translation": "stemningen / miljøet"
+      },
+      {
+        "word": "le télétravail",
+        "translation": "hjemmekontor / fjernarbeid"
+      },
+      {
+        "word": "les horaires",
+        "translation": "arbeidstidene"
+      },
+      {
+        "word": "une réunion",
+        "translation": "et møte"
+      }
+    ]
+  },
+  {
+    "id": "fr-film",
+    "title": "En film å snakke om",
+    "subtitle": "Oppsummer handlingen og begrunn en anbefaling.",
+    "level": "B1",
+    "icon": "theater",
+    "opening": "Ce soir, je ne sais pas quoi regarder. Tu peux me conseiller un film ou une série ?",
+    "openingTranslation": "I kveld vet jeg ikke hva jeg skal se. Kan du anbefale meg en film eller en serie?",
+    "steps": [
+      {
+        "question": "C’est quoi, et ça parle de quoi ?",
+        "translation": "Hva er det, og hva handler det om?",
+        "expected": [
+          "C’est « Intouchables ». Ça raconte l’amitié entre un homme riche en fauteuil roulant et l’homme qui s’occupe de lui.",
+          "C’est une série norvégienne, « Skam ». Elle parle de lycéens à Oslo."
+        ],
+        "hint": "«ça parle de …» / «ça raconte …» = det handler om …",
+        "reply": "Ah, j’en ai entendu parler !",
+        "replyTranslation": "Å, den har jeg hørt om!"
+      },
+      {
+        "question": "Pourquoi tu me le conseilles ?",
+        "translation": "Hvorfor anbefaler du den til meg?",
+        "expected": [
+          "Parce que c’est drôle et touchant à la fois.",
+          "Les acteurs sont excellents, et les dialogues sonnent très juste."
+        ],
+        "hint": "«à la fois» = på samme tid. «sonner juste» = virke ekte.",
+        "reply": "Tu sais donner envie ! Tu m’as presque convaincue.",
+        "replyTranslation": "Du er flink til å vekke interessen! Du har nesten overbevist meg."
+      },
+      {
+        "question": "Il y a un point faible, quand même ?",
+        "translation": "Har den ikke noen svake sider, da?",
+        "expected": [
+          "Peut-être la fin, un peu trop prévisible.",
+          "Le début est un peu lent, mais ça vaut la peine de continuer."
+        ],
+        "hint": "Nyanser: «un peu trop», «mais ça vaut la peine» (men det er verdt det).",
+        "reply": "Merci pour cet avis honnête, je vais y jeter un œil ce week-end.",
+        "replyTranslation": "Takk for den ærlige vurderingen, jeg skal ta en titt i helgen."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "ça parle de",
+        "translation": "det handler om"
+      },
+      {
+        "word": "drôle",
+        "translation": "morsom"
+      },
+      {
+        "word": "touchant",
+        "translation": "rørende"
+      },
+      {
+        "word": "à la fois",
+        "translation": "på samme tid"
+      },
+      {
+        "word": "prévisible",
+        "translation": "forutsigbar"
+      },
+      {
+        "word": "ça vaut la peine",
+        "translation": "det er verdt det"
+      }
+    ]
+  },
+  {
+    "id": "fr-malentendu",
+    "title": "Vent, hva mente du?",
+    "subtitle": "Be om forklaring og rydd opp i en misforståelse.",
+    "level": "B1",
+    "icon": "hand",
+    "opening": "Bon, alors on se voit demain chez Paul, comme prévu ?",
+    "openingTranslation": "Ok, så vi ses i morgen hos Paul, som planlagt?",
+    "steps": [
+      {
+        "question": "Tu fais une drôle de tête. Il y a un problème ?",
+        "translation": "Du ser litt rar ut. Er det noe?",
+        "expected": [
+          "Pardon, je ne comprends pas. On n’avait pas dit samedi ?",
+          "Attends, tu veux dire demain, vendredi ? Je croyais que c’était samedi."
+        ],
+        "hint": "«On n’avait pas dit …?» = hadde vi ikke sagt …? «Je croyais que …» = jeg trodde at …",
+        "reply": "Ah… je crois qu’on s’est mal compris.",
+        "replyTranslation": "Å … jeg tror vi har misforstått hverandre."
+      },
+      {
+        "question": "Paul a changé la date. Il ne t’a pas envoyé de message ?",
+        "translation": "Paul har flyttet datoen. Har han ikke sendt deg melding?",
+        "expected": [
+          "Non, je n’ai rien reçu. Tu peux me transférer son message ?",
+          "Non, rien du tout. C’est peut-être parti dans mes spams."
+        ],
+        "hint": "«je n’ai rien reçu» = jeg har ikke fått noe. «transférer» = videresende.",
+        "reply": "Je te transfère son message tout de suite.",
+        "replyTranslation": "Jeg videresender meldingen hans med en gang."
+      },
+      {
+        "question": "Tu peux venir demain quand même ?",
+        "translation": "Kan du komme i morgen likevel?",
+        "expected": [
+          "Oui, je m’arrangerai. Merci de me l’avoir dit !",
+          "Oui, je m’arrangerai. Merci de m’avoir prévenu !",
+          "Oui, je m’arrangerai. Merci de m’avoir prévenue !",
+          "Malheureusement non, je travaille. Tu peux transmettre mes excuses à Paul ?"
+        ],
+        "hint": "«prévenir» = gi beskjed (en mann sier «prévenu», en kvinne «prévenue»). «je m’arrangerai» = jeg skal få det til. «transmettre mes excuses» = si unnskyld fra meg.",
+        "reply": "Pas de souci, je préviens Paul.",
+        "replyTranslation": "Ikke noe problem, jeg gir Paul beskjed."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "se mal comprendre",
+        "translation": "misforstå hverandre"
+      },
+      {
+        "word": "je croyais que",
+        "translation": "jeg trodde at"
+      },
+      {
+        "word": "recevoir",
+        "translation": "motta / få"
+      },
+      {
+        "word": "transférer",
+        "translation": "videresende"
+      },
+      {
+        "word": "quand même",
+        "translation": "likevel"
+      },
+      {
+        "word": "prévenir",
+        "translation": "gi beskjed"
+      }
+    ]
+  },
+  {
+    "id": "fr-ville-sans-voiture",
+    "title": "Byen uten bil?",
+    "subtitle": "Drøft bilfrie sentrum med forbehold og motargumenter.",
+    "level": "B2",
+    "icon": "leaf",
+    "opening": "Paris a fermé plusieurs grands axes aux voitures et multiplié les pistes cyclables. Certains applaudissent, d’autres sont furieux.",
+    "openingTranslation": "Paris har stengt flere store hovedveier for biler og bygget langt flere sykkelfelt. Noen applauderer, andre er rasende.",
+    "steps": [
+      {
+        "question": "Toi, tu en penses quoi ?",
+        "translation": "Hva synes du om det?",
+        "expected": [
+          "Je trouve ça plutôt positif : l’air est plus propre et la ville plus agréable.",
+          "C’est une bonne idée sur le papier, mais je me méfie des décisions trop brutales."
+        ],
+        "hint": "«sur le papier» = i teorien; «se méfier de» = være skeptisk til.",
+        "reply": "Regardons maintenant les arguments de plus près.",
+        "replyTranslation": "La oss se nærmere på argumentene nå."
+      },
+      {
+        "question": "Les habitants de banlieue disent que ça les pénalise. Ils n’ont pas tort, si ?",
+        "translation": "Folk i forstedene sier at det rammer dem. De har jo et poeng, ikke sant?",
+        "expected": [
+          "Certes, ils ont un argument, mais la solution, ce sont de meilleurs transports en commun, pas plus de voitures.",
+          "Effectivement, si on ferme des routes sans proposer d’alternative, on crée une injustice."
+        ],
+        "hint": "Innrøm før du argumenterer: «certes …, mais …», «effectivement», «il faut reconnaître que …».",
+        "reply": "Voilà une concession bien amenée.",
+        "replyTranslation": "Det var en godt formulert innrømmelse."
+      },
+      {
+        "question": "Et les commerçants du centre qui perdent des clients ?",
+        "translation": "Og butikkeierne i sentrum som mister kunder?",
+        "expected": [
+          "Plusieurs études suggèrent l’inverse : les piétons et les cyclistes reviennent plus souvent et dépensent davantage sur la durée.",
+          "C’est un risque réel, d’où l’importance de les associer aux décisions."
+        ],
+        "hint": "«l’inverse» = det motsatte; «d’où» = derav / derfor; «associer quelqu’un à» = involvere noen i.",
+        "reply": "Ça vaudrait le coup de regarder les chiffres de près.",
+        "replyTranslation": "Det ville vært verdt å se nærmere på tallene."
+      },
+      {
+        "question": "Si tu étais maire, qu’est-ce que tu ferais concrètement ?",
+        "translation": "Hvis du var ordfører, hva ville du gjort helt konkret?",
+        "expected": [
+          "Je fermerais le centre progressivement, tout en développant les parkings relais.",
+          "Je commencerais par une phase test d’un an, puis je ferais un bilan avec les habitants."
+        ],
+        "hint": "«tout en» + participe présent = samtidig som; «un parking relais» = innfartsparkering; «faire un bilan» = gjøre opp status.",
+        "reply": "Pragmatique et progressif : tu aurais ma voix.",
+        "replyTranslation": "Pragmatisk og gradvis: du ville fått min stemme."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "un axe",
+        "translation": "en hovedvei / trafikkåre"
+      },
+      {
+        "word": "la piste cyclable",
+        "translation": "sykkelfeltet"
+      },
+      {
+        "word": "certes",
+        "translation": "riktignok"
+      },
+      {
+        "word": "les transports en commun",
+        "translation": "kollektivtrafikken"
+      },
+      {
+        "word": "d’où",
+        "translation": "derav"
+      },
+      {
+        "word": "le parking relais",
+        "translation": "innfartsparkeringen"
+      }
+    ]
+  },
+  {
+    "id": "fr-ecrans",
+    "title": "Mobilfri skole?",
+    "subtitle": "Ta stilling, innrøm et poeng og foreslå noe realistisk.",
+    "level": "B2",
+    "icon": "news",
+    "opening": "En France, les portables sont interdits à l’école primaire et au collège depuis 2018. Certains veulent aller plus loin.",
+    "openingTranslation": "I Frankrike har mobiltelefoner vært forbudt på barneskolen og ungdomsskolen siden 2018. Noen vil gå lenger.",
+    "steps": [
+      {
+        "question": "Tu es pour une interdiction totale des écrans à l’école ?",
+        "translation": "Er du for et totalforbud mot skjermer på skolen?",
+        "expected": [
+          "Pas totale : les ordinateurs peuvent être utiles en classe, mais les portables, je les interdirais.",
+          "Oui, je suis pour, du moins jusqu’à quinze ans."
+        ],
+        "hint": "«du moins» = i hvert fall; «je les interdirais» = jeg ville forbudt dem.",
+        "reply": "Une position nuancée : tu fixes une limite claire.",
+        "replyTranslation": "Et nyansert standpunkt: du setter en tydelig grense."
+      },
+      {
+        "question": "Mais les élèves disent que les écrans, c’est aussi leur façon d’apprendre.",
+        "translation": "Men elevene sier at skjermer også er deres måte å lære på.",
+        "expected": [
+          "Je l’admets, mais apprendre à se concentrer sans écran fait aussi partie de l’école.",
+          "Ils n’ont pas tout à fait tort, à condition que l’usage soit encadré."
+        ],
+        "hint": "«je l’admets, mais …»; «à condition que» + subjonctif; «encadré» = styrt / med rammer.",
+        "reply": "Tu reconnais l’argument sans renoncer à ta position.",
+        "replyTranslation": "Du anerkjenner argumentet uten å gi opp standpunktet ditt."
+      },
+      {
+        "question": "Et le rôle des parents dans tout ça ?",
+        "translation": "Og hva med foreldrenes rolle i alt dette?",
+        "expected": [
+          "Il est essentiel : l’école ne peut pas tout régler si le portable reste sur la table au dîner.",
+          "Ils devraient donner l’exemple, ce qui n’est pas toujours le cas."
+        ],
+        "hint": "«régler» = løse; «donner l’exemple» = være et forbilde; «ce qui» viser tilbake til hele setningen.",
+        "reply": "Bien vu : le problème ne s’arrête pas à la porte de l’école.",
+        "replyTranslation": "Godt poeng: problemet stopper ikke ved skoleporten."
+      },
+      {
+        "question": "Quelle mesure réaliste proposerais-tu à l’école de ton quartier ?",
+        "translation": "Hvilket realistisk tiltak ville du foreslått for skolen i nabolaget ditt?",
+        "expected": [
+          "Des casiers fermés à l’entrée, et des cours sur les réseaux sociaux.",
+          "Une journée par semaine sans écran, avec un bilan au bout de trois mois."
+        ],
+        "hint": "«un casier» = et skap; «au bout de» = etter (en periode).",
+        "reply": "Concret et faisable : c’est exactement ce qu’il faut pour convaincre.",
+        "replyTranslation": "Konkret og gjennomførbart: akkurat det som trengs for å overbevise."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "interdire",
+        "translation": "forby"
+      },
+      {
+        "word": "le collège",
+        "translation": "ungdomsskolen"
+      },
+      {
+        "word": "je l’admets",
+        "translation": "det innrømmer jeg"
+      },
+      {
+        "word": "à condition que",
+        "translation": "på betingelse av at"
+      },
+      {
+        "word": "encadré",
+        "translation": "styrt / med rammer"
+      },
+      {
+        "word": "donner l’exemple",
+        "translation": "være et forbilde"
+      }
+    ]
+  },
+  {
+    "id": "fr-35-heures",
+    "title": "35-timersuka",
+    "subtitle": "Forklar årsaker og følger, og vurder et kompromiss.",
+    "level": "B2",
+    "icon": "clock",
+    "opening": "Depuis le début des années 2000, la durée légale du travail en France est de trente-cinq heures par semaine. Le débat n’a jamais vraiment cessé.",
+    "openingTranslation": "Siden begynnelsen av 2000-tallet har den lovfestede arbeidstiden i Frankrike vært 35 timer i uka. Debatten har aldri helt stilnet.",
+    "steps": [
+      {
+        "question": "À ton avis, pourquoi a-t-on réduit le temps de travail à l’époque ?",
+        "translation": "Hvorfor tror du at man reduserte arbeidstiden den gangen?",
+        "expected": [
+          "Surtout pour créer des emplois : partager le travail devait faire baisser le chômage.",
+          "Je suppose que c’était pour lutter contre le chômage et améliorer la qualité de vie."
+        ],
+        "hint": "«le chômage» = arbeidsledigheten; «devait» kan her bety skulle (en forventning).",
+        "reply": "C’était effectivement l’un des grands arguments.",
+        "replyTranslation": "Det var faktisk et av hovedargumentene."
+      },
+      {
+        "question": "Et les effets, d’après toi ?",
+        "translation": "Og hvilke virkninger tror du det fikk?",
+        "expected": [
+          "Les avis sont partagés : il y a eu des créations d’emplois, mais aussi plus de stress dans certains secteurs.",
+          "Difficile à dire, car d’autres facteurs ont joué en même temps."
+        ],
+        "hint": "Forbehold: «les avis sont partagés», «difficile à dire», «d’autres facteurs ont joué».",
+        "reply": "Une réponse prudente, et c’est justement ce que disent beaucoup d’économistes.",
+        "replyTranslation": "Et forsiktig svar, og det er nettopp det mange økonomer sier."
+      },
+      {
+        "question": "En Norvège, la semaine normale fait trente-sept heures et demie. Ça change beaucoup ?",
+        "translation": "I Norge er normalarbeidsuka 37,5 timer. Utgjør det stor forskjell?",
+        "expected": [
+          "Pas tellement : ce qui compte, c’est surtout la flexibilité et la culture du travail.",
+          "Sur le papier, non, mais en Norvège, on finit souvent plus tôt dans la journée."
+        ],
+        "hint": "«pas tellement» = ikke så mye; «ce qui compte, c’est …» = det som teller, er …",
+        "reply": "Intéressant : les chiffres ne disent pas tout.",
+        "replyTranslation": "Interessant: tallene sier ikke alt."
+      },
+      {
+        "question": "Si tu devais proposer un compromis, ce serait lequel ?",
+        "translation": "Hvis du måtte foreslå et kompromiss, hva skulle det vært?",
+        "expected": [
+          "Laisser les entreprises négocier avec les salariés, dans un cadre minimum fixé par la loi.",
+          "Garder les trente-cinq heures, mais assouplir les règles sur les heures supplémentaires."
+        ],
+        "hint": "«assouplir» = myke opp; «les heures supplémentaires» = overtid; «un cadre» = en ramme.",
+        "reply": "Un compromis qui pourrait rassembler les deux camps.",
+        "replyTranslation": "Et kompromiss som kunne samlet begge leirer."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "la durée légale",
+        "translation": "den lovfestede arbeidstiden"
+      },
+      {
+        "word": "le chômage",
+        "translation": "arbeidsledigheten"
+      },
+      {
+        "word": "les avis sont partagés",
+        "translation": "meningene er delte"
+      },
+      {
+        "word": "sur le papier",
+        "translation": "på papiret / i teorien"
+      },
+      {
+        "word": "assouplir",
+        "translation": "myke opp"
+      },
+      {
+        "word": "les heures supplémentaires",
+        "translation": "overtid"
+      }
+    ]
+  },
+  {
+    "id": "fr-logement",
+    "title": "Å finne bolig i Paris",
+    "subtitle": "Forklar årsaker og følger, og vurder løsninger.",
+    "level": "B2",
+    "icon": "home",
+    "opening": "Trouver un appartement à Paris, c’est parfois un parcours du combattant : loyers élevés, dossiers épais, visites bondées.",
+    "openingTranslation": "Å finne leilighet i Paris kan være litt av en hinderløype: høye husleier, tykke søknadsmapper og fullpakkede visninger.",
+    "steps": [
+      {
+        "question": "D’après toi, pourquoi les loyers sont-ils si élevés dans les grandes villes ?",
+        "translation": "Hvorfor tror du husleiene er så høye i storbyene?",
+        "expected": [
+          "Parce que la demande est énorme et qu’on ne construit pas assez.",
+          "En partie à cause des locations touristiques, qui réduisent l’offre."
+        ],
+        "hint": "«parce que … et qu’…»: gjenta «que» etter «et». «l’offre» = tilbudet, «la demande» = etterspørselen.",
+        "reply": "Tu touches à un point essentiel : l’offre ne suit pas.",
+        "replyTranslation": "Du er inne på et sentralt poeng: tilbudet holder ikke følge."
+      },
+      {
+        "question": "Quelles conséquences pour les jeunes ?",
+        "translation": "Hvilke konsekvenser får det for unge?",
+        "expected": [
+          "Beaucoup restent chez leurs parents plus longtemps ou s’éloignent du centre.",
+          "Ils consacrent une grande partie de leur budget au loyer, au détriment du reste."
+        ],
+        "hint": "«s’éloigner» = flytte lenger unna; «au détriment de» = på bekostning av.",
+        "reply": "Et ça pèse sur toute leur vie quotidienne.",
+        "replyTranslation": "Og det preger hele hverdagen deres."
+      },
+      {
+        "question": "L’encadrement des loyers, c’est une bonne solution ?",
+        "translation": "Er husleieregulering en god løsning?",
+        "expected": [
+          "Ça peut aider à court terme, mais sans nouvelles constructions, ça ne règle rien.",
+          "Je suis partagé : ça protège les locataires, mais certains propriétaires retirent leur logement du marché.",
+          "Je suis partagée : ça protège les locataires, mais certains propriétaires retirent leur logement du marché."
+        ],
+        "hint": "«à court terme» = på kort sikt; «je suis partagé(e)» = jeg er i tvil / har delte følelser.",
+        "reply": "Tu vois bien les deux faces du problème.",
+        "replyTranslation": "Du ser begge sider av problemet."
+      },
+      {
+        "question": "Et en Norvège, quelle est la situation ?",
+        "translation": "Og hvordan er situasjonen i Norge?",
+        "expected": [
+          "Chez nous, la plupart des gens achètent, mais les prix à Oslo sont devenus très élevés.",
+          "On est plus souvent propriétaires, ce qui pose d’autres problèmes, comme l’endettement."
+        ],
+        "hint": "«propriétaire» = eier; «locataire» = leietaker; «l’endettement» = gjelden / gjeldsbyrden.",
+        "reply": "Deux modèles différents, mais un défi commun : se loger dans les grandes villes.",
+        "replyTranslation": "To ulike modeller, men en felles utfordring: å finne et sted å bo i storbyene."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "le loyer",
+        "translation": "husleia"
+      },
+      {
+        "word": "un parcours du combattant",
+        "translation": "en hinderløype"
+      },
+      {
+        "word": "l’offre et la demande",
+        "translation": "tilbud og etterspørsel"
+      },
+      {
+        "word": "au détriment de",
+        "translation": "på bekostning av"
+      },
+      {
+        "word": "l’encadrement des loyers",
+        "translation": "husleieregulering"
+      },
+      {
+        "word": "le locataire / le propriétaire",
+        "translation": "leietakeren / eieren"
+      }
+    ]
+  },
+  {
+    "id": "fr-desaccord",
+    "title": "Uenig, men saklig",
+    "subtitle": "Anerkjenn et poeng og bygg et saklig motargument.",
+    "level": "B2",
+    "icon": "hand",
+    "opening": "Je vais te provoquer un peu : à mon avis, apprendre une langue avec une appli, c’est une perte de temps.",
+    "openingTranslation": "Jeg skal provosere deg litt: Etter min mening er det bortkastet tid å lære et språk med en app.",
+    "steps": [
+      {
+        "question": "Tu es d’accord avec moi ?",
+        "translation": "Er du enig med meg?",
+        "expected": [
+          "Pas vraiment. Je comprends ton point de vue, mais une appli peut être un bon point de départ.",
+          "En partie seulement : à elle seule, une appli ne suffit pas, mais elle aide à garder le rythme."
+        ],
+        "hint": "«je comprends ton point de vue, mais …», «en partie seulement» = bare delvis.",
+        "reply": "Tu nuances, mais tu ne cèdes pas. J’aime ça.",
+        "replyTranslation": "Du nyanserer, men gir deg ikke. Det liker jeg."
+      },
+      {
+        "question": "Mais on ne parle jamais avec une vraie personne !",
+        "translation": "Men man snakker jo aldri med et ekte menneske!",
+        "expected": [
+          "C’est vrai, et c’est sa principale limite. Cela dit, beaucoup de gens n’ont personne avec qui parler.",
+          "Justement, l’appli prépare à ces conversations, elle ne les remplace pas."
+        ],
+        "hint": "«cela dit» = når det er sagt; «justement» = nettopp (snur argumentet); «tenir la route» = holde vann.",
+        "reply": "Bien joué, l’argument tient la route.",
+        "replyTranslation": "Godt svart, argumentet holder vann."
+      },
+      {
+        "question": "D’accord, mais tu ne peux pas nier que beaucoup abandonnent au bout d’une semaine.",
+        "translation": "Ok, men du kan ikke nekte for at mange gir opp etter en uke.",
+        "expected": [
+          "Je ne le nie pas, mais c’est vrai pour n’importe quelle méthode, y compris les cours du soir.",
+          "C’est vrai, mais ce n’est pas la faute de l’outil : c’est une question de motivation."
+        ],
+        "hint": "«nier» = nekte for; «y compris» = inkludert; «la faute de» = skylden til.",
+        "reply": "Touché. Tu déplaces le problème de l’outil vers celui qui s’en sert.",
+        "replyTranslation": "Touché. Du flytter problemet fra verktøyet til den som bruker det."
+      },
+      {
+        "question": "Bon, on trouve un terrain d’entente ?",
+        "translation": "Ok, finner vi et kompromiss?",
+        "expected": [
+          "Disons que l’appli est un outil utile, à condition de la combiner avec de vraies conversations.",
+          "On peut s’accorder sur un point : c’est un complément, pas une méthode à part entière."
+        ],
+        "hint": "«disons que …» = la oss si at …; «à part entière» = fullverdig; «un terrain d’entente» = felles grunn.",
+        "reply": "Marché conclu : c’est d’ailleurs un peu ce qu’on fait ici.",
+        "replyTranslation": "Avtale: det er jo egentlig litt det vi gjør her."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "une perte de temps",
+        "translation": "bortkastet tid"
+      },
+      {
+        "word": "nuancer",
+        "translation": "nyansere"
+      },
+      {
+        "word": "cela dit",
+        "translation": "når det er sagt"
+      },
+      {
+        "word": "tenir la route",
+        "translation": "holde vann"
+      },
+      {
+        "word": "nier",
+        "translation": "nekte for"
+      },
+      {
+        "word": "un terrain d’entente",
+        "translation": "felles grunn / et kompromiss"
+      }
+    ]
+  },
+  {
+    "id": "fr-reclamation",
+    "title": "En formell klage",
+    "subtitle": "Skriv en saklig klage i formelt register.",
+    "level": "C1",
+    "icon": "briefcase",
+    "opening": "Tu as commandé un canapé en ligne. Il est arrivé avec trois semaines de retard, et un pied était cassé. Rédigeons ensemble une réclamation.",
+    "openingTranslation": "Du har bestilt en sofa på nett. Den kom tre uker for sent, og ett av beina var knekt. La oss skrive en klage sammen.",
+    "steps": [
+      {
+        "question": "Comment commencerais-tu la lettre ?",
+        "translation": "Hvordan ville du begynt brevet?",
+        "expected": [
+          "Madame, Monsieur, je me permets de vous écrire au sujet de ma commande n° 4512 du 3 octobre.",
+          "Madame, Monsieur, par la présente, je souhaite vous faire part de mon mécontentement concernant ma commande n° 4512."
+        ],
+        "hint": "Tiltale uten navn: «Madame, Monsieur,». «je me permets de …» og «par la présente» er typiske formelle innledninger.",
+        "reply": "Formule d’appel correcte, objet clair : c’est exactement le ton attendu.",
+        "replyTranslation": "Korrekt tiltale og tydelig ærend: akkurat den tonen som forventes."
+      },
+      {
+        "question": "Maintenant, expose les faits, sans t’emporter.",
+        "translation": "Nå legger du fram fakta, uten å bli sint.",
+        "expected": [
+          "La livraison, prévue le 10 octobre, n’a eu lieu que le 31, et l’un des pieds du canapé était cassé.",
+          "Or, le canapé m’a été livré avec trois semaines de retard et présentait un pied cassé."
+        ],
+        "hint": "«ne … que» = først / bare; «or» innleder en innvending i formell stil; «présenter» = ha (en feil).",
+        "reply": "Factuel et précis, sans adjectifs inutiles.",
+        "replyTranslation": "Saklig og presist, uten unødvendige adjektiver."
+      },
+      {
+        "question": "Que demandes-tu concrètement ?",
+        "translation": "Hva krever du konkret?",
+        "expected": [
+          "Je vous saurais gré de bien vouloir remplacer le pied cassé dans les plus brefs délais.",
+          "Je vous demande donc le remplacement de la pièce défectueuse ainsi qu’un dédommagement pour le retard."
+        ],
+        "hint": "«je vous saurais gré de …» = jeg ville vært takknemlig om …; «dans les plus brefs délais» = så snart som mulig; «un dédommagement» = en kompensasjon.",
+        "reply": "Une demande claire, formulée avec la politesse qui convient.",
+        "replyTranslation": "Et tydelig krav, formulert med passende høflighet."
+      },
+      {
+        "question": "Et pour conclure ?",
+        "translation": "Og for å avslutte?",
+        "expected": [
+          "Dans l’attente de votre réponse, je vous prie d’agréer, Madame, Monsieur, mes salutations distinguées.",
+          "Je vous remercie par avance et vous prie de recevoir mes salutations distinguées."
+        ],
+        "hint": "Franske brev avsluttes med en fast formel: «je vous prie d’agréer … mes salutations distinguées».",
+        "reply": "Parfait : la formule de politesse est longue, mais c’est la règle du jeu.",
+        "replyTranslation": "Perfekt: høflighetsfrasen er lang, men det er spillets regler."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "je me permets de",
+        "translation": "jeg tillater meg å"
+      },
+      {
+        "word": "par la présente",
+        "translation": "herved"
+      },
+      {
+        "word": "or",
+        "translation": "men / imidlertid (formelt)"
+      },
+      {
+        "word": "je vous saurais gré de",
+        "translation": "jeg ville satt pris på om"
+      },
+      {
+        "word": "dans les plus brefs délais",
+        "translation": "så snart som mulig"
+      },
+      {
+        "word": "un dédommagement",
+        "translation": "en kompensasjon / erstatning"
+      }
+    ]
+  },
+  {
+    "id": "fr-entretien",
+    "title": "Jobbintervju på fransk",
+    "subtitle": "Fortell om resultater, svakheter og motivasjon.",
+    "level": "C1",
+    "icon": "briefcase",
+    "opening": "Bonjour, asseyez-vous, je vous en prie. Merci d’avoir accepté cet entretien.",
+    "openingTranslation": "God dag, vær så god og sett deg. Takk for at du takket ja til dette intervjuet.",
+    "steps": [
+      {
+        "question": "Pouvez-vous vous présenter en quelques mots ?",
+        "translation": "Kan du presentere deg selv med noen få ord?",
+        "expected": [
+          "J’ai une formation d’ingénieur et je travaille depuis cinq ans dans la gestion de projets.",
+          "Je suis ingénieur de formation et je travaille depuis cinq ans dans la gestion de projets.",
+          "Je suis ingénieure de formation et je travaille depuis cinq ans dans la gestion de projets.",
+          "Après un master en économie, j’ai travaillé quatre ans dans une start-up à Oslo, où je dirigeais une petite équipe."
+        ],
+        "hint": "«une formation d’ingénieur» = en ingeniørutdanning; «ingénieur de formation» (for en kvinne «ingénieure») = utdannet ingeniør; «depuis cinq ans» med presens = i fem år (og fortsatt).",
+        "reply": "Merci, c’est un parcours intéressant.",
+        "replyTranslation": "Takk, det er en interessant bakgrunn."
+      },
+      {
+        "question": "Parlez-moi d’une réussite professionnelle qui vous tient à cœur.",
+        "translation": "Fortell meg om en faglig suksess som betyr mye for deg.",
+        "expected": [
+          "J’ai mené un projet qui a réduit nos délais de livraison de trente pour cent.",
+          "J’ai sauvé la collaboration avec un client important que nous étions sur le point de perdre."
+        ],
+        "hint": "Bruk aktive verb («j’ai mené», «j’ai piloté», «j’ai sauvé») og et konkret resultat.",
+        "reply": "C’est concret, et on voit bien votre rôle personnel.",
+        "replyTranslation": "Det er konkret, og man ser tydelig din egen rolle."
+      },
+      {
+        "question": "Et quel serait votre principal point faible ?",
+        "translation": "Og hva ville vært din største svakhet?",
+        "expected": [
+          "J’ai parfois du mal à déléguer, mais j’ai appris à faire davantage confiance à mon équipe.",
+          "J’ai tendance à vouloir tout perfectionner ; aujourd’hui, je me fixe des délais plus stricts."
+        ],
+        "hint": "Nevn en ekte svakhet og hva du gjør med den: «j’ai tendance à …», «j’ai appris à …».",
+        "reply": "Merci pour cette réponse honnête. On voit que vous y travaillez.",
+        "replyTranslation": "Takk for et ærlig svar. Man ser at du jobber med det."
+      },
+      {
+        "question": "Pourquoi voulez-vous rejoindre notre entreprise ?",
+        "translation": "Hvorfor vil du jobbe hos oss?",
+        "expected": [
+          "Votre engagement en faveur de la transition énergétique correspond à mes valeurs.",
+          "J’ai envie de travailler dans un contexte international, et votre projet à Lyon m’intéresse beaucoup."
+        ],
+        "hint": "Knytt motivasjonen til virksomheten: «correspond à mes valeurs», «m’intéresse particulièrement».",
+        "reply": "Merci. Nous reviendrons vers vous d’ici la fin de la semaine.",
+        "replyTranslation": "Takk. Vi tar kontakt med deg innen utgangen av uka."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "un entretien",
+        "translation": "et intervju"
+      },
+      {
+        "word": "de formation",
+        "translation": "av utdanning"
+      },
+      {
+        "word": "un parcours",
+        "translation": "en karrierevei / bakgrunn"
+      },
+      {
+        "word": "mener un projet",
+        "translation": "lede et prosjekt"
+      },
+      {
+        "word": "avoir du mal à",
+        "translation": "ha vanskelig for å"
+      },
+      {
+        "word": "revenir vers quelqu’un",
+        "translation": "ta kontakt med noen igjen"
+      }
+    ]
+  },
+  {
+    "id": "fr-sous-entendus",
+    "title": "Det som ikke blir sagt",
+    "subtitle": "Tolk et vagt svar og be høflig om klarhet.",
+    "level": "C1",
+    "icon": "quote",
+    "opening": "Tu as envoyé une proposition de projet à ta responsable. Sa réponse : « C’est intéressant. On en reparlera. »",
+    "openingTranslation": "Du har sendt et prosjektforslag til sjefen din. Svaret hennes: «Det er interessant. Vi får snakke mer om det.»",
+    "steps": [
+      {
+        "question": "Comment interprètes-tu cette réponse ?",
+        "translation": "Hvordan tolker du dette svaret?",
+        "expected": [
+          "J’ai l’impression que c’est une manière polie de dire non, ou du moins pas maintenant.",
+          "Ça peut vouloir dire qu’elle est sceptique, mais qu’elle ne veut pas fermer la porte."
+        ],
+        "hint": "«du moins» = i hvert fall; «fermer la porte» = lukke døra (avvise helt).",
+        "reply": "Bien vu : « intéressant » est parfois une politesse qui cache un doute.",
+        "replyTranslation": "Godt sett: «intéressant» er noen ganger en høflighet som skjuler tvil."
+      },
+      {
+        "question": "Comment pourrais-tu lui demander une réponse plus claire, sans avoir l’air d’insister ?",
+        "translation": "Hvordan kunne du be henne om et tydeligere svar uten at det virker som du maser?",
+        "expected": [
+          "Je pourrais lui proposer un court rendez-vous pour en discuter, en lui demandant ce qui pourrait la convaincre.",
+          "Je lui demanderais s’il y a des points qui la font hésiter, pour pouvoir les retravailler."
+        ],
+        "hint": "«en lui demandant» = og samtidig spørre henne; «faire hésiter» = få noen til å nøle.",
+        "reply": "Tu lui laisses une porte de sortie tout en avançant : c’est habile.",
+        "replyTranslation": "Du gir henne en utvei samtidig som du kommer videre: det er smart."
+      },
+      {
+        "question": "Rédige la phrase exacte, dans un registre professionnel.",
+        "translation": "Skriv den nøyaktige setningen i et profesjonelt register.",
+        "expected": [
+          "Auriez-vous un quart d’heure cette semaine pour que nous en discutions ? J’aimerais savoir ce qui vous retient.",
+          "Si certains aspects vous laissent perplexe, je me ferais un plaisir de les approfondir avec vous."
+        ],
+        "hint": "Kondisjonalis gjør forespørselen høfligere: «auriez-vous …», «je me ferais un plaisir de …» (jeg vil gjerne …). «ce qui vous retient» = det som holder deg tilbake.",
+        "reply": "Courtois, direct et difficile à esquiver.",
+        "replyTranslation": "Høflig, direkte og vanskelig å vri seg unna."
+      },
+      {
+        "question": "Et si elle répond : « Je ne suis pas contre, mais ce n’est pas le moment » ?",
+        "translation": "Og hvis hun svarer: «Jeg er ikke imot, men det er ikke riktig tidspunkt»?",
+        "expected": [
+          "Je lui demanderais quand ce serait le bon moment, pour fixer une échéance.",
+          "Je prendrais ça comme un « oui, mais plus tard » et je relancerais dans un mois."
+        ],
+        "hint": "«fixer une échéance» = sette en frist; «relancer» = følge opp / purre.",
+        "reply": "Très juste : un « pas maintenant » mérite toujours qu’on lui donne un calendrier.",
+        "replyTranslation": "Helt riktig: et «ikke nå» fortjener alltid en tidsplan."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "on en reparlera",
+        "translation": "vi får snakke mer om det"
+      },
+      {
+        "word": "un sous-entendu",
+        "translation": "en underforstått mening"
+      },
+      {
+        "word": "fermer la porte",
+        "translation": "lukke døra (avvise)"
+      },
+      {
+        "word": "une porte de sortie",
+        "translation": "en utvei"
+      },
+      {
+        "word": "esquiver",
+        "translation": "vri seg unna / unngå"
+      },
+      {
+        "word": "relancer",
+        "translation": "følge opp / purre"
+      }
+    ]
+  },
+  {
+    "id": "fr-anglicismes",
+    "title": "Franglais og språkrøkt",
+    "subtitle": "Drøft språkpolitikk presist og uten å generalisere.",
+    "level": "C1",
+    "icon": "book",
+    "opening": "En France, une commission officielle propose des équivalents français aux mots anglais : « courriel » pour « e-mail », « mot-dièse » pour « hashtag ». Tout le monde ne les adopte pas…",
+    "openingTranslation": "I Frankrike foreslår en offentlig kommisjon franske ord for engelske: «courriel» for «e-mail», «mot-dièse» for «hashtag». Ikke alle tar dem i bruk …",
+    "steps": [
+      {
+        "question": "Que penses-tu de cette politique linguistique ?",
+        "translation": "Hva synes du om denne språkpolitikken?",
+        "expected": [
+          "Je la trouve légitime : une langue a le droit de créer ses propres mots, à condition de ne pas les imposer.",
+          "Elle part d’une bonne intention, mais elle me semble parfois en décalage avec l’usage réel."
+        ],
+        "hint": "«en décalage avec» = i utakt med; «partir d’une bonne intention» = være godt ment.",
+        "reply": "Tu fais la part des choses, et c’est précisément ce que ce débat exige.",
+        "replyTranslation": "Du skiller mellom ting, og det er akkurat det denne debatten krever."
+      },
+      {
+        "question": "Certains parlent d’un combat d’arrière-garde. Qu’en dis-tu ?",
+        "translation": "Noen kaller det en kamp for en tapt sak. Hva sier du til det?",
+        "expected": [
+          "C’est un peu caricatural : des mots français comme « logiciel » ou « ordinateur » se sont imposés face à l’anglais.",
+          "Je ne dirais pas ça ; il s’agit moins de résister à l’anglais que de garder la capacité de nommer le monde en français."
+        ],
+        "hint": "«caricatural» = karikert / forenklet; «il s’agit moins de … que de …» = det handler mindre om … enn om …",
+        "reply": "Voilà qui rend le débat moins binaire.",
+        "replyTranslation": "Det gjør debatten mindre svart-hvitt."
+      },
+      {
+        "question": "Et en Norvège, comment ça se passe avec les anglicismes ?",
+        "translation": "Og i Norge, hvordan er det med anglisismene?",
+        "expected": [
+          "Le Språkrådet propose aussi des équivalents, mais avec moins de poids symbolique qu’en France, il me semble.",
+          "On emprunte énormément à l’anglais, surtout les jeunes, et ça suscite des débats comparables."
+        ],
+        "hint": "Forbehold: «il me semble», «dans une certaine mesure»; «emprunter» = låne; «susciter» = vekke / skape.",
+        "reply": "Intéressant : le même phénomène, mais un rapport à la langue un peu différent.",
+        "replyTranslation": "Interessant: samme fenomen, men et litt annet forhold til språket."
+      },
+      {
+        "question": "Pour conclure, une phrase qui résume ta position sans caricaturer l’autre camp ?",
+        "translation": "Til slutt: en setning som oppsummerer standpunktet ditt uten å karikere den andre siden?",
+        "expected": [
+          "Défendre sa langue n’implique pas de rejeter les autres : tout est question de dosage.",
+          "On peut accueillir des mots étrangers tout en se donnant les moyens de dire les choses dans sa propre langue."
+        ],
+        "hint": "«n’implique pas de …» = betyr ikke at man må …; «une question de dosage» = et spørsmål om balanse.",
+        "reply": "Équilibré et élégant : difficile de faire mieux.",
+        "replyTranslation": "Balansert og elegant: vanskelig å gjøre det bedre."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "la politique linguistique",
+        "translation": "språkpolitikken"
+      },
+      {
+        "word": "en décalage avec",
+        "translation": "i utakt med"
+      },
+      {
+        "word": "faire la part des choses",
+        "translation": "skille mellom ting / se ting i perspektiv"
+      },
+      {
+        "word": "un combat d’arrière-garde",
+        "translation": "en kamp for en tapt sak"
+      },
+      {
+        "word": "emprunter",
+        "translation": "låne"
+      },
+      {
+        "word": "susciter",
+        "translation": "vekke / skape"
+      }
+    ]
+  },
+  {
+    "id": "fr-presse",
+    "title": "Hva viser egentlig tallene?",
+    "subtitle": "Undersøk belegg, årsakspåstander og usikkerhet.",
+    "level": "C1",
+    "icon": "news",
+    "opening": "Un titre de presse : « Les Français qui boivent du vin vivent plus longtemps ». Prenons-le au sérieux… mais pas trop.",
+    "openingTranslation": "En avisoverskrift: «Franskmenn som drikker vin, lever lenger». La oss ta den på alvor … men ikke for mye.",
+    "steps": [
+      {
+        "question": "Quelle est ta première réaction ?",
+        "translation": "Hva er den første reaksjonen din?",
+        "expected": [
+          "Je me méfie : une corrélation ne prouve pas un lien de cause à effet.",
+          "J’aimerais d’abord savoir d’où viennent les données et qui a financé l’étude."
+        ],
+        "hint": "«se méfier» = være på vakt; «un lien de cause à effet» = en årsakssammenheng.",
+        "reply": "Bon réflexe : avant de trinquer, on vérifie.",
+        "replyTranslation": "God refleks: før vi skåler, sjekker vi."
+      },
+      {
+        "question": "Quelles autres explications pourrait-il y avoir ?",
+        "translation": "Hvilke andre forklaringer kan det finnes?",
+        "expected": [
+          "Les buveurs modérés ont peut-être un niveau de vie plus élevé, ce qui joue sur la santé.",
+          "Il se peut que les non-buveurs comptent parmi eux d’anciens malades qui ont arrêté de boire."
+        ],
+        "hint": "«il se peut que» + subjonctif = det kan hende at; «jouer sur» = påvirke.",
+        "reply": "Exactement le genre de biais que les chercheurs doivent écarter.",
+        "replyTranslation": "Akkurat den typen skjevhet forskerne må utelukke."
+      },
+      {
+        "question": "Comment le journaliste aurait-il pu formuler son titre plus honnêtement ?",
+        "translation": "Hvordan kunne journalisten formulert overskriften mer ærlig?",
+        "expected": [
+          "« Vin et longévité : un lien observé, mais pas forcément une cause ».",
+          "« Une étude associe consommation modérée de vin et longévité, sans prouver de lien direct »."
+        ],
+        "hint": "«associer A et B» uten å si «A cause B»; «pas forcément» = ikke nødvendigvis.",
+        "reply": "Moins accrocheur, mais beaucoup plus juste.",
+        "replyTranslation": "Mindre fengende, men mye mer presist."
+      },
+      {
+        "question": "Pourquoi ce genre de titre circule-t-il autant, à ton avis ?",
+        "translation": "Hvorfor tror du slike overskrifter spres så mye?",
+        "expected": [
+          "Parce qu’il conforte ce que les gens ont envie de croire.",
+          "Les titres simples génèrent des clics, et la nuance se perd en route."
+        ],
+        "hint": "«conforter» = bekrefte / styrke; «se perdre en route» = forsvinne på veien.",
+        "reply": "Tu as mis le doigt sur le cœur du problème.",
+        "replyTranslation": "Du har satt fingeren på kjernen av problemet."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "un lien de cause à effet",
+        "translation": "en årsakssammenheng"
+      },
+      {
+        "word": "se méfier",
+        "translation": "være på vakt"
+      },
+      {
+        "word": "un biais",
+        "translation": "en skjevhet"
+      },
+      {
+        "word": "écarter",
+        "translation": "utelukke / skyve til side"
+      },
+      {
+        "word": "accrocheur",
+        "translation": "fengende"
+      },
+      {
+        "word": "pas forcément",
+        "translation": "ikke nødvendigvis"
+      }
+    ]
+  },
+  {
+    "id": "fr-ironie",
+    "title": "Ironi og litotes",
+    "subtitle": "Svar i samme tone og forklar når ros er et stikk.",
+    "level": "C2",
+    "icon": "quote",
+    "opening": "Trois jours de pluie, le RER est en panne et un collègue lâche : « Magnifique journée, n’est-ce pas ? » Parlons d’ironie.",
+    "openingTranslation": "Tre dager med regn, lokaltoget står, og en kollega slenger ut: «Nydelig dag, ikke sant?» La oss snakke om ironi.",
+    "steps": [
+      {
+        "question": "Réponds-lui sur le même ton.",
+        "translation": "Svar ham i samme tone.",
+        "expected": [
+          "Splendide. Je n’aurais pas rêvé mieux pour un lundi.",
+          "Un vrai bonheur. J’envisage d’ailleurs de m’installer sur ce quai."
+        ],
+        "hint": "Overdriv i samme retning: «je n’aurais pas rêvé mieux», «un vrai bonheur», «j’envisage de» (jeg vurderer å).",
+        "reply": "Je vois que tu as saisi le ton.",
+        "replyTranslation": "Jeg ser at du har tatt tonen."
+      },
+      {
+        "question": "La litote est une figure très française. Tu peux en donner un exemple ?",
+        "translation": "Litotes er en svært fransk stilfigur. Kan du gi et eksempel?",
+        "expected": [
+          "« Ce n’est pas mauvais » pour dire qu’un plat est délicieux.",
+          "Le classique de Corneille : « Va, je ne te hais point », qui veut dire « je t’aime »."
+        ],
+        "hint": "Litotes er å si mindre for å mene mer, ofte med nektelse: «ce n’est pas mal», «je ne dis pas non».",
+        "reply": "C’est tout le principe : dire moins pour faire entendre plus.",
+        "replyTranslation": "Det er hele poenget: å si mindre for å gi å forstå mer."
+      },
+      {
+        "question": "Et « pas terrible » ? Qu’est-ce que ça veut dire au juste ?",
+        "translation": "Og «pas terrible»? Hva betyr det egentlig?",
+        "expected": [
+          "Que c’est plutôt décevant : « terrible » au sens familier veut dire « génial ».",
+          "C’est une façon atténuée de dire que ce n’est pas bon du tout."
+        ],
+        "hint": "«terrible» betyr i dagligtale «fantastisk», så «pas terrible» betyr «ikke noe å skryte av».",
+        "reply": "Exactement, et c’est un piège classique pour ceux qui apprennent le français.",
+        "replyTranslation": "Nettopp, og det er en klassisk felle for dem som lærer fransk."
+      },
+      {
+        "question": "Et quand l’ironie tombe à plat, comment rattraper le coup ?",
+        "translation": "Og når ironien faller flatt, hvordan redder man situasjonen?",
+        "expected": [
+          "On peut désamorcer en riant de soi-même : « Bon, c’était de l’humour… raté. »",
+          "Mieux vaut s’expliquer simplement plutôt que d’en rajouter."
+        ],
+        "hint": "«tomber à plat» = falle flatt; «rattraper le coup» = redde situasjonen; «en rajouter» = legge på enda mer.",
+        "reply": "Sage conseil : l’ironie qu’il faut expliquer a déjà perdu la partie.",
+        "replyTranslation": "Klokt råd: ironi som må forklares, har allerede tapt."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "lâcher",
+        "translation": "slenge ut (en kommentar)"
+      },
+      {
+        "word": "la litote",
+        "translation": "litotes / underdrivelse"
+      },
+      {
+        "word": "pas terrible",
+        "translation": "ikke noe særlig"
+      },
+      {
+        "word": "tomber à plat",
+        "translation": "falle flatt"
+      },
+      {
+        "word": "rattraper le coup",
+        "translation": "redde situasjonen"
+      },
+      {
+        "word": "désamorcer",
+        "translation": "dempe / avvæpne"
+      }
+    ]
+  },
+  {
+    "id": "fr-registres",
+    "title": "Fra forvaltningsspråk til SMS",
+    "subtitle": "Si det samme i tre registre og forklar forskjellen.",
+    "level": "C2",
+    "icon": "scale",
+    "opening": "Voici une phrase administrative : « Il vous appartient de nous transmettre les pièces justificatives dans un délai de quinze jours. »",
+    "openingTranslation": "Her er en byråkratisk setning: «Det påhviler deg å oversende oss dokumentasjonen innen femten dager.»",
+    "steps": [
+      {
+        "question": "Reformule-la en français courant, comme à l’oral.",
+        "translation": "Omformuler den til vanlig fransk, slik man sier det muntlig.",
+        "expected": [
+          "Vous devez nous envoyer les justificatifs d’ici quinze jours.",
+          "Il faut nous envoyer les papiers sous deux semaines."
+        ],
+        "hint": "«il vous appartient de» = det er ditt ansvar å; «d’ici quinze jours» = innen to uker. Franskmenn sier «quinze jours» om to uker.",
+        "reply": "Plus simple, et le sens reste intact.",
+        "replyTranslation": "Enklere, og meningen er den samme."
+      },
+      {
+        "question": "Maintenant, un texto à un ami qui doit faire la même chose.",
+        "translation": "Nå en SMS til en venn som må gjøre det samme.",
+        "expected": [
+          "Envoie-leur tes papiers avant la fin de la semaine prochaine, sinon t’es mal.",
+          "Pense à leur envoyer tes justifs, t’as deux semaines max !"
+        ],
+        "hint": "Muntlig: «t’as» for «tu as», «t’es mal» = du er ille ute, «justifs» for «justificatifs».",
+        "reply": "Là, on est en plein registre familier.",
+        "replyTranslation": "Nå er vi midt i det uformelle registeret."
+      },
+      {
+        "question": "Quels marqueurs distinguent ces trois registres ?",
+        "translation": "Hvilke kjennetegn skiller disse tre registrene?",
+        "expected": [
+          "Le lexique, d’abord, mais aussi la syntaxe : tournures impersonnelles d’un côté, élisions et abréviations de l’autre.",
+          "Le degré de distance : le « vous » impersonnel de l’administration contre le tutoiement complice du texto."
+        ],
+        "hint": "«les tournures impersonnelles» = upersonlige konstruksjoner; «le tutoiement» = det å si «tu».",
+        "reply": "Analyse fine : le registre se joue à tous les niveaux de la phrase.",
+        "replyTranslation": "En fin analyse: registeret avgjøres på alle nivåer i setningen."
+      },
+      {
+        "question": "Et pourquoi l’administration écrit-elle encore ainsi, selon toi ?",
+        "translation": "Og hvorfor skriver forvaltningen fortsatt slik, tror du?",
+        "expected": [
+          "Par souci de précision juridique, sans doute, mais aussi par inertie.",
+          "Ce style donne une impression d’autorité et de neutralité, même s’il éloigne les citoyens."
+        ],
+        "hint": "«par souci de» = av hensyn til; «l’inertie» = treghet; «mitigé» = blandet.",
+        "reply": "On s’efforce d’ailleurs de simplifier ce langage, avec un succès mitigé.",
+        "replyTranslation": "Det finnes for øvrig arbeid for klarspråk i forvaltningen, med blandet hell."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "il vous appartient de",
+        "translation": "det påhviler deg å"
+      },
+      {
+        "word": "les pièces justificatives",
+        "translation": "dokumentasjonen / bilagene"
+      },
+      {
+        "word": "quinze jours",
+        "translation": "to uker"
+      },
+      {
+        "word": "t’es mal",
+        "translation": "du er ille ute"
+      },
+      {
+        "word": "le tutoiement",
+        "translation": "det å si «tu»"
+      },
+      {
+        "word": "un succès mitigé",
+        "translation": "blandet hell"
+      }
+    ]
+  },
+  {
+    "id": "fr-expressions",
+    "title": "Idiomer og faste uttrykk",
+    "subtitle": "Forstå, bruk og forklar faste uttrykk.",
+    "level": "C2",
+    "icon": "wave",
+    "opening": "Hier, mon frère m’a posé un lapin : j’ai attendu une heure sous la pluie et, pour couronner le tout, j’ai perdu mon parapluie.",
+    "openingTranslation": "I går lot broren min meg vente forgjeves: Jeg sto en time i regnet, og som om ikke det var nok, mistet jeg paraplyen.",
+    "steps": [
+      {
+        "question": "Qu’est-ce que ça veut dire, « poser un lapin » ?",
+        "translation": "Hva betyr «poser un lapin»?",
+        "expected": [
+          "Ne pas venir à un rendez-vous sans prévenir.",
+          "Ça veut dire que ton frère n’est pas venu et ne t’a pas prévenue."
+        ],
+        "hint": "Ordrett «å sette fra seg en kanin». «prévenir» = si fra.",
+        "reply": "C’est ça. Et je ne l’ai toujours pas digéré.",
+        "replyTranslation": "Nettopp. Og jeg har fortsatt ikke kommet over det."
+      },
+      {
+        "question": "Utilise une autre expression pour dire que quelque chose coûte très cher.",
+        "translation": "Bruk et annet uttrykk for å si at noe er veldig dyrt.",
+        "expected": [
+          "Ce manteau coûte les yeux de la tête.",
+          "À ce prix-là, c’est du vol ! Ça coûte un bras."
+        ],
+        "hint": "«coûter les yeux de la tête» og «coûter un bras» betyr å koste skjorta.",
+        "reply": "Bien choisi, et à Paris, on a souvent l’occasion de le dire.",
+        "replyTranslation": "Godt valgt, og i Paris har man ofte anledning til å si det."
+      },
+      {
+        "question": "Que dirais-tu d’un collègue qui ne fait jamais rien mais se plaint tout le temps ?",
+        "translation": "Hva ville du sagt om en kollega som aldri gjør noe, men klager hele tiden?",
+        "expected": [
+          "Il ne lève pas le petit doigt, mais il râle à longueur de journée.",
+          "Il se tourne les pouces et trouve quand même le moyen de râler."
+        ],
+        "hint": "«ne pas lever le petit doigt» = ikke løfte en finger; «se tourner les pouces» = tvinne tommeltotter; «râler» = sutre / klage.",
+        "reply": "Portrait cruel, mais savoureux.",
+        "replyTranslation": "Et nådeløst, men herlig portrett."
+      },
+      {
+        "question": "Quelle expression française perd son image quand on la traduit en norvégien ?",
+        "translation": "Hvilket fransk uttrykk mister bildet sitt når man oversetter det til norsk?",
+        "expected": [
+          "« Avoir le cafard » : en norvégien, on dit simplement qu’on est déprimé, et le cafard disparaît.",
+          "« Faire la grasse matinée » : on comprend « sove lenge », mais la matinée « grasse » se perd."
+        ],
+        "hint": "«avoir le cafard» = være nedfor (ordrett: ha kakerlakken); «faire la grasse matinée» = sove lenge.",
+        "reply": "Jolie trouvaille : certaines images ne survivent pas au voyage.",
+        "replyTranslation": "Fint funn: Noen bilder overlever ikke reisen."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "poser un lapin",
+        "translation": "ikke møte opp (uten å si fra)"
+      },
+      {
+        "word": "pour couronner le tout",
+        "translation": "som om ikke det var nok"
+      },
+      {
+        "word": "coûter les yeux de la tête",
+        "translation": "koste skjorta"
+      },
+      {
+        "word": "ne pas lever le petit doigt",
+        "translation": "ikke løfte en finger"
+      },
+      {
+        "word": "râler",
+        "translation": "sutre / klage"
+      },
+      {
+        "word": "avoir le cafard",
+        "translation": "være nedfor"
+      }
+    ]
+  },
+  {
+    "id": "fr-avocat-du-diable",
+    "title": "Djevelens advokat",
+    "subtitle": "Bygg det sterkeste argumentet, finn svakheten og nå fram til en syntese.",
+    "level": "C2",
+    "icon": "scale",
+    "opening": "Je défends une thèse et tu joues l’avocat du diable : il faudrait supprimer les notes à l’école.",
+    "openingTranslation": "Jeg forsvarer en påstand, og du er djevelens advokat: Vi burde fjerne karakterene i skolen.",
+    "steps": [
+      {
+        "question": "Commence par formuler l’argument le plus solide en faveur de ma thèse.",
+        "translation": "Begynn med å formulere det sterkeste argumentet for påstanden min.",
+        "expected": [
+          "Les notes mesurent moins l’apprentissage que la capacité à se conformer aux attentes de l’évaluation.",
+          "La peur de la mauvaise note décourage précisément les élèves qui auraient le plus besoin d’oser se tromper."
+        ],
+        "hint": "«moins … que …» = mindre … enn …; «oser se tromper» = tørre å ta feil.",
+        "reply": "Voilà un argument que je n’aurais pas mieux formulé moi-même.",
+        "replyTranslation": "Det argumentet kunne jeg ikke ha formulert bedre selv."
+      },
+      {
+        "question": "Maintenant, attaque : où est la faille ?",
+        "translation": "Nå går du til angrep: Hvor er svakheten?",
+        "expected": [
+          "Sans notes, l’évaluation risque de devenir plus floue, et donc plus arbitraire.",
+          "Les notes ont au moins le mérite de la transparence : on sait où l’on en est."
+        ],
+        "hint": "«la faille» = svakheten; «avoir le mérite de» = ha den fordelen at; «où l’on en est» = hvor man står.",
+        "reply": "Touché : supprimer la mesure ne supprime pas le jugement.",
+        "replyTranslation": "Touché: Å fjerne målingen fjerner ikke vurderingen."
+      },
+      {
+        "question": "Mais les notes sont-elles vraiment transparentes ? Une même copie peut recevoir des notes très différentes.",
+        "translation": "Men er karakterer egentlig så gjennomsiktige? Samme besvarelse kan få svært ulike karakterer.",
+        "expected": [
+          "Certes, mais c’est un argument pour mieux noter, pas pour cesser de noter.",
+          "C’est vrai, mais une appréciation écrite serait tout aussi subjective, sinon davantage."
+        ],
+        "hint": "«sinon davantage» = om ikke enda mer; «noter» = sette karakter; «une copie» = en besvarelse.",
+        "reply": "Une objection que tu ne balaies pas, mais que tu retournes.",
+        "replyTranslation": "En innvending du ikke feier bort, men snur."
+      },
+      {
+        "question": "Proposons une synthèse qui retienne le meilleur des deux positions.",
+        "translation": "La oss foreslå en syntese som tar vare på det beste fra begge standpunkter.",
+        "expected": [
+          "Supprimer les notes dans les premières années, puis les réintroduire avec des critères explicites.",
+          "Garder les notes, mais les accompagner systématiquement d’un commentaire qui explique comment progresser."
+        ],
+        "hint": "«retenir» = ta vare på; «des critères explicites» = tydelige kriterier; «couper la poire en deux» = møtes på halvveien.",
+        "reply": "Une synthèse qui ne se contente pas de couper la poire en deux.",
+        "replyTranslation": "En syntese som ikke bare møtes på halvveien."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "l’avocat du diable",
+        "translation": "djevelens advokat"
+      },
+      {
+        "word": "la faille",
+        "translation": "svakheten"
+      },
+      {
+        "word": "avoir le mérite de",
+        "translation": "ha den fordelen at"
+      },
+      {
+        "word": "sinon davantage",
+        "translation": "om ikke enda mer"
+      },
+      {
+        "word": "retourner une objection",
+        "translation": "snu en innvending"
+      },
+      {
+        "word": "couper la poire en deux",
+        "translation": "møtes på halvveien"
+      }
+    ]
+  },
+  {
+    "id": "fr-style",
+    "title": "Stil og tone i en tekst",
+    "subtitle": "Analyser en berømt åpningssetning og skriv videre i samme stil.",
+    "level": "C2",
+    "icon": "book",
+    "opening": "Proust ouvre « À la recherche du temps perdu » par une phrase toute simple : « Longtemps, je me suis couché de bonne heure. »",
+    "openingTranslation": "Proust åpner «På sporet av den tapte tid» med en helt enkel setning: «Lenge gikk jeg tidlig til sengs.» (Vår oversettelse.)",
+    "steps": [
+      {
+        "question": "Qu’est-ce qui te frappe dans cette phrase ?",
+        "translation": "Hva slår deg ved denne setningen?",
+        "expected": [
+          "Le contraste entre la banalité du propos et l’ampleur de l’œuvre qu’elle ouvre.",
+          "L’association étrange de « longtemps », qui étire la durée, et du passé composé, qui la referme."
+        ],
+        "hint": "«le propos» = det som sies; «l’ampleur» = omfanget; «étirer» = strekke ut.",
+        "reply": "Une lecture attentive : chaque mot compte, même dans une phrase si courte.",
+        "replyTranslation": "En oppmerksom lesning: Hvert ord teller, selv i en så kort setning."
+      },
+      {
+        "question": "Pourquoi, selon toi, commencer par le sommeil ?",
+        "translation": "Hvorfor tror du han begynner med søvnen?",
+        "expected": [
+          "Parce que le sommeil est le seuil de la mémoire : entre veille et rêve, le passé remonte.",
+          "Peut-être pour installer d’emblée un narrateur passif, qui subit le temps plutôt qu’il ne le maîtrise."
+        ],
+        "hint": "«le seuil» = terskelen; «d’emblée» = med en gang; «subir» = utsettes for. Etter «plutôt que» brukes ofte et «ne» uten nektende betydning.",
+        "reply": "C’est une piste que les premières pages ne démentent pas.",
+        "replyTranslation": "Det er en tolkning som de første sidene ikke motsier."
+      },
+      {
+        "question": "Écris maintenant une phrase d’ouverture à la manière de Proust, sur un autre sujet.",
+        "translation": "Skriv nå en åpningssetning på Prousts vis, om et annet tema.",
+        "expected": [
+          "Longtemps, j’ai cru que les gares étaient faites pour partir.",
+          "Souvent, le dimanche, j’attendais que la maison se taise pour commencer à vivre."
+        ],
+        "hint": "Begynn med et tidsadverb og et overraskende enkelt utsagn, som Proust: «Longtemps, …», «Souvent, …».",
+        "reply": "On sent l’écho, sans pastiche servile.",
+        "replyTranslation": "Man hører ekkoet, uten at det blir en slavisk etterligning."
+      },
+      {
+        "question": "Et si tu devais la prolonger en une longue phrase proustienne ?",
+        "translation": "Og hvis du måtte forlenge den til en lang, proustiansk setning?",
+        "expected": [
+          "… mais il m’a fallu des années, et bien des quais désertés, pour comprendre qu’on y attend surtout ce qui ne vient pas.",
+          "… car c’est alors seulement, dans ce silence où les objets semblaient reprendre leur souffle, que je retrouvais un peu de moi-même."
+        ],
+        "hint": "Proust utsetter poenget med innskudd og leddsetninger: «car c’est alors seulement … que …».",
+        "reply": "Subordonnées, incises, sens retardé : tu as du souffle.",
+        "replyTranslation": "Leddsetninger, innskudd og en mening som utsettes: Du har lang pust."
+      }
+    ],
+    "vocabulary": [
+      {
+        "word": "de bonne heure",
+        "translation": "tidlig"
+      },
+      {
+        "word": "le seuil",
+        "translation": "terskelen"
+      },
+      {
+        "word": "d’emblée",
+        "translation": "med en gang / fra første stund"
+      },
+      {
+        "word": "un pastiche",
+        "translation": "en pastisj / etterligning"
+      },
+      {
+        "word": "une incise",
+        "translation": "et innskudd"
+      },
+      {
+        "word": "avoir du souffle",
+        "translation": "ha lang pust (skrive lange perioder)"
+      }
+    ]
+  }
+]

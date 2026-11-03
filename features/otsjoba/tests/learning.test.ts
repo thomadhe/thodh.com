@@ -7,6 +7,7 @@ import {
   languages,
   lessonIcons,
   levelOrder,
+  languageCodes,
   levels,
   localDate,
   orderedLessons,
@@ -53,7 +54,7 @@ test("corrupted or older storage recovers while valid preferences survive", () =
     }),
   );
   assert.equal(data.language, "ru");
-  assert.deepEqual(data.levels, { it: "B2", ru: "B2", es: "A1" });
+  assert.deepEqual(data.levels, { it: "B2", ru: "B2", es: "A1", fr: "A1", de: "A1" });
   assert.equal(data.goal, 15);
   assert.deepEqual(data.saved.it, ["vorrei"]);
   assert.deepEqual(data.reviews, {});
@@ -155,6 +156,8 @@ test("tutor rejects role injection and invalid languages; accepted answers fit h
 test("every level A1–C2 has at least five well-formed lessons per language", () => {
   assert.deepEqual(levels, [...tutorLevels]);
   assert.deepEqual(Object.keys(languages).sort(), [...tutorLanguages].sort());
+  assert.deepEqual([...languageCodes].sort(), [...tutorLanguages].sort());
+  assert.deepEqual(Object.keys(curriculum).sort(), [...tutorLanguages].sort());
   const ids = new Set<string>();
   for (const language of tutorLanguages) {
     for (const level of levels) {
@@ -176,11 +179,15 @@ test("every level A1–C2 has at least five well-formed lessons per language", (
       for (const s of l.steps) {
         assert.ok(s.question.trim() && s.translation.trim() && s.hint.trim() && s.reply.trim() && s.replyTranslation.trim(), l.id);
         assert.ok(s.expected.length >= 1 && s.expected.every((e) => e.trim()), l.id);
+        assert.equal(new Set(s.expected).size, s.expected.length, `${l.id} repeats an answer`);
         if (tutorPersonas[language].transliteration) {
           assert.ok(s.transliteration && s.replyTransliteration, `${l.id} transliteration`);
+        } else {
+          assert.ok(!s.transliteration && !s.replyTransliteration, `${l.id} has transliteration`);
         }
       }
       assert.ok(l.vocabulary.length >= 5, l.id);
+      assert.equal(new Set(l.vocabulary.map((w) => w.word)).size, l.vocabulary.length, `${l.id} repeats a word`);
       for (const w of l.vocabulary) {
         assert.ok(w.word.trim() && w.translation.trim(), l.id);
         if (tutorPersonas[language].transliteration) assert.ok(w.transliteration, `${l.id} ${w.word}`);
@@ -192,13 +199,38 @@ test("every level A1–C2 has at least five well-formed lessons per language", (
     }
   }
 });
+test("French and German have their own tutors, voices and typography", () => {
+  for (const [language, locale, tutor] of [["fr", "fr-FR", "Camille"], ["de", "de-DE", "Jonas"]] as const) {
+    const profile = languages[language];
+    assert.equal(profile.locale, locale);
+    assert.equal(profile.tutor, tutor);
+    assert.equal(profile.startLevel, "A1");
+    assert.ok(profile.image.startsWith("/otsjoba/tutors/") && profile.image.endsWith(".svg"));
+    assert.equal(tutorPersonas[language].transliteration, false);
+    const instructions = tutorInstructions({ language, level: "B1", correction: "balanced", topic: "", messages: [{ role: "user", content: "Hallo" }] });
+    assert.match(instructions, language === "fr" ? /French \(France\).*tu unless/ : /German \(Germany\).*du unless/);
+    assert.doesNotMatch(instructions, /Latin transliteration/);
+    assert.ok(tutorRequest.safeParse({ language, level: "C2", correction: "detailed", topic: "Stil", messages: [{ role: "user", content: "Hallo" }] }).success);
+    const text = curriculum[language].flatMap((l) => [l.opening, ...l.steps.flatMap((s) => [s.question, s.reply, ...s.expected])]);
+    // Typographic apostrophes; French puts a narrow no-break space before ? ! : ;
+    assert.ok(text.every((t) => !t.includes("'")), `${language} straight apostrophe`);
+    if (language === "fr") assert.ok(text.every((t) => !/ [?!:;]/.test(t)), "French spacing");
+  }
+  assert.match(tutorInstructions({ language: "ru", level: "B1", correction: "balanced", topic: "", messages: [{ role: "user", content: "Привет" }] }), /Latin transliteration/);
+});
 test("C2 is a valid level and older saved progress still loads", () => {
   assert.equal(parseState(JSON.stringify({ ...defaults, levels: { it: "C2", ru: "C1" } })).levels.it, "C2");
   const old = { ...structuredClone(defaults), levels: { it: "B1", ru: "C1" }, saved: { it: ["ciao"], ru: [] } };
   const loaded = progressSchema.parse(old);
   assert.equal(loaded.levels.ru, "C1");
   assert.equal(loaded.levels.es, "A1");
-  assert.deepEqual(loaded.saved, { it: ["ciao"], ru: [], es: [] });
+  assert.equal(loaded.levels.fr, "A1");
+  assert.equal(loaded.levels.de, "A1");
+  assert.deepEqual(loaded.saved, { it: ["ciao"], ru: [], es: [], fr: [], de: [] });
+  const withSpanish = { ...old, levels: { ...old.levels, es: "B1" }, saved: { ...old.saved, es: ["hola"] } };
+  assert.deepEqual(progressSchema.parse(withSpanish).saved, { it: ["ciao"], ru: [], es: ["hola"], fr: [], de: [] });
+  assert.equal(parseState(JSON.stringify(old)).levels.de, "A1");
+  assert.deepEqual(parseState(JSON.stringify(old)).saved.fr, []);
   assert.equal(progressSchema.safeParse({ ...old, levels: { it: "C3", ru: "C1" } }).success, false);
   assert.deepEqual(levelOrder("B1"), ["B1", "B2", "A2", "C1", "A1", "C2"]);
   assert.equal(orderedLessons("it", "C2")[0].level, "C2");
@@ -322,12 +354,13 @@ test("pairing links are read from the hash and anything else is refused", () => 
 });
 test("progress from a newer deployment with another language still loads", () => {
   const state = structuredClone(defaults);
-  const newer = { ...state, levels: { ...state.levels, fr: "A2" }, saved: { ...state.saved, fr: ["bonjour"] } };
+  const newer = { ...state, levels: { ...state.levels, pt: "A2" }, saved: { ...state.saved, pt: ["olá"] } };
   const loaded = progressSchema.parse(newer) as typeof newer;
-  assert.equal(loaded.levels.fr, "A2");
-  assert.deepEqual(loaded.saved.fr, ["bonjour"]);
+  assert.equal(loaded.levels.pt, "A2");
+  assert.deepEqual(loaded.saved.pt, ["olá"]);
   assert.equal(progressSchema.safeParse({ ...newer, levels: { ...newer.levels, it: "C3" } }).success, false);
-  assert.equal(progressSchema.safeParse({ ...newer, saved: { ...newer.saved, fr: [7] } }).success, false);
+  assert.equal(progressSchema.safeParse({ ...newer, levels: { ...newer.levels, fr: "C3" } }).success, false);
+  assert.equal(progressSchema.safeParse({ ...newer, saved: { ...newer.saved, pt: [7] } }).success, false);
   assert.equal(progressSchema.safeParse({ ...newer, levels: { ...newer.levels, "__proto__x": "A1" } }).success, false);
 });
 test("the bridge reads both model list shapes and only tries ready engines", () => {

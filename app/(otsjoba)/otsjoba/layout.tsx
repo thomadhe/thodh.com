@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://thodh.com"),
   title: "Otsjoba · Litt øving. Mer flyt.",
   description:
-    "Øv på italiensk, russisk og spansk fra A1 til C2 med veiledede samtaler, ordtrening og egne språktutorer.",
+    "Øv på italiensk, russisk, spansk, fransk og tysk fra A1 til C2 med veiledede samtaler, ordtrening og egne språktutorer.",
   alternates: { canonical: "/otsjoba" },
   icons: { icon: "/otsjoba/favicon.svg" },
 };
