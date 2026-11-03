@@ -320,6 +320,16 @@ test("pairing links are read from the hash and anything else is refused", () => 
   assert.equal(parsePairing("<script>"), null);
   assert.equal(parsePairing(`#lokal-ai=${token}&port=80`)?.port, 4747);
 });
+test("progress from a newer deployment with another language still loads", () => {
+  const state = structuredClone(defaults);
+  const newer = { ...state, levels: { ...state.levels, fr: "A2" }, saved: { ...state.saved, fr: ["bonjour"] } };
+  const loaded = progressSchema.parse(newer) as typeof newer;
+  assert.equal(loaded.levels.fr, "A2");
+  assert.deepEqual(loaded.saved.fr, ["bonjour"]);
+  assert.equal(progressSchema.safeParse({ ...newer, levels: { ...newer.levels, it: "C3" } }).success, false);
+  assert.equal(progressSchema.safeParse({ ...newer, saved: { ...newer.saved, fr: [7] } }).success, false);
+  assert.equal(progressSchema.safeParse({ ...newer, levels: { ...newer.levels, "__proto__x": "A1" } }).success, false);
+});
 test("the bridge reads both model list shapes and only tries ready engines", () => {
   assert.deepEqual(modelList({ models: [
     { slug: "gpt-6.1-sol", display_name: "GPT-6.1-Sol", visibility: "list" },
