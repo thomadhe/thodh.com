@@ -164,7 +164,8 @@ export function advanceTime(state, now = Date.now()) {
   return true;
 }
 
-export function applyAction(state, action, actor, now = Date.now()) {
+/** `game` may be a chess.js game already at this position; replaying a long game is slow in the browser. */
+export function applyAction(state, action, actor, now = Date.now(), game = undefined) {
   if (!['w', 'b'].includes(actor)) throw new Error('Du har ingen spillerplass i dette partiet.');
   if (advanceTime(state, now)) return state;
   if (action.type === 'ack') {
@@ -185,7 +186,7 @@ export function applyAction(state, action, actor, now = Date.now()) {
   if (actor !== state.turn) throw new Error('Det er ikke din tur.');
   if (action.type !== 'move') throw new Error('Ukjent handling.');
   if (state.settings.minispill === 'casino') return casinoTrekk(state, action, actor, now);
-  const chess = chessFrom(state);
+  const chess = game ?? chessFrom(state);
   let move;
   try { move = chess.move({ from: action.from, to: action.to, ...(action.promotion ? { promotion: action.promotion } : {}) }); }
   catch { throw new Error('Trekket er ikke lovlig.'); }
@@ -215,3 +216,49 @@ export function formatClock(ms) {
 }
 
 export function noticeFacesOpposite(notice, mode) { return mode === 'local' && notice?.recipient === 'b'; }
+
+// Pieces, side to move and castling. The en passant field is left out, since chess.js versions write it differently.
+const position = fen => fen.split(' ').slice(0, 3).join(' ');
+
+/**
+ * Applies an unconfirmed online action. Returns false when it no longer fits the position, including when
+ * the entry records a position (`fen`, `index`) and the state is somewhere else.
+ */
+export function applyPending(state, entry, chessAt) {
+  if (typeof entry.fen === 'string' && position(entry.fen) !== position(state.fen)) return false;
+  if (Number.isInteger(entry.index) && entry.index !== state.moves.length) return false;
+  const moves = state.moves.length, status = state.status;
+  const noticed = state.notices.some(notice => notice.id === entry.action.noticeId);
+  try { applyAction(state, entry.action, entry.actor, entry.at, entry.action.type === 'move' ? chessAt?.(state) : undefined); } catch { return false; }
+  if (entry.action.type === 'move') return state.moves.length === moves + 1;
+  if (entry.action.type === 'ack') return noticed && !state.notices.some(notice => notice.id === entry.action.noticeId);
+  return status === 'playing' && state.status === 'finished';
+}
+
+/**
+ * Rebuilds the shown position: the server snapshot plus unconfirmed actions in revision order.
+ * Actions the server has already decided are dropped. If the server decided differently, everything
+ * built on that action goes too, which is the rollback.
+ */
+export function rebuild(snapshotState, revision, pending, chessAt) {
+  let state = structuredClone(snapshotState);
+  const kept = [];
+  for (const entry of pending) {
+    if (entry.base < revision) { if (containsAction(snapshotState, entry)) continue; break; }
+    if (entry.base !== revision + kept.length) break;
+    const trial = structuredClone(state);
+    if (!applyPending(trial, entry, chessAt)) break;
+    state = trial;
+    kept.push(entry);
+  }
+  return { state, kept };
+}
+
+/** True when the server's state already contains this own action, e.g. after a retried request. */
+export function containsAction(state, entry) {
+  const { action } = entry;
+  if (action.type === 'move') { const move = state.moves[entry.index]; return Boolean(move) && move.from === action.from && move.to === action.to && (move.promotion ?? null) === (action.promotion ?? null) && move.color === entry.actor; }
+  if (action.type === 'ack') return !state.notices.some(notice => notice.id === action.noticeId) && state.nextNotice > action.noticeId;
+  // Only our own resignation: the opponent won, with no move played after it, and the result says so.
+  return state.status === 'finished' && state.moves.length === entry.index && state.result?.kind === 'win' && state.result.recipient === other(entry.actor) && /ga opp/.test(state.result.description ?? '');
+}
