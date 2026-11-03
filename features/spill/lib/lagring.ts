@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react"
+import { useCallback, useState, useSyncExternalStore } from "react"
 import type { SpillId } from "./spill"
 
 // Progress lives in localStorage, one entry per game and date: "spill:<id>:<dato>".
@@ -57,23 +57,34 @@ function harSammeForm(lagret: unknown, mal: object) {
   )
 }
 
+const ingenEndring = () => () => {}
+
+/**
+ * False on the server and while hydrating, true in every other client render. Server HTML and hydration
+ * agree because both see false; a component that mounts later (after a client-side navigation) sees true
+ * in its very first render and can read localStorage straight away.
+ */
+export function useErKlient() {
+  return useSyncExternalStore(
+    ingenEndring,
+    () => true,
+    () => false,
+  )
+}
+
 /** Game state persisted for one date. `startverdi` must be stable for a given date. */
 export function useDagligTilstand<T extends { resultat: Resultat }>(id: SpillId, dato: string, startverdi: () => T) {
-  const [tilstand, setTilstand] = useState<{ dato: string; verdi: T; lastet: boolean }>(() => ({
-    dato,
-    verdi: startverdi(),
-    lastet: false,
-  }))
-
-  useEffect(() => {
-    const funnet = lesLagret<T>(id, dato)
+  const klient = useErKlient()
+  const les = () => {
+    const funnet = klient ? lesLagret<T>(id, dato) : null
     const lagret = funnet && harSammeForm(funnet, startverdi()) ? funnet : null
-    // Loading from storage after hydration keeps server and client markup identical.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setTilstand({ dato, verdi: lagret ?? startverdi(), lastet: true })
-    // startverdi is derived from the date; re-running on identity changes would reset progress.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, dato])
+    return { dato, verdi: lagret ?? startverdi(), lastet: klient }
+  }
+  const [tilstand, setTilstand] = useState<{ dato: string; verdi: T; lastet: boolean }>(les)
+
+  // Right after hydration (or if the date changes without a remount) storage is read during render rather
+  // than in an effect, so the saved game replaces the placeholder without an extra painted frame.
+  if (tilstand.dato !== dato || tilstand.lastet !== klient) setTilstand(les())
 
   const oppdater = useCallback(
     (endring: (forrige: T) => T) => {
@@ -86,12 +97,26 @@ export function useDagligTilstand<T extends { resultat: Resultat }>(id: SpillId,
     [id],
   )
 
-  const aktuell = tilstand.dato === dato
-  return {
-    verdi: aktuell ? tilstand.verdi : startverdi(),
-    lastet: aktuell && tilstand.lastet,
-    oppdater,
+  return { verdi: tilstand.verdi, lastet: tilstand.lastet, oppdater }
+}
+
+export type AlleResultater = Partial<Record<SpillId, Record<string, Resultat>>>
+
+const INGEN: AlleResultater = {}
+const INGEN_FOR_SPILL: Record<string, Resultat> = {}
+
+// One shared, parsed copy of all results, rebuilt only after storage changes. Every render gets the same object
+// back, so components that depend on it do not recompute or re-render for nothing (the desktop re-renders
+// every second for its clock).
+let alleResultater: AlleResultater | null = null
+
+if (typeof window !== "undefined") {
+  // Added when the module loads, so the copy is cleared before any component is told about a change.
+  const glem = () => {
+    alleResultater = null
   }
+  window.addEventListener(HENDELSE, glem)
+  window.addEventListener("storage", glem)
 }
 
 function abonner(varsle: () => void) {
@@ -103,33 +128,32 @@ function abonner(varsle: () => void) {
   }
 }
 
-export type AlleResultater = Partial<Record<SpillId, Record<string, Resultat>>>
-
-/** Stored results for every game, keyed by game and date. Re-renders when progress changes. */
-export function useAlleResultater(): AlleResultater {
-  const snapshot = useSyncExternalStore(
-    abonner,
-    () => {
-      const ut: Record<string, Record<string, Resultat>> = {}
+function lesAlleResultater(): AlleResultater {
+  if (alleResultater) return alleResultater
+  const ut: Record<string, Record<string, Resultat>> = {}
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const [prefix, id, dato] = localStorage.key(i)?.split(":") ?? []
+      if (prefix !== PREFIX || !id || !dato) continue
       try {
-        for (let i = 0; i < localStorage.length; i++) {
-          const [prefix, id, dato] = localStorage.key(i)?.split(":") ?? []
-          if (prefix !== PREFIX || !id || !dato) continue
-          const r = (JSON.parse(localStorage.getItem(`${prefix}:${id}:${dato}`) ?? "null") as { resultat?: Resultat } | null)
-            ?.resultat
-          if (r) (ut[id] ??= {})[dato] = r
-        }
+        const r = (JSON.parse(localStorage.getItem(`${prefix}:${id}:${dato}`) ?? "null") as { resultat?: Resultat } | null)?.resultat
+        if (r) (ut[id] ??= {})[dato] = r
       } catch {
         // Ignore unreadable entries.
       }
-      return JSON.stringify(ut)
-    },
-    () => "{}",
-  )
-  return JSON.parse(snapshot) as AlleResultater
+    }
+  } catch {
+    // Storage is unavailable: no results.
+  }
+  return (alleResultater = ut)
+}
+
+/** Stored results for every game, keyed by game and date. Re-renders when progress changes. */
+export function useAlleResultater(): AlleResultater {
+  return useSyncExternalStore(abonner, lesAlleResultater, () => INGEN)
 }
 
 /** All stored results for one game, keyed by date. */
 export function useResultater(id: SpillId) {
-  return useAlleResultater()[id] ?? {}
+  return useAlleResultater()[id] ?? INGEN_FOR_SPILL
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { stokk } from "../lib/dag"
+import { useErKlient } from "../lib/lagring"
 import { omrader, storeByer, type Omrade } from "../lib/geografi"
 import { landEtterId, normaliser } from "../lib/geografi-svar"
 import { lyder } from "../lib/lyd"
@@ -42,7 +43,14 @@ function lesLagret(dato: string): Lagret {
 }
 
 export function OmrissBonus({ fasit, dato }: { fasit: Omrade; dato: string }) {
-  const [lagret, setLagret] = useState<Lagret>({})
+  const klient = useErKlient()
+  // Mounted after a client render (the game is finished), so storage can be read at once; while hydrating it waits.
+  const [lagret, setLagret] = useState<{ dato: string; klient: boolean; verdi: Lagret }>(() => ({
+    dato,
+    klient,
+    verdi: klient ? lesLagret(dato) : {},
+  }))
+  if (lagret.dato !== dato || lagret.klient !== klient) setLagret({ dato, klient, verdi: klient ? lesLagret(dato) : {} })
   const runder = (Object.keys(NAVN) as RundeId[]).filter((r) => {
     if (r === "naboer") return naboerFor(fasit).ider.length > 0
     if (r === "hovedstad") return Boolean(fasit.hovedstad)
@@ -54,19 +62,13 @@ export function OmrissBonus({ fasit, dato }: { fasit: Omrade; dato: string }) {
   })
   const [aktiv, setAktiv] = useState<RundeId>(runder[0])
 
-  useEffect(() => {
-    // localStorage is only there in the browser.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLagret(lesLagret(dato))
-  }, [dato])
-
   const lagre = (r: RundeId, u: Utfall) => {
     setLagret((l) => {
-      const ny = { ...l, [r]: u }
+      const ny = { ...l.verdi, [r]: u }
       try {
         localStorage.setItem(`spill:omriss-bonus:${dato}`, JSON.stringify(ny))
       } catch {}
-      return ny
+      return { ...l, verdi: ny }
     })
     if (u.ferdig) {
       if (u.riktig) lyder.riktig()
@@ -74,7 +76,7 @@ export function OmrissBonus({ fasit, dato }: { fasit: Omrade; dato: string }) {
     }
   }
 
-  const utfall = lagret[aktiv] ?? { ferdig: false, riktig: false, svar: [] }
+  const utfall = lagret.verdi[aktiv] ?? { ferdig: false, riktig: false, svar: [] }
   const neste = runder[runder.indexOf(aktiv) + 1]
   const props = { fasit, dato, utfall, lagre: (u: Utfall) => lagre(aktiv, u) }
 
@@ -82,7 +84,7 @@ export function OmrissBonus({ fasit, dato }: { fasit: Omrade; dato: string }) {
     <Kort className="flex flex-col gap-4 p-5">
       <div className="flex flex-wrap gap-1.5">
         {runder.map((r) => {
-          const u = lagret[r]
+          const u = lagret.verdi[r]
           return (
             <button
               key={r}
