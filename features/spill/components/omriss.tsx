@@ -56,7 +56,7 @@ export function Omriss({ dato, form, nokkel }: { dato: string; form: string; nok
     })
   }
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
+  if (!lastet) return <div key="laster" className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   const delTekst = [
     `Omriss · ${formaterDato(dato, "kort")} · ${verdi.resultat.status === "vunnet" ? gjettet.length : "X"}/${FORSOK}`,

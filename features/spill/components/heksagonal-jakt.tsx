@@ -192,7 +192,7 @@ export function HeksagonalJakt({ dato, steder }: { dato: string; steder: JaktSte
     return () => window.removeEventListener("keydown", ved)
   })
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
+  if (!lastet) return <div key="laster" className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   const forhold = storSkjerm ? 9 / 16 : 0.8
   const resultat = oppgjor(runde)

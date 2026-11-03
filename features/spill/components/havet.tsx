@@ -82,7 +82,7 @@ export function Havet({ dato, oppgave }: { dato: string; oppgave: HavetOppgave }
     })
   }
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
+  if (!lastet) return <div key="laster" className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   const fordeling = visBeste ? besteFordeling(oppgave.poeng) : katFor
   const iKategori = (k: number) => fordeling.indexOf(k)

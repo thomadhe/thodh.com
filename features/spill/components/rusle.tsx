@@ -77,7 +77,7 @@ export function Rusle({ dato, fra, til }: { dato: string; fra: string; til: stri
     if (id) oppdater((t) => ({ ...t, hint: [...t.hint, id] }))
   }
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
+  if (!lastet) return <div key="laster" className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   const farger: Record<string, string> = { [fra]: FARGE.start, [til]: FARGE.mal }
   verdi.gjetninger.forEach((id, i) => (farger[id] = FARGE[vurdert[i]]))

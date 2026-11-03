@@ -217,7 +217,7 @@ export function Anelseslos({ dato, antall }: { dato: string; antall: number }) {
     oppdater((t) => (t.resultat.status === "pagar" ? { ...t, resultat: { status: "tapt", etikett: "Ga opp" } } : t))
   }
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
+  if (!lastet) return <div key="laster" className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   const delTekst = [
     `Anelsesløs · ${formaterDato(dato, "kort")}`,
