@@ -41,3 +41,30 @@ test("previews, errors and unexpected bodies get no push topic", async (t) => {
   t.mock.method(globalThis, "fetch", async () => new Response("{not json", { headers: { "Content-Type": "application/json" } }));
   assert.equal(await (await get()).text(), "{not json");
 });
+
+test("only seat snapshots from allowed endpoints and statuses get a push topic", async (t) => {
+  configure(t);
+  const snapshot = { roomId: id, revision: 3, color: "w", state: { turn: "b" } };
+  const post = (path: string) => new Request(`https://thodh.com/sjakk/api/rooms${path}`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer seat" }, body: "{}" });
+  const cases: [string, Request, number, boolean][] = [
+    ["state", new Request(`https://thodh.com/sjakk/api/rooms/${id}`, { headers: { Authorization: "Bearer seat" } }), 200, true],
+    ["state refused", new Request(`https://thodh.com/sjakk/api/rooms/${id}`, { headers: { Authorization: "Bearer seat" } }), 403, false],
+    ["create", post(""), 201, true],
+    ["create refused", post(""), 403, false],
+    ["join", post(`/${id}/join`), 200, true],
+    ["rejected join", post(`/${id}/join`), 403, false],
+    ["action", post(`/${id}/action`), 200, true],
+    ["action conflict", post(`/${id}/action`), 409, true],
+    ["illegal action", post(`/${id}/action`), 400, false],
+    ["preview", post(`/${id}/preview`), 200, false],
+  ];
+  for (const [name, request, status, expected] of cases) {
+    t.mock.method(globalThis, "fetch", async () => Response.json(snapshot, { status }));
+    const body = await (await relayChess(request)).json();
+    assert.equal("push" in body, expected, name);
+    t.mock.restoreAll();
+  }
+  // A snapshot for another room than the one in the path gets nothing.
+  t.mock.method(globalThis, "fetch", async () => Response.json({ ...snapshot, roomId: "00000000-0000-4000-8000-000000000003" }));
+  assert.equal("push" in await (await get()).json(), false);
+});
