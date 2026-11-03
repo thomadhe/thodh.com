@@ -9,10 +9,10 @@ Eier «hovedtråd» = hovedsamtalen styrer strømmen; vaktagenten rører den ikk
 | Strøm | Eier | Status | Gren / commit |
 | --- | --- | --- | --- |
 | Otsjoba: lokal AI-bro (Claude, «Continue with ChatGPT») + kurs A1–C2, spansk | hovedtråd | publisert 3. nov. | 5f4695a |
-| Otsjoba: fransk og tysk | hovedtråd | pågår | egen worktree |
+| Otsjoba: fransk (Camille) og tysk (Jonas), 30 leksjoner hver | hovedtråd | publisert 3. nov. | 142d097 |
 | Sjakk: oppgaver (rangert, daglig, Lynløp, temaer) | hovedtråd | publisert 3. nov. | 8c89ff3 |
-| Sjakk: åpningsrepertoar med trener Tora (19 åpninger) | hovedtråd | retter funn fra gjennomgang | t3/add-opening-repertoire-trainer |
-| Dagsspill: 6/7-stegern | hovedtråd | retter funn fra gjennomgang | t3/build-67-stegern-daily-game |
+| Sjakk: åpningsrepertoar med trener Tora (19 åpninger) | hovedtråd | retting stoppet på bruksgrense, uferdige endringer i worktree t3-ad29c511 | t3/add-opening-repertoire-trainer |
+| Dagsspill: 6/7-stegern | hovedtråd | retting stoppet på bruksgrense (07c519b + uferdige endringer i worktree t3-efaef30a) | t3/build-67-stegern-daily-game |
 | Optimalisering: hele thodh.com (skjelett, prefetch, fonter, CLS, funksjoner i arn1) | hovedtråd | publisert 3. nov. | e8e4d8c |
 | Optimalisering: online-sjakk | hovedtråd | publisert 3. nov. | e3fd09a |
 
