@@ -88,6 +88,25 @@ test('repetisjon: feilfri runde flytter linjen opp, feil sender den tilbake', ()
   assert.equal(fremgang.linjer[`${apning.id}|${forste.linje.id}`].boks, 2);
 });
 
+test('repetisjon: ekstrarunder før forfall flytter ikke linjen opp', () => {
+  const apning = apninger.find(a => a.id === 'halloween-gambitt').apning;
+  const fremgang = tomFremgang();
+  const naa = Date.UTC(2026, 10, 3);
+  for (let runde = 0; runde < 10; runde += 1) {
+    const { linje } = velgLinje(apning, fremgang, naa + runde * 60000);
+    vurderLinje(fremgang, apning.id, linje.id, 0, naa + runde * 60000);
+  }
+  for (const linje of apning.linjer) {
+    const post = fremgang.linjer[`${apning.id}|${linje.id}`];
+    assert.equal(post.boks, 1, `${linje.id} gikk til boks ${post.boks}`);
+    assert.equal(post.forfall, naa + INTERVALL_DAGER[1] * 86400000 + apning.linjer.indexOf(linje) * 60000);
+  }
+  assert.ok(Object.values(fremgang.linjer).reduce((sum, p) => sum + p.runder, 0) === 10);
+  // A mistake in an extra round still sends the line back.
+  const forste = apning.linjer[0].id;
+  assert.equal(vurderLinje(fremgang, apning.id, forste, 1, naa + 3600000).boks, 0);
+});
+
 test('fremgang lagres versjonert og vansker telles', () => {
   const minne = new Map();
   const lager = { getItem: k => minne.get(k) ?? null, setItem: (k, v) => minne.set(k, v) };

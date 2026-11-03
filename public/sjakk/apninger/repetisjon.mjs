@@ -22,8 +22,14 @@ const nokkel = (apningId, linjeId) => `${apningId}|${linjeId}`;
 export const linjePost = (fremgang, apningId, linjeId) => fremgang.linjer[nokkel(apningId, linjeId)] ?? null;
 
 // A clean run moves the line up one box; any mistake sends it back to box 0 (due again right away).
+// A clean extra round on a line that is not due yet keeps its box and due date.
 export function vurderLinje(fremgang, apningId, linjeId, feil, naa = Date.now()) {
   const forrige = linjePost(fremgang, apningId, linjeId);
+  if (!feil && forrige && forrige.forfall > naa) {
+    const post = { ...forrige, sist: naa, runder: (forrige.runder ?? 0) + 1 };
+    fremgang.linjer[nokkel(apningId, linjeId)] = post;
+    return post;
+  }
   const boks = feil ? 0 : Math.min(INTERVALL_DAGER.length - 1, (forrige?.boks ?? 0) + 1);
   const post = { boks, forfall: naa + INTERVALL_DAGER[boks] * DAG, sist: naa, runder: (forrige?.runder ?? 0) + 1, feilfrie: (forrige?.feilfrie ?? 0) + (feil ? 0 : 1) };
   fremgang.linjer[nokkel(apningId, linjeId)] = post;

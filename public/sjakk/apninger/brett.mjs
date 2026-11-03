@@ -39,6 +39,8 @@ export function lagBrett(rot, { naarTrekk }) {
       if (sjakk && brikke?.type === 'k' && brikke.color === chess.turn()) klasser.push('in-check');
       if (tilstand.merket.includes(felt)) klasser.push('ap-merket');
       if (dra?.fra === felt && dra.spokelse) klasser.push('ap-dra-kilde');
+      // Only squares with a piece to move block scrolling; a swipe elsewhere scrolls the page.
+      if (kanFlytteFra(felt)) klasser.push('ap-kan');
       const navn = brikke ? `${brikke.color === 'w' ? 'hvit' : 'svart'} ${NAVN[brikke.type]}` : 'tomt felt';
       const etikett = `${felt}, ${navn}${til ? ', lovlig trekk hit' : ''}${valgt === felt ? ', valgt' : ''}`;
       const kol = i % 8, rekke = Math.floor(i / 8);
@@ -94,7 +96,12 @@ export function lagBrett(rot, { naarTrekk }) {
     if (!knapp || tilstand.laast) return;
     const felt = knapp.dataset.square;
     if (valgt && valgt !== felt && lovlige(valgt).some(m => m.to === felt)) { event.preventDefault(); provTrekk(valgt, felt); return; }
-    if (!kanFlytteFra(felt)) { valgt = null; fokus = felt; tegn(); return; }
+    if (!kanFlytteFra(felt)) {
+      fokus = felt;
+      // Re-rendering under the finger would disturb a scroll gesture, so only redraw when a selection is cleared.
+      if (valgt) { valgt = null; tegn(); } else for (const k of brett.querySelectorAll('[data-square]')) k.tabIndex = k.dataset.square === fokus ? 0 : -1;
+      return;
+    }
     event.preventDefault();
     dra = { fra: felt, x: event.clientX, y: event.clientY, spokelse: null, varValgt: valgt === felt, id: event.pointerId };
     valgt = felt;
