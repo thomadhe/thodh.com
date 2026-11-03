@@ -13,7 +13,7 @@ Eier «hovedtråd» = hovedsamtalen styrer strømmen; vaktagenten rører den ikk
 | Sjakk: oppgaver (rangert, daglig, Lynløp, temaer) | hovedtråd | publisert 3. nov. | 8c89ff3 |
 | Sjakk: åpningsrepertoar med trener Tora (19 åpninger) | hovedtråd | retter funn fra gjennomgang | t3/add-opening-repertoire-trainer |
 | Dagsspill: 6/7-stegern | hovedtråd | retter funn fra gjennomgang | t3/build-67-stegern-daily-game |
-| Optimalisering: hele thodh.com (Sonnet 5.5) | hovedtråd | pågår | egen worktree |
+| Optimalisering: hele thodh.com (skjelett, prefetch, fonter, CLS, funksjoner i arn1) | hovedtråd | publisert 3. nov. | e8e4d8c |
 | Optimalisering: online-sjakk | hovedtråd | publisert 3. nov. | e3fd09a |
 
 ## Mål som ikke er nådd (går foran køen)
@@ -44,7 +44,8 @@ Eier fra nå: vakt. Er ingen strøm i gang på online-sjakk, start en ny Claude-
 1. Åpningsteori: nye åpninger og dypere linjer, alltid kontrollert med chess.js og Stockfish.
 2. 6/7-stegern: fyll på spørsmålsbanken (dag 61+, fra 1. jan. 2027) — vent til hovedtrådens retting er flettet.
 3. Otsjoba: flere språk, flere leksjoner per nivå.
-4. Sjakkoppgaver: tidsbonus i Lynløp, gjennomgang av bom etter løp, rating synket til kontoen, egen rating per tema, «x % løste dagens».
+4. Ytelse, neste runde: cache-headere for public/ (lyd, logoer), React.memo/cache i «I dag»-panelet (useAlleResultater), les lagret fremdrift før første tegning (useDagligTilstand) for raskere LCP.
+5. Sjakkoppgaver: tidsbonus i Lynløp, gjennomgang av bom etter løp, rating synket til kontoen, egen rating per tema, «x % løste dagens».
 
 ## Idébank
 
