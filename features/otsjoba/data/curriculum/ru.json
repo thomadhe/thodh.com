@@ -45,7 +45,7 @@
         ],
         "hint": "Svar «Хорошо, спасибо» og spør tilbake: «А у тебя?»",
         "reply": "У меня тоже всё хорошо.",
-        "replyTranslation": "Hos meg går også alt bra.",
+        "replyTranslation": "Jeg har det også bra.",
         "replyTransliteration": "U menya tozhe vsyo khorosho."
       }
     ],
@@ -206,7 +206,7 @@
         "translation": "Noe mer? Vi har gode piroger.",
         "transliteration": "Chto-nibud’ yeshchyo? U nas vkusnyye pirozhki.",
         "expected": [
-          "Да, один пирожок с яблоком, пожалуйста.",
+          "Да, один пирожок с яблоками, пожалуйста.",
           "Нет, спасибо. Сколько стоит?"
         ],
         "hint": "Spør om prisen: «Сколько стоит?»",
@@ -277,7 +277,7 @@
         "transliteration": "Idi pryamo, potom nalevo. Ponyatno?",
         "expected": [
           "Да, прямо и налево. Спасибо!",
-          "Повтори, пожалуйста, медленно."
+          "Повтори, пожалуйста, помедленнее."
         ],
         "hint": "«прямо» betyr rett frem, «налево» til venstre, «направо» til høyre.",
         "reply": "Конечно: прямо, потом налево.",
@@ -293,9 +293,9 @@
           "На автобусе. Где остановка?"
         ],
         "hint": "«пешком» betyr til fots, «на автобусе» med buss.",
-        "reply": "Нет, недалеко. Пешком пять минут.",
-        "replyTranslation": "Nei, ikke langt. Fem minutter til fots.",
-        "replyTransliteration": "Net, nedaleko. Peshkom pyat’ minut."
+        "reply": "Это недалеко: пешком пять минут, а остановка автобуса прямо здесь.",
+        "replyTranslation": "Det er ikke langt: fem minutter til fots, og bussholdeplassen er rett her.",
+        "replyTransliteration": "Eto nedaleko: peshkom pyat’ minut, a ostanovka avtobusa pryamo zdes’."
       }
     ],
     "vocabulary": [
@@ -350,9 +350,9 @@
           "Мне удобно в четверг."
         ],
         "hint": "«в» og ukedag i akkusativ: «в понедельник», «в среду», «в пятницу».",
-        "reply": "Хорошо, в понедельник.",
-        "replyTranslation": "Bra, på mandag.",
-        "replyTransliteration": "Khorosho, v ponedel’nik."
+        "reply": "Хорошо, мне тоже удобно.",
+        "replyTranslation": "Bra, det passer for meg også.",
+        "replyTransliteration": "Khorosho, mne tozhe udobno."
       },
       {
         "question": "Во сколько?",
@@ -363,9 +363,9 @@
           "В десять утра."
         ],
         "hint": "«в шесть часов» betyr klokka seks. «утра» og «вечера» betyr om morgenen og om kvelden.",
-        "reply": "Отлично, в шесть.",
-        "replyTranslation": "Utmerket, klokka seks.",
-        "replyTransliteration": "Otlichno, v shest’."
+        "reply": "Отлично, договорились.",
+        "replyTranslation": "Utmerket, da er det avtalt.",
+        "replyTransliteration": "Otlichno, dogovorilis’."
       },
       {
         "question": "А сколько сейчас времени?",
@@ -376,9 +376,9 @@
           "Сейчас три часа."
         ],
         "hint": "Etter 2–4 sier man «часа», etter 5 og mer «часов».",
-        "reply": "Спасибо! До понедельника!",
-        "replyTranslation": "Takk! Vi ses på mandag!",
-        "replyTransliteration": "Spasibo! Do ponedel’nika!"
+        "reply": "Спасибо! До встречи!",
+        "replyTranslation": "Takk! Vi ses!",
+        "replyTransliteration": "Spasibo! Do vstrechi!"
       }
     ],
     "vocabulary": [
@@ -525,16 +525,16 @@
         "translation": "Hva skjedde av interessant på lørdag?",
         "transliteration": "Chto interesnogo bylo v subbotu?",
         "expected": [
-          "В субботу я гулял в парке с друзьями.",
+          "В субботу я ходил с друзьями в кино.",
           "Я ходила в кино, а потом мы ужинали в ресторане."
         ],
-        "hint": "Fortid: en mann sier «гулял», en kvinne «гуляла». «ходить в кино» betyr å gå på kino.",
+        "hint": "Fortid: en mann sier «ходил», en kvinne «ходила». «ходить в кино» betyr å gå på kino.",
         "reply": "Здорово! А какой фильм вы смотрели?",
         "replyTranslation": "Kjempefint! Og hvilken film så dere?",
         "replyTransliteration": "Zdorovo! A kakoy fil’m vy smotreli?"
       },
       {
-        "question": "А воскресенье было спокойное?",
+        "question": "А воскресенье было спокойным?",
         "translation": "Og var søndagen rolig?",
         "transliteration": "A voskresen’ye bylo spokoynoye?",
         "expected": [
@@ -626,7 +626,7 @@
         ],
         "hint": "«Я ищу …» med akkusativ: «лёгкую куртку».",
         "reply": "Посмотрите, вот синие и зелёные.",
-        "replyTranslation": "Se her, disse er blå og grønne.",
+        "replyTranslation": "Se, vi har blå og grønne.",
         "replyTransliteration": "Posmotrite, vot siniye i zelyonyye."
       },
       {
@@ -722,7 +722,7 @@
         ],
         "hint": "«У меня болит …» med nominativ: «голова», «горло», «живот». «температура» betyr her feber.",
         "reply": "Понятно. Давайте я вас послушаю.",
-        "replyTranslation": "Jeg forstår. La meg lytte på deg.",
+        "replyTranslation": "Jeg forstår. La meg lytte på lungene dine.",
         "replyTransliteration": "Ponyatno. Davayte ya vas poslushayu."
       },
       {
@@ -2462,7 +2462,7 @@
         "transliteration": "Kak ty nachnyosh’ ofitsial’noye pis’mo?",
         "expected": [
           "Уважаемые господа! Обращаюсь к вам в связи с отменой рейса 12 марта.",
-          "Уважаемая служба поддержки! Пишу вам по поводу своего обращения от 3 марта, которое до сих пор осталось без ответа."
+          "Уважаемая служба поддержки! Пишу вам по поводу своего обращения от 3 марта, которое до сих пор остаётся без ответа."
         ],
         "hint": "Formell hilsen «Уважаемые …!» og saken: «в связи с», «по поводу».",
         "reply": "Хорошее начало: вежливо и по существу.",
@@ -2474,7 +2474,7 @@
         "translation": "Hvordan uttrykke misnøye uten å bli skarp i tonen?",
         "transliteration": "Kak vyrazit’ nedovol’stvo, ne perekhodya na rezkiy ton?",
         "expected": [
-          "К сожалению, вынужден констатировать, что, несмотря на мои неоднократные обращения, ответа я так и не получил.",
+          "К сожалению, вынуждена констатировать, что, несмотря на мои неоднократные обращения, ответа я так и не получила.",
           "Приходится с сожалением отметить, что качество обслуживания не соответствовало заявленному уровню."
         ],
         "hint": "Upersonlig og saklig: «вынужден(а) констатировать», «несмотря на», «так и не».",
@@ -2521,9 +2521,9 @@
         "transliteration": "v svyazi s"
       },
       {
-        "word": "вынужден констатировать",
+        "word": "вынужден(а) констатировать",
         "translation": "må konstatere",
-        "transliteration": "vynuzhden konstatirovat’"
+        "transliteration": "vynuzhden(a) konstatirovat’"
       },
       {
         "word": "неоднократный",
@@ -2654,11 +2654,11 @@
         "transliteration": "Kak ob”yasnit’ inostrantsu, kogda russkiy kompliment na samom dele shpil’ka?",
         "expected": [
           "Обычно шпильку выдают интонация и явный перебор: если похвала несоразмерна ситуации, жди подвоха.",
-          "Нужно смотреть на зазор между сказанным и тем, что очевидно всем."
+          "Нужно смотреть на разрыв между сказанным и тем, что очевидно всем."
         ],
-        "hint": "«шпилька» er et stikk; «перебор» er overdrivelse; «жди подвоха» betyr vent deg en baktanke; «зазор» betyr avstand.",
+        "hint": "«шпилька» er et stikk; «перебор» er overdrivelse; «жди подвоха» betyr vær på vakt; «разрыв» betyr sprik.",
         "reply": "«Жди подвоха» — очень точно и очень по-русски.",
-        "replyTranslation": "«Vent deg en baktanke» – veldig presist og veldig russisk.",
+        "replyTranslation": "«Vær på vakt» – veldig presist og veldig russisk.",
         "replyTransliteration": "«Zhdi podvokha» — ochen’ tochno i ochen’ po-russki."
       },
       {
@@ -2775,7 +2775,7 @@
         "translation": "Hva er det konkret som endrer seg fra register til register i versjonene dine?",
         "transliteration": "Chto konkretno menyayetsya ot registra k registru v tvoikh variantakh?",
         "expected": [
-          "Безличные канцелярские обороты уступили место прямой речи, а книжная лексика — разговорной.",
+          "Безличные канцелярские обороты уступили место прямому обращению, а книжная лексика — разговорной.",
           "Меняются синтаксис, лексика и, главное, подразумеваемые отношения с адресатом."
         ],
         "hint": "Nevn nivåene: syntaks, ordforråd og forholdet til mottakeren («адресат»). «уступать место» betyr å vike plassen for.",
@@ -2871,8 +2871,8 @@
         "translation": "Finnes det et norsk uttrykk som er vanskelig å oversette til russisk? Forklar det.",
         "transliteration": "Yest’ li norvezhskoye vyrazheniye, kotoroye plokho perevoditsya na russkiy? Ob”yasni yego.",
         "expected": [
-          "«Ut på tur, aldri sur»: дословно «в поход — и никогда не злой», а смысл в том, что прогулка на природе всегда поднимает настроение.",
-          "Мы говорим «å ta seg vann over hodet», то есть «взять воду над головой»: это примерно «взвалить на себя непосильную ношу»."
+          "«Ut på tur, aldri sur»: дословно «в поход — и никогда не хмурый», а смысл в том, что прогулка на природе всегда поднимает настроение.",
+          "«Det finnes ikke dårlig vær, bare dårlige klær»: дословно «не бывает плохой погоды, бывает неподходящая одежда»; по-норвежски это рифма, а смысл в том, что в правильной одежде можно гулять в любую погоду."
         ],
         "hint": "Gi den bokstavelige oversettelsen («дословно …») og deretter meningen («смысл в том, что …»).",
         "reply": "Замечательно! Эту мудрость стоило бы перенять и нам.",
@@ -3024,18 +3024,18 @@
         "translation": "Hvilket inntrykk gjør denne sammenligningen?",
         "transliteration": "Kakoye vpechatleniye proizvodit eto sravneniye?",
         "expected": [
-          "Оно обескураживает: морю приписывается почти человеческая робость, а заодно появляется намёк на семейный долг.",
+          "Оно озадачивает: морю приписывается почти человеческая робость, а заодно появляется намёк на семейный долг.",
           "Мне кажется, оно одновременно ироничное и грустное, потому что делает домашним нечто огромное."
         ],
-        "hint": "Beskriv virkningen presist: «обескураживать» (overrumple), «намёк на» (antydning om), «делать домашним» (gjøre hjemlig).",
+        "hint": "Beskriv virkningen presist: «озадачивать» (forundre / sette i tenkeboksen), «намёк на» (antydning om), «делать домашним» (gjøre hjemlig).",
         "reply": "Хорошее прочтение. Теперь посмотрим на самое начало фразы.",
         "replyTranslation": "En god tolkning. La oss nå se på selve begynnelsen av setningen.",
         "replyTransliteration": "Khorosheye prochteniye. Teper’ posmotrim na samoye nachalo frazy."
       },
       {
-        "question": "Что, по-твоему, подсказывает это начальное «И в то лето»?",
-        "translation": "Hva antyder, etter din mening, den innledende «И в то лето» (også den sommeren)?",
-        "transliteration": "Chto, po-tvoyemu, podskazyvayet eto nachal’noye «I v to leto»?",
+        "question": "Что, по-твоему, подсказывает начальное «И»?",
+        "translation": "Hva antyder, etter din mening, den innledende «И» (også)?",
+        "transliteration": "Chto, po-tvoyemu, podskazyvayet nachal’noye «I»?",
         "expected": [
           "Оно говорит о повторении, почти ритуале: рассказчик пережил много похожих лет.",
           "Оно сразу вносит ноту смирения: то, что происходит, уже никого не удивляет."
@@ -3084,9 +3084,9 @@
         "transliteration": "sravneniye"
       },
       {
-        "word": "обескураживать",
-        "translation": "overrumple / ta motet fra",
-        "transliteration": "obeskurazhivat’"
+        "word": "озадачивать",
+        "translation": "forundre / sette i tenkeboksen",
+        "transliteration": "ozadachivat’"
       },
       {
         "word": "смирение",

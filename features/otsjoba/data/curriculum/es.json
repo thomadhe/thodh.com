@@ -101,15 +101,15 @@
         "replyTranslation": "Veldig bra."
       },
       {
-        "question": "Son tres euros. ¿Pagas con tarjeta?",
-        "translation": "Det blir tre euro. Betaler du med kort?",
+        "question": "Son tres euros. ¿Pagas en efectivo?",
+        "translation": "Det blir tre euro. Betaler du kontant?",
         "expected": [
-          "Sí, con tarjeta.",
-          "No, en efectivo. Aquí tienes cinco euros."
+          "Sí, aquí tienes cinco euros.",
+          "Sí, en efectivo. Tengo un billete de cinco."
         ],
-        "hint": "«con tarjeta» betyr med kort, «en efectivo» betyr kontant.",
-        "reply": "Gracias. Tu cambio: dos euros.",
-        "replyTranslation": "Takk. Vekslepengene dine: to euro."
+        "hint": "«en efectivo» betyr kontant, «con tarjeta» med kort. «aquí tienes» betyr vær så god (når du gir noe).",
+        "reply": "Gracias. Aquí tienes el cambio: dos euros.",
+        "replyTranslation": "Takk. Her er vekslepengene: to euro."
       }
     ],
     "vocabulary": [
@@ -248,8 +248,8 @@
           "En metro. ¿Dónde está la parada?"
         ],
         "hint": "«andando» betyr til fots, «en metro» med metro.",
-        "reply": "No, está a diez minutos andando.",
-        "replyTranslation": "Nei, det er ti minutter å gå."
+        "reply": "Está cerca: diez minutos andando o una parada de metro, y la entrada del metro está ahí enfrente.",
+        "replyTranslation": "Det er like i nærheten: ti minutter å gå eller ett stopp med metroen, og inngangen til metroen er rett der borte."
       }
     ],
     "vocabulary": [
@@ -296,8 +296,8 @@
           "El jueves, por favor."
         ],
         "hint": "«el lunes» betyr på mandag. Ukedager: lunes, martes, miércoles, jueves, viernes.",
-        "reply": "Perfecto, el lunes.",
-        "replyTranslation": "Perfekt, på mandag."
+        "reply": "Perfecto, ese día me va bien.",
+        "replyTranslation": "Perfekt, den dagen passer for meg."
       },
       {
         "question": "¿A qué hora?",
@@ -307,8 +307,8 @@
           "A las diez de la mañana."
         ],
         "hint": "«a las seis» betyr klokka seks. «de la tarde» betyr om ettermiddagen, «de la mañana» om morgenen.",
-        "reply": "Muy bien, a las seis.",
-        "replyTranslation": "Veldig bra, klokka seks."
+        "reply": "Muy bien, a esa hora puedo.",
+        "replyTranslation": "Veldig bra, da kan jeg."
       },
       {
         "question": "¿Y qué hora es ahora?",
@@ -317,9 +317,9 @@
           "Son las dos.",
           "Es la una y media."
         ],
-        "hint": "«Son las dos» betyr klokka er to. Klokka ett: «Es la una». «y media» betyr halv (tretti over).",
-        "reply": "¡Gracias! Hasta el lunes.",
-        "replyTranslation": "Takk! Vi ses på mandag."
+        "hint": "«Son las dos» betyr klokka er to. Klokka ett: «Es la una». «y media» betyr «og en halv»: «la una y media» er halv to (13.30).",
+        "reply": "¡Gracias! Entonces nos vemos pronto.",
+        "replyTranslation": "Takk! Da ses vi snart."
       }
     ],
     "vocabulary": [
@@ -344,8 +344,8 @@
         "translation": "om ettermiddagen"
       },
       {
-        "word": "¡hasta el lunes!",
-        "translation": "vi ses på mandag!"
+        "word": "¡nos vemos pronto!",
+        "translation": "vi ses snart!"
       }
     ]
   },
@@ -382,12 +382,12 @@
       },
       {
         "question": "Lo siento, hoy no funciona el ascensor. ¿Le va bien una habitación en el tercer piso?",
-        "translation": "Beklager, i dag virker ikke heisen. Passer et rom i tredje etasje for deg?",
+        "translation": "Beklager, i dag virker ikke heisen. Passer et rom i fjerde etasje for deg?",
         "expected": [
           "Está bien, pero ¿me pueden ayudar con la maleta?",
           "¿No tienen una habitación en el primer piso?"
         ],
-        "hint": "Godta, men be om hjelp med kofferten, eller spør om en lavere etasje.",
+        "hint": "Godta, men be om hjelp med kofferten, eller spør om en lavere etasje. «el tercer piso» er fjerde etasje på norsk, fordi bakkeplanet heter «la planta baja».",
         "reply": "Por supuesto, un compañero le sube la maleta.",
         "replyTranslation": "Selvfølgelig, en kollega bærer kofferten opp for deg."
       },
@@ -680,7 +680,7 @@
     "level": "A2",
     "icon": "utensils",
     "opening": "¡Qué bien que hayas venido! Aquí las tapas son buenísimas. ¿Pedimos para compartir?",
-    "openingTranslation": "Så fint at du kom! Her er tapasen kjempegod. Skal vi bestille noe å dele?",
+    "openingTranslation": "Så fint at du kom! Her er tapasene kjempegode. Skal vi bestille noe å dele?",
     "steps": [
       {
         "question": "¿Qué te apetece?",
@@ -723,8 +723,8 @@
           "Hoy invito yo, que es tu cumpleaños."
         ],
         "hint": "«a medias» betyr halvt hver. «invito yo» betyr jeg spanderer.",
-        "reply": "¡Gracias! La próxima vez invito yo.",
-        "replyTranslation": "Takk! Neste gang spanderer jeg."
+        "reply": "¡Genial! Ha sido una tarde estupenda.",
+        "replyTranslation": "Supert! Det har vært en kjempefin kveld."
       }
     ],
     "vocabulary": [
@@ -842,7 +842,7 @@
     "level": "B1",
     "icon": "home",
     "opening": "Vives en un piso compartido y la cocina siempre está desordenada. Hoy hablas con tu compañero de piso.",
-    "openingTranslation": "Du bor i et bofellesskap, og kjøkkenet er alltid rotete. I dag snakker du med romkameraten din.",
+    "openingTranslation": "Du bor i et bofellesskap, og kjøkkenet er alltid rotete. I dag snakker du med bofellen din.",
     "steps": [
       {
         "question": "¿Querías hablar conmigo? ¿Qué pasa?",
@@ -1069,12 +1069,12 @@
         "question": "¿Cómo explicas qué ocurrió?",
         "translation": "Hvordan forklarer du hva som skjedde?",
         "expected": [
-          "En el mensaje ponía «el jueves» y yo entendí este jueves, no el pasado.",
+          "En el mensaje ponía «mañana», pero lo leí un día tarde y pensé que la cena era hoy.",
           "Debí de leer el mensaje muy deprisa y me quedé con la fecha equivocada."
         ],
-        "hint": "«ponía» betyr det sto. «debí de» betyr jeg må ha …",
-        "reply": "Pues sí, el mensaje era un poco ambiguo.",
-        "replyTranslation": "Ja, meldingen var litt tvetydig."
+        "hint": "«ponía» betyr det sto, «un día tarde» en dag for sent. «debí de» betyr jeg må ha …",
+        "reply": "Bueno, son cosas que pasan.",
+        "replyTranslation": "Vel, sånt skjer."
       },
       {
         "question": "¿Qué propones para arreglarlo?",
@@ -1162,7 +1162,7 @@
         "translation": "Er du ikke redd for at turistene drar et annet sted?",
         "expected": [
           "Es un riesgo, pero dudo que una tasa moderada cambie mucho las decisiones de los viajeros.",
-          "Algo de menos turismo no sería necesariamente malo, siempre que llegue un turismo más sostenible."
+          "Un poco menos de turismo no sería necesariamente malo, siempre que llegue un turismo más sostenible."
         ],
         "hint": "«dudo que» og «siempre que» (forutsatt at) tar konjunktiv.",
         "reply": "Una postura equilibrada: ni turismofobia ni barra libre.",
@@ -1243,7 +1243,7 @@
         "translation": "Hvilket realistisk tiltak ville du foreslått?",
         "expected": [
           "Propondría enseñar en clase cómo funcionan los algoritmos, para que los jóvenes usen las redes con criterio.",
-          "Yo retrasaría la edad mínima para abrir una cuenta y lo controlaría de verdad."
+          "Yo subiría la edad mínima para abrir una cuenta y lo controlaría de verdad."
         ],
         "hint": "«para que» tar konjunktiv: «para que usen». «con criterio» betyr med omtanke / kritisk sans.",
         "reply": "Educar antes que prohibir: una idea con mucho sentido.",
@@ -1478,8 +1478,8 @@
           "Podemos estar de acuerdo en algo: sin preparación, ninguna reunión funciona."
         ],
         "hint": "Foreslå en test: «¿qué te parece si probamos …?», eller finn felles grunn.",
-        "reply": "Perfecto: así nadie pierde la cara y todos ganan tiempo.",
-        "replyTranslation": "Perfekt: slik taper ingen ansikt, og alle sparer tid."
+        "reply": "Perfecto: así nadie queda mal y todos ganan tiempo.",
+        "replyTranslation": "Perfekt: slik kommer ingen dårlig ut av det, og alle sparer tid."
       }
     ],
     "vocabulary": [
@@ -1607,14 +1607,14 @@
           "Pienso en un proyecto en el que tuve que mediar entre dos departamentos con prioridades opuestas."
         ],
         "hint": "Relativsetning med «del que» (som … er stolt av). Nevn resultatet: «cumpliendo plazos y presupuesto».",
-        "reply": "Interesante. Me llama la atención su papel de mediador.",
-        "replyTranslation": "Interessant. Rollen din som mekler fanger interessen min."
+        "reply": "Interesante. Se nota que ese proyecto le importó.",
+        "replyTranslation": "Interessant. Det merkes at det prosjektet betydde noe for deg."
       },
       {
         "question": "¿Cuál fue el principal obstáculo y cómo lo superó?",
         "translation": "Hva var den største hindringen, og hvordan overvant du den?",
         "expected": [
-          "El nudo era la falta de confianza entre los equipos: introduje reuniones breves y objetivos compartidos, y la situación se desbloqueó.",
+          "El principal escollo era la falta de confianza entre los equipos: introduje reuniones breves y objetivos compartidos, y la situación se desbloqueó.",
           "Al principio subestimamos los plazos, así que redefinimos prioridades e involucramos antes a los usuarios."
         ],
         "hint": "Problem, tiltak, resultat. «desbloquearse» betyr å løse seg opp.",
@@ -1792,7 +1792,7 @@
         ],
         "hint": "Innrøm risikoen og nyanser: «si se plantea como …», «no tendría por qué» (trenger ikke nødvendigvis).",
         "reply": "Una respuesta que evita los extremos. Muy de nivel C1.",
-        "replyTranslation": "Et svar som unngår ytterpunktene. Veldig mye C1-nivå."
+        "replyTranslation": "Et svar som unngår ytterpunktene. Helt på C1-nivå."
       }
     ],
     "vocabulary": [
@@ -1847,7 +1847,7 @@
         "translation": "Anta at korrelasjonen er reell. Beviser det at sjokolade gjør folk lykkelige?",
         "expected": [
           "No: una correlación por sí sola no demuestra causalidad, porque pueden influir otros factores.",
-          "Aunque la relación existiera, no se podría descartar que fuera al revés: que la gente feliz se dé más caprichos."
+          "Aunque la relación existiera, no se podría descartar que fuera al revés: que la gente feliz se diera más caprichos."
         ],
         "hint": "Skill mellom korrelasjon og årsak: «por sí sola», «no se podría descartar que» med konjunktiv, «al revés» (omvendt).",
         "reply": "Lo de la causalidad inversa es una observación excelente.",
@@ -1943,7 +1943,7 @@
         ],
         "hint": "Gi et eksempel: «no está mal» (ikke verst), «nada del otro mundo» (ikke noe særlig).",
         "reply": "De acuerdo: la modestia exhibida también es una forma de presumir.",
-        "replyTranslation": "Enig: utstilt beskjedenhet er også en måte å skryte på."
+        "replyTranslation": "Enig: påtatt beskjedenhet er også en måte å skryte på."
       },
       {
         "question": "¿Esa última frase era irónica? Justifica tu lectura.",
@@ -2112,7 +2112,7 @@
         "translation": "Finnes det et norsk uttrykk som er vanskelig å oversette til spansk? Forklar det.",
         "expected": [
           "«Ut på tur, aldri sur»: literalmente «de excursión, nunca de mal humor», y quiere decir que salir a la naturaleza siempre te anima.",
-          "Decimos «å ta seg vann over hodet», o sea, «echarse agua por encima de la cabeza»: equivale más o menos a meterse en camisa de once varas."
+          "«Det finnes ikke dårlig vær, bare dårlige klær»: literalmente «no existe el mal tiempo, solo la ropa inadecuada»; en noruego rima, y quiere decir que con la ropa adecuada se puede salir haga el tiempo que haga."
         ],
         "hint": "Gi den bokstavelige oversettelsen («literalmente …») og deretter meningen («quiere decir que …»).",
         "reply": "¡Precioso! Una sabiduría que deberíamos adoptar también en el sur.",

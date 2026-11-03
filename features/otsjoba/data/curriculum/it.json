@@ -75,11 +75,11 @@
     "subtitle": "Kjøp frukt, tell og betal.",
     "level": "A1",
     "icon": "shop",
-    "opening": "Buongiorno! Oggi c'è frutta fresca. Cosa vuoi?",
-    "openingTranslation": "God dag! I dag er det fersk frukt. Hva vil du ha?",
+    "opening": "Buongiorno! Oggi c'è frutta fresca. Cosa desidera?",
+    "openingTranslation": "God dag! I dag er det fersk frukt. Hva ønsker du?",
     "steps": [
       {
-        "question": "Quante mele vuoi?",
+        "question": "Quante mele vuole?",
         "translation": "Hvor mange epler vil du ha?",
         "expected": [
           "Vorrei tre mele, per favore.",
@@ -90,7 +90,7 @@
         "replyTranslation": "Vær så god, tre epler."
       },
       {
-        "question": "Vuoi anche le banane?",
+        "question": "Vuole anche le banane?",
         "translation": "Vil du også ha bananer?",
         "expected": [
           "Sì, due banane, grazie.",
@@ -101,7 +101,7 @@
         "replyTranslation": "Greit."
       },
       {
-        "question": "Sono quattro euro. Paghi in contanti?",
+        "question": "Sono quattro euro. Paga in contanti?",
         "translation": "Det blir fire euro. Betaler du kontant?",
         "expected": [
           "Sì, ecco cinque euro.",
@@ -248,8 +248,8 @@
           "In autobus. Dov'è la fermata?"
         ],
         "hint": "«a piedi» betyr til fots.",
-        "reply": "A piedi sono cinque minuti.",
-        "replyTranslation": "Til fots tar det fem minutter."
+        "reply": "Va bene! A piedi sono cinque minuti, e la fermata dell'autobus è qui davanti.",
+        "replyTranslation": "Greit! Til fots tar det fem minutter, og bussholdeplassen er rett her foran."
       }
     ],
     "vocabulary": [
@@ -296,8 +296,8 @@
           "Per me va bene giovedì."
         ],
         "hint": "Si en ukedag: lunedì, martedì, mercoledì, giovedì, venerdì.",
-        "reply": "Lunedì va bene anche per me.",
-        "replyTranslation": "Mandag passer for meg også."
+        "reply": "Perfetto, quel giorno va bene anche per me.",
+        "replyTranslation": "Perfekt, den dagen passer for meg også."
       },
       {
         "question": "A che ora?",
@@ -307,8 +307,8 @@
           "Alle dieci di mattina."
         ],
         "hint": "«alle sei» betyr klokka seks.",
-        "reply": "Perfetto, alle sei.",
-        "replyTranslation": "Perfekt, klokka seks."
+        "reply": "Perfetto, a quell'ora ci sono.",
+        "replyTranslation": "Perfekt, da kan jeg."
       },
       {
         "question": "Che ore sono adesso?",
@@ -318,8 +318,8 @@
           "Adesso sono le tre e mezza."
         ],
         "hint": "«Sono le …» og et tall. «e mezza» betyr tretti over.",
-        "reply": "Grazie! Allora a lunedì.",
-        "replyTranslation": "Takk! Vi ses på mandag, da."
+        "reply": "Grazie! Allora a presto.",
+        "replyTranslation": "Takk! Vi ses snart, da."
       }
     ],
     "vocabulary": [
@@ -596,13 +596,13 @@
       },
       {
         "question": "Purtroppo oggi l'ascensore non funziona. Va bene una camera al terzo piano?",
-        "translation": "Dessverre virker ikke heisen i dag. Går det bra med et rom i tredje etasje?",
+        "translation": "Dessverre virker ikke heisen i dag. Går det bra med et rom i fjerde etasje?",
         "expected": [
           "Va bene, ma potete aiutarmi con la valigia?",
           "Avete una camera al primo piano?"
         ],
-        "hint": "Godta, men be om hjelp med kofferten, eller spør om en lavere etasje.",
-        "reply": "Certo, un collega porta la valigia in camera.",
+        "hint": "Godta, men be om hjelp med kofferten, eller spør om en lavere etasje. «il terzo piano» er fjerde etasje på norsk, fordi bakkeplanet heter «il piano terra».",
+        "reply": "Certo, un collega le porta la valigia in camera.",
         "replyTranslation": "Selvfølgelig, en kollega bærer kofferten opp på rommet."
       },
       {
@@ -2139,7 +2139,7 @@
         ],
         "hint": "Overdriv i samme retning. «quasi quasi» betyr jeg har nesten lyst til å …, «in pianta stabile» betyr for godt.",
         "reply": "Ah, vedo che hai colto lo spirito.",
-        "replyTranslation": "Ah, jeg ser at du har fått med deg ånden."
+        "replyTranslation": "Ah, jeg ser at du er med på leken."
       },
       {
         "question": "Come spiegheresti a uno straniero quando in italiano un complimento è in realtà una frecciatina?",
@@ -2161,7 +2161,7 @@
         ],
         "hint": "Gi et eksempel: «non c'è male» (ikke verst), «niente di che» (ikke noe særlig).",
         "reply": "Concordo: la modestia esibita è a sua volta una forma di vanto.",
-        "replyTranslation": "Enig: utstilt beskjedenhet er i seg selv en form for skryt."
+        "replyTranslation": "Enig: påtatt beskjedenhet er i seg selv en form for skryt."
       },
       {
         "question": "Quest'ultima frase era ironica? Motiva la tua lettura.",
@@ -2171,7 +2171,7 @@
           "Più che ironica la definirei paradossale, perché dice una verità sotto forma di contraddizione."
         ],
         "hint": "Nyansert: «più che … la definirei …». «smascherare» betyr å avsløre.",
-        "reply": "Ottima distinzione: non ogni paradosso è ironia, ma l'ironia ama i paradossi.",
+        "reply": "Ottima distinzione: non tutti i paradossi sono ironia, ma l'ironia ama i paradossi.",
         "replyTranslation": "En god distinksjon: ikke alle paradokser er ironi, men ironi elsker paradokser."
       }
     ],
@@ -2334,7 +2334,7 @@
         "translation": "Finnes det et norsk uttrykk som ikke lar seg oversette godt til italiensk? Forklar det.",
         "expected": [
           "«Ut på tur, aldri sur»: letteralmente «in gita, mai di cattivo umore», ma il senso è che stare all'aria aperta mette sempre di buon umore.",
-          "Diciamo «å ta seg vann over hodet», cioè «prendersi acqua sopra la testa»: corrisponde più o meno a fare il passo più lungo della gamba."
+          "«Det finnes ikke dårlig vær, bare dårlige klær»: letteralmente «non esiste il brutto tempo, solo i vestiti sbagliati»; in norvegese fa rima, e il senso è che con l'abbigliamento giusto si esce con qualsiasi tempo."
         ],
         "hint": "Gi den bokstavelige oversettelsen («letteralmente …») og deretter meningen («il senso è che …»).",
         "reply": "Bellissimo! Una saggezza che anche noi italiani dovremmo adottare.",
@@ -2498,7 +2498,7 @@
           "Noi lo aspettavamo sulla spiaggia con la pazienza di chi sa già come andrà a finire.",
           "La nonna, come ogni anno, finse di non essersene accorta."
         ],
-        "hint": "Hold den rolige rytmen og den lune ironien, og bruk passato remoto som i åpningen.",
+        "hint": "Hold den rolige rytmen og den lune ironien. Bruk passato remoto for hendelser, som «arrivò» i åpningen («finse»), og imperfetto for bakgrunn og det som varer («aspettavamo»).",
         "reply": "Bellissima: hai mantenuto il tono e aggiunto un personaggio. Qui comincia la letteratura.",
         "replyTranslation": "Nydelig: du holdt tonen og la til en person. Her begynner litteraturen."
       }
