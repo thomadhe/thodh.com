@@ -1,5 +1,5 @@
-// The standalone app's AI integration depends on its private Sites gateway.
-// Keep AI disabled on the public site until authentication and usage limits exist.
+// Free conversation runs through the owner's local AI bridge (scripts/lokal-ai.mjs)
+// straight from the browser. The public site never runs AI on the server.
 const headers = { "Cache-Control": "no-store" };
 
 export function GET() {
@@ -8,7 +8,7 @@ export function GET() {
 
 export function POST() {
   return Response.json(
-    { error: "Fri AI-samtale er ikke koblet til ennå. Bruk en veiledet øvelse." },
+    { error: "Fri samtale går via lokal AI på din egen PC, ikke via serveren. Start broen eller bruk en veiledet øvelse." },
     { status: 503, headers },
   );
 }

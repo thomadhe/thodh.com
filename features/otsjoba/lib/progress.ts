@@ -1,14 +1,23 @@
 import { z } from "zod";
 import { defaults, type LearningState } from "./learning";
 
-const language = z.enum(["it", "ru"]);
-const level = z.enum(["A1", "A2", "B1", "B2", "C1"]);
+const language = z.enum(["it", "ru", "es"]);
+const level = z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]);
 const text = z.string().max(500);
 const date = z.string().datetime({ offset: true });
+// Keys for languages this build does not know yet are kept as-is, loosely
+// checked, so progress saved by a newer deployment still loads in an older one.
+const otherLanguage = /^[a-z]{2,3}$/;
+const byLanguage = <T extends z.ZodRawShape, C extends z.ZodTypeAny>(known: T, other: C) =>
+  z.object(known).catchall(other).superRefine((value, ctx) => {
+    const extra = Object.keys(value).filter((k) => !(k in known));
+    if (extra.length > 20 || extra.some((k) => !otherLanguage.test(k))) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Ukjent språknøkkel." });
+  });
 export const progressSchema = z.object({
   version: z.literal(1),
   language,
-  levels: z.object({ it: level, ru: level }).strict(),
+  // Languages added later default, so progress saved before them still loads.
+  levels: byLanguage({ it: level, ru: level, es: level.default("A1") }, z.string().max(10)),
   goal: z.union([z.literal(5), z.literal(10), z.literal(15), z.literal(20), z.literal(30)]),
   translations: z.boolean(), transliteration: z.boolean(), autoSpeak: z.boolean(),
   correction: z.enum(["gentle", "balanced", "detailed"]),
@@ -17,7 +26,10 @@ export const progressSchema = z.object({
     seconds: z.number().finite().min(0).max(604800),
     turns: z.number().int().min(0).max(1000), mode: z.enum(["guided", "ai"]),
   }).strict()).max(1000),
-  saved: z.object({ it: z.array(text).max(1000), ru: z.array(text).max(1000) }).strict(),
+  saved: byLanguage(
+    { it: z.array(text).max(1000), ru: z.array(text).max(1000), es: z.array(text).max(1000).default([]) },
+    z.array(text).max(1000),
+  ),
   reviews: z.record(z.string().max(600), z.object({ due: z.number().finite().min(0), interval: z.number().finite().min(0).max(30) }).strict())
     .refine((v) => Object.keys(v).length <= 2000),
   activities: z.array(z.object({

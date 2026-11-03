@@ -1,7 +1,15 @@
-import rawCurriculum from "@/features/otsjoba/data/curriculum.json";
+import italian from "@/features/otsjoba/data/curriculum/it.json";
+import russian from "@/features/otsjoba/data/curriculum/ru.json";
+import spanish from "@/features/otsjoba/data/curriculum/es.json";
 
-export type Language = "it" | "ru";
-export type Level = "A1" | "A2" | "B1" | "B2" | "C1";
+export type Language = "it" | "ru" | "es";
+export const languageCodes: Language[] = ["it", "ru", "es"];
+export type Level = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+export const lessonIcons = [
+  "coffee", "hand", "wave", "train", "utensils", "compass", "shop", "home", "map",
+  "clock", "heart", "book", "briefcase", "theater", "scale", "news", "quote", "leaf",
+] as const;
+export type LessonIcon = (typeof lessonIcons)[number];
 export type Word = {
   word: string;
   translation: string;
@@ -22,15 +30,32 @@ export type Lesson = {
   title: string;
   subtitle: string;
   level: Level;
-  icon: string;
+  icon: LessonIcon;
   opening: string;
   openingTranslation: string;
   openingTransliteration?: string;
   steps: Step[];
   vocabulary: Word[];
 };
-export const curriculum = rawCurriculum as Record<Language, Lesson[]>;
-export const languages = {
+export const curriculum = { it: italian, ru: russian, es: spanish } as Record<Language, Lesson[]>;
+export type TutorProfile = {
+  name: string;
+  native: string;
+  tutor: string;
+  locale: string;
+  flag: string;
+  image: string;
+  greeting: string;
+  focus: string;
+  adjective: string;
+  hero: [string, string];
+  heroText: string;
+  about: string;
+  theme: string;
+  placeholder: string;
+  startLevel: Level;
+};
+export const languages: Record<Language, TutorProfile> = {
   it: {
     name: "Italiensk",
     native: "Italiano",
@@ -40,6 +65,13 @@ export const languages = {
     image: "/otsjoba/tutors/giulia.png",
     greeting: "Ciao, bentornato!",
     focus: "Fortell, begrunn og finn ordene.",
+    adjective: "italienske",
+    hero: ["Un po’ di pratica.", "Mye mer selvtillit."],
+    heroText: "Giulia er klar for en ny samtale. Er du?",
+    about: "Varm, nysgjerrig og glad i de gode hverdagssamtalene. Øv på å fortelle historier og begrunne meningene dine.",
+    theme: "Hverdagsliv & kultur",
+    placeholder: "Scrivi qui… eller bruk mikrofonen",
+    startLevel: "B1",
   },
   ru: {
     name: "Russisk",
@@ -50,9 +82,41 @@ export const languages = {
     image: "/otsjoba/tutors/sasha.png",
     greeting: "Рад тебя видеть!",
     focus: "Diskuter, nyanser og snakk friere.",
+    adjective: "russiske",
+    hero: ["Давай поговорим.", "Finn din egen flyt."],
+    heroText: "Sasha har nye spørsmål og perspektiver til deg.",
+    about: "Rolig, reflektert og glad i nyanser. Utfordre deg selv med diskusjon, argumentasjon og mer presise formuleringer.",
+    theme: "Perspektiver & diskusjon",
+    placeholder: "Напиши здесь… eller bruk mikrofonen",
+    startLevel: "B2",
+  },
+  es: {
+    name: "Spansk",
+    native: "Español",
+    tutor: "Lucía",
+    locale: "es-ES",
+    flag: "🇪🇸",
+    image: "/otsjoba/tutors/lucia.svg",
+    greeting: "¡Hola! ¡Qué alegría verte!",
+    focus: "Snakk fritt, fortell og hold samtalen i gang.",
+    adjective: "spanske",
+    hero: ["Poco a poco.", "Og plutselig flyter det."],
+    heroText: "Lucía har en ny samtale klar til deg.",
+    about: "Livlig, tålmodig og glad i gode historier. Øv på hverdagsprat, tapasbord og etter hvert skarpe diskusjoner.",
+    theme: "Hverdag & samtale",
+    placeholder: "Escribe aquí… eller bruk mikrofonen",
+    startLevel: "A1",
   },
 };
-export const levels: Level[] = ["A1", "A2", "B1", "B2", "C1"];
+export const levels: Level[] = ["A1", "A2", "B1", "B2", "C1", "C2"];
+export const levelNames: Record<Level, string> = {
+  A1: "Nybegynner",
+  A2: "Grunnleggende",
+  B1: "Mellomnivå",
+  B2: "Øvre mellomnivå",
+  C1: "Avansert",
+  C2: "Nær morsmål",
+};
 export type Session = {
   id: string;
   language: Language;
@@ -93,14 +157,14 @@ export type LearningState = {
 export const defaults: LearningState = {
   version: 1,
   language: "it",
-  levels: { it: "B1", ru: "B2" },
+  levels: { it: "B1", ru: "B2", es: "A1" },
   goal: 15,
   translations: false,
   transliteration: false,
   autoSpeak: false,
   correction: "balanced",
   sessions: [],
-  saved: { it: [], ru: [] },
+  saved: { it: [], ru: [], es: [] },
   reviews: {},
   activities: [],
   mistakes: [],
@@ -114,11 +178,10 @@ export function parseState(raw: string | null): LearningState {
     if (p.version !== 1) return structuredClone(defaults);
     return {
       ...defaults,
-      language: p.language === "ru" ? "ru" : "it",
-      levels: {
-        it: levels.includes(p.levels?.it) ? p.levels.it : "B1",
-        ru: levels.includes(p.levels?.ru) ? p.levels.ru : "B2",
-      },
+      language: languageCodes.includes(p.language) ? p.language : "it",
+      levels: Object.fromEntries(languageCodes.map((l) => [
+        l, levels.includes(p.levels?.[l]) ? p.levels[l] : languages[l].startLevel,
+      ])) as Record<Language, Level>,
       goal: [5, 10, 15, 20, 30].includes(p.goal) ? p.goal : 15,
       translations: p.translations === true,
       transliteration: p.transliteration === true,
@@ -142,7 +205,7 @@ export function parseState(raw: string | null): LearningState {
             .filter(
               (s: Session) =>
                 s &&
-                ["it", "ru"].includes(s.language) &&
+                languageCodes.includes(s.language) &&
                 typeof s.id === "string" &&
                 typeof s.title === "string" &&
                 Number.isFinite(s.seconds) &&
@@ -151,14 +214,9 @@ export function parseState(raw: string | null): LearningState {
             )
             .slice(-1000)
         : [],
-      saved: {
-        it: Array.isArray(p.saved?.it)
-          ? p.saved.it.filter((x: unknown) => typeof x === "string")
-          : [],
-        ru: Array.isArray(p.saved?.ru)
-          ? p.saved.ru.filter((x: unknown) => typeof x === "string")
-          : [],
-      },
+      saved: Object.fromEntries(languageCodes.map((l) => [
+        l, Array.isArray(p.saved?.[l]) ? p.saved[l].filter((x: unknown) => typeof x === "string") : [],
+      ])) as Record<Language, string[]>,
       reviews:
         p.reviews && typeof p.reviews === "object"
           ? (Object.fromEntries(
@@ -207,12 +265,18 @@ export function allWords(language: Language): Word[] {
     ).values(),
   ];
 }
+// The learner's own level first, then outward; at equal distance the level
+// above comes before the level below.
+export function levelOrder(level: Level) {
+  const rank = (l: Level) => {
+    const d = levels.indexOf(l) - levels.indexOf(level);
+    return Math.abs(d) * 2 + (d < 0 ? 1 : 0);
+  };
+  return [...levels].sort((a, b) => rank(a) - rank(b));
+}
 export function orderedLessons(language: Language, level: Level) {
-  return [...curriculum[language]].sort(
-    (a, b) =>
-      Math.abs(levels.indexOf(a.level) - levels.indexOf(level)) -
-      Math.abs(levels.indexOf(b.level) - levels.indexOf(level)),
-  );
+  const order = levelOrder(level);
+  return [...curriculum[language]].sort((a, b) => order.indexOf(a.level) - order.indexOf(b.level));
 }
 export function scheduleReview(
   previous: Review | undefined,

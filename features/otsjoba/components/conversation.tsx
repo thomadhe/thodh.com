@@ -39,6 +39,13 @@ import {
   type Session,
 } from "@/features/otsjoba/lib/learning";
 import { speak } from "@/features/otsjoba/lib/speech";
+import {
+  askBridge,
+  chosenEngine,
+  engineLabel,
+  type BridgeSettings,
+  type BridgeStatus,
+} from "@/features/otsjoba/lib/local-ai";
 
 type Message = {
   role: "assistant" | "user";
@@ -75,6 +82,8 @@ export default function Conversation({
   onClose,
   onFinish,
   onSaveWord,
+  bridge,
+  bridgeStatus,
 }: {
   lesson: Lesson;
   language: Language;
@@ -83,8 +92,14 @@ export default function Conversation({
   onClose: () => void;
   onFinish: (session: Session) => void;
   onSaveWord: (word: string) => void;
+  bridge: BridgeSettings | null;
+  bridgeStatus: BridgeStatus;
 }) {
   const tutor = languages[language];
+  const choice = chosenEngine(bridge, bridgeStatus);
+  const [answeredBy, setAnsweredBy] = useState(() =>
+    choice ? engineLabel(bridgeStatus, choice.engine, choice.model.id) : "",
+  );
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -213,33 +228,25 @@ export default function Conversation({
     setBusy(true);
     const controller = new AbortController();
     request.current = controller;
-    const timeout = setTimeout(() => controller.abort(), 45000);
+    // The bridge allows two attempts per engine plus a fallback engine.
+    const timeout = setTimeout(() => controller.abort(), 150000);
     try {
-      const response = await fetch("/otsjoba/api/tutor", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      if (!bridge) throw new Error("Den lokale AI-broen er ikke koblet til.");
+      const { reply: data, engine, model } = await askBridge(
+        bridge,
+        bridgeStatus,
+        {
           language,
           level: preferences.levels[language],
           correction: preferences.correction,
-          topic: lesson.title,
+          topic: `${lesson.title}: ${lesson.subtitle}`.slice(0, 200),
           messages: next
             .slice(-24)
-            .map((m) => ({ role: m.role, content: m.text })),
-        }),
-        signal: controller.signal,
-      });
-      const data = (await response.json()) as {
-        error?: string;
-        reply: string;
-        translation: string;
-        transliteration: string;
-        correction: Message["correction"];
-      };
-      if (!response.ok)
-        throw new Error(
-          data.error || "Samtalen kunne ikke fortsette. Prøv igjen.",
-        );
+            .map((m) => ({ role: m.role, content: m.text.slice(0, 4000) })),
+        },
+        controller.signal,
+      );
+      setAnsweredBy(engineLabel(bridgeStatus, engine, model));
       setMessages([
         ...next,
         {
@@ -352,7 +359,9 @@ export default function Conversation({
                 </span>
               </DialogTitle>
               <DialogDescription>
-                {mode === "guided" ? lesson.title : "Fri AI-samtale"}
+                {mode === "guided"
+                  ? lesson.title
+                  : `Fri samtale${answeredBy ? ` · ${answeredBy}` : ""}`}
               </DialogDescription>
             </div>
             <span className="session-timer">
@@ -368,7 +377,7 @@ export default function Conversation({
           </header>
           <div className="conversation-options">
             <span className="mode-label">
-              {mode === "guided" ? "Veiledet øvelse" : "AI-samtale"}
+              {mode === "guided" ? "Veiledet øvelse" : "Lokal AI"}
             </span>
             <button
               className={"text-button " + (translations ? "selected" : "")}
@@ -398,6 +407,12 @@ export default function Conversation({
             aria-label="Samtale"
             aria-live="polite"
           >
+            {mode === "ai" && (
+              <p className="guided-notice">
+                Svarene lages av {answeredBy || "AI-en"} på PC-en din via den
+                lokale broen. AI-en kan ta feil; rettelsene er forslag.
+              </p>
+            )}
             {mode === "guided" && (
               <p className="guided-notice">
                 Svar med egne ord, og sammenlign med et eksempelsvar. Denne
@@ -532,11 +547,7 @@ export default function Conversation({
                   <form onSubmit={submit} className="composer-form">
                     <textarea
                       aria-label="Ditt svar"
-                      placeholder={
-                        language === "it"
-                          ? "Scrivi qui… eller bruk mikrofonen"
-                          : "Напиши здесь… eller bruk mikrofonen"
-                      }
+                      placeholder={tutor.placeholder}
                       value={input}
                       maxLength={2000}
                       disabled={busy}

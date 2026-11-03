@@ -10,7 +10,7 @@ Personlig prosjektoversikt med Otsjoba og Sjakk for 2;) på samme domene.
 | `/kontakt` | Kontakt |
 | `/konto` | Felles konto for thodh.com og Karrierepiloten |
 | `/logg-inn`, `/registrer` | Innlogging, e-postlenke og registrering |
-| `/otsjoba` | Italiensk og russisk, veiledede samtaler og ordtrening |
+| `/otsjoba` | Italiensk, russisk og spansk A1–C2, veiledede samtaler, ordtrening og fri samtale via lokal AI |
 | `/sjakk` | Sjakk for to på samme skjerm eller med invitasjonslenke på nett |
 
 Karrierepiloten åpnes via en ekstern lenke til https://karrierepiloten.com.
@@ -28,6 +28,16 @@ npm start
 ```
 
 På Windows kan `npm.cmd` brukes i stedet for `npm`. Prosjektet er koblet til Vercel-prosjektet `thodh.com`.
+
+## Lokal AI for Otsjoba
+
+Fri samtale i Otsjoba bruker eierens egne abonnementer (ChatGPT eller Claude Code) via en lokal bro, ikke serveren:
+
+```sh
+node scripts/lokal-ai.mjs
+```
+
+Åpne lenken broen skriver ut én gang. Oppsett, sikkerhet og autostart i Windows står i [docs/lokal-ai.md](docs/lokal-ai.md).
 
 ## Uavhengige design
 

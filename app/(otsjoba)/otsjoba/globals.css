@@ -521,6 +521,20 @@ img {
 .ru .hero-portrait {
   background: #879bc8;
 }
+.conversation-hero.es {
+  background: #fbeccb;
+}
+.es .hero-kicker,
+.es .hero-copy h2 {
+  color: #6a3a12;
+}
+.es .hero-copy > p,
+.es .hero-footnote {
+  color: #8a5a2c;
+}
+.es .hero-portrait {
+  background: #e9a552;
+}
 .section-heading {
   display: flex;
   align-items: center;
@@ -2331,5 +2345,334 @@ img {
   .app-sidebar [data-slot="sidebar-header"] {
     padding-top: 30px;
     padding-bottom: 28px;
+  }
+}
+
+/* Local AI bridge */
+.bridge-settings {
+  display: grid;
+  gap: 12px;
+  padding: 16px 0 4px;
+  border-top: 1px solid #f0f1f4;
+}
+.bridge-settings h3 {
+  font-size: 15px;
+  font-weight: 640;
+}
+.bridge-settings > .text-button {
+  justify-self: start;
+}
+.bridge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #626b77;
+}
+.bridge-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #c3c8d1;
+  flex: none;
+}
+.bridge-status.ready .bridge-dot {
+  background: #5c9783;
+  box-shadow: 0 0 0 4px #e5f2ed;
+}
+.bridge-status.checking .bridge-dot {
+  animation: bridge-pulse 1.2s ease-in-out infinite;
+}
+.bridge-status.denied .bridge-dot,
+.bridge-status.outdated .bridge-dot {
+  background: #d9903d;
+}
+@keyframes bridge-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+.bridge-steps {
+  display: grid;
+  gap: 10px;
+  counter-reset: bridge;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.bridge-steps li {
+  counter-increment: bridge;
+  position: relative;
+  display: grid;
+  gap: 4px;
+  padding: 13px 14px 13px 48px;
+  border: 1px solid #e8ebf0;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #6d7581;
+  background: #fff;
+}
+.bridge-steps li::before {
+  content: counter(bridge);
+  position: absolute;
+  left: 14px;
+  top: 13px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #8a6f5d;
+  background: #f6eee7;
+}
+.bridge-steps li.current {
+  border-color: #efc2ae;
+  background: #fffaf7;
+}
+.bridge-steps li.current::before {
+  background: #dc5035;
+  color: #fff;
+}
+.bridge-steps strong {
+  color: #343b47;
+  font-size: 14px;
+}
+.bridge-steps code {
+  justify-self: start;
+  font: 600 13px/1.4 Consolas, "Cascadia Mono", monospace;
+  color: #232834;
+  background: #f2f4f7;
+  border-radius: 6px;
+  padding: 5px 9px;
+  user-select: all;
+}
+.pair-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+.pair-form input {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  border: 1px solid #dfe2e9;
+  border-radius: 8px;
+  padding: 0 11px;
+  font-size: 13px;
+  background: #fff;
+}
+.pair-form input:focus-visible {
+  outline: 2px solid #dc503566;
+  border-color: #dc5035;
+}
+.pair-form .button {
+  height: 38px;
+  padding: 0 14px;
+  font-size: 13px;
+}
+.bridge-engines {
+  display: grid;
+  gap: 4px;
+}
+.chatgpt-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding: 4px 0 10px;
+}
+.chatgpt-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 20px 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: #000;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  transition: background 0.15s;
+}
+.chatgpt-button:hover {
+  background: #2b2b2b;
+}
+.chatgpt-button:focus-visible {
+  outline: 3px solid #dc503566;
+  outline-offset: 2px;
+}
+.chatgpt-button:disabled {
+  opacity: 0.7;
+}
+.chatgpt-mark {
+  width: 21px;
+  height: 21px;
+  flex: none;
+}
+.chatgpt-note {
+  flex: 1 1 200px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #7f8690;
+}
+.chatgpt-note a {
+  color: #c44831;
+  font-weight: 600;
+}
+.chatgpt-signed-in {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex: 1;
+}
+.chatgpt-signed-in .chatgpt-mark {
+  width: 34px;
+  height: 34px;
+  padding: 7px;
+  border-radius: 50%;
+  background: #000;
+  color: #fff;
+}
+.chatgpt-signed-in > span {
+  display: grid;
+  font-size: 12px;
+  color: #7f8690;
+}
+.chatgpt-signed-in strong {
+  font-size: 14px;
+  color: #343b47;
+}
+.engine-select {
+  min-width: 210px;
+}
+.bridge-engines-note {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  font-size: 12px;
+  color: #8a909a;
+  padding-top: 8px;
+}
+.connection-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+}
+
+/* Level filter and grouping in the course */
+.level-filter {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 2px 6px;
+  margin-bottom: 8px;
+  scrollbar-width: thin;
+}
+.level-filter button {
+  flex: none;
+  display: grid;
+  gap: 1px;
+  text-align: left;
+  min-width: 74px;
+  padding: 9px 14px;
+  border: 1px solid #e6e8ed;
+  border-radius: 10px;
+  background: #fff;
+  color: #555f6d;
+  transition: border-color 0.15s, background 0.15s;
+}
+.level-filter button strong {
+  font-size: 14px;
+  font-weight: 650;
+}
+.level-filter button span {
+  font-size: 11px;
+  color: #8a909a;
+}
+.level-filter button.mine {
+  border-color: #efc2ae;
+}
+.level-filter button:hover {
+  border-color: #dfa78e;
+}
+.level-filter button[aria-pressed="true"] {
+  background: #232834;
+  border-color: #232834;
+  color: #fff;
+}
+.level-filter button[aria-pressed="true"] span {
+  color: #c9ced7;
+}
+.level-section {
+  margin-top: 22px;
+}
+.level-heading {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 14px;
+}
+.level-heading > div {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.level-heading h2 {
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.3px;
+}
+.level-heading h2 span {
+  font-weight: 500;
+  color: #7f8690;
+}
+.level-badge {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.2px;
+  color: #aa3825;
+  background: #fff0e9;
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+.level-count {
+  font-size: 12px;
+  color: #7c8592;
+}
+.level-heading [data-slot="progress"] {
+  grid-column: 1 / -1;
+  height: 4px;
+}
+@media (max-width: 767px) {
+  .level-filter {
+    margin-right: -16px;
+    padding-right: 16px;
+  }
+  .pair-form {
+    flex-direction: column;
+  }
+  .pair-form input {
+    flex: none;
+  }
+  .level-filter {
+    scrollbar-width: none;
+  }
+  .engine-select {
+    min-width: 0;
+    max-width: 190px;
+  }
+  .chatgpt-button {
+    width: 100%;
   }
 }
