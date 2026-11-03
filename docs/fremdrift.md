@@ -11,7 +11,7 @@ Eier «hovedtråd» = hovedsamtalen styrer strømmen; vaktagenten rører den ikk
 | Otsjoba: lokal AI-bro (Claude, «Continue with ChatGPT») + kurs A1–C2, spansk | hovedtråd | publisert 3. nov. | 5f4695a |
 | Otsjoba: fransk (Camille) og tysk (Jonas), 30 leksjoner hver | hovedtråd | publisert 3. nov. | 142d097 |
 | Sjakk: oppgaver (rangert, daglig, Lynløp, temaer) | hovedtråd | publisert 3. nov. | 8c89ff3 |
-| Sjakk: åpningsrepertoar med trener Tora (19 åpninger) | hovedtråd | retting stoppet på bruksgrense, uferdige endringer i worktree t3-ad29c511 | t3/add-opening-repertoire-trainer |
+| Sjakk: åpningsrepertoar med trener Tora (19 åpninger, 147 linjer) | hovedtråd | publisert 3. nov. | abc5169 |
 | Dagsspill: 6/7-stegern | hovedtråd | retting stoppet på bruksgrense (07c519b + uferdige endringer i worktree t3-efaef30a) | t3/build-67-stegern-daily-game |
 | Optimalisering: hele thodh.com (skjelett, prefetch, fonter, CLS, funksjoner i arn1) | hovedtråd | publisert 3. nov. | e8e4d8c |
 | Optimalisering: online-sjakk | hovedtråd | publisert 3. nov. | e3fd09a |
@@ -35,13 +35,13 @@ Eier fra nå: vakt. Er ingen strøm i gang på online-sjakk, start en ny Claude-
 
 ## Etterarbeid når strømmene er flettet
 
-- Rewrite og lenke for `/sjakk/apninger` (oppgaver er gjort). Lenkene ligger i `<nav class="hub-links">` i public/sjakk/index.html.
+- Rewrites og lenker for `/sjakk/oppgaver` og `/sjakk/apninger` er på plass (kryss-lenket).
 - Kodegjennomgang: en egen Claude-agent (ikke den som skrev koden) ser over hver strøm før publisering.
 - Optimaliseringene kan foreslå endringer i spill.ts/spill-oversikt.tsx; legg dem inn etter at 6/7-stegern er flettet.
 
 ## Kø for løpende utvidelse (øverst først)
 
-1. Åpningsteori: nye åpninger og dypere linjer, alltid kontrollert med chess.js og Stockfish.
+1. Åpningsteori: følg den prioriterte lista i scripts/sjakk-apninger/README.md og agentens rapport: dypere Caro-Kann/Aljechin/Pirc/Halloween/Beograd; sjeldnere svar (fransk 3…Se7/3…b6, Caro-Kann 3…c5, skandinavisk 3…De5+, Aljechin 2…Se4/2…Sg8, Smith-Morra 2…d5/2…e6); feller i Wiener, Evans, Beograd, Schliemann, Caro-Kann, skandinavisk, Aljechin; svart mot 1.d4 (sunt hovedforsvar) og mot spansk med …d6; Ponziani og løperåpning som egne moduler. Ikke endre linje-id-er for eksisterende linjer uten migrering (fremgang lagres per linje-id). Alltid chess.js + Stockfish (dybde ≥16) og en egen gjennomgang før publisering.
 2. 6/7-stegern: fyll på spørsmålsbanken (dag 61+, fra 1. jan. 2027) — vent til hovedtrådens retting er flettet.
 3. Otsjoba: flere språk, flere leksjoner per nivå.
 4. Ytelse, neste runde: cache-headere for public/ (lyd, logoer), React.memo/cache i «I dag»-panelet (useAlleResultater), les lagret fremdrift før første tegning (useDagligTilstand) for raskere LCP.
