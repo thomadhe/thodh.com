@@ -1,4 +1,4 @@
-export type TutorLanguage = "it" | "ru";
+export type TutorLanguage = "it" | "ru" | "es";
 export type TutorLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
 export type TutorCorrection = "gentle" | "balanced" | "detailed";
 export type TutorRequest = {
@@ -17,7 +17,7 @@ export type TutorResponse = {
 type Result<T> = { ok: true; value: T } | { ok: false; error: string };
 
 export const tutorPersonas: Record<TutorLanguage, { intro: string; english: string; transliteration: boolean }>;
-export const tutorLanguages: readonly ["it", "ru"];
+export const tutorLanguages: readonly ["it", "ru", "es"];
 export const tutorLevels: readonly ["A1", "A2", "B1", "B2", "C1", "C2"];
 export const tutorCorrections: readonly ["gentle", "balanced", "detailed"];
 export const tutorLimits: { topic: number; messages: number; content: number; reply: number; translation: number; correction: number };

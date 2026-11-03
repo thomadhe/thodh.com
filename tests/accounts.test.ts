@@ -73,7 +73,7 @@ test("network failure preserves unsaved work and allows retry", async () => {
 test("switching accounts clears the old screen and cannot write to the new user", async () => {
   let writes = 0;
   const store = new ProgressStore(userId, emptyProgress(), async () => { writes++; return json({ code: "account_changed" }, 409); });
-  store.update((state) => ({ ...state, saved: { it: ["private"], ru: [] } }));
+  store.update((state) => ({ ...state, saved: { ...state.saved, it: ["private"] } }));
   assert.equal(await store.flush(), false);
   assert.equal(store.getSnapshot().status, "signed-out");
   assert.deepEqual(store.getSnapshot().state.saved.it, []);

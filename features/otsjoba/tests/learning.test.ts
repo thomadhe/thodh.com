@@ -47,7 +47,7 @@ test("corrupted or older storage recovers while valid preferences survive", () =
     }),
   );
   assert.equal(data.language, "ru");
-  assert.deepEqual(data.levels, { it: "B2", ru: "B2" });
+  assert.deepEqual(data.levels, { it: "B2", ru: "B2", es: "A1" });
   assert.equal(data.goal, 15);
   assert.deepEqual(data.saved.it, ["vorrei"]);
   assert.deepEqual(data.reviews, {});
@@ -188,8 +188,11 @@ test("every level A1–C2 has at least five well-formed lessons per language", (
 });
 test("C2 is a valid level and older saved progress still loads", () => {
   assert.equal(parseState(JSON.stringify({ ...defaults, levels: { it: "C2", ru: "C1" } })).levels.it, "C2");
-  const old = { ...structuredClone(defaults), levels: { it: "B1", ru: "C1" } };
-  assert.equal(progressSchema.parse(old).levels.ru, "C1");
+  const old = { ...structuredClone(defaults), levels: { it: "B1", ru: "C1" }, saved: { it: ["ciao"], ru: [] } };
+  const loaded = progressSchema.parse(old);
+  assert.equal(loaded.levels.ru, "C1");
+  assert.equal(loaded.levels.es, "A1");
+  assert.deepEqual(loaded.saved, { it: ["ciao"], ru: [], es: [] });
   assert.equal(progressSchema.safeParse({ ...old, levels: { it: "C3", ru: "C1" } }).success, false);
   assert.deepEqual(levelOrder("B1"), ["B1", "B2", "A2", "C1", "A1", "C2"]);
   assert.equal(orderedLessons("it", "C2")[0].level, "C2");

@@ -10,7 +10,7 @@ Personlig prosjektoversikt med Otsjoba og Sjakk for 2;) på samme domene.
 | `/kontakt` | Kontakt |
 | `/konto` | Felles konto for thodh.com og Karrierepiloten |
 | `/logg-inn`, `/registrer` | Innlogging, e-postlenke og registrering |
-| `/otsjoba` | Italiensk og russisk A1–C2, veiledede samtaler, ordtrening og fri samtale via lokal AI |
+| `/otsjoba` | Italiensk, russisk og spansk A1–C2, veiledede samtaler, ordtrening og fri samtale via lokal AI |
 | `/sjakk` | Sjakk for to på samme skjerm eller med invitasjonslenke på nett |
 
 Karrierepiloten åpnes via en ekstern lenke til https://karrierepiloten.com.

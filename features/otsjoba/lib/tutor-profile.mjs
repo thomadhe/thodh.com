@@ -3,8 +3,9 @@
 export const tutorPersonas = {
   it: { intro: "Giulia, a warm and curious Italian tutor", english: "Italian", transliteration: false },
   ru: { intro: "Sasha, a calm and thoughtful Russian tutor", english: "Russian", transliteration: true },
+  es: { intro: "Lucía, a lively and patient Spanish tutor from Spain", english: "Spanish (Spain)", transliteration: false },
 };
-export const tutorLanguages = /** @type {const} */ (["it", "ru"]);
+export const tutorLanguages = /** @type {const} */ (["it", "ru", "es"]);
 export const tutorLevels = /** @type {const} */ (["A1", "A2", "B1", "B2", "C1", "C2"]);
 export const tutorCorrections = /** @type {const} */ (["gentle", "balanced", "detailed"]);
 export const tutorLimits = { topic: 200, messages: 24, content: 4000, reply: 4000, translation: 5000, correction: 2000 };

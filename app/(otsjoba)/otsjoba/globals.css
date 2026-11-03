@@ -521,6 +521,20 @@ img {
 .ru .hero-portrait {
   background: #879bc8;
 }
+.conversation-hero.es {
+  background: #fbeccb;
+}
+.es .hero-kicker,
+.es .hero-copy h2 {
+  color: #6a3a12;
+}
+.es .hero-copy > p,
+.es .hero-footnote {
+  color: #8a5a2c;
+}
+.es .hero-portrait {
+  background: #e9a552;
+}
 .section-heading {
   display: flex;
   align-items: center;

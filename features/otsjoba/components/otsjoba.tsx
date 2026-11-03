@@ -63,6 +63,7 @@ import { Toaster, toast } from "sonner";
 import {
   allWords,
   curriculum,
+  languageCodes,
   languages,
   levelNames,
   levelOrder,
@@ -476,8 +477,11 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="it">🇮🇹 Italiensk</SelectItem>
-                <SelectItem value="ru">🇷🇺 Russisk</SelectItem>
+                {languageCodes.map((l) => (
+                  <SelectItem key={l} value={l}>
+                    {languages[l].flag} {languages[l].name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <button
@@ -550,26 +554,12 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
                       <span className="flag">{tutor.flag}</span> {tutor.name}{" "}
                       <span className="hero-level">{state.levels[lang]}</span>
                     </span>
-                    <h2>
-                      {lang === "it" ? (
-                        <>
-                          Un po’ di pratica.
-                          <br />
-                          Mye mer selvtillit.
-                        </>
-                      ) : (
-                        <>
-                          Давай поговорим.
-                          <br />
-                          Finn din egen flyt.
-                        </>
-                      )}
+                    <h2 lang={lang}>
+                      {tutor.hero[0]}
+                      <br />
+                      <span lang="nb">{tutor.hero[1]}</span>
                     </h2>
-                    <p>
-                      {lang === "it"
-                        ? "Giulia er klar for en ny samtale. Er du?"
-                        : "Sasha har nye spørsmål og perspektiver til deg."}
-                    </p>
+                    <p>{tutor.heroText}</p>
                     <button
                       className="button white"
                       disabled={!nextLesson}
@@ -590,7 +580,7 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
                   <div className="hero-portrait">
                     <img
                       src={tutor.image}
-                      alt={`${tutor.tutor}, din ${lang === "it" ? "italienske" : "russiske"} tutor`}
+                      alt={`${tutor.tutor}, din ${tutor.adjective} tutor`}
                     />
                     <div className="portrait-caption">
                       <span>{tutor.greeting}</span>
@@ -678,7 +668,7 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
                 </section>
                 <section className="languages-card">
                   <h3>Mine språk</h3>
-                  {(["it", "ru"] as Language[]).map((l) => {
+                  {languageCodes.map((l) => {
                     const count = new Set(
                       state.sessions
                         .filter((s) => s.language === l && s.mode === "guided")
@@ -808,7 +798,7 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
           {view === "tutors" && (
             <>
               <div className="tutor-grid">
-                {(["it", "ru"] as Language[]).map((l) => (
+                {languageCodes.map((l) => (
                   <article className={"tutor-card " + l} key={l}>
                     <div className="tutor-photo">
                       <img src={languages[l].image} alt={languages[l].tutor} />
@@ -821,19 +811,11 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
                         DIN {languages[l].name.toUpperCase()}TUTOR
                       </p>
                       <h2>{languages[l].tutor}</h2>
-                      <p>
-                        {l === "it"
-                          ? "Varm, nysgjerrig og glad i de gode hverdagssamtalene. Øv på å fortelle historier og begrunne meningene dine."
-                          : "Rolig, reflektert og glad i nyanser. Utfordre deg selv med diskusjon, argumentasjon og mer presise formuleringer."}
-                      </p>
+                      <p>{languages[l].about}</p>
                       <div className="tutor-tags">
                         <span>{state.levels[l]}</span>
                         <span>Norsk støtte</span>
-                        <span>
-                          {l === "it"
-                            ? "Hverdagsliv & kultur"
-                            : "Perspektiver & diskusjon"}
-                        </span>
+                        <span>{languages[l].theme}</span>
                       </div>
                       <button
                         className="button primary"
@@ -974,7 +956,7 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
                 <article>
                   <Bookmark />
                   <strong>
-                    {state.saved.it.length + state.saved.ru.length}
+                    {languageCodes.reduce((sum, l) => sum + state.saved[l].length, 0)}
                   </strong>
                   <span>lagrede ord</span>
                 </article>
@@ -1071,7 +1053,7 @@ export default function Otsjoba({ userId, email, initial, initialNow }: { userId
           <DialogDescription>
             Nivåene er dine egne vurderinger. Juster dem når du vil.
           </DialogDescription>
-          {(["it", "ru"] as Language[]).map((l) => (
+          {languageCodes.map((l) => (
             <div className="setting-row" key={l}>
               <label id={`level-${l}`}>
                 {languages[l].flag} {languages[l].name}

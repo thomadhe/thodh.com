@@ -547,11 +547,7 @@ export default function Conversation({
                   <form onSubmit={submit} className="composer-form">
                     <textarea
                       aria-label="Ditt svar"
-                      placeholder={
-                        language === "it"
-                          ? "Scrivi qui… eller bruk mikrofonen"
-                          : "Напиши здесь… eller bruk mikrofonen"
-                      }
+                      placeholder={tutor.placeholder}
                       value={input}
                       maxLength={2000}
                       disabled={busy}
