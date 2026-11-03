@@ -155,6 +155,7 @@ export function byggOppgave(s: StegernSporsmal): Oppgave {
 
   const indeks = new Map<string, number>()
   alternativer.forEach((a, i) => {
+    if (forbokstav && !normaliser(a.vis).startsWith(forbokstav)) a.vis = a.nokler.find((n) => normaliser(n).startsWith(forbokstav!)) ?? a.vis
     a.nokler = [...new Set(a.nokler.map(normaliser).filter((k) => k && (!forbokstav || k.startsWith(forbokstav))))]
     // The first answer to claim a text keeps it ("Kongo" stays with whichever Congo came first).
     for (const k of a.nokler) if (!indeks.has(k)) indeks.set(k, i)
@@ -213,13 +214,16 @@ export function finnAlternativ(o: Oppgave, tekst: string): number | null {
     const i = o.indeks.get(t.slice(0, -e.length))
     if (i !== undefined) return i
   }
-  if (kjente().has(t)) return null
+  // A real word from elsewhere ("Irak" when only Iran fits) is not a typo; only long words one letter off
+  // ("Lichtenstein") still count.
+  const kjent = kjente().has(t)
   let best: number | null = null
   let bestAvstand = Infinity
   for (const [k, i] of o.indeks) {
     // Typos rarely hit the first letter, and requiring it keeps "Mali" from passing as "Bali".
     if (k[0] !== t[0]) continue
-    const tol = toleranse(k.length)
+    const tol = kjent ? (k.length >= 9 ? 1 : 0) : toleranse(k.length)
+    if (tol === 0) continue
     const d = avstand(t, k, tol)
     if (d > tol) continue
     if (d < bestAvstand || (d === bestAvstand && best !== null && o.alternativer[i].nivaa < o.alternativer[best].nivaa)) {

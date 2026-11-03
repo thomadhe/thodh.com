@@ -98,8 +98,8 @@ export const dager12 = [
     ),
     sp(
       "Nevn et kort i en vanlig kortstokk",
-      "ess, konge, dame, knekt, joker | hjerter ess, spar ess, kløver, spar, ruter, hjerter | spar dame, hjerter dame, ruter knekt, kløver konge, tieren/ti, nieren/ni, åtteren/åtte, sjueren/sju, seksern/seks, femmeren/fem, fireren/fire, treeren/tre, toeren/to | kløver ess, ruter ess, spar konge, hjerter konge, ruter konge, kløver dame, ruter dame, spar knekt, hjerter knekt, kløver knekt,| ",
-      { nei: "kortstokk, kabal, poker, dronning" },
+      "ess, konge, dame/dronning, knekt, joker | hjerter ess, spar ess, kløver, spar, ruter, hjerter | spar dame, hjerter dame, ruter knekt, kløver konge, tieren/ti, nieren/ni, åtteren/åtte, sjueren/sju, seksern/seks, femmeren/fem, fireren/fire, treeren/tre, toeren/to | kløver ess, ruter ess, spar konge, hjerter konge, ruter konge, kløver dame, ruter dame, spar knekt, hjerter knekt, kløver knekt,| ",
+      { nei: "kortstokk, kabal, poker" },
     ),
     sp(
       "Nevn en maler eller billedkunstner",

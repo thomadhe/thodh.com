@@ -10,6 +10,22 @@ import { erRiktigStavet } from "../features/spill/lib/stavebien-regler"
 import { gridDisk, gridRing } from "h3-js"
 import { avstandKm, MAKS_POENG, NIVAER, nivaaForZoom, rundePoeng, utfallForAvstand } from "../features/spill/lib/heksagon"
 import { celleFor, nivaaFor, omriss, sentrum, synligeCeller, vurder } from "../features/spill/lib/heksagon-celler"
+import { stegernDager } from "../features/spill/data/stegern"
+import { sp } from "../features/spill/data/stegern/typer"
+import { GJENTA_DM, hoppDm, MAKS_DM, NORMALE, STEGERN_START } from "../features/spill/lib/stegern"
+import {
+  avstand,
+  byggOppgave,
+  dagensSporsmal,
+  dagFor,
+  erGjentatt,
+  finnAlternativ,
+  kanSpillesStegern,
+  konflikter,
+  normaliser,
+  sjetteNr,
+  vurderSvar,
+} from "../features/spill/lib/server/stegern-logikk"
 
 const dager = Array.from({ length: 120 }, (_, i) => leggTilDager(START_DATO, i))
 
@@ -161,4 +177,137 @@ test("Heksagonal jakt: vurdering og poeng som i HexHunt", () => {
   assert.equal(rundePoeng("varm", 3, 0), 54)
   assert.equal(rundePoeng("het", 0, 2), 29)
   assert.equal(rundePoeng("lunken", 4, 0), 0)
+})
+
+// 6/7-stegern
+
+const stegernDatoer = Array.from({ length: 120 }, (_, i) => leggTilDager(STEGERN_START, i))
+const treff = (svar: string, tekst: string, streng = false) => {
+  const o = byggOppgave(sp("Test", svar, { streng }))
+  const i = finnAlternativ(o, tekst)
+  return i === null ? null : o.alternativer[i].vis
+}
+
+test("6/7-stegern: normalisering av svar", () => {
+  assert.equal(normaliser("Côte d'Ivoire"), "cotedivoire")
+  assert.equal(normaliser("  Østerrike "), "osterrike")
+  assert.equal(normaliser("Ålesund"), normaliser("Aalesund"))
+  assert.equal(normaliser("en banan"), "banan")
+  assert.equal(normaliser("Bosnia-Hercegovina"), normaliser("bosnia hercegovina"))
+  assert.notEqual(normaliser("C#"), normaliser("C"))
+  assert.notEqual(normaliser("C++"), normaliser("C"))
+  assert.equal(avstand("tyskland", "tysklnad"), 1)
+  assert.equal(avstand("abc", "xyz", 1), 2)
+})
+
+test("6/7-stegern: alias, skrivefeil og bøyning godtas", () => {
+  const usa = "#US, #CA | #MX | | | "
+  for (const t of ["USA", "Amerika", "De forente stater", "united states", "usa "]) assert.equal(treff(usa, t), "USA")
+  assert.equal(treff("#DE, #FR | | | | ", "Tysklnad"), "Tyskland")
+  assert.equal(treff("#AT | | | | ", "Østerike"), "Østerrike")
+  assert.equal(treff("#LI | | | | ", "Lichtenstein"), "Liechtenstein")
+  assert.equal(treff("eple/epler, banan | | | | ", "EPLER"), "eple")
+  assert.equal(treff("katt, hund | | | | ", "katter"), "katt")
+  assert.equal(treff("kantarell | | | | ", "kantarel"), "kantarell")
+  assert.equal(treff("Python, C, C#, C++ | | | | ", "c#"), "C#")
+  assert.equal(treff("Python, C, C#, C++ | | | | ", "C++"), "C++")
+})
+
+test("6/7-stegern: nesten-treff på andre ord, delstrenger og lister avvises", () => {
+  const afghanistan = byggOppgave(sp("Test", "@naboer:AF | | | | "))
+  const vis = (t: string) => {
+    const i = finnAlternativ(afghanistan, t)
+    return i === null ? null : afghanistan.alternativer[i].vis
+  }
+  assert.equal(vis("Iran"), "Iran")
+  assert.equal(vis("Irna"), "Iran")
+  // Irak is a real country one letter from Iran: never read as a typo.
+  assert.equal(vis("Irak"), null)
+  assert.equal(treff("Bali, Java | | | | ", "Mali"), null)
+  assert.equal(treff("banan, eple | | | | ", "ban"), null)
+  assert.equal(treff("banan, eple | | | | ", "banan eple"), null)
+  assert.equal(treff("banan, eple | | | | ", ""), null)
+  assert.equal(treff("Niger | | | | ", "Nigeria"), null)
+  // Rhymes are exact: no typos, no inflection.
+  assert.equal(treff("mus, lus | | | | ", "mus", true), "mus")
+  assert.equal(treff("mus, lus | | | | ", "muss", true), null)
+  assert.equal(treff("mus, lus | | | | ", "muser", true), null)
+  // A listed wrong answer stays wrong even when it is a typo away from a right one.
+  const o = byggOppgave(sp("Test", "konge, dronning | | | | ", { nei: "konga" }))
+  assert.equal(finnAlternativ(o, "konga"), null)
+  assert.notEqual(finnAlternativ(o, "kongee"), null)
+})
+
+test("6/7-stegern: hopp og poeng", () => {
+  assert.equal(hoppDm(0), 4)
+  assert.equal(hoppDm(5), 90)
+  assert.equal(hoppDm(5, true), 153)
+  assert.equal(GJENTA_DM, 67)
+  // A perfect day is exactly 67 metres.
+  assert.equal(MAKS_DM, 670)
+})
+
+test("6/7-stegern: dagens oppgaver og spørsmål 6", () => {
+  assert.equal(kanSpillesStegern("2026-11-01", "2026-12-01"), false)
+  assert.equal(kanSpillesStegern(STEGERN_START, "2026-12-01"), true)
+  assert.equal(kanSpillesStegern("2026-12-02", "2026-12-01"), false)
+  // At least 60 days in a row from the start, each with its own prompts.
+  const forste60 = stegernDatoer.slice(0, 60).map((d) => dagFor(d))
+  assert.ok(stegernDager.length >= 60, `${stegernDager.length}`)
+  assert.equal(new Set(forste60).size, 60)
+  assert.equal(dagFor(STEGERN_START), stegernDager[0])
+  for (const dato of stegernDatoer) {
+    assert.equal(dagensSporsmal(dato).length, NORMALE, dato)
+    const n = sjetteNr(dato)
+    assert.ok(Number.isInteger(n) && n >= 1 && n <= NORMALE, `${dato}: ${n}`)
+    assert.equal(sjetteNr(dato), n)
+  }
+  // Question 6 points at different questions on different days.
+  assert.ok(new Set(stegernDatoer.map(sjetteNr)).size === NORMALE)
+
+  const dato = STEGERN_START
+  const s = dagFor(dato).sporsmal[sjetteNr(dato) - 1]
+  const o = byggOppgave(s)
+  const forsteSvar = o.alternativer[0]
+  // The same answer, in another form or with a typo, unlocks the final.
+  assert.equal(erGjentatt(dato, forsteSvar.vis, forsteSvar.vis), true)
+  assert.equal(erGjentatt(dato, forsteSvar.vis, forsteSvar.vis.toUpperCase() + " "), true)
+  const alias = forsteSvar.nokler.find((k) => k !== normaliser(forsteSvar.vis))
+  if (alias) assert.equal(erGjentatt(dato, forsteSvar.vis, alias), true)
+  assert.equal(erGjentatt(dato, forsteSvar.vis, o.alternativer[1].vis), false)
+  // A wrong answer then must be repeated as typed; a blank one is repeated by answering blank or "ingenting".
+  assert.equal(erGjentatt(dato, "blåbærsyltetøy", "blåbærsyltetøy"), true)
+  assert.equal(erGjentatt(dato, "blåbærsyltetøy", "blåbærsyltetøi"), true)
+  assert.equal(erGjentatt(dato, "blåbærsyltetøy", "jordbær"), false)
+  assert.equal(erGjentatt(dato, "", ""), true)
+  assert.equal(erGjentatt(dato, "", "Ingenting"), true)
+  assert.equal(erGjentatt(dato, "", forsteSvar.vis), false)
+  assert.equal(erGjentatt(dato, forsteSvar.vis, ""), false)
+
+  const v = vurderSvar(dato, 0, byggOppgave(dagFor(dato).sporsmal[0]).alternativer[0].vis)
+  assert.equal(v.nivaa, 1)
+  assert.ok(v.vanligste.length > 0 && v.sjeldneste.length > 0 && v.antall > 10)
+  assert.equal(vurderSvar(dato, 0, "qwertyuiop").nivaa, 0)
+})
+
+test("6/7-stegern: hver dag i banken er velformet", () => {
+  const tekster = new Set<string>()
+  for (const [i, d] of stegernDager.entries()) {
+    assert.equal(d.sporsmal.length, NORMALE, `dag ${i + 1}`)
+    for (const s of [...d.sporsmal, d.finale]) {
+      const hvor = `dag ${i + 1}: ${s.tekst}`
+      assert.ok(!tekster.has(s.tekst), `to like spørsmål: ${hvor}`)
+      tekster.add(s.tekst)
+      assert.ok(!s.svar.includes("?"), `usikkert svar: ${hvor}`)
+      const o = byggOppgave(s)
+      assert.ok(o.alternativer.length >= 4, hvor)
+      assert.ok(o.alternativer.some((a) => a.nivaa === 1), hvor)
+      assert.ok(o.alternativer.every((a) => a.nokler.length > 0), hvor)
+      assert.deepEqual(konflikter(s), [], hvor)
+      // Every answer is found from its own name.
+      for (const [j, a] of o.alternativer.entries()) assert.equal(finnAlternativ(o, a.vis), j, `${hvor}: ${a.vis}`)
+      // A wrong answer never slips through.
+      assert.equal(finnAlternativ(o, "xqzv"), null, hvor)
+    }
+  }
 })
