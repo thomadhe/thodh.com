@@ -1,9 +1,12 @@
 import assert from "node:assert/strict"
+import { readFileSync } from "node:fs"
 import { test } from "node:test"
 import { sanglosSanger } from "../features/spill/data/sanglos/sanger"
 import { stavebienOrd } from "../features/spill/data/stavebien/ord"
 import { dagNummer, erGyldigDato, iDagOslo, iRotasjon, kanSpilles, leggTilDager, START_DATO, velgDato } from "../features/spill/lib/dag"
 import { formaterVerdi } from "../features/spill/lib/format"
+import { forhandsbygdeDager, KLOKKESLINGRING_MS, rutSpill, sidensDag } from "../features/spill/lib/ruting"
+import { spill } from "../features/spill/lib/spill"
 import { dagensMerEllerMindre, kategorier, KATEGORIER_PER_DAG, RUNDER_PER_KATEGORI } from "../features/spill/lib/mer-eller-mindre"
 import { dagensStavebien } from "../features/spill/lib/stavebien"
 import { erRiktigStavet } from "../features/spill/lib/stavebien-regler"
@@ -44,6 +47,62 @@ test("datoer valideres og avgrenses til spillbare dager", () => {
   assert.equal(velgDato("2099-01-01", "2026-10-28"), "2026-10-28")
   assert.equal(velgDato("2026-10-05", "2026-10-28"), "2026-10-05")
   assert.equal(iDagOslo(new Date("2026-10-28T23:30:00Z")), "2026-10-29")
+})
+
+test("spillsider: Proxy velger datoen og omskriver til en side per dato", () => {
+  const iDag = "2026-11-03"
+  const rut = (sti: string, dato: string | null = null) => rutSpill(sti, dato, iDag)
+  assert.deepEqual(rut("/spill/omriss"), { type: "rewrite", sti: "/spill/omriss/i-dag-2026-11-03" })
+  assert.deepEqual(rut("/spill/omriss", "2026-11-03"), { type: "rewrite", sti: "/spill/omriss/i-dag-2026-11-03" })
+  assert.deepEqual(rut("/spill/omriss", "2026-10-20"), { type: "rewrite", sti: "/spill/omriss/2026-10-20" })
+  // Future, invalid and too early dates show today's puzzle, as before.
+  for (const dato of ["2026-11-04", "2099-01-01", "tull", "2026-02-30", "2026-09-30", ""]) {
+    assert.deepEqual(rut("/spill/omriss", dato), { type: "rewrite", sti: "/spill/omriss/i-dag-2026-11-03" }, dato)
+  }
+  // A game that started later sends earlier days to today.
+  assert.deepEqual(rut("/spill/67-stegern", "2026-10-05"), { type: "redirect", sti: "/spill/67-stegern" })
+  assert.deepEqual(rut("/spill/67-stegern", "2026-11-02"), { type: "rewrite", sti: "/spill/67-stegern/2026-11-02" })
+  // The per-date pages are not public addresses.
+  assert.deepEqual(rut("/spill/omriss/2026-11-04"), { type: "redirect", sti: "/spill/omriss?dato=2026-11-04" })
+  assert.deepEqual(rut("/spill/omriss/i-dag-2026-11-04"), { type: "redirect", sti: "/spill/omriss" })
+  assert.deepEqual(rut("/spill/omriss/tull"), { type: "redirect", sti: "/spill/omriss" })
+  for (const sti of ["/spill", "/spill/verdens-land", "/spill/api/omriss-form", "/spill/omriss/a/b"]) assert.equal(rut(sti), null, sti)
+})
+
+test("spillsider: midnatt i Oslo bytter dag i Proxy, og ingen framtidig side bygges eller vises", () => {
+  // November is UTC+1, so the day changes at 23:00 UTC.
+  const for_ = iDagOslo(new Date("2026-11-03T22:59:59Z"))
+  const etter = iDagOslo(new Date("2026-11-03T23:00:00Z"))
+  assert.deepEqual(rutSpill("/spill/omriss", null, for_), { type: "rewrite", sti: "/spill/omriss/i-dag-2026-11-03" })
+  assert.deepEqual(rutSpill("/spill/omriss", null, etter), { type: "rewrite", sti: "/spill/omriss/i-dag-2026-11-04" })
+  // Yesterday's "today" page is no longer used; the plain date serves it with arrows.
+  assert.deepEqual(rutSpill("/spill/omriss", "2026-11-03", etter), { type: "rewrite", sti: "/spill/omriss/2026-11-03" })
+
+  const kl = (utc: string) => Date.parse(utc)
+  assert.deepEqual(sidensDag("omriss", "i-dag-2026-11-03", kl("2026-11-03T12:00:00Z")), { dato: "2026-11-03", iDag: true })
+  assert.deepEqual(sidensDag("omriss", "2026-10-20", kl("2026-11-03T12:00:00Z")), { dato: "2026-10-20", iDag: false })
+  assert.equal(sidensDag("omriss", "i-dag-2026-11-04", kl("2026-11-03T12:00:00Z")), null)
+  assert.equal(sidensDag("omriss", "2026-11-04", kl("2026-11-03T22:50:00Z")), null)
+  // Only within the clock slack right before midnight.
+  assert.ok(KLOKKESLINGRING_MS <= 5 * 60_000)
+  assert.deepEqual(sidensDag("omriss", "i-dag-2026-11-04", kl("2026-11-03T22:59:00Z")), { dato: "2026-11-04", iDag: true })
+  for (const segment of ["tull", "2026-02-30", "2026-09-30", "i-dag-", "I-DAG-2026-11-03"]) assert.equal(sidensDag("omriss", segment), null, segment)
+  assert.equal(sidensDag("67-stegern", "2026-11-01", kl("2026-11-03T12:00:00Z")), null)
+
+  for (const s of spill) {
+    for (const { dag } of forhandsbygdeDager(s.id, "2026-11-03")) {
+      assert.ok(sidensDag(s.id, dag, kl("2026-11-03T12:00:00Z")), `${s.id} ${dag}`)
+    }
+  }
+  assert.deepEqual(forhandsbygdeDager("67-stegern", "2026-11-03"), [{ dag: "i-dag-2026-11-03" }, { dag: "2026-11-02" }])
+  assert.equal(spill.find((s) => s.id === "67-stegern")?.start, STEGERN_START)
+})
+
+test("spillsider: Proxy-matcheren dekker nøyaktig de daglige spillene", () => {
+  const kilde = readFileSync("proxy.ts", "utf8")
+  const liste = /"\/spill\/:spill\(([^)]+)\)\/:dag\?"/.exec(kilde)?.[1]
+  assert.ok(liste, "fant ikke spill-matcheren i proxy.ts")
+  assert.deepEqual(liste.split("|").sort(), spill.map((s) => s.id).sort())
 })
 
 test("rotasjon bruker hvert element én gang før noe gjentas", () => {

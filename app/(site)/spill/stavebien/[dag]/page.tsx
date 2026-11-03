@@ -2,9 +2,10 @@ import type { Metadata } from "next"
 import lydfiler from "@/features/spill/data/stavebien/lyd.json"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
 import { Stavebien, type StaveOrd } from "@/features/spill/components/stavebien"
-import { velgDato } from "@/features/spill/lib/dag"
+import { forhandsbygdeDager } from "@/features/spill/lib/ruting"
 import { dagensStavebien } from "@/features/spill/lib/stavebien"
 import { LYD_DELER, LYD_MAPPE, lydId, type LydDel } from "@/features/spill/lib/stavebien-lyd"
+import { dagForSide } from "@/features/spill/lib/server/side"
 
 export const metadata: Metadata = {
   title: "Stavebien",
@@ -25,12 +26,18 @@ function medLyd(dato: string): StaveOrd[] {
   })
 }
 
-export default async function Page({ searchParams }: PageProps<"/spill/stavebien">) {
-  const dato = velgDato((await searchParams).dato)
+// One cached page per date. Players use /spill/stavebien(?dato=…); Proxy rewrites it here (features/spill/lib/ruting.ts).
+export function generateStaticParams() {
+  return forhandsbygdeDager("stavebien")
+}
+
+export default async function Page({ params }: PageProps<"/spill/stavebien/[dag]">) {
+  const { dato, iDag } = dagForSide("stavebien", (await params).dag)
   return (
     <SpillRamme
       spillId="stavebien"
       dato={dato}
+      iDag={iDag}
       regler={<p>Definisjon og eksempel er lov å bruke. Britisk staving godtas.</p>}
     >
       <Stavebien key={dato} dato={dato} ord={medLyd(dato)} />

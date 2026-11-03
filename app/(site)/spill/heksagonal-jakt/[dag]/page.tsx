@@ -1,20 +1,27 @@
 import type { Metadata } from "next"
 import { HeksagonalJakt } from "@/features/spill/components/heksagonal-jakt"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
-import { velgDato } from "@/features/spill/lib/dag"
+import { forhandsbygdeDager } from "@/features/spill/lib/ruting"
 import { dagensJakt } from "@/features/spill/lib/server/heksagonal-jakt"
+import { dagForSide } from "@/features/spill/lib/server/side"
 
 export const metadata: Metadata = {
   title: "Heksagonal jakt",
   description: "Sju steder om dagen. Finn sekskanten de ligger i.",
 }
 
-export default async function Page({ searchParams }: PageProps<"/spill/heksagonal-jakt">) {
-  const dato = velgDato((await searchParams).dato)
+// One cached page per date. Players use /spill/heksagonal-jakt(?dato=…); Proxy rewrites it here (features/spill/lib/ruting.ts).
+export function generateStaticParams() {
+  return forhandsbygdeDager("heksagonal-jakt")
+}
+
+export default async function Page({ params }: PageProps<"/spill/heksagonal-jakt/[dag]">) {
+  const { dato, iDag } = dagForSide("heksagonal-jakt", (await params).dag)
   return (
     <SpillRamme
       spillId="heksagonal-jakt"
       dato={dato}
+      iDag={iDag}
       bred
       regler={
         <>

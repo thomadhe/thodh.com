@@ -2,7 +2,8 @@
 
 import { ArrowLeft, CalendarDays, ChevronLeft, ChevronRight, CircleHelp, Volume2, VolumeX } from "lucide-react"
 import Link from "next/link"
-import { useState, type ReactNode } from "react"
+import { useRouter } from "next/navigation"
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react"
 import { formaterDato, iDagOslo, leggTilDager, START_DATO } from "../lib/dag"
 import { settLyd, useLydPa } from "../lib/lyd"
 import { finnSpill, type QuizId, type SpillId } from "../lib/spill"
@@ -10,6 +11,8 @@ import { Kalender } from "./kalender"
 import { visningsskrift } from "./skrift"
 
 type Panel = "kalender" | "regler" | null
+
+const ingenEndring = () => () => {}
 
 const ikonKnapp =
   "flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition hover:bg-black/5 hover:text-neutral-900 aria-expanded:bg-neutral-900 aria-expanded:text-neutral-50"
@@ -21,12 +24,15 @@ const ikonKnapp =
 export function SpillRamme({
   spillId,
   dato,
+  iDag: erIDag = false,
   children,
   regler,
   bred = false,
 }: {
   spillId: SpillId | QuizId
   dato?: string
+  /** Whether this is today's puzzle. Proxy decides it per request; the cached page must not read the clock. */
+  iDag?: boolean
   children: ReactNode
   /** Extra how-to content under the one-line rule. */
   regler?: ReactNode
@@ -36,9 +42,18 @@ export function SpillRamme({
   const info = finnSpill(spillId)
   const forste = info.start ?? START_DATO
   const [panel, setPanel] = useState<Panel>(null)
-  const iDag = iDagOslo()
+  const router = useRouter()
+  // The clock is read only in the browser, after hydration: an earlier day's page is the same HTML whenever it is
+  // served, and only uses today's date to link "next day" to the plain address when that day is today.
+  const klientIDag = useSyncExternalStore(ingenEndring, iDagOslo, () => null)
+  const iDag = erIDag ? dato : klientIDag
   const lenke = (d: string) => (d === iDag ? info.href : `${info.href}?dato=${d}`)
   const veksle = (p: Exclude<Panel, null>) => setPanel((n) => (n === p ? null : p))
+
+  useEffect(() => {
+    // Today's page, prefetched before midnight, can still be in the router cache: fetch the new day's instead.
+    if (erIDag && dato && iDagOslo() > dato) router.refresh()
+  }, [erIDag, dato, router])
 
   return (
     <div className={`spill-mork ${visningsskrift.variable} min-h-dvh`}>
