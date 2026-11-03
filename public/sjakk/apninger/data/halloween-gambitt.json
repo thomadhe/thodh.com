@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "id": "halloween-gambitt",
+  "navn": "Halloween-gambitt",
+  "farge": "w",
+  "eco": "C47",
+  "niva": "lett",
+  "karakter": "Ren moro",
+  "skarphet": 5,
+  "kort": "4.Sxe5?! – en hel springer for et bondesentrum som jager svarts springere tilbake. Objektivt tvilsomt, praktisk livsfarlig.",
+  "start": "e4 e5 Nf3 Nc6 Nc3 Nf6",
+  "intro": {
+    "historie": "Offeret er kjent siden 1800-tallet (også kalt Müller–Schulze-gambitten), men fikk navnet Halloween-gambitt i Tyskland – fordi det er så skremmende.",
+    "karakter": "Hvit ofrer en springer for én bonde (e5) og et bondesentrum med d4 og e5 som jager svarts springere til g8 og g6. Svart har en brikke mer, men må vite hvordan de skal utvikles.",
+    "passer": "… vil ha det gøy i lyn og bullet, og tåler å stå dårlig hvis motstanderen finner riktig forsvar."
+  },
+  "planer": [
+    "d4 og e5: bøndene jager springerne tilbake.",
+    "Lc4 og Df3 mot f7, og raskt 0-0 med f-linjen.",
+    "Ikke bytt dronninger – angrepet er hele kompensasjonen."
+  ],
+  "modellideer": [
+    "Bonden på e5 tar f6 fra svarts springer.",
+    "Mot …Sc6 jager d5 springeren igjen – sentrumsbøndene blir et våpen."
+  ],
+  "feller": [],
+  "sidelinjer": [],
+  "trekk": [
+    { "sti": "Nxe5", "navn": "Halloween-gambitt", "hva": "Springeren ofres på e5!", "ide": "etter …Sxe5 får vi d4 med tempo og et bondesentrum som jager svarts springere tilbake.", "pass": "Vi er en brikke under. Hvis svart utvikler rolig og gir tilbake litt materiell, står svart klart bedre.", "vurdering": "Objektivt et dårlig offer: motoren gir svart ca. 1,8 bonde i fordel. Vi spiller det for overraskelsen og fordi mange forsvarer seg feil.", "piler": ["d2d4"], "motor": { "cp": -187, "tap": 203, "best": "d4", "dybde": 16 } },
+    { "sti": "Nxe5 Nxe5", "hva": "Svart tar springeren." },
+    { "sti": "Nxe5 Nxe5 d4", "hva": "Bonden jager springeren.", "ide": "springeren på e5 må flytte, og vi følger opp med e5 mot f6-springeren.", "pass": "Svarts beste er 5…Sg6: da gir motoren svart nesten 2 bønder i fordel. 5…Sc6 er over en bonde svakere – etter 6.d5 er det bare ca. 0,7 bonde for svart.", "motor": { "cp": -197, "tap": 0, "best": "d4", "dybde": 16 } },
+    { "sti": "Nxe5 Nxe5 d4 Ng6", "vekt": 3, "hva": "Springeren går til g6." },
+    { "sti": "Nxe5 Nxe5 d4 Ng6 e5", "hva": "Neste springer jages.", "ide": "e5 tar f6 fra springeren, så den må helt tilbake til g8.", "pass": "Svart er en brikke over. Vi må fortsette med tempo: Lc4 og Df3.", "motor": { "cp": -186, "tap": 0, "best": "e5", "dybde": 16 } },
+    { "sti": "Nxe5 Nxe5 d4 Ng6 e5 Ng8", "hva": "Springeren går hjem." },
+    { "sti": "Nxe5 Nxe5 d4 Ng6 e5 Ng8 Bc4", "hva": "Løperen mot f7.", "ide": "løperen og en dame på f3 eller h5 truer f7, og svart har nesten ingen utvikling.", "pass": "Etter …d5 slår vi Lxd5 og fortsetter angrepet.", "plan": "Df3 eller Lxd5, 0-0 og f4–f5. Hvit spiller for angrep; motoren gir svart nesten 2 bønder i fordel.", "motor": { "cp": -189, "tap": 0, "best": "Bc4", "dybde": 16 } },
+    { "sti": "Nxe5 Nxe5 d4 Nc6", "vekt": 2, "hva": "Springeren går til c6." },
+    { "sti": "Nxe5 Nxe5 d4 Nc6 d5", "hva": "Vi jager springeren igjen.", "ide": "sentrumsbøndene vinner tempo hver gang de går fram.", "pass": "Svart kan svare …Lb4! med motangrep på e4.", "plan": "Etter …Se5: f4 og e5. Etter …Lb4: dxc6 og Dd4. Hvit har initiativ, men står objektivt dårligere.", "motor": { "cp": -70, "tap": 0, "best": "d5", "dybde": 16 } }
+  ]
+}

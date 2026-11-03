@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/sjakk", destination: "/sjakk/index.html" },
       { source: "/sjakk/oppgaver", destination: "/sjakk/oppgaver/index.html" },
+      { source: "/sjakk/apninger", destination: "/sjakk/apninger/index.html" },
     ];
   },
   // Anelsesløs reads its word vectors from disk at runtime.

@@ -1,0 +1,200 @@
+{
+  "dato": "2026-11-03",
+  "motor": "Stockfish 19 WASM Multithreaded",
+  "dybde": 16,
+  "grenseCp": 100,
+  "sjekker": [
+    "schema",
+    "lovlige trekk og korrekt SAN (chess.js)",
+    "omstillinger (samme stilling gir samme repertoartrekk)",
+    "Stockfish dybde 16 på hvert repertoartrekk og hvert felletrekk"
+  ],
+  "ikkeKjort": [
+    "Lichess opening explorer: krever innlogging (HTTP 401 uten token), derfor ikke brukt – ingen konto opprettet"
+  ],
+  "apninger": [
+    {
+      "id": "kongegambitt",
+      "linjer": 16,
+      "stillinger": 89,
+      "repertoartrekk": 45,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "wienergambitt",
+      "linjer": 8,
+      "stillinger": 38,
+      "repertoartrekk": 19,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "dansk-gambitt",
+      "linjer": 9,
+      "stillinger": 52,
+      "repertoartrekk": 28,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "skotsk-gambitt",
+      "linjer": 9,
+      "stillinger": 50,
+      "repertoartrekk": 25,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "evans-gambitt",
+      "linjer": 8,
+      "stillinger": 44,
+      "repertoartrekk": 22,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "sg5-angrepet",
+      "linjer": 6,
+      "stillinger": 45,
+      "repertoartrekk": 23,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "beograd-gambitt",
+      "linjer": 5,
+      "stillinger": 24,
+      "repertoartrekk": 12,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "halloween-gambitt",
+      "linjer": 2,
+      "stillinger": 10,
+      "repertoartrekk": 5,
+      "flagget": [
+        {
+          "sti": "Nxe5",
+          "trekk": "Nxe5",
+          "tap": 203,
+          "best": "d4",
+          "cp": -187,
+          "kommentert": true
+        }
+      ],
+      "felleSjekk": []
+    },
+    {
+      "id": "smith-morra",
+      "linjer": 9,
+      "stillinger": 44,
+      "repertoartrekk": 22,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "fransk-fremstot",
+      "linjer": 5,
+      "stillinger": 34,
+      "repertoartrekk": 17,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "caro-kann-fremstot",
+      "linjer": 3,
+      "stillinger": 14,
+      "repertoartrekk": 7,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "skandinavisk",
+      "linjer": 5,
+      "stillinger": 28,
+      "repertoartrekk": 14,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "aljechin",
+      "linjer": 3,
+      "stillinger": 22,
+      "repertoartrekk": 11,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "pirc-modern",
+      "linjer": 5,
+      "stillinger": 23,
+      "repertoartrekk": 12,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "schliemann",
+      "linjer": 7,
+      "stillinger": 49,
+      "repertoartrekk": 25,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "traxler",
+      "linjer": 13,
+      "stillinger": 78,
+      "repertoartrekk": 39,
+      "flagget": [
+        {
+          "sti": "Nf6 Ng5 Bc5",
+          "trekk": "Bc5",
+          "tap": 102,
+          "best": "d5",
+          "cp": 110,
+          "kommentert": true
+        }
+      ],
+      "felleSjekk": []
+    },
+    {
+      "id": "marshall",
+      "linjer": 6,
+      "stillinger": 60,
+      "repertoartrekk": 30,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "e5-mot-resten",
+      "linjer": 18,
+      "stillinger": 102,
+      "repertoartrekk": 51,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "englund",
+      "linjer": 10,
+      "stillinger": 46,
+      "repertoartrekk": 23,
+      "flagget": [
+        {
+          "sti": "e5",
+          "trekk": "e5",
+          "tap": 103,
+          "best": "Nf6",
+          "cp": 135,
+          "kommentert": true
+        }
+      ],
+      "felleSjekk": []
+    }
+  ],
+  "totalt": {
+    "repertoartrekk": 430,
+    "flagget": 3
+  }
+}

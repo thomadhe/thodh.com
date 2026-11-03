@@ -22,7 +22,7 @@ try {
   ]) {
     await build({ entryPoints: [entry], outfile, bundle: true, platform: "node", format: "esm" });
   }
-  const result = spawnSync(process.execPath, ["--test", learning, api, accounts, chessRelay, chessPush, games, "tests/game.test.mjs", "tests/turn-clock.test.mjs", "tests/chess-session.test.mjs", "tests/chess-online.test.mjs", "tests/sjakk-oppgaver.test.mjs"], { stdio: "inherit" });
+  const result = spawnSync(process.execPath, ["--test", learning, api, accounts, chessRelay, chessPush, games, "tests/game.test.mjs", "tests/turn-clock.test.mjs", "tests/chess-session.test.mjs", "tests/chess-online.test.mjs", "tests/sjakk-oppgaver.test.mjs", "tests/sjakk-apninger.test.mjs"], { stdio: "inherit" });
   process.exitCode = result.status ?? 1;
 } finally {
   // Only remove the dedicated directory created for this test run.

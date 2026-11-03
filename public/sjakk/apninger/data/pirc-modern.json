@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "id": "pirc-modern",
+  "navn": "Mot Pirc og moderne: østerriksk angrep",
+  "farge": "w",
+  "eco": "B06–B09",
+  "niva": "middels",
+  "karakter": "Bondestorm i sentrum",
+  "skarphet": 4,
+  "kort": "Mot 1…d6 og 1…g6: tre bønder i sentrum med f4 – det østerrikske angrepet.",
+  "start": "e4",
+  "intro": {
+    "historie": "Pirc-forsvaret har navn etter slovenske Vasja Pirc. Det østerrikske angrepet med f4 regnes som et av de skarpeste svarene mot det, og det har vært et populært valg på alle nivåer.",
+    "karakter": "Svart lar hvit bygge sentrum for å angripe det senere. Med bønder på e4, d4 og f4 truer hvit e5 og et raskt kongeangrep; svart må slå til med …c5 eller …e5 i tide.",
+    "passer": "… liker et stort sentrum og direkte angrep, og vil ha samme oppsett mot både 1…d6 og 1…g6."
+  },
+  "planer": [
+    "d4, Sc3, f4 og Sf3 – tre sentrumsbønder.",
+    "Ld3 og 0-0, deretter e5 eller f5 med kongeangrep.",
+    "Mot …c5: dxc5 og De2/Ld3 – vi holder sentrumsbøndene mobile."
+  ],
+  "modellideer": [
+    "e5 jager springeren på f6 og åpner diagonalen d3–h7.",
+    "De1–h4 og f5 er et klassisk angrepsmønster.",
+    "Mot …Lg4 kan h3 og g4 jage løperen."
+  ],
+  "feller": [],
+  "sidelinjer": [],
+  "trekk": [
+    { "sti": "d6", "navn": "Pirc", "vekt": 3, "hva": "Svart forbereder …Sf6 og …g6." },
+    { "sti": "d6 d4", "hva": "Vi tar sentrum.", "ide": "to bønder i sentrum; svart lar oss bygge det.", "pass": "Etter …Sf6 dekker vi e4 med Sc3.", "motor": { "cp": 52, "tap": 0, "best": "d4", "dybde": 16 } },
+    { "sti": "d6 d4 Nf6", "hva": "Springeren angriper e4." },
+    { "sti": "d6 d4 Nf6 Nc3", "hva": "Springeren dekker e4.", "ide": "Sc3 er naturlig og forbereder f4.", "pass": "Etter …g6 kommer f4.", "motor": { "cp": 51, "tap": 0, "best": "Nc3", "dybde": 16 } },
+    { "sti": "d6 d4 Nf6 Nc3 g6", "vekt": 4, "hva": "Svart fianchetterer – Pirc." },
+    { "sti": "d6 d4 Nf6 Nc3 g6 f4", "navn": "Østerriksk angrep", "hva": "Tre bønder i sentrum.", "ide": "f4 forbereder e5 og gir plass for et kongeangrep.", "pass": "Svart slår til med …c5 eller …0-0 og …c5. Hold sentrum sammen.", "piler": ["e4e5"], "motor": { "cp": 59, "tap": 12, "best": "Be3", "dybde": 16 } },
+    { "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7", "hva": "Løperen til g7." },
+    { "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3", "hva": "Springeren utvikles.", "ide": "Sf3 dekker d4 og e5 og gjør klart for Ld3 og 0-0.", "pass": "Mot …c5 er dxc5 og Da5-ideer kjent teori. Mot …0-0 spiller vi Ld3.", "motor": { "cp": 55, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3 O-O", "vekt": 3, "hva": "Svart rokerer." },
+    { "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3 O-O Bd3", "hva": "Løperen til d3.", "ide": "løperen peker mot h7 og støtter e4 og e5.", "pass": "Svart spiller …Sc6, …Sa6 eller …c5. Rokér og vær klar for e5.", "plan": "0-0, De1–h4 og f5, eller e5. Motoren: ca. +0,6.", "motor": { "cp": 70, "tap": 0, "best": "Bd3", "dybde": 16 } },
+    { "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3 c5", "vekt": 2, "hva": "Svart angriper d4 med en gang." },
+    { "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3 c5 dxc5", "hva": "Vi slår.", "ide": "vi åpner d-linjen; svart må bruke damen for å vinne bonden tilbake.", "pass": "Etter …Da5 dekker vi med De2 og spiller Le3.", "plan": "De2, Le3 og 0-0-0 eller Sd2. Svarts dame blir et mål; motoren: ca. +0,6.", "motor": { "cp": 57, "tap": 0, "best": "dxc5", "dybde": 16 } },
+    { "sti": "d6 d4 Nf6 Nc3 e5", "vekt": 1, "hva": "Svart slår til mot sentrum." },
+    { "sti": "d6 d4 Nf6 Nc3 e5 Nf3", "hva": "Springeren utvikles.", "ide": "vi er i en Philidor-stilling med god utvikling.", "pass": "Etter …Sbd7 spiller vi Lc4 og 0-0.", "plan": "Lc4, 0-0 og Te1. Plass og utvikling; motoren: ca. +0,5.", "motor": { "cp": 50, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "g6", "navn": "Moderne", "vekt": 2, "hva": "Svart fianchetterer først." },
+    { "sti": "g6 d4", "hva": "Vi tar sentrum.", "ide": "samme oppsett som mot Pirc: d4, Sc3 og f4.", "pass": "Svart kan spille …d6 og …a6/…c6 uten …Sf6.", "motor": { "cp": 68, "tap": 0, "best": "d4", "dybde": 16 } },
+    { "sti": "g6 d4 Bg7", "hva": "Løperen til g7." },
+    { "sti": "g6 d4 Bg7 Nc3", "hva": "Springeren utvikles.", "ide": "Sc3 dekker e4 og forbereder f4.", "pass": "Etter …d6 kommer f4.", "motor": { "cp": 59, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "g6 d4 Bg7 Nc3 d6", "hva": "Svart dekker e5." },
+    { "sti": "g6 d4 Bg7 Nc3 d6 f4", "hva": "Østerriksk oppsett.", "ide": "tre sentrumsbønder; etter …Sf6 og Sf3 er vi i Pirc-hovedlinjen.", "pass": "Svart kan spille …a6 og …b5 i stedet for …Sf6.", "motor": { "cp": 50, "tap": 18, "best": "Be3", "dybde": 16 } },
+    { "sti": "g6 d4 Bg7 Nc3 d6 f4 Nf6", "vekt": 2, "hva": "Svart utvikler springeren." },
+    { "sti": "g6 d4 Bg7 Nc3 d6 f4 Nf6 Nf3", "hva": "Springeren utvikles – samme stilling som i Pirc.", "ide": "en omstilling: vi er i det østerrikske angrepet.", "pass": "Fortsett som i Pirc: Ld3 og 0-0.", "overgang": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3", "motor": { "cp": 55, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "g6 d4 Bg7 Nc3 d6 f4 a6", "vekt": 1, "hva": "Svart forbereder …b5." },
+    { "sti": "g6 d4 Bg7 Nc3 d6 f4 a6 Nf3", "hva": "Springeren utvikles.", "ide": "vi utvikler og lar svart bruke tid på dameflanken.", "pass": "Etter …b5 kommer Ld3 og 0-0.", "plan": "Ld3, 0-0 og e5 eller a4. Sentrum og utvikling; motoren: ca. +0,7.", "motor": { "cp": 70, "tap": 0, "best": "Nf3", "dybde": 16 } }
+  ]
+}

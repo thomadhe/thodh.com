@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "id": "aljechin",
+  "navn": "Mot Aljechin",
+  "farge": "w",
+  "eco": "B02–B05",
+  "niva": "middels",
+  "karakter": "Plass mot provokasjon",
+  "skarphet": 3,
+  "kort": "Mot 1…Sf6: 2.e5 og den moderne 4.Sf3 – stor plassfordel uten å overdrive.",
+  "start": "e4 Nf6",
+  "intro": {
+    "historie": "Aleksandr Aljechin, verdensmester 1927–35 og 1937–46, innførte 1…Sf6 på 1920-tallet. Svart provoserer hvits bønder fram for å angripe dem senere. Fischer spilte det i VM-matchen mot Spasskij i 1972.",
+    "karakter": "Hvit jager springeren og får et stort sentrum. Den moderne varianten 4.Sf3 holder ting enkelt: utvikle, rokere og spille c4 når det passer.",
+    "passer": "… vil straffe et provoserende forsvar med sunn plassfordel i stedet for skarpe bondestormer."
+  },
+  "planer": [
+    "e5, d4 og Sf3 – plass og sunn utvikling.",
+    "Mot …Lg4: Le2, 0-0, h3 og c4.",
+    "Senere Sc3, Le3 og exd6 når det passer."
+  ],
+  "modellideer": [
+    "c4 jager springeren fra d5 med tempo.",
+    "h3 tvinger løperen på g4 til å bestemme seg.",
+    "Bondeparet e5/d4 gir varig plass; ikke la svart bryte det opp gratis."
+  ],
+  "feller": [],
+  "sidelinjer": [
+    { "navn": "Firebondeangrepet", "sti": "e5 Nd5 d4 d6 c4 Nb6 f4", "tekst": "Det mest ambisiøse: 4.c4 Sb6 5.f4 med fire bønder i sentrum. Svært skarpt; mot godt forsvar kan bøndene bli mål." }
+  ],
+  "trekk": [
+    { "sti": "e5", "hva": "Vi jager springeren.", "ide": "e5 vinner tempo og plass; springeren må til d5.", "pass": "Svart vil angripe e5 med …d6. Vi dekker med d4 og Sf3.", "motor": { "cp": 84, "tap": 0, "best": "e5", "dybde": 16 } },
+    { "sti": "e5 Nd5", "vekt": 5, "hva": "Springeren går til d5." },
+    { "sti": "e5 Nd5 d4", "hva": "Vi tar sentrum.", "ide": "d4 støtter e5 og åpner for løperen på c1.", "pass": "Etter …d6 kommer Sf3 – den moderne varianten.", "motor": { "cp": 71, "tap": 0, "best": "c4", "dybde": 16 } },
+    { "sti": "e5 Nd5 d4 d6", "vekt": 5, "hva": "Svart angriper e5." },
+    { "sti": "e5 Nd5 d4 d6 Nf3", "navn": "Moderne", "hva": "Springeren dekker e5.", "ide": "Sf3 holder e5 og gjør klart for Le2 og 0-0.", "pass": "Svart binder ofte med …Lg4. Le2 bryter bindingen.", "motor": { "cp": 49, "tap": 24, "best": "c4", "dybde": 16 } },
+    { "sti": "e5 Nd5 d4 d6 Nf3 Bg4", "vekt": 3, "hva": "Løperen binder springeren." },
+    { "sti": "e5 Nd5 d4 d6 Nf3 Bg4 Be2", "hva": "Løperen dekker springeren.", "ide": "vi bryter bindingen og rokerer.", "pass": "Etter …e6 rokerer vi.", "motor": { "cp": 82, "tap": 0, "best": "c4", "dybde": 16 } },
+    { "sti": "e5 Nd5 d4 d6 Nf3 Bg4 Be2 e6", "hva": "Svart åpner for løperen." },
+    { "sti": "e5 Nd5 d4 d6 Nf3 Bg4 Be2 e6 O-O", "hva": "Rokade.", "ide": "kongen trygg; h3 og c4 følger.", "pass": "Etter …Le7 jager vi løperen med h3.", "motor": { "cp": 77, "tap": 1, "best": "c4", "dybde": 16 } },
+    { "sti": "e5 Nd5 d4 d6 Nf3 Bg4 Be2 e6 O-O Be7", "hva": "Svart utvikler." },
+    { "sti": "e5 Nd5 d4 d6 Nf3 Bg4 Be2 e6 O-O Be7 h3", "hva": "Vi spør løperen.", "ide": "h3 tvinger løperen til å bytte eller trekke seg til h5.", "pass": "Etter …Lh5 kommer c4 med tempo på springeren.", "motor": { "cp": 89, "tap": 0, "best": "h3", "dybde": 16 } },
+    { "sti": "e5 Nd5 d4 d6 Nf3 Bg4 Be2 e6 O-O Be7 h3 Bh5", "hva": "Løperen trekker seg." },
+    { "sti": "e5 Nd5 d4 d6 Nf3 Bg4 Be2 e6 O-O Be7 h3 Bh5 c4", "hva": "Tempo på springeren.", "ide": "c4 jager springeren til b6 og tar enda mer plass.", "pass": "Etter …Sb6 utvikler vi Sc3.", "motor": { "cp": 98, "tap": 0, "best": "c4", "dybde": 16 } },
+    { "sti": "e5 Nd5 d4 d6 Nf3 Bg4 Be2 e6 O-O Be7 h3 Bh5 c4 Nb6", "hva": "Springeren til b6." },
+    { "sti": "e5 Nd5 d4 d6 Nf3 Bg4 Be2 e6 O-O Be7 h3 Bh5 c4 Nb6 Nc3", "hva": "Springeren utvikles.", "ide": "Sc3 støtter d5 og e4; Le3 og exd6 følger.", "pass": "Svart presser d4 og e5. Hold kjeden sterk med Le3.", "plan": "Le3, exd6 og b3 eller Db3. Klar plassfordel; motoren: ca. +1.", "motor": { "cp": 103, "tap": 0, "best": "Nc3", "dybde": 16 } },
+    { "sti": "e5 Nd5 d4 d6 Nf3 dxe5", "vekt": 1, "hva": "Svart slår på e5." },
+    { "sti": "e5 Nd5 d4 d6 Nf3 dxe5 Nxe5", "hva": "Springeren slår tilbake.", "ide": "springeren står sterkt på e5, og c4 jager springeren på d5.", "pass": "Svart spiller …g6, …c6 eller …Sd7. Mot …Sd7 bytter vi ikke unødig.", "plan": "c4, Le2 og 0-0. Sentralisert springer og plass; motoren: ca. +0,5.", "motor": { "cp": 47, "tap": 0, "best": "Nxe5", "dybde": 16 } },
+    { "sti": "e5 Nd5 d4 d6 Nf3 g6", "vekt": 1, "hva": "Svart fianchetterer." },
+    { "sti": "e5 Nd5 d4 d6 Nf3 g6 Bc4", "hva": "Løperen angriper springeren.", "ide": "Lc4 jager springeren til b6, og løperen går til b3 mot f7.", "pass": "Etter …Sb6 trekker løperen seg til b3.", "motor": { "cp": 77, "tap": 3, "best": "c4", "dybde": 16 } },
+    { "sti": "e5 Nd5 d4 d6 Nf3 g6 Bc4 Nb6", "hva": "Springeren til b6." },
+    { "sti": "e5 Nd5 d4 d6 Nf3 g6 Bc4 Nb6 Bb3", "hva": "Løperen trekker seg til b3.", "ide": "løperen står trygt og presser f7.", "pass": "Etter …Lg7 kan a4 jage springeren igjen.", "plan": "a4, 0-0 og Sg5 eller De2. Plass og aktive løpere; motoren: ca. +0,7.", "motor": { "cp": 67, "tap": 0, "best": "Bb3", "dybde": 16 } }
+  ]
+}
