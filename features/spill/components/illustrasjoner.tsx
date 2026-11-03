@@ -169,26 +169,42 @@ function HeksagonalJakt() {
   )
 }
 
-function Stegern() {
-  // Mid-jump over the track, with the arcs of the jumps before.
+/** One palm-up hand, fingers pointing right: wrist at the origin, palm surface at y = 0. */
+function Haand() {
   return (
-    <svg viewBox="0 0 160 80" className="h-20 w-auto" aria-hidden="true">
-      <rect x="0" y="66" width="160" height="14" rx="3" className="fill-black/40" />
-      {[14, 46, 86, 132].map((x) => (
-        <line key={x} x1={x} x2={x} y1="66" y2="72" stroke="white" strokeOpacity="0.5" strokeWidth="2" />
-      ))}
-      <path d="M8 64 Q30 34 52 64" fill="none" stroke="#38bdf8" strokeWidth="3" strokeDasharray="4 5" strokeLinecap="round" />
-      <path d="M52 64 Q84 10 116 40" fill="none" stroke="#e879f9" strokeWidth="3" strokeDasharray="4 5" strokeLinecap="round" />
-      <g transform="translate(124 46) rotate(12)">
-        <path d="M-6 6 q4 10 14 10 M6 6 q8 6 16 2" fill="none" stroke="#3f6212" strokeWidth="4" strokeLinecap="round" />
-        <rect x="-13" y="-34" width="26" height="40" rx="13" fill="#a3e635" />
-        <path d="M-13 -24 Q0 -28 13 -24 L13 -19 Q0 -23 -13 -19 Z" fill="#ef4444" />
-        <ellipse cx="-4" cy="-13" rx="4" ry="4.6" fill="white" />
-        <ellipse cx="6" cy="-13" rx="4" ry="4.6" fill="white" />
-        <circle cx="-3" cy="-12.5" r="2" fill="#18181b" />
-        <circle cx="7" cy="-12.5" r="2" fill="#18181b" />
-        <path d="M-12 -10 l-10 -12 M12 -10 l10 -12" stroke="#65a30d" strokeWidth="3.4" strokeLinecap="round" />
+    <>
+      <rect x="-30" y="-6" width="26" height="20" rx="3" fill="#a3e635" />
+      <rect x="-7" y="-8" width="7" height="24" rx="2" fill="#f4f4f5" />
+      <path d="M3 -1Q4 -13 11 -14Q16 -14 15 -8L14 -1Z" fill="#fcc21b" />
+      <path d="M28 9H38Q42 9 42 11.5Q42 14 38 14H28Z" fill="#e8a80c" />
+      <path d="M28 4H43Q47 4 47 6.5Q47 9 43 9H28Z" fill="#fbb515" />
+      <path d="M20 -2H42Q46 -2 47 -6Q48 -9 50 -8Q53 -6 51 -1Q49 4 43 4H20Z" fill="#fcc21b" />
+      <path d="M0 -2H30V14H6Q0 14 0 8Z" fill="#fcc21b" />
+      <path d="M28 4H43M28 9H38" stroke="#c27c0e" strokeWidth="1.6" strokeLinecap="round" />
+    </>
+  )
+}
+
+function Stegern() {
+  // The logo: the "six seven" hands, weighing a 6 against a 7.
+  const tall = { textAnchor: "middle", fontSize: 36, fontWeight: 900, fontFamily: "var(--font-visning), sans-serif", fill: "#f4f4f5" } as const
+  const pil = { fill: "none", stroke: "#fde047", strokeWidth: 3, strokeLinecap: "round", strokeLinejoin: "round" } as const
+  return (
+    <svg viewBox="2 8 156 64" className="h-20 w-auto" aria-hidden="true">
+      <g transform="translate(30 38)">
+        <Haand />
       </g>
+      <g transform="translate(130 54) scale(-1 1)">
+        <Haand />
+      </g>
+      <text x="52" y="37" {...tall}>
+        6
+      </text>
+      <text x="108" y="53" {...tall}>
+        7
+      </text>
+      <path d="M12 30v-14m-5 5 5-5 5 5" {...pil} />
+      <path d="M148 30v14m-5-5 5 5 5-5" {...pil} />
     </svg>
   )
 }

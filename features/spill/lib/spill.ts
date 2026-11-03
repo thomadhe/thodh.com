@@ -132,7 +132,7 @@ export const spill: Spill[] = [
     kort: "Sjeldne svar, lange hopp.",
     regel: "Nevn noe som passer. Jo sjeldnere svaret er, jo lengre hopper Stegern. Husker du svaret ditt når spørsmål 6 spør, får du en finale.",
     ikon: "67",
-    farge: "bg-lime-400 text-neutral-950",
+    farge: "bg-[#2b2d31] text-lime-400",
     start: "2026-11-02",
   },
 ]

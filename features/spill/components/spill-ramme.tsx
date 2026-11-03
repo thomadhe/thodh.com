@@ -9,10 +9,16 @@ import { settLyd, useLydPa } from "../lib/lyd"
 import { finnSpill, type QuizId, type SpillId } from "../lib/spill"
 import { Kalender } from "./kalender"
 import { visningsskrift } from "./skrift"
+import { StegernLogo } from "./stegern-logo"
 
 type Panel = "kalender" | "regler" | null
 
 const ingenEndring = () => () => {}
+
+/** Games with a drawn logo in the header tile instead of the `ikon` glyph. */
+const logoer: Partial<Record<SpillId | QuizId, ReactNode>> = {
+  "67-stegern": <StegernLogo className="h-7 w-7" />,
+}
 
 const ikonKnapp =
   "flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition hover:bg-black/5 hover:text-neutral-900 aria-expanded:bg-neutral-900 aria-expanded:text-neutral-50"
@@ -66,7 +72,7 @@ export function SpillRamme({
             aria-hidden="true"
             className={`ml-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-sm font-semibold ${info.farge}`}
           >
-            {info.ikon}
+            {logoer[spillId] ?? info.ikon}
           </span>
           <h1 className="min-w-0 flex-1 truncate font-[family-name:var(--font-visning)] text-lg font-extrabold tracking-[-0.04em] text-neutral-950">
             {info.navn}
