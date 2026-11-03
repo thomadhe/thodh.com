@@ -19,9 +19,14 @@ import {
   dagensSporsmal,
   dagFor,
   erGjentatt,
+  erRepris,
+  finaleBillett,
   finnAlternativ,
+  harFinaleBillett,
+  harKvittering,
   kanSpillesStegern,
   konflikter,
+  kvittering,
   normaliser,
   sjetteNr,
   tallIOrd,
@@ -342,6 +347,31 @@ test("6/7-stegern: dagens oppgaver og spørsmål 6", () => {
   assert.equal(v.nivaa, 1)
   assert.ok(v.vanligste.length > 0 && v.sjeldneste.length > 0 && v.antall > 10)
   assert.equal(vurderSvar(dato, 0, "qwertyuiop").nivaa, 0)
+})
+
+test("6/7-stegern: kvitteringer for svar og finalen", () => {
+  const dato = STEGERN_START
+  const k = kvittering(dato, 2, "Banan")
+  // The receipt follows the normalised answer, so case and spacing do not matter.
+  assert.equal(harKvittering(dato, 2, "banan ", k), true)
+  assert.equal(harKvittering(dato, 2, "eple", k), false)
+  assert.equal(harKvittering(dato, 3, "Banan", k), false)
+  assert.equal(harKvittering(leggTilDager(dato, 1), 2, "Banan", k), false)
+  assert.equal(harKvittering(dato, 2, "Banan", undefined), false)
+  assert.equal(harKvittering(dato, 2, "Banan", k.slice(0, -1)), false)
+  // A blank answer gets a receipt too, and question 6 can then be repeated blank.
+  assert.equal(harKvittering(dato, 0, "", kvittering(dato, 0, "")), true)
+  assert.equal(harFinaleBillett(dato, finaleBillett(dato)), true)
+  assert.equal(harFinaleBillett(leggTilDager(dato, 1), finaleBillett(dato)), false)
+  assert.equal(harFinaleBillett(dato, ""), false)
+  assert.equal(harFinaleBillett(dato, k), false)
+})
+
+test("6/7-stegern: repris når banken begynner på nytt", () => {
+  assert.equal(erRepris(STEGERN_START), false)
+  assert.equal(erRepris(leggTilDager(STEGERN_START, stegernDager.length - 1)), false)
+  assert.equal(erRepris(leggTilDager(STEGERN_START, stegernDager.length)), true)
+  assert.equal(dagFor(leggTilDager(STEGERN_START, stegernDager.length)), stegernDager[0])
 })
 
 test("6/7-stegern: hver dag i banken er velformet", () => {

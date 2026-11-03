@@ -1,8 +1,9 @@
 import type { Metadata } from "next"
+import { redirect } from "next/navigation"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
 import { Stegern } from "@/features/spill/components/stegern"
-import { iDagOslo, velgDato } from "@/features/spill/lib/dag"
-import { dagensSporsmal } from "@/features/spill/lib/server/stegern"
+import { velgDato } from "@/features/spill/lib/dag"
+import { dagensSporsmal, erRepris } from "@/features/spill/lib/server/stegern"
 import { FINALE_FAKTOR, GJENTA_DM, hoppDm, meter, NIVAAER, SEKUNDER, STEGERN_START, type Nivaa } from "@/features/spill/lib/stegern"
 
 export const metadata: Metadata = {
@@ -11,8 +12,9 @@ export const metadata: Metadata = {
 }
 
 export default async function Page({ searchParams }: PageProps<"/spill/67-stegern">) {
-  const valgt = velgDato((await searchParams).dato)
-  const dato = valgt < STEGERN_START ? iDagOslo() : valgt
+  const dato = velgDato((await searchParams).dato)
+  // Days before the game existed have no puzzle: send the player to today instead of showing it under that date.
+  if (dato < STEGERN_START) redirect("/spill/67-stegern")
   return (
     <SpillRamme
       spillId="67-stegern"
@@ -44,7 +46,7 @@ export default async function Page({ searchParams }: PageProps<"/spill/67-steger
         </>
       }
     >
-      <Stegern key={dato} dato={dato} sporsmal={dagensSporsmal(dato)} />
+      <Stegern key={dato} dato={dato} sporsmal={dagensSporsmal(dato)} repris={erRepris(dato)} />
     </SpillRamme>
   )
 }

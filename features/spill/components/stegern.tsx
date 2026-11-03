@@ -2,6 +2,7 @@
 
 import { Lock, LockOpen, Timer, TimerOff } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
+import { flushSync } from "react-dom"
 import { formaterDato, iDagOslo, leggTilDager } from "../lib/dag"
 import { useDagligTilstand, useResultater, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
@@ -13,8 +14,11 @@ import { Bane, type Hopp } from "./stegern-bane"
 // Stegern jumps that far. Question 6 asks what you answered on one of the first five; get it right and the
 // final, worth 1.7 times as much, opens.
 
-/** One answer: the text, its tier, the answer it matched and the top and rarest answers for the reveal. */
-type Svar = { t: string; n: Nivaa; treff: string | null; v: string[]; s: string[]; a: number }
+/**
+ * One answer: the text, its tier, the answer it matched, the top and rarest answers for the reveal and the
+ * server's receipt, which question 6 shows to prove what was answered.
+ */
+type Svar = { t: string; n: Nivaa; treff: string | null; v: string[]; s: string[]; a: number; k?: string }
 type Tilstand = {
   v: 1
   startet: boolean
@@ -30,6 +34,8 @@ type Tilstand = {
   sjetteNr: number
   sjette: { t: string; ok: boolean } | null
   finale: string
+  /** The server's ticket to the final, given when question 6 is right. */
+  billett?: string
   finaleSvar: Svar | null
   resultat: Resultat
 }
@@ -56,7 +62,7 @@ async function spor<T>(body: unknown): Promise<T> {
   return data as T
 }
 
-const tilSvar = (t: string, v: Vurdering): Svar => ({ t, n: v.nivaa, treff: v.treff, v: v.vanligste, s: v.sjeldneste, a: v.antall })
+const tilSvar = (t: string, v: Vurdering & { kvittering?: string }): Svar => ({ t, n: v.nivaa, treff: v.treff, v: v.vanligste, s: v.sjeldneste, a: v.antall, k: v.kvittering })
 
 function hoppene(t: Tilstand): Hopp[] {
   const ut: Hopp[] = t.svar.map((s) => ({ dm: hoppDm(s.n), nivaa: s.n, type: "vanlig" }))
@@ -90,11 +96,11 @@ function Fremdrift({ t }: { t: Tilstand }) {
     return { i, farge, aktiv: t.startet && t.nr === i && t.resultat.status === "pagar" }
   })
   return (
-    <ol className="flex items-center gap-1.5" aria-label="Spørsmål">
+    <ol className="flex min-w-0 items-center gap-1 sm:gap-1.5" aria-label="Spørsmål">
       {prikker.map(({ i, farge, aktiv }) => (
         <li
           key={i}
-          className={`flex h-6 w-6 items-center justify-center rounded-full font-mono text-[10px] font-bold transition ${farge ? "text-[#0b1016]" : "bg-neutral-100 text-neutral-500"} ${aktiv ? "ring-2 ring-neutral-950 ring-offset-2 ring-offset-[var(--spill-flate)]" : ""}`}
+          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-mono text-[10px] font-bold transition ${farge ? "text-[#0b1016]" : "bg-neutral-100 text-neutral-500"} ${aktiv ? "ring-2 ring-neutral-950 ring-offset-2 ring-offset-[var(--spill-flate)]" : ""}`}
           style={farge ? { background: farge } : undefined}
           aria-label={`Spørsmål ${i + 1}`}
         >
@@ -160,7 +166,7 @@ function Statistikk() {
   )
 }
 
-export function Stegern({ dato, sporsmal }: { dato: string; sporsmal: string[] }) {
+export function Stegern({ dato, sporsmal, repris = false }: { dato: string; sporsmal: string[]; repris?: boolean }) {
   const { verdi: t, lastet, oppdater } = useDagligTilstand<Tilstand>("67-stegern", dato, tom)
   const [tekst, setTekst] = useState("")
   const [opptatt, setOpptatt] = useState(false)
@@ -168,6 +174,9 @@ export function Stegern({ dato, sporsmal }: { dato: string; sporsmal: string[] }
   const [oppsummering, setOppsummering] = useState(false)
   const [na, setNa] = useState(() => Date.now())
   const felt = useRef<HTMLInputElement>(null)
+  const handling = useRef<HTMLDivElement>(null)
+  // Set once an answer is judged, so the reveal's button takes focus.
+  const tilKnapp = useRef(false)
   const ferdig = t.resultat.status !== "pagar"
 
   // A game that was already over when the page loaded opens on the summary.
@@ -189,17 +198,23 @@ export function Stegern({ dato, sporsmal }: { dato: string; sporsmal: string[] }
     lyder.velg()
     try {
       if (t.nr === 5) {
-        const tidligere = t.svar[t.sjetteNr - 1]?.t ?? ""
-        const r = await spor<{ riktig: boolean; finale?: string }>({ type: "gjenta", dato, tidligere, svar: svarTekst })
+        const tidligere = t.svar[t.sjetteNr - 1]
+        const r = await spor<{ riktig: boolean; finale?: string; billett?: string }>({
+          type: "gjenta",
+          dato,
+          tidligere: tidligere?.t ?? "",
+          kvittering: tidligere?.k ?? "",
+          svar: svarTekst,
+        })
         window.setTimeout(() => (r.riktig ? lyder.seier() : lyder.feil()), 700)
         oppdater((x) => {
           if (x.nr !== 5 || !x.apen) return x
-          const neste = { ...x, apen: false, frist: 0, sjette: { t: svarTekst, ok: r.riktig }, finale: r.finale ?? "" }
+          const neste = { ...x, apen: false, frist: 0, sjette: { t: svarTekst, ok: r.riktig }, finale: r.finale ?? "", billett: r.billett }
           return r.riktig ? neste : ferdigResultat(neste)
         })
       } else {
         const nr = t.nr
-        const v = await spor<Vurdering>({ type: "svar", dato, nr, svar: svarTekst })
+        const v = await spor<Vurdering & { kvittering?: string }>({ type: "svar", dato, nr, svar: svarTekst, billett: nr === 6 ? t.billett : undefined })
         const lyd = v.nivaa === 0 ? lyder.feil : v.nivaa >= 4 ? lyder.seier : v.nivaa >= 2 ? lyder.riktig : () => lyder.naer(0.4)
         window.setTimeout(lyd, 650)
         oppdater((x) => {
@@ -208,7 +223,14 @@ export function Stegern({ dato, sporsmal }: { dato: string; sporsmal: string[] }
           if (nr === 6) return ferdigResultat({ ...x, finaleSvar: s })
           return { ...x, apen: false, frist: 0, svar: [...x.svar.slice(0, nr), s] }
         })
+        // Ask which question number 6 is about while the fifth answer is shown, so moving on needs no wait.
+        if (nr === 4 && !t.sjetteNr) {
+          spor<{ n: number }>({ type: "sjette", dato })
+            .then(({ n }) => oppdater((x) => (x.sjetteNr ? x : { ...x, sjetteNr: n })))
+            .catch(() => {})
+        }
       }
+      tilKnapp.current = true
       setTekst("")
     } catch (e) {
       setMelding((e as Error).message)
@@ -232,16 +254,22 @@ export function Stegern({ dato, sporsmal }: { dato: string; sporsmal: string[] }
       }
       return
     }
-    oppdater((x) => {
-      if (x.apen || x.resultat.status !== "pagar") return x
-      if (x.nr === 5 && !x.sjette?.ok) return x
-      return { ...x, nr: x.nr + 1, apen: true, frist }
-    })
+    // Render the next question now and focus its field while still inside the tap: iOS only raises the
+    // keyboard for focus that happens synchronously in a user gesture.
+    flushSync(() =>
+      oppdater((x) => {
+        if (x.apen || x.resultat.status !== "pagar") return x
+        if (x.nr === 5 && !x.sjette?.ok) return x
+        return { ...x, nr: x.nr + 1, apen: true, frist }
+      }),
+    )
+    felt.current?.focus({ preventScroll: true })
   }
 
   const start = () => {
     lyder.velg()
-    oppdater((x) => (x.startet ? x : { ...x, startet: true, nr: 0, apen: true, frist: x.klokke ? Date.now() + SEKUNDER * 1000 : 0 }))
+    flushSync(() => oppdater((x) => (x.startet ? x : { ...x, startet: true, nr: 0, apen: true, frist: x.klokke ? Date.now() + SEKUNDER * 1000 : 0 })))
+    felt.current?.focus({ preventScroll: true })
   }
 
   // The clock: tick while a question is open, and send whatever is typed when time runs out.
@@ -270,6 +298,13 @@ export function Stegern({ dato, sporsmal }: { dato: string; sporsmal: string[] }
     if (t.apen && lastet) felt.current?.focus({ preventScroll: true })
   }, [t.apen, t.nr, lastet])
 
+  // After an answer, focus moves to the button that goes on, so Enter, Space and screen readers land there.
+  useEffect(() => {
+    if (!tilKnapp.current || t.apen) return
+    tilKnapp.current = false
+    handling.current?.querySelector("button")?.focus()
+  })
+
   // Enter moves on once an answer has been revealed.
   useEffect(() => {
     const ved = (e: KeyboardEvent) => {
@@ -282,12 +317,23 @@ export function Stegern({ dato, sporsmal }: { dato: string; sporsmal: string[] }
     return () => window.removeEventListener("keydown", ved)
   })
 
-  if (!lastet) return <div className="h-96 animate-pulse rounded-3xl bg-white/5" />
+  if (!lastet) return <div key="laster" className="h-96 animate-pulse rounded-3xl bg-white/5" />
 
   const hopp = hoppene(t)
   const total = sumDm(t)
   const sporsmalTekst = t.nr === 5 ? `Hva svarte du på spørsmål ${t.sjetteNr}?` : t.nr === 6 ? t.finale : sporsmal[t.nr]
   const sisteSvar = t.nr === 6 ? t.finaleSvar : t.nr < NORMALE ? t.svar[t.nr] : null
+  // Read out by screen readers when an answer is judged.
+  const kunngjoring =
+    !t.startet || t.apen
+      ? ""
+      : t.nr === 5 && t.sjette
+        ? t.sjette.ok
+          ? `Riktig husket! Stegern hopper ${meter(GJENTA_DM)}, og finalen er låst opp.`
+          : "Det var ikke det du svarte. Løpet er over."
+        : sisteSvar
+          ? `${NIVAAER[sisteSvar.n].navn}, ${meter(hoppDm(sisteSvar.n, t.nr === 6))}. ${sisteSvar.treff ?? (sisteSvar.t ? `«${sisteSvar.t}» er ikke på lista.` : "Ikke noe svar.")}`
+          : ""
 
   const delTekst = [
     `6/7-stegern · ${formaterDato(dato, "kort")} · ${meter(total)}`,
@@ -297,10 +343,13 @@ export function Stegern({ dato, sporsmal }: { dato: string; sporsmal: string[] }
 
   return (
     <div className="flex flex-col gap-3">
+      <p role="status" aria-live="polite" className="sr-only">
+        {kunngjoring}
+      </p>
       <Kort className="overflow-hidden">
-        <div className="flex items-center justify-between gap-3 px-4 pt-3">
+        <div className="flex items-center justify-between gap-2 px-4 pt-3 sm:gap-3">
           <Fremdrift t={t} />
-          <p className="font-mono text-sm font-semibold tabular-nums text-neutral-950">{meter(total)}</p>
+          <p className="shrink-0 font-mono text-sm font-semibold tabular-nums text-neutral-950">{meter(total)}</p>
         </div>
         <div className="mt-2">
           <Bane hopp={hopp} oversikt={sammendrag} />
@@ -310,6 +359,11 @@ export function Stegern({ dato, sporsmal }: { dato: string; sporsmal: string[] }
       {!t.startet ? (
         <Kort className="mel-inn space-y-4 p-5">
           <div>
+            {repris ? (
+              <p className="mb-2 inline-flex rounded-full bg-neutral-100 px-2.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-widest text-neutral-500">
+                Repris · spørsmålene har vært brukt før
+              </p>
+            ) : null}
             <p className="font-[family-name:var(--font-visning)] text-2xl font-extrabold tracking-[-0.03em] text-neutral-950">Sjeldne svar, lange hopp.</p>
             <p className="mt-1 text-sm leading-6 text-neutral-600">
               Fem spørsmål der alt som passer er riktig. Svarer du det alle sier, tar Stegern et kort steg. Finner du noe få tenker på, flyr han.
@@ -343,6 +397,7 @@ export function Stegern({ dato, sporsmal }: { dato: string; sporsmal: string[] }
           <div className="flex items-baseline justify-between gap-3">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-neutral-400">
               {t.nr === 5 ? "Spørsmål 6 · husker du?" : t.nr === 6 ? "Finale · 1,7×" : `Spørsmål ${t.nr + 1} av 5`}
+              {repris ? " · Repris" : ""}
             </p>
             {igjen !== null ? <p className={`font-mono text-sm font-semibold tabular-nums ${igjen <= 5 ? "text-rose-500" : "text-neutral-500"}`}>{igjen} s</p> : null}
           </div>
@@ -396,7 +451,7 @@ export function Stegern({ dato, sporsmal }: { dato: string; sporsmal: string[] }
               <p className="font-mono text-[11px] text-neutral-500">
                 Da: «{t.svar[t.sjetteNr - 1]?.t || "ingenting"}» · nå: «{t.sjette.t || "ingenting"}»
               </p>
-              <div className="flex justify-end">
+              <div ref={handling} className="flex justify-end">
                 {t.sjette.ok ? <Knapp onClick={neste}>Til finalen</Knapp> : <Knapp onClick={() => setOppsummering(true)}>Se resultatet</Knapp>}
               </div>
             </div>
@@ -420,7 +475,7 @@ export function Stegern({ dato, sporsmal }: { dato: string; sporsmal: string[] }
                 </p>
               </div>
               <Avsloring s={sisteSvar} finale={t.nr === 6} />
-              <div className="flex justify-end">
+              <div ref={handling} className="flex justify-end">
                 {ferdig ? <Knapp onClick={() => setOppsummering(true)}>Se resultatet</Knapp> : <Knapp onClick={neste} disabled={opptatt}>{t.nr === 4 ? "Spørsmål 6" : "Neste"}</Knapp>}
               </div>
             </div>

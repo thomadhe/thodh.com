@@ -1,6 +1,7 @@
 // 6/7-stegern on the server: the day's prompts, answer matching and the question 6 check.
 // Kept free of "server-only" so the tests can import it; only server code (./stegern.ts) uses it.
 
+import { createHmac, randomBytes, timingSafeEqual } from "node:crypto"
 import { stegernDager } from "../../data/stegern"
 import type { StegernDag, StegernSporsmal } from "../../data/stegern/typer"
 import { dagNummer, erGyldigDato, iDagOslo, tilfeldig } from "../dag"
@@ -301,6 +302,40 @@ export function dagFor(dato: string): StegernDag {
   const n = dagNummer(dato) - dagNummer(STEGERN_START)
   return stegernDager[((n % stegernDager.length) + stegernDager.length) % stegernDager.length]
 }
+
+/** Whether the date replays a day from an earlier round of the bank. */
+export function erRepris(dato: string) {
+  return dagNummer(dato) - dagNummer(STEGERN_START) >= stegernDager.length
+}
+
+// Receipts keep question 6 and the final honest without storing anything: the server signs each answer it
+// judged, question 6 only checks an earlier answer that carries its receipt, and the final needs the ticket
+// question 6 hands out. STEGERN_HEMMELIGHET can set the key; otherwise it is derived from SJAKK_GATEWAY_KEY,
+// which Vercel already has, so the chess key itself never signs anything here. Without either (local
+// development) the key lives for this process only.
+let hemmelighet: Buffer | null = null
+function nokkel() {
+  if (hemmelighet) return hemmelighet
+  const kilde = process.env.STEGERN_HEMMELIGHET || process.env.SJAKK_GATEWAY_KEY
+  return (hemmelighet = kilde ? createHmac("sha256", kilde).update("67-stegern:kvittering").digest() : randomBytes(32))
+}
+
+const signer = (tekst: string) => createHmac("sha256", nokkel()).update(tekst).digest("base64url")
+
+function stemmer(signatur: unknown, tekst: string) {
+  if (typeof signatur !== "string") return false
+  const a = Buffer.from(signatur)
+  const b = Buffer.from(signer(tekst))
+  return a.length === b.length && timingSafeEqual(a, b)
+}
+
+/** The receipt for answer `svar` to normal prompt `nr` (0–4) on `dato`. */
+export const kvittering = (dato: string, nr: number, svar: string) => signer(`${dato}|${nr}|${normaliser(svar)}`)
+export const harKvittering = (dato: string, nr: number, svar: string, k: unknown) => stemmer(k, `${dato}|${nr}|${normaliser(svar)}`)
+
+/** The ticket to the final, handed out when question 6 is right. */
+export const finaleBillett = (dato: string) => signer(`${dato}|finale`)
+export const harFinaleBillett = (dato: string, b: unknown) => stemmer(b, `${dato}|finale`)
 
 /** The five normal prompts; the final and question 6 are only told when they come up. */
 export function dagensSporsmal(dato: string) {
