@@ -1,21 +1,28 @@
 import type { Metadata } from "next"
 import { Anelseslos } from "@/features/spill/components/anelseslos"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
-import { velgDato } from "@/features/spill/lib/dag"
+import { forhandsbygdeDager } from "@/features/spill/lib/ruting"
 import { antallOrd } from "@/features/spill/lib/server/anelseslos"
+import { dagForSide } from "@/features/spill/lib/server/side"
 
 export const metadata: Metadata = {
   title: "Anelsesløs",
   description: "Finn dagens hemmelige engelske ord. Ordene rangeres etter hvor like de er i betydning.",
 }
 
-export default async function Page({ searchParams }: PageProps<"/spill/anelseslos">) {
-  const dato = velgDato((await searchParams).dato)
+// One cached page per date. Players use /spill/anelseslos(?dato=…); Proxy rewrites it here (features/spill/lib/ruting.ts).
+export function generateStaticParams() {
+  return forhandsbygdeDager("anelseslos")
+}
+
+export default async function Page({ params }: PageProps<"/spill/anelseslos/[dag]">) {
+  const { dato, iDag } = dagForSide("anelseslos", (await params).dag)
   const antall = antallOrd()
   return (
     <SpillRamme
       spillId="anelseslos"
       dato={dato}
+      iDag={iDag}
       regler={
         <>
           <p>

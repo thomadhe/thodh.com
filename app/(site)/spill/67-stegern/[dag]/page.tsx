@@ -1,24 +1,29 @@
 import type { Metadata } from "next"
-import { redirect } from "next/navigation"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
 import { Stegern } from "@/features/spill/components/stegern"
-import { velgDato } from "@/features/spill/lib/dag"
+import { forhandsbygdeDager } from "@/features/spill/lib/ruting"
+import { dagForSide } from "@/features/spill/lib/server/side"
 import { dagensSporsmal, erRepris } from "@/features/spill/lib/server/stegern"
-import { FINALE_FAKTOR, GJENTA_DM, hoppDm, meter, NIVAAER, SEKUNDER, STEGERN_START, type Nivaa } from "@/features/spill/lib/stegern"
+import { FINALE_FAKTOR, GJENTA_DM, hoppDm, meter, NIVAAER, SEKUNDER, type Nivaa } from "@/features/spill/lib/stegern"
 
 export const metadata: Metadata = {
   title: "6/7-stegern",
   description: "Sju spørsmål om dagen. Jo sjeldnere svar, jo lengre hopper Stegern.",
 }
 
-export default async function Page({ searchParams }: PageProps<"/spill/67-stegern">) {
-  const dato = velgDato((await searchParams).dato)
-  // Days before the game existed have no puzzle: send the player to today instead of showing it under that date.
-  if (dato < STEGERN_START) redirect("/spill/67-stegern")
+// One cached page per date. Players use /spill/67-stegern(?dato=…); Proxy rewrites it here (features/spill/lib/ruting.ts).
+export function generateStaticParams() {
+  return forhandsbygdeDager("67-stegern")
+}
+
+export default async function Page({ params }: PageProps<"/spill/67-stegern/[dag]">) {
+  const { dato, iDag } = dagForSide("67-stegern", (await params).dag)
+  // Days before the game existed (spill.ts `start`) never get here: Proxy sends them to today's page.
   return (
     <SpillRamme
       spillId="67-stegern"
       dato={dato}
+      iDag={iDag}
       regler={
         <>
           <p>
