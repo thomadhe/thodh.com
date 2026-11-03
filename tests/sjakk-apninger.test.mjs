@@ -114,3 +114,22 @@ test('treneren bruker norsk notasjon og forklarer feil', () => {
   const bc5 = kg.noder.get('f4 Bc5 Nf3');
   assert.match(feilKommentar('fxe5', bc5), /Dh4\+/);
 });
+
+// Coach text uses Norwegian piece letters (S, L, T, D); English SAN belongs only in sti/trekk.
+const ENGELSK_TREKK = /(?:^|[^\p{L}\d])…?[NBRQ][a-h]?[1-8]?x?[a-h][1-8]/u;
+function trenerTekster(data) {
+  const ut = [['kort', data.kort], ...Object.entries(data.intro ?? {}).map(([k, v]) => [`intro.${k}`, v]), ...data.planer.map((p, i) => [`planer[${i}]`, p]), ...data.modellideer.map((p, i) => [`modellideer[${i}]`, p])];
+  for (const f of data.feller ?? []) for (const k of ['navn', 'tekst', 'forklaring']) ut.push([`felle ${f.id}.${k}`, f[k]]);
+  for (const s of data.sidelinjer ?? []) for (const k of ['navn', 'tekst']) ut.push([`sidelinje ${s.navn}.${k}`, s[k]]);
+  for (const t of data.trekk) {
+    for (const k of ['navn', 'hva', 'ide', 'pass', 'vurdering', 'plan']) ut.push([`${t.sti}.${k}`, t[k]]);
+    for (const [san, v] of Object.entries(t.vanligeFeil ?? {})) ut.push([`${t.sti}.vanligeFeil.${san}`, v]);
+  }
+  return ut.filter(([, v]) => typeof v === 'string');
+}
+
+test('trenertekstene bruker norske brikkebokstaver', () => {
+  assert.ok(ENGELSK_TREKK.test('Spill …Ba7 her.') && ENGELSK_TREKK.test('Nxe5 vinner') && !ENGELSK_TREKK.test('…La7 og Sxe5, Dh4+ og exd5'));
+  const funn = apninger.flatMap(({ id, data }) => trenerTekster(data).filter(([, v]) => ENGELSK_TREKK.test(v)).map(([k, v]) => `${id} ${k}: ${v.match(ENGELSK_TREKK)[0].trim()}`));
+  assert.deepEqual(funn, []);
+});

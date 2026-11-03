@@ -25,7 +25,7 @@
     "Pass på den sibirske fella: …Dc7, …Sf6–g4 og …Sd4 mot h2."
   ],
   "feller": [
-    { "id": "sibirsk-felle", "type": "unngå", "navn": "Den sibirske fella", "sti": "d4 cxd4 c3 dxc3 Nxc3 Nc6 Nf3 e6 Bc4 Qc7 O-O Nf6 Qe2 Ng4", "trekk": "Rd1", "godta": ["Nb5"], "tekst": "Svarts springer på g4 og damen på c7 ser mot h2. Det naturlige 9.h3?? taper damen etter 9…Sd4!. Finn et trygt, aktivt trekk.", "forklaring": "9.Td1 (eller 9.Sb5) holder alt dekket. Etter 9.h3?? Sd4! 10.Sxd4 Dh2# eller 10.Dd1 Sxf3+ vinner svart materiell." }
+    { "id": "sibirsk-felle", "type": "unngå", "navn": "Den sibirske fella", "sti": "d4 cxd4 c3 dxc3 Nxc3 Nc6 Nf3 e6 Bc4 Qc7 O-O Nf6 Qe2 Ng4", "trekk": "Rd1", "godta": ["Nb5"], "tekst": "Svarts springer på g4 og damen på c7 ser mot h2. Det naturlige 9.h3?? taper etter 9…Sd4!. Finn et trygt, aktivt trekk.", "forklaring": "9.Td1 (eller 9.Sb5) holder alt dekket. Etter 9.h3?? Sd4! angriper springeren damen: 10.Sxd4 Dh2# er matt, og 10.Dd1 Sxf3+ 11.gxf3 (eller 11.Dxf3) Dh2# er også matt. Bare 10.hxg4 unngår matten, men da tar 10…Sxe2+ damen." }
   ],
   "sidelinjer": [],
   "trekk": [
@@ -55,7 +55,7 @@
     { "sti": "d4 cxd4 c3 dxc3 Nxc3 Nc6 Nf3 e6 Bc4 Qc7", "hva": "Damen til c7 – første steg i den sibirske planen." },
     { "sti": "d4 cxd4 c3 dxc3 Nxc3 Nc6 Nf3 e6 Bc4 Qc7 O-O", "hva": "Rokade.", "ide": "kongen trygg, og De2 og Td1 følger.", "pass": "Etter …Sf6 og …Sg4 må vi passe på h2.", "motor": { "cp": 38, "tap": 0, "best": "O-O", "dybde": 16 } },
     { "sti": "d4 cxd4 c3 dxc3 Nxc3 Nc6 Nf3 e6 Bc4 Qc7 O-O Nf6", "hva": "Svart utvikler." },
-    { "sti": "d4 cxd4 c3 dxc3 Nxc3 Nc6 Nf3 e6 Bc4 Qc7 O-O Nf6 Qe2", "hva": "Damen til e2.", "ide": "som alltid: d1 til tårnet.", "pass": "Etter …Sg4 er 10.h3?? en grov feil på grunn av …Sd4!. Spill Td1 eller Sb5.", "motor": { "cp": -3, "tap": 67, "best": "Nb5", "dybde": 16 } },
+    { "sti": "d4 cxd4 c3 dxc3 Nxc3 Nc6 Nf3 e6 Bc4 Qc7 O-O Nf6 Qe2", "hva": "Damen til e2.", "ide": "som alltid: d1 til tårnet.", "pass": "Etter …Sg4 er 9.h3?? en grov feil på grunn av …Sd4!. Spill Td1 eller Sb5.", "motor": { "cp": -3, "tap": 67, "best": "Nb5", "dybde": 16 }, "vurdering": "Motoren foretrekker 8.Sb5 med tempo på damen (ca. 0,7 bonde bedre) før …Sg4 kommer. 8.De2 er standardoppstillingen og helt spillbar – men da må du kjenne den sibirske fella." },
     { "sti": "d4 cxd4 c3 dxc3 Nxc3 Nc6 Nf3 e6 Bc4 Qc7 O-O Nf6 Qe2 Ng4", "hva": "Springeren går til g4 mot h2." },
     { "sti": "d4 cxd4 c3 dxc3 Nxc3 Nc6 Nf3 e6 Bc4 Qc7 O-O Nf6 Qe2 Ng4 Rd1", "hva": "Tårnet til d1 – og h2 er fortsatt trygt.", "ide": "Td1 gir kongen luft på f1 og forbereder Sb5 og h3 når …Sd4 ikke lenger fungerer.", "pass": "Svart kan spille …Lc5 mot f2. Da kommer Sb5 og h3.", "vanligeFeil": { "h3": "9.h3?? Sd4! – springeren angriper damen, og etter 10.Sxd4 kommer Dh2#." }, "plan": "Sb5 med tempo på damen, deretter h3 og Le3. Motoren gir hvit ca. +0,2.", "motor": { "cp": 23, "tap": 0, "best": "Rd1", "dybde": 16 } },
     { "sti": "d4 cxd4 c3 dxc3 Nxc3 d6", "vekt": 2, "hva": "Svart velger …d6 først." },

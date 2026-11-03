@@ -68,7 +68,7 @@
     { "sti": "a6 Ba4 Nf6 O-O Be7 Re1 b5 Bb3 O-O h3", "navn": "Anti-Marshall 8.h3", "vekt": 2, "hva": "Hvit forbereder d4 uten å tillate …Lg4." },
     { "sti": "a6 Ba4 Nf6 O-O Be7 Re1 b5 Bb3 O-O h3 Bb7", "hva": "Løperen utvikles.", "ide": "…Lb7 presser e4; vi kan spille …d5 senere når det passer.", "pass": "Etter 9.d3 spiller vi …d6 eller …Te8.", "motor": { "cp": 9, "tap": 0, "best": "Bb7", "dybde": 16 } },
     { "sti": "a6 Ba4 Nf6 O-O Be7 Re1 b5 Bb3 O-O h3 Bb7 d3", "hva": "Hvit dekker e4." },
-    { "sti": "a6 Ba4 Nf6 O-O Be7 Re1 b5 Bb3 O-O h3 Bb7 d3 d6", "hva": "Vi dekker e5.", "ide": "solid oppstilling; …Sa5 og …c5 eller …Dd7 og …Tad8 følger.", "pass": "Hvit kan spille a4 eller Sc3. Ha …Sa5 klart mot løperen på b3.", "plan": "…Sa5, …c5 og …Dd7. Rolig spill; motoren: hvit ca. +0,3.", "motor": { "cp": 19, "tap": 11, "best": "d5", "dybde": 16 } },
+    { "sti": "a6 Ba4 Nf6 O-O Be7 Re1 b5 Bb3 O-O h3 Bb7 d3 d6", "hva": "Vi dekker e5.", "ide": "solid oppstilling; …Sa5 og …c5 eller …Dd7 og …Tad8 følger.", "pass": "Hvit kan spille a4 eller Sc3. Ha …Sa5 klart mot løperen på b3.", "plan": "…Sa5, …c5 og …Dd7. Rolig spill; motoren: hvit ca. +0,2.", "motor": { "cp": 19, "tap": 11, "best": "d5", "dybde": 16 } },
     { "sti": "a6 Ba4 Nf6 O-O Be7 d3", "vekt": 1, "hva": "Hvit spiller rolig med d3." },
     { "sti": "a6 Ba4 Nf6 O-O Be7 d3 b5", "hva": "Vi jager løperen.", "ide": "…b5 vinner plass og tar bort trusselen mot c6.", "pass": "Etter Lb3 spiller vi …d6 og …0-0.", "motor": { "cp": 13, "tap": 0, "best": "b5", "dybde": 16 } },
     { "sti": "a6 Ba4 Nf6 O-O Be7 d3 b5 Bb3", "hva": "Løperen trekker seg." },

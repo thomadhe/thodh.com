@@ -35,7 +35,7 @@
     { "sti": "d4 d5 e5 Bf5 Nf3 e6", "hva": "Svart åpner for løperen på f8." },
     { "sti": "d4 d5 e5 Bf5 Nf3 e6 Be2", "hva": "Løperen til e2.", "ide": "rolig utvikling og rask rokade; løperen kan senere gå til d3 eller f3.", "pass": "Etter …c5 er Le3 det mest presise.", "motor": { "cp": 31, "tap": 0, "best": "Be2", "dybde": 16 } },
     { "sti": "d4 d5 e5 Bf5 Nf3 e6 Be2 c5", "vekt": 3, "hva": "Svart angriper d4." },
-    { "sti": "d4 d5 e5 Bf5 Nf3 e6 Be2 c5 Be3", "hva": "Løperen dekker d4.", "ide": "Le3 holder d4 og gjør dxc5 mulig med en sterk løper på d4.", "pass": "Etter …cxd4 tar springeren tilbake.", "plan": "0-0, c3 eller dxc5 med Sbd2–b3. Hvit har plass; motoren: ca. +0,3.", "motor": { "cp": 15, "tap": 5, "best": "O-O", "dybde": 16 } },
+    { "sti": "d4 d5 e5 Bf5 Nf3 e6 Be2 c5 Be3", "hva": "Løperen dekker d4.", "ide": "Le3 holder d4 og gjør dxc5 mulig med en sterk løper på d4.", "pass": "Etter …cxd4 tar springeren tilbake.", "plan": "0-0, c3 eller dxc5 med Sbd2–b3. Hvit har plass; motoren: ca. +0,1.", "motor": { "cp": 15, "tap": 5, "best": "O-O", "dybde": 16 } },
     { "sti": "d4 d5 e5 Bf5 Nf3 e6 Be2 Nd7", "vekt": 2, "hva": "Svart utvikler springeren." },
     { "sti": "d4 d5 e5 Bf5 Nf3 e6 Be2 Nd7 O-O", "hva": "Rokade.", "ide": "kongen trygg; c3, Sbd2 og Sh4 følger.", "pass": "Svart spiller …Se7 og …h6. Pass på …c5-bruddet.", "plan": "c3, Sbd2–b3 og Sh4 mot løperen. Motoren: ca. +0,4.", "motor": { "cp": 43, "tap": 0, "best": "O-O", "dybde": 16 } },
     { "sti": "d4 d5 e5 c5", "vekt": 1, "hva": "Svart angriper d4 straks." },

@@ -10,7 +10,7 @@
   "kort": "Mot 1…d5: slå, jag damen med Sc3, og bygg et sunt sentrum med d4 og Sf3.",
   "start": "e4 d5",
   "intro": {
-    "historie": "Skandinavisk er en av de eldste åpningene vi kjenner (Castellví–Vinyoles 1475). Den ble populær i Norden på 1800-tallet – derav navnet – og Magnus Carlsen har brukt den i VM-sammenheng.",
+    "historie": "Skandinavisk er en av de eldste åpningene vi kjenner (Castellví–Vinyoles 1475). Den ble populær i Norden på 1800-tallet – derav navnet – og Viswanathan Anand brukte den mot Kasparov i VM-kampen i 1995.",
     "karakter": "Svart henter bonden tilbake med damen, og hvit vinner tempo ved å jage den. Hvit får en behagelig utviklingsfordel og et sunt sentrum.",
     "passer": "… vil ha en enkel og sunn plan mot et forsvar som ofte brukes for å slippe teori."
   },
@@ -35,7 +35,7 @@
     { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6", "hva": "Svart utvikler." },
     { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6 Nf3", "hva": "Springeren utvikles.", "ide": "Sf3 dekker d4 og gjør klart for Lc4 og 0-0.", "pass": "Etter …c6 kommer Lc4.", "motor": { "cp": 65, "tap": 0, "best": "Nf3", "dybde": 16 } },
     { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6 Nf3 c6", "hva": "Svart gir damen en retrett." },
-    { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6 Nf3 c6 Bc4", "hva": "Løperen til c4.", "ide": "løperen peker mot f7 og hindrer …Lf5–e6.", "pass": "Etter …Lf5 kommer Se5 med g4-ideer.", "motor": { "cp": 66, "tap": 0, "best": "Bd2", "dybde": 16 } },
+    { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6 Nf3 c6 Bc4", "hva": "Løperen til c4.", "ide": "løperen peker mot f7 og kontrollerer e6-feltet.", "pass": "Etter …Lf5 kommer Se5 med g4-ideer.", "motor": { "cp": 66, "tap": 0, "best": "Bd2", "dybde": 16 } },
     { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6 Nf3 c6 Bc4 Bf5", "hva": "Svart utvikler løperen." },
     { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6 Nf3 c6 Bc4 Bf5 Ne5", "hva": "Springeren til e5.", "ide": "springeren truer f7 og forbereder g4 mot løperen.", "pass": "Etter …e6 spiller vi g4.", "motor": { "cp": 66, "tap": 5, "best": "Bd2", "dybde": 16 } },
     { "sti": "exd5 Qxd5 Nc3 Qa5 d4 Nf6 Nf3 c6 Bc4 Bf5 Ne5 e6", "hva": "Svart åpner for løperen." },

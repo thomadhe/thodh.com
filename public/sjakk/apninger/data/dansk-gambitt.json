@@ -10,7 +10,7 @@
   "kort": "1.e4 e5 2.d4 exd4 3.c3! – hvit ofrer opptil to bønder for to løpere som sikter rett mot svarts konge.",
   "start": "e4 e5",
   "intro": {
-    "historie": "Dansk gambitt ble populær i Danmark på 1800-tallet (Martin From, Schlechter analyserte forsvaret) og var et favorittvåpen for Aljechin og Marshall i simultan. Den kalles også Nordisk gambitt. Leter du etter «bulgarsk gambitt»? Den hører til Englund-komplekset mot 1.d4 – se Englund-modulen for svart.",
+    "historie": "Dansk gambitt ble populær i Danmark på 1800-tallet (Martin From, Schlechter analyserte forsvaret) og var et favorittvåpen for Aljechin og Marshall i simultan. Den kalles også Nordisk gambitt.",
     "karakter": "Etter 3…dxc3 4.Lc4 cxb2 5.Lxb2 har hvit gitt to bønder, men løperne på c4 og b2 skyter mot f7 og g7, og utviklingen er langt foran. Svart må gi tilbake materiell eller finne nøyaktige trekk.",
     "passer": "… elsker løperpar, åpne linjer og raske matter, og vil ha en gambitt som er enkel å lære fordi planen er den samme hver gang."
   },
@@ -23,10 +23,10 @@
   "modellideer": [
     "Lxg7 er et vanlig taktisk slag når svart flytter løperen bort fra f8 for tidlig.",
     "Etter …Lb4+ dekker vi med Sc3 og bruker bindingen – ofte kommer Db3 mot b4 og f7.",
-    "Sge2 (ikke Sf3) holder f-bonden fri til f4 og gir løperen på b2 fri diagonal."
+    "Sge2 (ikke Sf3) holder f-bonden fri til f4."
   ],
   "feller": [
-    { "id": "lxg7", "type": "slå", "navn": "Lxg7 mot …Lc5", "sti": "d4 exd4 c3 dxc3 Bc4 cxb2 Bxb2 Bc5", "trekk": "Bxg7 Qh4 Qf3", "tekst": "Svart grådde begge bønder og satte løperen på c5. Hva skjedde med g7?", "forklaring": "6.Lxg7! vinner tårnet på h8: etter 6…Dh4 7.Df3 truer hvit både Dxf7# og Lxh8. Motoren gir hvit nær +6." },
+    { "id": "lxg7", "type": "slå", "navn": "Lxg7 mot …Lc5", "sti": "d4 exd4 c3 dxc3 Bc4 cxb2 Bxb2 Bc5", "trekk": "Bxg7 Qh4 Qf3", "tekst": "Svart grådde begge bønder og satte løperen på c5. Hva skjedde med g7?", "forklaring": "6.Lxg7! vinner tårnet på h8: etter 6…Dh4 7.Df3 truer hvit både Dxf7+ og Lxh8. Motoren gir hvit nær +6." },
     { "id": "rokade-mot-sxe4", "type": "slå", "navn": "Rokade mot …Sxe4", "sti": "d4 exd4 c3 dxc3 Bc4 cxb2 Bxb2 Bb4+ Nc3 Nf6 Ne2 Nxe4", "trekk": "O-O", "tekst": "Svart har tatt en tredje bonde på e4. Ikke ta tilbake straks – finn trekket som åpner linjene mot svarts konge.", "forklaring": "8.0-0! Etter 8…Sxc3 9.Sxc3 Lxc3 10.Lxc3 står svarts konge midt på e-linjen mot to løpere og tårn. Motoren gir hvit over +2." }
   ],
   "sidelinjer": [
@@ -49,7 +49,7 @@
     { "sti": "d4 exd4 c3 dxc3 Bc4 cxb2 Bxb2 d5 Bxd5 Nf6 Bxf7+ Kxf7 Qxd8 Bb4+", "hva": "Sjakk – og tårnet på h8 angriper damen." },
     { "sti": "d4 exd4 c3 dxc3 Bc4 cxb2 Bxb2 d5 Bxd5 Nf6 Bxf7+ Kxf7 Qxd8 Bb4+ Qd2", "hva": "Damen dekker sjakken.", "ide": "damen gir seg tilbake, og etter …Lxd2+ Sxd2 er materiellet likt med bedre utvikling for hvit.", "pass": "Alt annet taper damen: etter 9.Kd1? eller 9.Ke2? kommer …Txd8.", "vanligeFeil": { "Kd1": "9.Kd1? Txd8+ – tårnet på h8 tar damen." }, "motor": { "cp": 0, "tap": 0, "best": "Qd2", "dybde": 16 } },
     { "sti": "d4 exd4 c3 dxc3 Bc4 cxb2 Bxb2 d5 Bxd5 Nf6 Bxf7+ Kxf7 Qxd8 Bb4+ Qd2 Bxd2+", "hva": "Svart slår damen." },
-    { "sti": "d4 exd4 c3 dxc3 Bc4 cxb2 Bxb2 d5 Bxd5 Nf6 Bxf7+ Kxf7 Qxd8 Bb4+ Qd2 Bxd2+ Nxd2", "hva": "Springeren slår tilbake.", "ide": "materiellet er likt, og hvit har en sentrumsbonde mot ingen og aktive brikker.", "pass": "Svart spiller …c5, …Sc6 og …Le6. Pass på …Sxe4 – dekk e4 med Sgf3 eller f3.", "plan": "Sgf3, Ke2 og Thc1 eller Tc1. Løperen på b2 og e4-bonden gir hvit det lille ekstra i sluttspillet; motoren: omtrent likt.", "motor": { "cp": -5, "tap": 0, "best": "Nxd2", "dybde": 16 } },
+    { "sti": "d4 exd4 c3 dxc3 Bc4 cxb2 Bxb2 d5 Bxd5 Nf6 Bxf7+ Kxf7 Qxd8 Bb4+ Qd2 Bxd2+ Nxd2", "hva": "Springeren slår tilbake.", "ide": "materiellet er likt, og hvit har en sentrumsbonde mot ingen og aktive brikker.", "pass": "Svart spiller …c5, …Sc6 og …Le6. Springeren på d2 dekker e4. Flytter den, må e4 dekkes på nytt, for eksempel med f3 – ellers kommer …Sxe4.", "plan": "Sgf3, Ke2 og Thc1 eller Tc1. Løperen på b2 og e4-bonden gir hvit det lille ekstra i sluttspillet; motoren: omtrent likt.", "motor": { "cp": -5, "tap": 0, "best": "Nxd2", "dybde": 16 } },
     { "sti": "d4 exd4 c3 dxc3 Bc4 cxb2 Bxb2 Nf6", "vekt": 3, "hva": "Svart utvikler og angriper e4." },
     { "sti": "d4 exd4 c3 dxc3 Bc4 cxb2 Bxb2 Nf6 Nc3", "hva": "Springeren dekker e4.", "ide": "vi utvikler og holder e4; etter …d5 går vi over i hovedlinjen med exd5.", "pass": "Etter …Lb4 er springeren bundet. Da kommer Db3 eller Se2.", "motor": { "cp": -57, "tap": 0, "best": "Nc3", "dybde": 16 } },
     { "sti": "d4 exd4 c3 dxc3 Bc4 cxb2 Bxb2 Nf6 Nc3 d5", "vekt": 2, "hva": "Svart slår tilbake i sentrum." },
@@ -69,7 +69,7 @@
     { "sti": "d4 exd4 c3 dxc3 Bc4 cxb2 Bxb2 Bb4+ Nc3 Nf6 Qb3 Bxc3+", "hva": "Svart bytter på c3." },
     { "sti": "d4 exd4 c3 dxc3 Bc4 cxb2 Bxb2 Bb4+ Nc3 Nf6 Qb3 Bxc3+ Qxc3", "hva": "Damen slår tilbake.", "ide": "dame og løper på den lange diagonalen mot g7.", "pass": "Svart rokerer gjerne nå. Da kommer Se2, 0-0 og f4–e5.", "plan": "Se2, 0-0, f3/f4 og Tad1. Svart har bonden, hvit har aktivitet og mørke felt.", "motor": { "cp": -33, "tap": 0, "best": "Qxc3", "dybde": 16 } },
     { "sti": "d4 exd4 c3 dxc3 Bc4 Nf6", "vekt": 1, "hva": "Svart avslår den andre bonden og utvikler." },
-    { "sti": "d4 exd4 c3 dxc3 Bc4 Nf6 Nxc3", "hva": "Vi tar tilbake bonden.", "ide": "materiellet er likt igjen, og vi har en utviklingsfordel – en slags Göring-gambitt.", "pass": "Svart vil spille …Lb4 og …Sxe4. Utvikle Sf3 og rokér raskt.", "plan": "Sf3, 0-0 og e5 eller Lg5. Hvit har rask utvikling; materiellet er likt.", "motor": { "cp": -9, "tap": 0, "best": "Nxc3", "dybde": 16 } },
+    { "sti": "d4 exd4 c3 dxc3 Bc4 Nf6 Nxc3", "hva": "Vi tar tilbake bonden.", "ide": "vi får én bonde tilbake og har en klar utviklingsfordel for den andre – en slags Göring-gambitt.", "pass": "Svart vil spille …Lb4 og …Sxe4. Utvikle Sf3 og rokér raskt.", "plan": "Sf3, 0-0 og e5 eller Lg5. Hvit er en bonde under, men har rask utvikling; motoren kaller det omtrent likt.", "motor": { "cp": -9, "tap": 0, "best": "Nxc3", "dybde": 16 } },
     { "sti": "d4 exd4 c3 d5", "navn": "Avslått med 3…d5", "vekt": 2, "hva": "Svart slår tilbake i sentrum – det sunneste avslaget." },
     { "sti": "d4 exd4 c3 d5 exd5", "hva": "Vi slår.", "ide": "vi åpner linjer; etter …Dxd5 får vi tempo på damen med cxd4 og Sf3/Sc3.", "pass": "Damen står sterkt på d5. Ikke la den bli der uforstyrret.", "motor": { "cp": -16, "tap": 0, "best": "exd5", "dybde": 16 } },
     { "sti": "d4 exd4 c3 d5 exd5 Qxd5", "hva": "Svart slår tilbake med damen." },
@@ -83,7 +83,7 @@
     { "sti": "d4 exd4 c3 Nf6", "vekt": 1, "hva": "Svart utvikler og angriper e4." },
     { "sti": "d4 exd4 c3 Nf6 e5", "hva": "Vi jager springeren.", "ide": "e5 vinner plass og jager springeren til d5, der den kan angripes igjen.", "pass": "Etter …Sd5 tar vi d4-bonden med damen – den står sentralt og kan ikke lett jages.", "motor": { "cp": 3, "tap": 0, "best": "e5", "dybde": 16 } },
     { "sti": "d4 exd4 c3 Nf6 e5 Nd5", "hva": "Springeren går til d5." },
-    { "sti": "d4 exd4 c3 Nf6 e5 Nd5 Qxd4", "hva": "Damen tar bonden på d4.", "ide": "materiellet er likt, og hvit har mer plass med e5.", "pass": "Svart spiller …Sb6 eller …c6 og …d6 for å angripe e5.", "plan": "Sf3, Le2/Lc4 og 0-0. Hvit har plassfordel og litt bedre stilling.", "motor": { "cp": 2, "tap": 0, "best": "Qxd4", "dybde": 16 } },
+    { "sti": "d4 exd4 c3 Nf6 e5 Nd5 Qxd4", "hva": "Damen tar bonden på d4.", "ide": "materiellet er likt, og hvit har mer plass med e5.", "pass": "Svart spiller …Sb6 eller …c6 og …d6 for å angripe e5.", "plan": "Sf3, Le2/Lc4 og 0-0. Hvit har plassfordel; motoren kaller det likt.", "motor": { "cp": 2, "tap": 0, "best": "Qxd4", "dybde": 16 } },
     { "sti": "d4 d6", "vekt": 1, "hva": "Svart holder e5 – en slags Philidor." },
     { "sti": "d4 d6 Nf3", "hva": "Vi utvikler og øker presset mot e5.", "ide": "dette er vanlig Philidor-teori: etter …exd4 slår vi med springeren, og etter …Sf6 kommer Sc3.", "pass": "Dansk er ikke mulig her. Spill normal utvikling: Sc3, Lc4 og 0-0.", "plan": "Sc3, Lc4 og 0-0. Hvit har plassfordel mot det passive …d6.", "motor": { "cp": 59, "tap": 0, "best": "Nf3", "dybde": 16 } },
     { "sti": "d4 Nc6", "vekt": 1, "hva": "Svart utvikler i stedet for å slå." },
