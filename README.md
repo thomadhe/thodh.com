@@ -39,7 +39,7 @@ Nettspill går via den avgrensede serverruten `/sjakk/api/rooms/[[...path]]` til
 
 Vercel må ha serverhemmelighetene `SJAKK_SITE_BYPASS` (eksisterende Sites-tilgang for serveren) og `SJAKK_GATEWAY_KEY`. Sistnevnte må også være satt på sjakkserveren i Sites. Gatewayen slipper bare gjennom spilloperasjoner, sender ingen brukerkapsler og eksponerer ikke servernøklene. En daglig HMAC av klient-IP lar serveren begrense nye rom per klient uten å lagre IP-adressen. Sites beholder sin egen tilgangsinnstilling; kun sjakk-API-et er tilgjengelig gjennom gatewayen.
 
-Kildespillet vedlikeholdes i `Morsomme spill` / `sjakk-for-2`. Kjør `node scripts/export-thodh.mjs C:/thodh.com/public/sjakk` derfra for å oppdatere ressursene. Kjør testene og publiser begge prosjektene når felles spillregler eller API-kontrakten endres. Lokalt kan serverhemmelighetene ligge i en ignorert `.env.development.local`; de skal aldri ha `NEXT_PUBLIC_`-prefiks.
+`public/sjakk` i dette repoet er nå hovedkopien av klienten. Den har utviklet seg langt fra kildespillet i `Morsomme spill` / `sjakk-for-2`, som heller ikke ligger på denne PC-en. En eksport derfra (`scripts/export-thodh.mjs`) ville overskrive endringene her og skal ikke kjøres før de er overført dit. Spillserveren på Sites er fortsatt autoritativ; kjør testene og publiser begge når felles spillregler eller API-kontrakten endres. Lokalt kan serverhemmelighetene ligge i en ignorert `.env.development.local`; de skal aldri ha `NEXT_PUBLIC_`-prefiks.
 
 ## Otsjoba
 
