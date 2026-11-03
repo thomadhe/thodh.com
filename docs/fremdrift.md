@@ -7,7 +7,7 @@ Vaktagenten leser og oppdaterer denne fila. Den er arbeidslisten for løpende ut
 | Strøm | Status | Gren / commit |
 | --- | --- | --- |
 | Otsjoba: lokal AI-bro (Claude, Codex, «Continue with ChatGPT») + kurs A1–C2 (+ flere språk) | pågår | – |
-| Sjakk: oppgaver (rangert, daglig, Lynløp, temaer) | pågår | – |
+| Sjakk: oppgaver (rangert, daglig, Lynløp, temaer) | publisert 3. nov. | c168b68 + rettelser 54ce6c6, live 8c89ff3 |
 | Sjakk: åpningsrepertoar med personlig trener (e4 + gambitter, Englund-gambitt for svart) | pågår | – |
 | Optimalisering: online-sjakk (Claude Opus 5.5) | pågår | – |
 | Optimalisering: hele thodh.com (Claude Sonnet 5.5) | pågår | – |
@@ -30,7 +30,7 @@ Hver vaktrunde: er online-strømmen ferdig og målet ikke nådd, start en ny Cla
 
 ## Etterarbeid når strømmene er flettet
 
-- Rewrites i next.config.ts for `/sjakk/oppgaver` og `/sjakk/apninger`, og lenker i toppen av public/sjakk/index.html.
+- Rewrite og lenke for `/sjakk/apninger` (oppgaver er gjort). Lenkene ligger i `<nav class="hub-links">` i public/sjakk/index.html.
 - Kodegjennomgang: en egen Claude-agent (ikke den som skrev koden) ser over hver strøm før publisering.
 - Optimaliseringene kan foreslå endringer i spill.ts/spill-oversikt.tsx; legg dem inn etter at 6/7-stegern er flettet.
 
@@ -39,7 +39,7 @@ Hver vaktrunde: er online-strømmen ferdig og målet ikke nådd, start en ny Cla
 1. Åpningsteori: nye åpninger og dypere linjer, alltid kontrollert med chess.js og Stockfish.
 2. 6/7-stegern: fyll på spørsmålsbanken god tid før den tar slutt.
 3. Otsjoba: flere språk, flere leksjoner per nivå.
-4. Sjakkoppgaver: flere moduser og temaer.
+4. Sjakkoppgaver: tidsbonus i Lynløp, gjennomgang av bom etter løp, rating synket til kontoen, egen rating per tema, «x % løste dagens».
 
 ## Idébank
 
