@@ -75,8 +75,8 @@
     "subtitle": "Bestill brød og bakst, tell og betal.",
     "level": "A1",
     "icon": "shop",
-    "opening": "Guten Morgen! Heute bin ich Bäcker. Die Brötchen sind ganz frisch!",
-    "openingTranslation": "God morgen! I dag er jeg baker. Rundstykkene er helt ferske!",
+    "opening": "Guten Morgen! Heute spiele ich den Bäcker. Die Brötchen sind ganz frisch!",
+    "openingTranslation": "God morgen! I dag spiller jeg baker. Rundstykkene er helt ferske!",
     "steps": [
       {
         "question": "Was darf es sein?",
@@ -145,8 +145,8 @@
     "subtitle": "Bestill noe å drikke og spør om prisen.",
     "level": "A1",
     "icon": "coffee",
-    "opening": "Guten Tag! Hier ist die Karte. Setzen Sie sich, bitte.",
-    "openingTranslation": "God dag! Her er menyen. Vær så god og sett deg.",
+    "opening": "Guten Tag! Setzen Sie sich doch. Hier ist die Karte.",
+    "openingTranslation": "God dag! Vær så god og sett deg. Her er menyen.",
     "steps": [
       {
         "question": "Was möchten Sie trinken?",
@@ -163,7 +163,7 @@
         "question": "Möchten Sie auch ein Stück Kuchen?",
         "translation": "Vil du også ha et kakestykke?",
         "expected": [
-          "Ja, gern. Einen Käsekuchen, bitte.",
+          "Ja, gern. Ein Stück Käsekuchen, bitte.",
           "Nein, danke."
         ],
         "hint": "«Ja, gern» = ja takk, gjerne; «Nein, danke» = nei takk. «Käsekuchen» = ostekake.",
@@ -178,8 +178,8 @@
           "Ja, sehr gut. Ich möchte bitte zahlen."
         ],
         "hint": "«Was kostet das?» = hva koster det? «Ich möchte zahlen» = jeg vil gjerne betale.",
-        "reply": "Ich bringe Ihnen gleich die Rechnung.",
-        "replyTranslation": "Jeg kommer med regningen med en gang."
+        "reply": "Das macht zusammen sieben Euro achtzig.",
+        "replyTranslation": "Det blir sju euro og åtti cent til sammen."
       }
     ],
     "vocabulary": [
@@ -241,7 +241,7 @@
         "replyTranslation": "Nei, bare fem minutter å gå."
       },
       {
-        "question": "Sehen Sie das große Gebäude dort?",
+        "question": "Sehen Sie das große Gebäude dort drüben?",
         "translation": "Ser du den store bygningen der borte?",
         "expected": [
           "Ja, ich sehe es. Vielen Dank!",
@@ -550,7 +550,7 @@
           "Ja, ein bisschen. Achtunddreißig Grad."
         ],
         "hint": "Nektelse med substantiv: «kein Fieber». 38 grader = «achtunddreißig Grad».",
-        "reply": "Gut. Ich verschreibe Ihnen etwas.",
+        "reply": "Alles klar. Ich verschreibe Ihnen etwas.",
         "replyTranslation": "Greit. Jeg skriver ut noe til deg."
       },
       {
@@ -621,7 +621,7 @@
         ],
         "hint": "«morgen früh» = i morgen tidlig; «gegen neun Uhr» = rundt ni.",
         "reply": "Da gibt es einen ICE um neun Uhr vier.",
-        "replyTranslation": "Da går det et ICE klokka 9.04."
+        "replyTranslation": "Da går det et ICE-tog klokka 9.04."
       },
       {
         "question": "Möchten Sie einen Sitzplatz reservieren?",
@@ -722,7 +722,7 @@
           "Es war sehr lecker, danke. Getrennt, bitte.",
           "Sehr gut, danke! Zusammen, bitte."
         ],
-        "hint": "Servitøren spør ofte «Zusammen oder getrennt?» (samlet eller hver for dere?). Tips: rund opp med omtrent ti prosent.",
+        "hint": "Servitøren spør ofte «Zusammen oder getrennt?» (samlet eller hver for dere?). Tips: rund opp med fem til ti prosent.",
         "reply": "Gern, ich hole gleich das Kartengerät.",
         "replyTranslation": "Gjerne, jeg henter kortterminalen med en gang."
       }
@@ -1132,8 +1132,8 @@
           "Ich bin skeptisch: Ohne Atomkraft bleibt man länger auf Kohle und Gas angewiesen."
         ],
         "hint": "«grundsätzlich» = i prinsippet; «umstritten» = omstridt; «angewiesen sein auf» = være avhengig av.",
-        "reply": "Schauen wir uns jetzt die andere Seite an.",
-        "replyTranslation": "La oss nå se på den andre siden."
+        "reply": "Schauen wir uns die Argumente genauer an.",
+        "replyTranslation": "La oss se nærmere på argumentene."
       },
       {
         "question": "Die Strompreise sind in Deutschland ziemlich hoch. Ist das nicht ein starkes Gegenargument?",
@@ -1209,7 +1209,7 @@
         "question": "Bist du für ein komplettes Handyverbot an Schulen?",
         "translation": "Er du for et totalforbud mot mobil på skolen?",
         "expected": [
-          "Nicht komplett: In den Pausen fände ich es in Ordnung, im Unterricht aber nicht.",
+          "Nicht komplett: Im Unterricht ja, aber in den Pausen fände ich das Handy in Ordnung.",
           "Ja, zumindest bis zur zehnten Klasse."
         ],
         "hint": "«zumindest» = i hvert fall; «ich fände es in Ordnung» = jeg ville syntes det var greit.",
@@ -1534,7 +1534,7 @@
         "translation": "Hvordan ville du begynt brevet?",
         "expected": [
           "Sehr geehrte Damen und Herren, ich wende mich an Sie wegen meiner Bestellung Nr. 4512 vom 3. Oktober.",
-          "Sehr geehrte Damen und Herren, hiermit möchte ich mich über meine Bestellung Nr. 4512 beschweren."
+          "Sehr geehrte Damen und Herren, hiermit möchte ich mich über die Abwicklung meiner Bestellung Nr. 4512 beschweren."
         ],
         "hint": "Tiltale uten navn: «Sehr geehrte Damen und Herren,». Etter kommaet fortsetter brevet med liten forbokstav.",
         "reply": "Korrekte Anrede, klares Anliegen – genau der richtige Ton.",
@@ -1614,10 +1614,12 @@
         "question": "Erzählen Sie doch kurz etwas über sich.",
         "translation": "Fortell litt kort om deg selv.",
         "expected": [
+          "Ich habe Maschinenbau studiert und arbeite seit fünf Jahren im Projektmanagement.",
+          "Ich bin Ingenieur und arbeite seit fünf Jahren im Projektmanagement.",
           "Ich bin Ingenieurin und arbeite seit fünf Jahren im Projektmanagement.",
           "Nach meinem Master in Wirtschaft habe ich vier Jahre bei einem Start-up in Oslo gearbeitet und dort ein kleines Team geleitet."
         ],
-        "hint": "«seit» + presens: «ich arbeite seit fünf Jahren» = jeg har jobbet i fem år (og gjør det fortsatt).",
+        "hint": "«seit» + presens: «ich arbeite seit fünf Jahren» = jeg har jobbet i fem år (og gjør det fortsatt). Yrkestitler bøyes etter kjønn: «Ingenieur» / «Ingenieurin».",
         "reply": "Danke, ein interessanter Werdegang.",
         "replyTranslation": "Takk, en interessant karrierevei."
       },
@@ -1640,8 +1642,8 @@
           "Ich neige zum Perfektionismus; inzwischen setze ich mir strengere Fristen."
         ],
         "hint": "Nevn en ekte svakhet og hva du gjør med den: «ich neige zu …», «ich habe gelernt, …».",
-        "reply": "Danke für die ehrliche Antwort – und vor allem dafür, wie Sie daran arbeiten.",
-        "replyTranslation": "Takk for det ærlige svaret – og ikke minst for hvordan du jobber med det."
+        "reply": "Danke für die ehrliche Antwort. Man merkt, dass Sie daran arbeiten.",
+        "replyTranslation": "Takk for det ærlige svaret. Man merker at du jobber med det."
       },
       {
         "question": "Warum möchten Sie bei uns arbeiten?",
@@ -1688,8 +1690,8 @@
     "subtitle": "Tolk koden i en tysk arbeidsattest og be høflig om en endring.",
     "level": "C1",
     "icon": "quote",
-    "opening": "In Deutschland haben Arbeitszeugnisse eine eigene Geheimsprache. Ein Satz aus deinem Zeugnis: „Sie hat sich stets bemüht, den Anforderungen gerecht zu werden.“",
-    "openingTranslation": "I Tyskland har arbeidsattester sitt eget hemmelige språk. En setning fra attesten din: «Hun har alltid bestrebet seg på å innfri kravene.»",
+    "opening": "In Deutschland haben Arbeitszeugnisse eine eigene Geheimsprache. Deine Freundin Lena zeigt dir einen Satz aus ihrem Zeugnis: „Sie hat sich stets bemüht, den Anforderungen gerecht zu werden.“",
+    "openingTranslation": "I Tyskland har arbeidsattester sitt eget hemmelige språk. Venninnen din Lena viser deg en setning fra attesten sin: «Hun har alltid bestrebet seg på å innfri kravene.»",
     "steps": [
       {
         "question": "Klingt doch freundlich, oder? Wie verstehst du den Satz?",
@@ -1714,8 +1716,8 @@
         "replyTranslation": "Riktig – grammatisk tvilsomt, men toppkarakter i en attest."
       },
       {
-        "question": "Du willst deine Chefin bitten, den Satz zu ändern. Wie formulierst du das, ohne fordernd zu wirken?",
-        "translation": "Du vil be sjefen din om å endre setningen. Hvordan formulerer du det uten å virke krevende?",
+        "question": "Lena will ihre Chefin bitten, den Satz zu ändern. Was könnte sie sagen, ohne fordernd zu wirken?",
+        "translation": "Lena vil be sjefen sin om å endre setningen. Hva kan hun si uten å virke krevende?",
         "expected": [
           "Könnten wir kurz über mein Zeugnis sprechen? Mir ist eine Formulierung aufgefallen, die man missverstehen könnte.",
           "Hätten Sie diese Woche ein paar Minuten Zeit? Ich würde gern eine Formulierung in meinem Zeugnis mit Ihnen besprechen."
@@ -1725,11 +1727,11 @@
         "replyTranslation": "Høflig, direkte og vanskelig å avslå."
       },
       {
-        "question": "Und wenn sie antwortet: „Das ist doch eine ganz normale Formulierung“?",
-        "translation": "Og hvis hun svarer: «Det er da en helt vanlig formulering»?",
+        "question": "Und wenn die Chefin antwortet: „Das ist doch eine ganz normale Formulierung“?",
+        "translation": "Og hvis sjefen svarer: «Det er da en helt vanlig formulering»?",
         "expected": [
-          "Ich würde sachlich erklären, wie solche Sätze üblicherweise gelesen werden, und einen konkreten Vorschlag machen.",
-          "Ich würde freundlich darauf hinweisen, dass ein Zeugnis wohlwollend formuliert sein muss."
+          "Sie sollte sachlich erklären, wie solche Sätze üblicherweise gelesen werden, und einen konkreten Vorschlag machen.",
+          "Sie könnte freundlich darauf hinweisen, dass ein Zeugnis wohlwollend formuliert sein muss."
         ],
         "hint": "«darauf hinweisen, dass …» = påpeke at …; «wohlwollend» = velvillig. I Tyskland har man krav på en velvillig attest.",
         "reply": "Gut: freundlich bleiben, aber die Sache nicht fallen lassen.",
@@ -2083,7 +2085,7 @@
       },
       {
         "word": "bürgernah",
-        "translation": "folkelig / nær innbyggerne"
+        "translation": "innbyggervennlig / nær innbyggerne"
       }
     ]
   },
@@ -2256,7 +2258,7 @@
     "level": "C2",
     "icon": "book",
     "opening": "Kafkas „Die Verwandlung“ beginnt so: „Als Gregor Samsa eines Morgens aus unruhigen Träumen erwachte, fand er sich in seinem Bett zu einem ungeheueren Ungeziefer verwandelt.“",
-    "openingTranslation": "Kafkas «Forvandlingen» begynner slik: «Da Gregor Samsa en morgen våknet av urolige drømmer, fant han seg selv forvandlet til et uhyre av et kryp i sengen sin.»",
+    "openingTranslation": "Kafkas «Forvandlingen» begynner slik: «Da Gregor Samsa en morgen våknet av urolige drømmer, fant han seg selv forvandlet til et uhyrlig kryp i sengen sin.» (Vår oversettelse.)",
     "steps": [
       {
         "question": "Was fällt dir an diesem Satz auf?",
