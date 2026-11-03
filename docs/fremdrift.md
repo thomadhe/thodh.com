@@ -12,7 +12,7 @@ Eier «hovedtråd» = hovedsamtalen styrer strømmen; vaktagenten rører den ikk
 | Otsjoba: fransk (Camille) og tysk (Jonas), 30 leksjoner hver | hovedtråd | publisert 3. nov. | 142d097 |
 | Sjakk: oppgaver (rangert, daglig, Lynløp, temaer) | hovedtråd | publisert 3. nov. | 8c89ff3 |
 | Sjakk: åpningsrepertoar med trener Tora (19 åpninger, 147 linjer) | hovedtråd | publisert 3. nov. | abc5169 |
-| Dagsspill: 6/7-stegern | hovedtråd | retting stoppet på bruksgrense (07c519b + uferdige endringer i worktree t3-efaef30a) | t3/build-67-stegern-daily-game |
+| Dagsspill: 6/7-stegern (60 dager, 2. nov.–31. des.) | hovedtråd | publisert 3. nov. | 1c6fe62 |
 | Optimalisering: hele thodh.com (skjelett, prefetch, fonter, CLS, funksjoner i arn1) | hovedtråd | publisert 3. nov. | e8e4d8c |
 | Optimalisering: online-sjakk | hovedtråd | publisert 3. nov. | e3fd09a |
 
@@ -42,7 +42,7 @@ Eier fra nå: vakt. Er ingen strøm i gang på online-sjakk, start en ny Claude-
 ## Kø for løpende utvidelse (øverst først)
 
 1. Åpningsteori: følg den prioriterte lista i scripts/sjakk-apninger/README.md og agentens rapport: dypere Caro-Kann/Aljechin/Pirc/Halloween/Beograd; sjeldnere svar (fransk 3…Se7/3…b6, Caro-Kann 3…c5, skandinavisk 3…De5+, Aljechin 2…Se4/2…Sg8, Smith-Morra 2…d5/2…e6); feller i Wiener, Evans, Beograd, Schliemann, Caro-Kann, skandinavisk, Aljechin; svart mot 1.d4 (sunt hovedforsvar) og mot spansk med …d6; Ponziani og løperåpning som egne moduler. Ikke endre linje-id-er for eksisterende linjer uten migrering (fremgang lagres per linje-id). Alltid chess.js + Stockfish (dybde ≥16) og en egen gjennomgang før publisering.
-2. 6/7-stegern: fyll på spørsmålsbanken (dag 61+, fra 1. jan. 2027) — vent til hovedtrådens retting er flettet.
+2. 6/7-stegern: fyll på spørsmålsbanken (dag 61+, fra 1. jan. 2027) i features/spill/data/stegern/ — legg nye dager bakerst, ikke endre spilte dager, kjør kryssjekk-testen. Ideer fra agenten: logg avviste svar (uten personopplysninger) for å finne manglende gyldige svar; «du var den eneste»; øvingsmodus uten klokke på gamle dager. Tittelen avkortes til «6/7-ste…» i spillrammen på mobil — vurder kortere visningsnavn eller mindre skrift.
 3. Otsjoba: flere språk, flere leksjoner per nivå.
 4. Ytelse, neste runde: cache-headere for public/ (lyd, logoer), React.memo/cache i «I dag»-panelet (useAlleResultater), les lagret fremdrift før første tegning (useDagligTilstand) for raskere LCP.
 5. Sjakkoppgaver: tidsbonus i Lynløp, gjennomgang av bom etter løp, rating synket til kontoen, egen rating per tema, «x % løste dagens».
