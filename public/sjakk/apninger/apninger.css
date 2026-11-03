@@ -132,7 +132,11 @@ a { color: var(--pink); }
 @media (max-width: 520px) {
   .site-header { gap: 8px; }
   .ap-tittel { margin-right: 0; font-size: .68rem; letter-spacing: .1em; }
-  .hub-link { display: none; }
+  /* The brand already leads back to the board. */
+  .hub-links .hub-link:last-child { display: none; }
+  .hub-link { font-size: .74rem; }
+  .brand { font-size: 1.3rem; }
+  .brand-symbol { font-size: 2rem; }
   .ap-innhold { padding-top: 16px; }
   .ap-brett-ramme { padding: 6px; }
   .ap-piler { inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); }

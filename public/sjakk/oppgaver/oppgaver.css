@@ -134,6 +134,8 @@ footer.kreditt .text-button { padding: 8px 0; }
   .brand-symbol { font-size: 2rem; }
   .topplenker { gap: 12px; }
   .topplenker .hub-link { font-size: .78rem; }
+  /* The brand row is full on phones; thodh.com is one step away via Sjakk for to. */
+  .topplenker .hub-link:last-child { display: none; }
   .faner { padding-top: 10px; gap: 6px; }
   .faner button { flex: 1; padding: 7px 6px; font-size: .82rem; }
   .oppgave-status { min-height: 66px; padding: 4px 0 8px; gap: 10px; }
