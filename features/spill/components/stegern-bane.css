@@ -1,0 +1,71 @@
+/* Stegern's idle while he waits for an answer. The course sets data-hvile when he stands still and its
+   animation loop has handed over; these run a limited number of times and then leave him resting. */
+@media (prefers-reduced-motion: no-preference) {
+  .stegern-bane[data-hvile] .stegern-pust {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: stegern-pust 3.2s ease-in-out 0.6s 10;
+  }
+  .stegern-bane[data-hvile] .stegern-blunk {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: stegern-blunk 3.7s step-end 0.9s 10;
+  }
+  /* Now and then the 6–7 hands: palms up, weighing one against the other. */
+  .stegern-bane[data-hvile] .stegern-arm-v {
+    animation: stegern-seks 7s step-end 2.5s 5;
+  }
+  .stegern-bane[data-hvile] .stegern-arm-h {
+    animation: stegern-sju 7s step-end 2.5s 5;
+  }
+}
+
+@keyframes stegern-pust {
+  50% {
+    transform: scale(1.025, 0.975);
+  }
+}
+
+@keyframes stegern-blunk {
+  0%,
+  6% {
+    transform: none;
+  }
+  3% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes stegern-seks {
+  0%,
+  86% {
+    transform: none;
+  }
+  88%,
+  92%,
+  96% {
+    transform: translateY(-0.17px);
+  }
+  90%,
+  94%,
+  98% {
+    transform: translateY(0.09px);
+  }
+}
+
+@keyframes stegern-sju {
+  0%,
+  86% {
+    transform: none;
+  }
+  88%,
+  92%,
+  96% {
+    transform: translateY(0.09px);
+  }
+  90%,
+  94%,
+  98% {
+    transform: translateY(-0.17px);
+  }
+}

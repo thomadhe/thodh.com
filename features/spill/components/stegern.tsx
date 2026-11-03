@@ -8,7 +8,7 @@ import { useDagligTilstand, useResultater, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
 import { GJENTA_DM, hoppDm, MAKS_DM, meter, NIVAAER, NORMALE, SEKUNDER, STEGERN_START, type Nivaa, type Vurdering } from "../lib/stegern"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
-import { Bane, type Hopp } from "./stegern-bane"
+import { Bane, tidTilLanding, type Hopp } from "./stegern-bane"
 
 // 6/7-stegern: seven open prompts ("Nevn en frukt"). The server rates each answer from common to rare, and
 // Stegern jumps that far. Question 6 asks what you answered on one of the first five; get it right and the
@@ -206,7 +206,8 @@ export function Stegern({ dato, sporsmal, repris = false }: { dato: string; spor
           kvittering: tidligere?.k ?? "",
           svar: svarTekst,
         })
-        window.setTimeout(() => (r.riktig ? lyder.seier() : lyder.feil()), 700)
+        const hopp: Hopp = { dm: r.riktig ? GJENTA_DM : hoppDm(0), nivaa: r.riktig ? 5 : 0, type: "gjenta" }
+        window.setTimeout(() => (r.riktig ? lyder.seier() : lyder.feil()), tidTilLanding(hopp))
         oppdater((x) => {
           if (x.nr !== 5 || !x.apen) return x
           const neste = { ...x, apen: false, frist: 0, sjette: { t: svarTekst, ok: r.riktig }, finale: r.finale ?? "", billett: r.billett }
@@ -216,7 +217,7 @@ export function Stegern({ dato, sporsmal, repris = false }: { dato: string; spor
         const nr = t.nr
         const v = await spor<Vurdering & { kvittering?: string }>({ type: "svar", dato, nr, svar: svarTekst, billett: nr === 6 ? t.billett : undefined })
         const lyd = v.nivaa === 0 ? lyder.feil : v.nivaa >= 4 ? lyder.seier : v.nivaa >= 2 ? lyder.riktig : () => lyder.naer(0.4)
-        window.setTimeout(lyd, 650)
+        window.setTimeout(lyd, tidTilLanding({ dm: hoppDm(v.nivaa, nr === 6), nivaa: v.nivaa, type: nr === 6 ? "finale" : "vanlig" }))
         oppdater((x) => {
           if (x.nr !== nr || !x.apen) return x
           const s = tilSvar(svarTekst, v)
