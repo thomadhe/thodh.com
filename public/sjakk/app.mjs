@@ -37,7 +37,6 @@ let joining = null;
 let confirmed = null;
 let pending = [];
 let sending = false;
-let knownRevision = -1;
 let premoves = [];
 let announceJoin = false;
 const now = () => Date.now() + (mode === 'online' ? serverOffset : 0);
@@ -240,7 +239,9 @@ function render() {
   setText($('#seat-help'), mode === 'online' ? 'Hver spiller har sitt eget brett.' : 'Hvit sitter her. Svart sitter på motsatt side.');
   $('#flip').hidden = mode === 'online';
   $('#resign').hidden = state.status !== 'playing';
-  $('#rematch').hidden = !(mode === 'online' && state.status === 'finished' && confirmed);
+  // An index.html cached from before the button existed still loads this script.
+  const rematchButton = $('#rematch');
+  if (rematchButton) rematchButton.hidden = !rematchReady();
   $('#invite-panel').hidden = !(mode === 'online' && state.status === 'waiting' && room?.inviteToken);
   if (room?.inviteToken) $('#invite-link').value = `${location.origin}${location.pathname}#room=${room.id}&invite=${room.inviteToken}`;
   setText($('#move-count'), `${state.moves.length} trekk`);
@@ -411,39 +412,47 @@ function setConnected(value) {
 }
 
 /** What the full render depends on, apart from clocks. */
-const viewKey = () => [state.fen, state.moves.length, state.status, state.notices.map(notice => notice.id).join(), state.startedAt === null, playerColor, Boolean(confirmed), premoves.length].join('|');
+const viewKey = () => [state.fen, state.moves.length, state.status, state.notices.map(notice => notice.id).join(), state.startedAt === null, playerColor, confirmed?.status, pending.length, premoves.length].join('|');
 let shownKey = '';
 
-// Own actions the server hasn't confirmed survive a reload of the tab and are sent again if they still fit.
-// A saved premove may be built on an opponent move the server doesn't have yet; it waits for that revision.
+// Own actions the server hasn't confirmed survive a reload of the tab. Each one remembers the position it was
+// made from and is only sent again on that position. A saved premove may be built on an opponent move the
+// server doesn't have yet; it waits for that revision.
 let parked = [];
 function savePending() {
   if (!room) return;
   try { sessionStorage.setItem(`sjakk-pending:${room.id}`, JSON.stringify([...parked, ...pending.filter(entry => entry.own)])); } catch { /* Only this page load keeps them. */ }
 }
 function savedPending(id) {
-  try { return (JSON.parse(sessionStorage.getItem(`sjakk-pending:${id}`)) ?? []).filter(entry => entry && entry.own && Number.isInteger(entry.base) && validHint(entry.action)).map(entry => ({ ...entry, since: performance.now() })); } catch { return []; }
+  try { return (JSON.parse(sessionStorage.getItem(`sjakk-pending:${id}`)) ?? []).filter(entry => entry && entry.own && Number.isInteger(entry.base) && Number.isInteger(entry.index) && typeof entry.fen === 'string' && validHint(entry.action)).map(entry => ({ ...entry, since: performance.now() })); } catch { return []; }
 }
 
 function acceptSnapshot(snapshot) {
   if (!room || snapshot.roomId !== room.id || snapshot.revision < revision) return;
   revision = snapshot.revision;
-  knownRevision = Math.max(knownRevision, revision);
   playerColor = snapshot.color;
   confirmed = snapshot.state;
   flipped = playerColor === 'b';
-  if (snapshot.push) joinPush(snapshot.push);
+  if (pushName.test(snapshot.push)) { roomPush = snapshot.push; joinPush(snapshot.push); }
   // Unconfirmed hints from the opponent expire; our own actions wait for the server's answer.
   const time = performance.now();
   parked = parked.filter(entry => entry.base >= revision && time - entry.since < 10000);
-  if (parked.length && !pending.length && parked[0].base === revision) { pending = parked; parked = []; }
-  const rebuilt = rebuild(confirmed, revision, pending.filter(entry => entry.own || time - entry.since < 6000), chessAt);
+  let rebuilt = rebuild(confirmed, revision, pending.filter(entry => entry.own || time - entry.since < 6000), chessAt);
+  // Saved actions join once everything before them is known, one revision after the other.
+  if (parked[0]?.base === revision + rebuilt.kept.length) {
+    const joined = [];
+    while (parked[0]?.base === revision + rebuilt.kept.length + joined.length) joined.push(parked.shift());
+    rebuilt = rebuild(confirmed, revision, [...rebuilt.kept, ...joined], chessAt);
+  }
+  // An own action that is neither confirmed nor kept was built on a position the server doesn't have.
+  if (pending.some(entry => entry.own && !rebuilt.kept.includes(entry) && !(entry.base < revision && containsAction(confirmed, entry)))) premoves = [];
   pending = rebuilt.kept;
   state = rebuilt.state;
   savePending();
   setConnected(true);
   if (viewKey() !== shownKey) render(); else renderClocks();
   if (pending.some(entry => entry.own)) flush();
+  if (rematchOffer?.from === room.id && rematchReady()) rematch(rematchOffer);
 }
 
 // ---- Online actions: shown at once, sent in order, confirmed or rolled back by the server ----
@@ -461,7 +470,7 @@ function perform(action) {
     return;
   }
   if (!room || !confirmed) return;
-  const entry = { base: revision + pending.length, action, actor: playerColor, at: now(), own: true, since: performance.now(), index: state.moves.length };
+  const entry = { base: revision + pending.length, action, actor: playerColor, at: now(), own: true, since: performance.now(), index: state.moves.length, fen: state.fen };
   const next = structuredClone(state);
   if (!applyPending(next, entry, chessAt)) { render(); return; }
   state = next;
@@ -480,10 +489,13 @@ function retry(delay) { clearTimeout(retryTimer); retryTimer = setTimeout(() => 
 async function flush() {
   if (sending || !room) return;
   const entry = pending.find(item => item.own);
-  // A premove on top of an unconfirmed opponent move waits until the server has that move.
-  if (!entry || entry.base > Math.max(revision, knownRevision)) return;
+  // Only positions the server has shown us are built on. A move made on top of the opponent's announced
+  // move waits until a snapshot contains that move, so it never lands in a position we haven't seen.
+  if (!entry || entry.base > revision) return;
   sending = true;
   const activeRoom = room;
+  let again = true;
+  const later = (max = 2000) => { again = false; retry(retryDelay); retryDelay = Math.min(max, retryDelay * 2); };
   try {
     const snapshot = await request(`/api/rooms/${room.id}/action`, { action: entry.action, revision: entry.base }, room, 8000);
     if (room !== activeRoom) return;
@@ -493,19 +505,23 @@ async function flush() {
   } catch (error) {
     if (room !== activeRoom) return;
     const snapshot = error.snapshot;
-    if (!error.status) { setConnected(false); retry(retryDelay); retryDelay = Math.min(2000, retryDelay * 2); return; }
-    if (snapshot && snapshot.revision < entry.base) { acceptSnapshot(snapshot); retry(retryDelay); retryDelay = Math.min(2000, retryDelay * 2); return; }
+    if (!error.status) { setConnected(false); later(); return; }
+    // Too many requests or a timeout: the server hasn't judged the action, so it is sent again later.
+    if (!snapshot && [408, 425, 429].includes(error.status)) { later(8000); return; }
+    if (snapshot && snapshot.revision < entry.base) { acceptSnapshot(snapshot); later(); return; }
     if (snapshot && snapshot.revision > entry.base && containsAction(snapshot.state, entry)) { acceptSnapshot(snapshot); hint('sync', { r: snapshot.revision }); return; }
     // Rejected: drop it and everything built on it, then show the server's position.
     pending = pending.filter(item => item.base < entry.base);
     savePending();
     premoves = [];
     if (snapshot) acceptSnapshot(snapshot);
-    else if (confirmed) { const rebuilt = rebuild(confirmed, revision, pending, chessAt); pending = rebuilt.kept; state = rebuilt.state; render(); }
+    else { if (confirmed) { const rebuilt = rebuild(confirmed, revision, pending, chessAt); pending = rebuilt.kept; state = rebuilt.state; render(); } poll(); }
+    // The opponent may already show the rejected action; `x` tells them to drop it.
+    hint('sync', { r: revision, x: entry.base });
     message(error.message, 4000);
   } finally {
     sending = false;
-    if (room === activeRoom && pending.some(item => item.own && item.base <= Math.max(revision, knownRevision))) flush();
+    if (again && room === activeRoom && pending.some(item => item.own && item.base <= revision)) flush();
   }
 }
 
@@ -529,18 +545,24 @@ function validHint(action) {
 }
 
 let confirmTimer = null;
-// Whether the other tab sends hints. Until it does (an older version, or no push), keep polling every second.
-let heardOpponent = false;
+// When the opponent was last heard on the push channel. Both sides say hello every 10 s; while that is
+// recent, polling is only a slow safety net. Otherwise (an older version, or push down) poll every second.
+let lastHeard = -Infinity;
+const heardRecently = () => performance.now() - lastHeard < 25000;
 /** Realtime hints from the other player. They only change what is shown until the server confirms. */
 function onHint(event, payload) {
-  if (mode !== 'online' || !room || !confirmed || !payload) return;
-  if (!heardOpponent && event !== 'rematch') { heardOpponent = true; if (event !== 'hello') hint('hello', {}); }
+  if (mode !== 'online' || !room || !payload) return;
+  if (event === 'rematch') { if (typeof payload.id === 'string' && typeof payload.invite === 'string') rematch({ id: payload.id, invite: payload.invite }); return; }
+  if (!confirmed) return;
+  const fresh = !heardRecently();
+  lastHeard = performance.now();
   if (event === 'hello') { if (payload.r !== true) hint('hello', { r: true }); return; }
+  if (fresh) hint('hello', { r: true });
   if (event === 'act') {
     const action = validHint(payload.a);
     if (!action || payload.c !== other(playerColor)) return;
     if (payload.b !== revision + pending.length) { if (payload.b > revision + pending.length) poll(); return; }
-    const entry = { base: payload.b, action, actor: payload.c, at: now(), own: false, since: performance.now(), index: state.moves.length };
+    const entry = { base: payload.b, action, actor: payload.c, at: now(), own: false, since: performance.now(), index: state.moves.length, fen: state.fen };
     const next = structuredClone(state);
     if (!applyPending(next, entry, chessAt)) { poll(); return; }
     state = next;
@@ -549,18 +571,28 @@ function onHint(event, payload) {
     // Normally the opponent's "sync" arrives first; this covers a lost one.
     clearTimeout(confirmTimer);
     confirmTimer = setTimeout(() => { if (pending.some(item => !item.own)) poll(); }, 2500);
-  } else if (event === 'sync' && Number.isInteger(payload.r) && payload.r > revision) {
-    knownRevision = Math.max(knownRevision, payload.r);
-    if (pending.some(entry => entry.own && entry.base <= knownRevision)) flush();
-    else poll();
-  } else if (event === 'rematch' && typeof payload.id === 'string' && typeof payload.invite === 'string' && state.status === 'finished') {
-    acceptRematch(payload.id, payload.invite);
+  } else if (event === 'sync' && Number.isInteger(payload.r)) {
+    // `x`: the server rejected the opponent's action at that revision, so it and all built on it go now.
+    const cut = Number.isInteger(payload.x) ? pending.findIndex(entry => !entry.own && entry.base >= payload.x) : -1;
+    if (cut >= 0) {
+      if (pending.slice(cut).some(entry => entry.own)) premoves = [];
+      const rebuilt = rebuild(confirmed, revision, pending.slice(0, cut), chessAt);
+      pending = rebuilt.kept; state = rebuilt.state;
+      savePending();
+      render();
+    }
+    // The server's position is fetched before anything built on the announced move is sent.
+    if (cut >= 0 || payload.r > revision || pending.some(entry => !entry.own)) poll();
   }
 }
 
 // ---- Realtime push (Supabase Realtime broadcast over a plain Phoenix WebSocket) ----
 
-const live = { socket: null, topic: null, joinedTopic: null, joined: false, joinRef: null, beat: null, ref: 0, attempt: 0, timer: null };
+// The Supabase project is shared with another app. Failed connections back off with jitter and give up
+// after a few tries; polling carries the game meanwhile. A hidden tab never reconnects.
+const pushTries = 6;
+const pushName = /^sjakk-[0-9a-f]{32}$/;
+const live = { socket: null, topic: null, joinedTopic: null, joined: false, joinRef: null, joinSent: 0, joinedAt: 0, beat: null, ref: 0, attempt: 0, timer: null };
 
 function pushSend(topic, event, payload, ref = String(++live.ref)) {
   if (live.socket?.readyState !== WebSocket.OPEN) return false;
@@ -568,18 +600,33 @@ function pushSend(topic, event, payload, ref = String(++live.ref)) {
   return true;
 }
 
+/** Connects unless a socket exists, a retry is already scheduled or push has given up. */
 function openPush() {
+  if (live.socket || live.timer || live.attempt >= pushTries) return;
+  connectPush();
+}
+
+function schedulePush() {
   clearTimeout(live.timer);
-  if (!pushUrl || live.socket || mode !== 'online' && !joining || navigator.onLine === false) return;
+  live.timer = null;
+  if (document.hidden || live.attempt >= pushTries || mode !== 'online' && !joining) return;
+  const delay = Math.min(30000, 1000 * 2 ** live.attempt++) * (0.5 + Math.random() / 2);
+  live.timer = setTimeout(connectPush, delay);
+}
+
+function connectPush() {
+  live.timer = null;
+  if (!pushUrl || live.socket || mode !== 'online' && !joining || navigator.onLine === false || document.hidden) return;
   const socket = new WebSocket(pushUrl);
   live.socket = socket;
-  socket.onopen = () => { live.attempt = 0; subscribePush(); };
+  socket.onopen = () => subscribePush();
   socket.onmessage = event => {
     let data;
     try { data = JSON.parse(event.data); } catch { return; }
     if (data.event === 'phx_reply' && data.ref === live.joinRef) {
       live.joined = data.payload?.status === 'ok';
       if (!live.joined) { socket.close(); return; }
+      live.joinedAt = performance.now();
       if (announceJoin) { announceJoin = false; hint('sync', { r: revision }); }
       else hint('hello', {});
       // Anything that happened while the socket was down.
@@ -591,8 +638,10 @@ function openPush() {
   socket.onerror = () => socket.close();
   socket.onclose = () => {
     if (live.socket !== socket) return;
+    // Only a channel that stayed joined for a while counts as working; a rejected join keeps backing off.
+    if (live.joined && performance.now() - live.joinedAt > 15000) live.attempt = 0;
     Object.assign(live, { socket: null, joined: false, joinedTopic: null, beat: null });
-    live.timer = setTimeout(openPush, Math.min(2000, 250 * 2 ** live.attempt++));
+    schedulePush();
   };
 }
 
@@ -602,19 +651,20 @@ function subscribePush() {
   live.joined = false;
   live.joinRef = String(++live.ref);
   live.joinedTopic = live.topic;
+  live.joinSent = performance.now();
   pushSend(`realtime:${live.topic}`, 'phx_join', { config: { broadcast: { self: false, ack: false }, presence: { key: '', enabled: false }, postgres_changes: [], private: false } }, live.joinRef);
 }
 
 function joinPush(topic) {
-  if (typeof topic !== 'string' || !/^sjakk-[0-9a-f]{32}$/.test(topic)) return;
+  if (typeof topic !== 'string' || !pushName.test(topic)) return;
   live.topic = topic;
   if (live.socket) subscribePush(); else openPush();
 }
 
 function closePush() {
   const socket = live.socket;
-  Object.assign(live, { socket: null, topic: null, joined: false, joinedTopic: null, beat: null });
   clearTimeout(live.timer);
+  Object.assign(live, { socket: null, topic: null, joined: false, joinedTopic: null, beat: null, timer: null });
   socket?.close();
 }
 
@@ -624,10 +674,11 @@ function hint(event, payload) {
 
 setInterval(() => {
   if (live.socket?.readyState !== WebSocket.OPEN) return;
-  // No answer to the previous heartbeat: the connection is dead even if the socket hasn't noticed.
-  if (live.beat) { live.socket.close(); return; }
+  // No answer to the previous heartbeat, or to the join: the connection is dead even if the socket hasn't noticed.
+  if (live.beat || live.joinedTopic && !live.joined && performance.now() - live.joinSent > 10000) { live.socket.close(); return; }
   live.beat = String(++live.ref);
   pushSend('phoenix', 'heartbeat', {}, live.beat);
+  if (mode === 'online' && room) hint('hello', { r: true });
 }, 10000);
 
 // ---- Board input: click, keyboard and drag and drop ----
@@ -828,15 +879,15 @@ $('.presets').addEventListener('click', event => {
 
 /** Switches this tab to an online room before the server has answered; `undo` restores the previous game. */
 function enterRoom(credentials, color, provisional) {
-  const previous = { mode, room, revision, confirmed, pending, state, playerColor, flipped, connected };
-  mode = 'online'; room = credentials; revision = -1; knownRevision = -1; confirmed = null; pending = []; parked = []; premoves = []; selected = null; shownNotice = null; localSetupPause = false; connected = true; heardOpponent = false;
+  const previous = { mode, room, revision, confirmed, pending, state, playerColor, flipped, connected, roomPush };
+  mode = 'online'; room = credentials; revision = -1; confirmed = null; pending = []; parked = []; premoves = []; selected = null; shownNotice = null; localSetupPause = false; connected = true; lastHeard = -Infinity; roomPush = null;
   playerColor = color; flipped = color === 'b'; state = provisional; soundMoves = provisional.moves.length;
   history.replaceState(null, '', `${location.pathname}#room=${credentials.id}`);
   openPush();
   setTimeout(forbered, 0);
   return () => {
     if (room !== credentials) return;
-    ({ mode, room, revision, confirmed, pending, state, playerColor, flipped, connected } = previous);
+    ({ mode, room, revision, confirmed, pending, state, playerColor, flipped, connected, roomPush } = previous);
     soundMoves = state.moves.length;
     if (mode !== 'online') closePush();
     history.replaceState(null, '', room ? `${location.pathname}#room=${room.id}` : location.pathname);
@@ -844,8 +895,8 @@ function enterRoom(credentials, color, provisional) {
   };
 }
 
-async function createRoom(settings, color, created = () => {}) {
-  const credentials = { id: crypto.randomUUID(), token: token(), inviteToken: token(), color };
+async function createRoom(settings, color, created = () => {}, preset = null) {
+  const credentials = { id: preset?.id ?? crypto.randomUUID(), token: token(), inviteToken: preset?.invite ?? token(), color };
   storage.write(`sjakk-room:${credentials.id}`, credentials);
   // The invite link is known up front, so it shows while the server stores the room.
   const undo = enterRoom(credentials, color, createSession(settings, now(), true));
@@ -854,7 +905,7 @@ async function createRoom(settings, color, created = () => {}) {
     const snapshot = await request('/api/rooms', { id: credentials.id, hostToken: credentials.token, inviteToken: credentials.inviteToken, hostColor: color, settings });
     created(credentials);
     acceptSnapshot(snapshot);
-  } catch (error) { undo(); return error; }
+  } catch (error) { undo(); return Object.assign(error, { credentials }); }
   return null;
 }
 
@@ -882,23 +933,59 @@ $('#copy-invite').addEventListener('click', async () => {
   catch { $('#invite-link').select(); $('#invite-feedback').textContent = 'Marker og kopier lenken ovenfor.'; }
 });
 
-// Rematch: a new room with the colours swapped. The opponent's tab joins by itself through the old room's
-// push channel, which stays open until the new room exists; otherwise the invite link is shown as usual.
-$('#rematch').addEventListener('click', async () => {
-  if (mode !== 'online' || !room || state.status !== 'finished') return;
-  const failure = await createRoom(state.settings, other(playerColor), credentials => hint('rematch', { id: credentials.id, invite: credentials.inviteToken }));
-  if (failure) message(failure.message, 4000);
-});
+// Rematch: a new room with the colours swapped. Both seats derive the same room ID and invite from the old
+// room's push topic, which only the two players get. Whoever creates it first hosts; the other press, even a
+// simultaneous one, joins it instead, so both always end up in the same room. The creator also announces it
+// on the old room's push channel, so the opponent's tab joins by itself.
+let roomPush = null;
+let rematchOffer = null;
+let rematching = false;
+const rematchReady = () => mode === 'online' && Boolean(room) && confirmed?.status === 'finished' && state.status === 'finished' && !pending.some(entry => entry.own) && !rematching;
 
-async function acceptRematch(id, inviteToken) {
-  if (!/^[0-9a-f-]{36}$/i.test(id) || !/^[0-9a-f]{64}$/.test(inviteToken)) return;
+async function rematchRoom() {
+  if (!roomPush || !crypto.subtle) return null;
+  const digest = async label => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${label}:${roomPush}`)))].map(v => v.toString(16).padStart(2, '0')).join('');
+  const [hex, invite] = await Promise.all([digest('sjakk-rematch-room'), digest('sjakk-rematch-invite')]);
+  return { id: `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-${(8 | parseInt(hex[16], 16) & 3).toString(16)}${hex.slice(17, 20)}-${hex.slice(20, 32)}`, invite };
+}
+
+async function joinRematch(id, inviteToken) {
   const credentials = { id, token: token() };
   storage.write(`sjakk-room:${id}`, credentials);
-  try {
-    const preview = await request(`/api/rooms/${id}/preview`, { inviteToken });
-    await joinRoom(credentials, inviteToken, preview);
-  } catch (error) { message(error.message, 4000); }
+  const preview = await request(`/api/rooms/${id}/preview`, { inviteToken });
+  await joinRoom(credentials, inviteToken, preview);
 }
+
+/** Starts a rematch, or with `offer` joins the one the opponent announced. Waits while our own actions are unconfirmed. */
+async function rematch(offer) {
+  if (offer && !(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(offer.id) && /^[0-9a-f]{64}$/.test(offer.invite))) return;
+  if (!rematchReady()) { if (offer && room && offer.id !== room.id) rematchOffer = { ...offer, from: room.id }; return; }
+  rematching = true;
+  rematchOffer = null;
+  const from = room;
+  try {
+    if (offer) { await joinRematch(offer.id, offer.invite); return; }
+    const target = await rematchRoom();
+    if (room !== from) return;
+    const settings = state.settings;
+    const failure = await createRoom(settings, other(playerColor), credentials => hint('rematch', { id: credentials.id, invite: credentials.inviteToken }), target);
+    // 403 means the room exists with another host; a server error may hide a duplicate or our own room.
+    const exists = failure && (!failure.status || failure.status === 403 || failure.status === 409);
+    if (!failure || !target || room !== from || !exists) { if (failure) message(failure.message, 4000); return; }
+    try { await claimRoom(failure.credentials); return; } catch { /* Not ours. */ }
+    try { await joinRematch(target.id, target.invite); } catch (error) { if (room === from) message((failure.status ? error : failure).message, 4000); }
+  } catch (error) { if (room === from) message(error.message, 4000); }
+  finally { rematching = false; }
+}
+
+/** Takes the host seat of a room whose creation answered with an error but may still have been stored. */
+async function claimRoom(credentials) {
+  const snapshot = await request(`/api/rooms/${credentials.id}`, undefined, credentials);
+  enterRoom(credentials, snapshot.color, structuredClone(snapshot.state));
+  acceptSnapshot(snapshot);
+}
+
+$('#rematch')?.addEventListener('click', () => rematch());
 
 async function joinRoom(credentials, inviteToken, preview) {
   const provisional = createSession(preview.settings, now());
@@ -975,7 +1062,7 @@ setInterval(() => {
   renderClocks();
   if (mode !== 'online' || !room || !confirmed) return;
   // With push, polling is only a safety net. Without it, poll every second as before.
-  const pushed = live.joined && heardOpponent && state.status !== 'waiting';
+  const pushed = live.joined && heardRecently() && state.status !== 'waiting';
   if (performance.now() - lastPoll >= (pushed ? 10000 : 1000) && !sending) poll();
   // The server decides timeouts; ask as soon as a clock runs out.
   const clocks = clockValues(state, now());
@@ -986,7 +1073,8 @@ setInterval(() => {
 const warmSound = () => { if (mode === 'online') setTimeout(forbered, 0); };
 addEventListener('pointerdown', warmSound, { once: true, capture: true });
 addEventListener('keydown', warmSound, { once: true, capture: true });
-const wake = () => { live.attempt = 0; if (!live.socket) openPush(); poll(); flush(); };
+// Coming back gives push one more try after it gave up.
+const wake = () => { live.attempt = Math.min(live.attempt, pushTries - 1); openPush(); poll(); flush(); };
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { wake(); if (mode === 'local' && advanceTime(state, now())) render(); } });
 addEventListener('online', wake);
 addEventListener('offline', () => { if (mode !== 'online') return; setConnected(false); const socket = live.socket; if (socket) { live.socket = null; Object.assign(live, { joined: false, joinedTopic: null, beat: null }); socket.close(); } });
