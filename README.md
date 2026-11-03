@@ -51,6 +51,8 @@ Vercel må ha serverhemmelighetene `SJAKK_SITE_BYPASS` (eksisterende Sites-tilga
 
 `public/sjakk` i dette repoet er nå hovedkopien av klienten. Den har utviklet seg langt fra kildespillet i `Morsomme spill` / `sjakk-for-2`, som heller ikke ligger på denne PC-en. En eksport derfra (`scripts/export-thodh.mjs`) ville overskrive endringene her og skal ikke kjøres før de er overført dit. Spillserveren på Sites er fortsatt autoritativ; kjør testene og publiser begge når felles spillregler eller API-kontrakten endres. Lokalt kan serverhemmelighetene ligge i en ignorert `.env.development.local`; de skal aldri ha `NEXT_PUBLIC_`-prefiks.
 
+6/7-stegern lagrer ingenting på serveren. For hvert vurderte svar sender ruten `/spill/api/67-stegern` en HMAC-kvittering av dato, spørsmålsnummer og normalisert svar. Spørsmål 6 sjekker bare et tidligere svar som har riktig kvittering, og et riktig svar gir en billett som finalen krever. Nøkkelen kan settes med `STEGERN_HEMMELIGHET`. Ellers avledes den fra `SJAKK_GATEWAY_KEY`, som Vercel allerede har, og selve sjakknøkkelen signerer aldri noe. Uten noen av dem (lokalt) lages en nøkkel som bare gjelder til serveren starter på nytt.
+
 ## Otsjoba
 
 `features/otsjoba` inneholder komponentene som brukes av den opprinnelige Otsjoba-appen, læringsinnhold, UI-komponenter og lagring. Portrettene ligger i `public/otsjoba/tutors`. Importene og ressursbanene er tilpasset dette prosjektet. Videre endringer for thodh.com gjøres her; det er ingen automatisk synkronisering med det separate Otsjoba-repositoriet.

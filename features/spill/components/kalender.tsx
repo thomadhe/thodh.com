@@ -39,7 +39,10 @@ export function Kalender({ spillIder, href, valgt }: { spillIder: SpillId[]; hre
   const [aar, setAar] = useState(() => Number(valgt.slice(0, 4)))
   const [maaned, setMaaned] = useState(() => Number(valgt.slice(5, 7)) - 1)
 
-  const forste = START_DATO.slice(0, 7)
+  // A game that started later than the others only has days from its own start.
+  const startFor = (id: SpillId) => spill.find((s) => s.id === id)?.start ?? START_DATO
+  const start = spillIder.map(startFor).reduce((a, b) => (a < b ? a : b))
+  const forste = start.slice(0, 7)
   const sist = iDag.slice(0, 7)
   const denne = `${aar}-${String(maaned + 1).padStart(2, "0")}`
   const flytt = (steg: number) => {
@@ -52,7 +55,8 @@ export function Kalender({ spillIder, href, valgt }: { spillIder: SpillId[]; hre
   const forskyvning = (new Date(Date.UTC(aar, maaned, 1)).getUTCDay() + 6) % 7
   const celler = [...Array(forskyvning).fill(null), ...Array.from({ length: dagerIMaaned }, (_, i) => i + 1)]
 
-  const ferdigeSpill = (dato: string) => spillIder.filter((id) => {
+  const aktive = (dato: string) => spillIder.filter((id) => startFor(id) <= dato)
+  const ferdigeSpill = (dato: string) => aktive(dato).filter((id) => {
     const r = alle[id]?.[dato]
     return r && r.status !== "pagar"
   }).length
@@ -95,7 +99,7 @@ export function Kalender({ spillIder, href, valgt }: { spillIder: SpillId[]; hre
           if (dag === null) return <span key={`tom-${i}`} />
           const dato = `${denne}-${String(dag).padStart(2, "0")}`
           const resultat = enkelt ? alle[spillIder[0]]?.[dato] : undefined
-          const spillbar = dato >= START_DATO && dato <= iDag
+          const spillbar = dato >= start && dato <= iDag
           const erValgt = dato === valgt
           const ring = erValgt ? "outline-2 outline-offset-2 outline-neutral-900" : ""
           if (!spillbar) {
@@ -105,7 +109,7 @@ export function Kalender({ spillIder, href, valgt }: { spillIder: SpillId[]; hre
               </span>
             )
           }
-          const alleFerdige = !enkelt && ferdigeSpill(dato) === spillIder.length
+          const alleFerdige = !enkelt && ferdigeSpill(dato) === aktive(dato).length
           const bakgrunn = resultat
             ? stil[resultat.status]
             : alleFerdige
@@ -119,7 +123,7 @@ export function Kalender({ spillIder, href, valgt }: { spillIder: SpillId[]; hre
               aria-label={
                 enkelt
                   ? `${dag}. ${resultat?.etikett ?? "Ikke spilt"}`
-                  : `${dag}. ${ferdigeSpill(dato)} av ${spillIder.length} spill ferdig`
+                  : `${dag}. ${ferdigeSpill(dato)} av ${aktive(dato).length} spill ferdig`
               }
               aria-current={erValgt ? "date" : undefined}
               className={`relative flex aspect-square items-center justify-center rounded-xl text-xs font-medium transition ${ring} ${bakgrunn}`}
@@ -129,7 +133,7 @@ export function Kalender({ spillIder, href, valgt }: { spillIder: SpillId[]; hre
                 dato === iDag ? <span className="absolute bottom-1 h-1 w-1 rounded-full bg-current opacity-70" /> : null
               ) : (
                 <span className="absolute bottom-1.5 flex gap-0.5">
-                  {spillIder.map((id) => {
+                  {aktive(dato).map((id) => {
                     const r = alle[id]?.[dato]
                     return <span key={id} className={`h-1 w-1 rounded-full ${r ? prikk[r.status] : "bg-black/15"}`} />
                   })}

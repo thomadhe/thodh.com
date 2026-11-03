@@ -1,5 +1,5 @@
 /** Daily games: one puzzle per day, with calendar and stored results. */
-export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas" | "soket" | "emovi" | "rusle" | "tilkoblinger" | "havet" | "heksagonal-jakt"
+export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas" | "soket" | "emovi" | "rusle" | "tilkoblinger" | "havet" | "heksagonal-jakt" | "67-stegern"
 /** Free-play quizzes without a daily puzzle. */
 export type QuizId = "verdens-land" | "hovedsteder"
 
@@ -12,6 +12,8 @@ export type Spill<Id extends string = SpillId> = {
   ikon: string
   /** Tailwind classes for the game's accent tile. */
   farge: string
+  /** First day with a puzzle, for games that came after the shared START_DATO. */
+  start?: string
 }
 
 export const spill: Spill[] = [
@@ -122,6 +124,16 @@ export const spill: Spill[] = [
     regel: "Trykk på sekskanten der stedet ligger. Varmt eller kaldt forteller hvor nær du er.",
     ikon: "⬢",
     farge: "bg-orange-500 text-white",
+  },
+  {
+    id: "67-stegern",
+    navn: "6/7-stegern",
+    href: "/spill/67-stegern",
+    kort: "Sjeldne svar, lange hopp.",
+    regel: "Nevn noe som passer. Jo sjeldnere svaret er, jo lengre hopper Stegern. Husker du svaret ditt når spørsmål 6 spør, får du en finale.",
+    ikon: "67",
+    farge: "bg-lime-400 text-neutral-950",
+    start: "2026-11-02",
   },
 ]
 

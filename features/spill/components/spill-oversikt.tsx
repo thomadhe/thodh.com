@@ -110,9 +110,12 @@ export function SpillOversikt({ dato }: { dato: string }) {
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2">
-        {spill.map((s) => (
-          <Flis key={s.id} s={s} dato={dato} iDag={iDag} resultater={alle[s.id] ?? {}} />
-        ))}
+        {/* A game that started later has no puzzle on earlier days. */}
+        {spill
+          .filter((s) => !s.start || dato >= s.start)
+          .map((s) => (
+            <Flis key={s.id} s={s} dato={dato} iDag={iDag} resultater={alle[s.id] ?? {}} />
+          ))}
       </div>
     </>
   )

@@ -169,6 +169,30 @@ function HeksagonalJakt() {
   )
 }
 
+function Stegern() {
+  // Mid-jump over the track, with the arcs of the jumps before.
+  return (
+    <svg viewBox="0 0 160 80" className="h-20 w-auto" aria-hidden="true">
+      <rect x="0" y="66" width="160" height="14" rx="3" className="fill-black/40" />
+      {[14, 46, 86, 132].map((x) => (
+        <line key={x} x1={x} x2={x} y1="66" y2="72" stroke="white" strokeOpacity="0.5" strokeWidth="2" />
+      ))}
+      <path d="M8 64 Q30 34 52 64" fill="none" stroke="#38bdf8" strokeWidth="3" strokeDasharray="4 5" strokeLinecap="round" />
+      <path d="M52 64 Q84 10 116 40" fill="none" stroke="#e879f9" strokeWidth="3" strokeDasharray="4 5" strokeLinecap="round" />
+      <g transform="translate(124 46) rotate(12)">
+        <path d="M-6 6 q4 10 14 10 M6 6 q8 6 16 2" fill="none" stroke="#3f6212" strokeWidth="4" strokeLinecap="round" />
+        <rect x="-13" y="-34" width="26" height="40" rx="13" fill="#a3e635" />
+        <path d="M-13 -24 Q0 -28 13 -24 L13 -19 Q0 -23 -13 -19 Z" fill="#ef4444" />
+        <ellipse cx="-4" cy="-13" rx="4" ry="4.6" fill="white" />
+        <ellipse cx="6" cy="-13" rx="4" ry="4.6" fill="white" />
+        <circle cx="-3" cy="-12.5" r="2" fill="#18181b" />
+        <circle cx="7" cy="-12.5" r="2" fill="#18181b" />
+        <path d="M-12 -10 l-10 -12 M12 -10 l10 -12" stroke="#65a30d" strokeWidth="3.4" strokeLinecap="round" />
+      </g>
+    </svg>
+  )
+}
+
 export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   "mer-eller-mindre": MerEllerMindre,
   anelseslos: Anelseslos,
@@ -182,4 +206,5 @@ export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   tilkoblinger: Tilkoblinger,
   havet: Havet,
   "heksagonal-jakt": HeksagonalJakt,
+  "67-stegern": Stegern,
 }

@@ -34,6 +34,7 @@ export function SpillRamme({
   bred?: boolean
 }) {
   const info = finnSpill(spillId)
+  const forste = info.start ?? START_DATO
   const [panel, setPanel] = useState<Panel>(null)
   const iDag = iDagOslo()
   const lenke = (d: string) => (d === iDag ? info.href : `${info.href}?dato=${d}`)
@@ -57,7 +58,7 @@ export function SpillRamme({
           </h1>
           {dato ? (
             <nav className="flex items-center" aria-label="Bytt dag">
-              {dato > START_DATO ? (
+              {dato > forste ? (
                 <Link href={lenke(leggTilDager(dato, -1))} className={ikonKnapp} aria-label="Forrige dag">
                   <ChevronLeft className="h-4 w-4" />
                 </Link>
