@@ -172,7 +172,8 @@ function stengt(slot, valgte) {
 
 function slotDekket(slot, valgte) {
   if (stengt(slot, valgte)) return 1;
-  const her = slot.apninger.filter(apning => valgte.includes(apning));
+  // Two openings on the same branch answer the same games once.
+  const her = [...new Map(slot.apninger.filter(apning => valgte.includes(apning)).map(apning => [apning.startTrekk.join(' '), apning])).values()];
   const dekket = sum(slot.linjer.map(linje => linjeVekt(slot.farge, linje) * Math.min(1, sum(her.map(apning => andelAvLinje(apning, linje))))));
   return dekket / (sum(slot.linjer.map(linje => linjeVekt(slot.farge, linje))) || 1);
 }

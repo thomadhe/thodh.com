@@ -36,8 +36,9 @@ function visKonto(status) {
   if (status === 'ute') felt.innerHTML = 'Vil du ha repertoaret på alle enhetene dine? <a href="/logg-inn?neste=/sjakk/apninger">Logg inn</a>.';
 }
 
-// A board stays as it is: what came from another device shows on the next screen.
-const synk = lagSynk({ lager, hent: () => fremgang, status: visKonto, sett(ny) { fremgang = ny; rep.lagreFremgang(lager, fremgang); if (!brett) rute(); } });
+// Only the overview pages redraw. A board or a summary stays as it is: what came from another device shows on the next screen.
+const erOversikt = () => !brett && ['', '#', '#/', '#/repertoar'].includes(location.hash);
+const synk = lagSynk({ lager, hent: () => fremgang, status: visKonto, sett(ny) { fremgang = ny; rep.lagreFremgang(lager, fremgang); if (erOversikt()) rute(); } });
 const lagre = () => { rep.lagreFremgang(lager, fremgang); synk.endret(); };
 const tilfeldig = liste => liste[Math.floor(Math.random() * liste.length)];
 const stopp = () => { clearTimeout(timer); timer = null; };

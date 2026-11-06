@@ -33,16 +33,19 @@ export function taFlere(ui) {
 // The one button at the top of the library and the repertoire page. It always says what to do next.
 export function nesteStegHtml(ui) {
   const valgte = ui.valgte().length;
-  const steg = nesteSteg(valgte, valgte ? klareKort(ui) : null);
+  const ko = valgte ? klareKort(ui) : null;
+  const steg = nesteSteg(valgte, ko);
   const boks = ({ eyebrow, tittel, tekst, knapper }) => `<section class="ap-neste" aria-label="Neste steg"><div class="ap-neste-tekst"><p class="eyebrow">${eyebrow}</p><h2>${tittel}</h2><p>${tekst}</p></div><div class="ap-neste-knapper">${knapper}</div></section>`;
   if (steg.type === 'bygg') return boks({ eyebrow: 'KOM I GANG', tittel: 'Bygg repertoaret', tekst: 'Noen korte spørsmål, ett om gangen. Så vet jeg hva jeg skal lære deg.', knapper: '<a class="button primary" href="#/repertoar/bygg">Begynn ▶</a>' });
   if (steg.type === 'okt') return boks({ eyebrow: 'NESTE STEG', tittel: 'Dagens økt', tekst: `${esc(oktTekst(steg))}${steg.etterpa ? `, så ${steg.etterpa} til etterpå` : ''}`, knapper: '<a class="button primary" href="#/repertoar/kort">Start ▶</a>' });
   const iMorgen = forfallerIMorgen(ui.kort(), ui.fremgang());
   const senere = iMorgen ? `${flertall(iMorgen, 'kort kommer', 'kort kommer')} tilbake i morgen.` : 'Ingen kort venter nå.';
-  if (steg.type === 'flere') return boks({ eyebrow: 'NESTE STEG', tittel: 'Dagens økt er gjort', tekst: `${senere} Har du lyst på mer, står nye kort klare.`, knapper: '<a class="button primary" href="#/repertoar/kort/flere">Ta flere nye kort ▶</a><a class="button secondary" href="#/repertoar/ov">Blandet øving</a>' });
+  if (steg.type === 'flere') return boks({ eyebrow: 'NESTE STEG', tittel: 'Dagens økt er gjort', tekst: `${senere} Har du lyst på mer, står ${ko.pause ? 'flere repetisjoner' : 'nye kort'} klare.`, knapper: `<a class="button primary" href="#/repertoar/kort/flere">${flereTekst(ko)} ▶</a><a class="button secondary" href="#/repertoar/ov">Blandet øving</a>` });
   return boks({ eyebrow: 'NESTE STEG', tittel: 'Dagens økt er gjort', tekst: `${senere} Har du lyst på mer, kan du øve hele repertoaret fra første trekk.`, knapper: '<a class="button primary" href="#/repertoar/ov">Blandet øving ▶</a>' });
 }
 
+// While the reviews are behind, more means more of those and no new cards.
+const flereTekst = ko => (ko.pause ? 'Ta flere repetisjoner' : 'Ta flere nye kort');
 const rolig = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 const tilfeldig = liste => liste[Math.floor(Math.random() * liste.length)];
 const tilbake = '<nav class="ap-tilbake"><a href="#/repertoar">← Mitt repertoar</a></nav>';
@@ -96,16 +99,18 @@ function tekstSide(ui, innhold) {
 
 function intetKlart(ui, ko) {
   const iMorgen = forfallerIMorgen(ui.kort(), ui.fremgang());
-  tekstSide(ui, `<p class="eyebrow">DAGENS ØKT</p><h1>Ingen kort akkurat nå</h1><p>${iMorgen ? `Godt jobbet! ${iMorgen} kort kommer tilbake i morgen.` : 'Godt jobbet! Nå er du ajour.'}</p><div class="ap-tekst-knapper">${ko.flere ? '<button type="button" class="button primary" data-flere>Ta flere nye kort</button><a class="button secondary" href="#/repertoar/ov">Blandet øving</a>' : '<a class="button primary" href="#/repertoar/ov">Blandet øving</a><a class="button secondary" href="#/repertoar">Til repertoaret</a>'}</div>`);
+  tekstSide(ui, `<p class="eyebrow">DAGENS ØKT</p><h1>Ingen kort akkurat nå</h1><p>${iMorgen ? `Godt jobbet! ${iMorgen} kort kommer tilbake i morgen.` : 'Godt jobbet! Nå er du ajour.'}</p><div class="ap-tekst-knapper">${ko.flere ? `<button type="button" class="button primary" data-flere>${flereTekst(ko)}</button><a class="button secondary" href="#/repertoar/ov">Blandet øving</a>` : '<a class="button primary" href="#/repertoar/ov">Blandet øving</a><a class="button secondary" href="#/repertoar">Til repertoaret</a>'}</div>`);
   ui.main.querySelector('[data-flere]')?.addEventListener('click', () => taFlere(ui));
 }
 
 // Both are practice, so they can be pressed as often as the player likes.
-function repeterKnapper(ui, okt) {
+function repeterKnapper(ui, okt, valg = {}) {
   const bom = [...okt.bom.values()].map(({ kort }) => kort);
   return { html: `<div class="ap-kontroller ap-rad ap-okt-slutt ap-repeter"><button type="button" class="button secondary" data-repeter>Repeter disse kortene</button>${bom.length ? '<button type="button" class="button secondary" data-repeter-bom>Repeter de jeg bommet på</button>' : ''}</div><p class="ap-ovelse-linje">${IKKE_TIMEPLAN}</p>`, koble() {
-    ui.main.querySelector('[data-repeter]').addEventListener('click', () => visOvelse(ui, okt.kortliste, { tittel: 'Repeter kortene' }));
-    ui.main.querySelector('[data-repeter-bom]')?.addEventListener('click', () => visOvelse(ui, bom, { tittel: 'Repeter de du bommet på' }));
+    // What was left of a long practice comes after the repeat, so it is not lost.
+    const etter = { etter: valg.rest ?? [], hovedTittel: valg.hovedTittel ?? valg.tittel };
+    ui.main.querySelector('[data-repeter]').addEventListener('click', () => visOvelse(ui, okt.kortliste, { tittel: 'Repeter kortene', ...etter }));
+    ui.main.querySelector('[data-repeter-bom]')?.addEventListener('click', () => visOvelse(ui, bom, { tittel: 'Repeter de du bommet på', ...etter }));
   } };
 }
 
@@ -114,13 +119,15 @@ function oppsummering(ui, okt) {
   const iMorgen = forfallerIMorgen(ui.kort(), fremgang);
   const tunge = vanskeligst(okt);
   const igjen = klareKort(ui);
-  const dom = okt.riktige === okt.totalt ? 'Alt satt på første forsøk!' : okt.riktige * 2 >= okt.totalt ? 'Godt jobbet. Det som glapp, tar vi igjen snart.' : 'Dette var harde kort, og det er derfor vi øver. De kommer tilbake til de sitter.';
+  // A card alone in a session is only taught, so there can be nothing to judge.
+  const testet = okt.vurdert.size;
+  const dom = !testet ? 'Da er det lært. Testen kommer litt senere.' : okt.riktige === testet ? 'Alt satt på første forsøk!' : okt.riktige * 2 >= testet ? 'Godt jobbet. Det som glapp, tar vi igjen snart.' : 'Dette var harde kort, og det er derfor vi øver. De kommer tilbake til de sitter.';
   const flere = igjen.kort.length || igjen.flere;
-  const laert = okt.vist.size ? `<p>Du lærte ${flertall(okt.vist.size, 'nytt trekk', 'nye trekk')}. De kommer tilbake i morgen, så de får satt seg.</p>` : '';
+  const laert = okt.vist.size ? `<p>Du lærte ${flertall(okt.vist.size, 'nytt trekk', 'nye trekk')}. De kommer tilbake, så de får satt seg.</p>` : '';
   const repeter = repeterKnapper(ui, okt);
   tekstSide(ui, `<p class="eyebrow">DAGENS ØKT · FERDIG</p><h1>${esc(dom)}</h1>${laert}`);
   ui.main.insertAdjacentHTML('beforeend', `
-    <div class="ap-ovstatus ap-okt-tall"><span><b>${okt.riktige}</b>av ${okt.totalt} riktig</span><span><b>${okt.hint}</b>med hint</span><span><b>${iMorgen}</b>i morgen</span></div>
+    <div class="ap-ovstatus ap-okt-tall"><span><b>${okt.riktige}</b>av ${testet} riktig</span><span><b>${okt.hint}</b>med hint</span><span><b>${iMorgen}</b>i morgen</span></div>
     ${tunge.length ? `<section class="ap-gruppe ap-okt-tunge"><h2>Disse var tyngst</h2><ul class="ap-felleliste">${tunge.map(({ kort, antall }, i) => { const kilde = kort.kilder[0]; return `<li><button type="button" class="ap-felle" data-tung="${i}"><span>${esc(kilde.apning.navn)} · ${flertall(antall, 'bom', 'bom')}</span><b>${esc(kilde.linje)}</b><small>${esc(sanTekst(kilde.forTrekk))}</small></button></li>`; }).join('')}</ul></section>` : ''}
     <div class="ap-kontroller ap-rad ap-okt-slutt">${flere ? `<button type="button" class="button primary" data-flere>${igjen.kort.length ? `Fortsett: ${esc(oktTekst(oktInnhold(igjen)))}` : 'Ta flere'}</button>` : ''}<a class="button ${flere ? 'secondary' : 'primary'}" href="#/repertoar">Til repertoaret</a></div>
     ${repeter.html}`);
@@ -135,8 +142,8 @@ function oppsummering(ui, okt) {
 }
 
 function ovelseFerdig(ui, okt, valg) {
-  const { tittel, rest = [] } = valg;
-  const repeter = repeterKnapper(ui, okt);
+  const { tittel, rest = [], hovedTittel = tittel } = valg;
+  const repeter = repeterKnapper(ui, okt, valg);
   tekstSide(ui, `<p class="eyebrow">${esc(tittel.toUpperCase())} · FERDIG</p><h1>${okt.bom.size ? 'Da har du øvd. Noen glapp, og det er bare å ta dem igjen.' : 'Alt satt!'}</h1>`);
   ui.main.insertAdjacentHTML('beforeend', `
     <div class="ap-ovstatus ap-okt-tall"><span><b>${okt.riktige}</b>riktig</span><span><b>${okt.hint}</b>med hint</span><span><b>${okt.bom.size}</b>bom</span></div>
@@ -144,7 +151,7 @@ function ovelseFerdig(ui, okt, valg) {
     ${repeter.html}
     <div class="ap-kontroller ap-rad ap-okt-slutt"><a class="button ${rest.length ? 'secondary' : 'primary'}" href="#/repertoar">Til repertoaret</a></div>`);
   repeter.koble();
-  ui.main.querySelector('[data-videre]')?.addEventListener('click', () => visOvelse(ui, rest, { tittel }));
+  ui.main.querySelector('[data-videre]')?.addEventListener('click', () => visOvelse(ui, rest, { tittel: hovedTittel }));
 }
 
 // Practice: the same screen as a session, but nothing is written to the schedule.
@@ -153,7 +160,7 @@ export function visOvelse(ui, kort, valg) {
   ui.stopp();
   ui.settTast(null);
   document.title = `${valg.tittel} · Åpninger`;
-  kjorOkt(ui, lagOvelse(utvalg, ui.fremgang()), { ...valg, rest: kort.slice(OVELSE_STORRELSE) });
+  kjorOkt(ui, lagOvelse(utvalg, ui.fremgang()), { ...valg, rest: [...kort.slice(OVELSE_STORRELSE), ...(valg.etter ?? [])] });
 }
 
 // #/repertoar/trening/<opening or "alle">/<rekke or stokket>
@@ -265,7 +272,7 @@ function kjorOkt(ui, okt, ovelse = null) {
     ui.settTrekk(null);
     spillPaBrettet(trekk, kort, kilde);
     const ros = tilfeldig(['Sånn ja!', 'Akkurat sånn.', 'Fint!']);
-    ui.respons(`${ros} ${norsk(trekk.san)}`, 'bra');
+    svarRespons(`${ros} ${norsk(trekk.san)}`, 'bra');
     evalbar.hold(false);
     fremover(`<p class="eyebrow">${esc(kilde.apning.navn.toUpperCase())} · ${esc(kilde.linje)}</p><p class="ap-sier"><strong>${ros}</strong> Nå har du spilt ${esc(norsk(trekk.san))} selv.</p>${forklaringFor(kort, trekk.san, { ideErSagt: true, felleErSagt: true, innErSagt: true })}${okt.ovelse ? '' : '<p class="ap-kilde">Om litt spør jeg deg om den igjen.</p>'}`, 'bra');
   }
@@ -282,9 +289,11 @@ function kjorOkt(ui, okt, ovelse = null) {
     return treff;
   }
 
+  const svarRespons = (...respons) => { aktiv.respons = respons; ui.respons(...respons); };
+
   // The answer stays on screen until the player moves on.
   function fremover(tekst, stemning) {
-    aktiv.svart = { tekst, stemning };
+    aktiv.svart = { tekst, stemning, linje: linje.textContent };
     tegnSpor();
     const siste = okt.ko.length === 1;
     panel.innerHTML = `${trenerBoble(tekst, { stemning })}<div class="ap-kontroller ap-okt-neste"><button type="button" class="button primary" data-neste>${siste ? 'Se oppsummering ▶' : 'Neste ▶'}</button></div>`;
@@ -313,8 +322,9 @@ function kjorOkt(ui, okt, ovelse = null) {
     ui.respons();
     enter = null;
     ui.brukOppslag(kilde.apning);
-    evalbar.hold(false);
+    // The board first, so the bar never shows the number of the position we left.
     brett.sett({ fen, orientering: kort.farge, sist, laast: true, piler: visPilerFor(kort) });
+    evalbar.hold(false);
     linje.textContent = sanTekst(kilde.forTrekk);
     linje.scrollLeft = linje.scrollWidth;
     teller.textContent = `Ser på kort ${plass + 1}`;
@@ -341,8 +351,8 @@ function kjorOkt(ui, okt, ovelse = null) {
       ui.settTrekk(null);
       const etter = new Chess(fen);
       etter.move(trekk.san);
-      evalbar.hold(false);
       brett.sett({ fen: etter.fen(), orientering: kort.farge, sist: { from: trekk.from, to: trekk.to }, laast: true, gli: true });
+      evalbar.hold(false);
       ui.respons(`${tilfeldig(ROS)} ${norsk(trekk.san)}`, 'bra');
       panel.innerHTML = `${trenerBoble(`<p class="ap-sier"><strong>${tilfeldig(ROS)}</strong> ${esc(norsk(trekk.san))}.</p><p class="ap-kilde">${IKKE_TIMEPLAN}</p>`, { stemning: 'bra' })}<div class="ap-kontroller ap-rad"><button type="button" class="button secondary" data-prov>Prøv igjen</button><button type="button" class="button primary" data-her>Til kortet du er på ▶</button></div>`;
       panel.querySelector('[data-prov]').addEventListener('click', () => provIgjen(plass));
@@ -359,8 +369,11 @@ function kjorOkt(ui, okt, ovelse = null) {
     ui.brukOppslag(kilde.apning);
     settTeller();
     if (svart) {
-      evalbar.hold(false);
       brett.sett(bilde);
+      evalbar.hold(false);
+      linje.textContent = svart.linje;
+      linje.scrollLeft = linje.scrollWidth;
+      ui.respons(...aktiv.respons);
       fremover(svart.tekst, svart.stemning);
       return;
     }
@@ -428,6 +441,8 @@ function kjorOkt(ui, okt, ovelse = null) {
       return;
     }
     const kilde = hovedKilde(kort);
+    // Taught on another device since the session began: then this is its test.
+    if (!okt.ovelse && ui.fremgang().kort[kort.id]) okt.laer.delete(kort.id);
     const laer = okt.laer.has(kort.id);
     if (laer && !okt.ovelse && !introSett(ui.fremgang(), kilde.apning.id)) { visIntro(kilde.apning, () => visKort(tastatur)); return; }
     aktiv = { kort, kilde, laer, igjen: okt.vurdert.has(kort.id), fersk: okt.vist.has(kort.id), hint: false, klar: false, sist: null, svart: null, bilde: null };
@@ -457,14 +472,14 @@ function kjorOkt(ui, okt, ovelse = null) {
       const ros = hint ? 'Riktig, med litt hjelp.' : tilfeldig(ROS);
       const hva = treff.node ? ` ${esc(medNummer(treff.node))} – ${esc(treff.node.entry.hva)}` : ` ${esc(norsk(trekk.san))}.`;
       tekst = `<p class="ap-sier"><strong>${ros}</strong>${hva}</p>${forklaringFor(kort, trekk.san)}`;
-      ui.respons(`${ros} ${norsk(trekk.san)}`, 'bra');
+      svarRespons(`${ros} ${norsk(trekk.san)}`, 'bra');
     } else {
       brett.rist();
       aktiv.bilde = { fen: brett.chess.fen(), orientering: kort.farge, sist, laast: true, piler: [{ fra: trekk.from, til: trekk.to, type: 'fare' }, ...kort.kilder.map(k => ({ fra: k.fra, til: k.til, type: 'hint' }))] };
       brett.sett(aktiv.bilde);
       const vanlig = kilde.node?.entry.vanligeFeil?.[trekk.san];
       tekst = `<p class="ap-sier">${esc(feilTekst(kort, trekk.san))}</p>${forklaringFor(kort, kilde.san, { ideErSagt: !vanlig })}`;
-      ui.respons(`Her vil vi spille ${norsk(kilde.san)}.`, 'feil');
+      svarRespons(`Her vil vi spille ${norsk(kilde.san)}.`, 'feil');
     }
     evalbar.hold(false);
     const hvaNa = !riktig ? 'Den kommer tilbake om litt.' : post ? (hint ? `Den blir stående der den var. ${nesteGang(post)}` : nesteGang(post)) : 'Nå satt den.';

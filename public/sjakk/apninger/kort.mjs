@@ -181,8 +181,16 @@ function fordelOkt(repetisjoner, nye) {
   const ut = [];
   const rest = [...repetisjoner];
   const blokker = Array.from({ length: Math.ceil(nye.length / BLOKK) }, (_, i) => nye.slice(i * BLOKK, (i + 1) * BLOKK));
+  // One card left over joins the block before: alone it would be tested the moment it was taught.
+  if (blokker.length > 1 && blokker.at(-1).length === 1) blokker.at(-2).push(...blokker.pop());
   const hver = Math.ceil(rest.length / (2 * blokker.length + 1));
-  for (const blokk of blokker) ut.push(...rest.splice(0, hver), ...blokk, ...rest.splice(0, hver), ...blokk);
+  for (const blokk of blokker) {
+    ut.push(...rest.splice(0, hver), ...blokk);
+    const mellom = rest.splice(0, hver);
+    ut.push(...mellom);
+    // A card alone with nothing between waits for its test until the next session.
+    if (blokk.length > 1 || mellom.length) ut.push(...blokk);
+  }
   return [...ut, ...rest];
 }
 
@@ -215,14 +223,15 @@ export function vistKort(okt, kort, fremgang, naa = Date.now()) {
   okt.laer.delete(kort.id);
   okt.vist.add(kort.id);
   if (!okt.resultat.has(kort.id)) okt.resultat.set(kort.id, 'vist');
-  if (!okt.ovelse) fremgang.kort[kort.id] = { boks: 0, forfall: dagStart(naa), sist: naa, forst: naa, riktige: 0, feil: 0, vist: naa };
+  // Another device can have got further in the meantime.
+  if (!okt.ovelse && !fremgang.kort[kort.id]) fremgang.kort[kort.id] = { boks: 0, forfall: dagStart(naa), sist: naa, forst: naa, riktige: 0, feil: 0, vist: naa };
 }
 
 export const introSett = (fremgang, apningId) => Boolean(fremgang.introer[apningId]);
 export function merkIntro(fremgang, apningId, naa = Date.now()) { fremgang.introer[apningId] = { sist: naa }; }
 
 // How far the player has come with a set of cards: a card counts once its test is passed.
-export const laerteKort = (kort, fremgang) => kort.filter(k => fremgang.kort[k.id]?.boks >= 1).length;
+export const laerteKort = (kort, fremgang) => kort.filter(k => fremgang.kort[k.id]?.boks >= 1 && fremgang.kort[k.id].riktige >= 1).length;
 
 // Only the first answer counts as a review. A wrong answer brings the card back a few cards later, whatever it was the first time.
 export function svarKort(okt, kort, utfall, fremgang, naa = Date.now()) {

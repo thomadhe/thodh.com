@@ -4,12 +4,14 @@ import { esc } from './trener.mjs';
 
 const STATUS = { ny: 'ikke tatt ennå', vist: 'vist', riktig: 'riktig', hint: 'riktig med hint', feil: 'bom' };
 
-// A card can be opened once it has been shown. The ones still to come stay shut.
+// A card can be opened once it has been shown. The ones still to come stay shut, and so does one waiting
+// for its test or a new try: a peek at the answer would make the test worth nothing.
 export function sporSegmenter(okt, aktivId = null) {
+  const venter = new Set(okt.ko.slice(1).map(kort => kort.id));
   return okt.kortliste.map(kort => {
     const status = okt.resultat.get(kort.id) ?? 'ny';
     const aktiv = kort.id === aktivId;
-    return { kort, status, aktiv, apen: aktiv || status !== 'ny' };
+    return { kort, status, aktiv, apen: aktiv || (status !== 'ny' && !venter.has(kort.id)) };
   });
 }
 

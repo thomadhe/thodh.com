@@ -1133,3 +1133,40 @@ test('repetering: de samme kortene som øving, og bare bommene når det er det s
   for (const k of alle3.ko.slice()) svarKort(alle3, k, 'riktig', fremgang, NAA + 9);
   assert.equal(JSON.stringify(fremgang), for_);
 });
+
+test('kort: et nytt kort testes aldri rett etter at det ble vist', () => {
+  for (const antall of [2, 4, 7, 10, 13, 15]) {
+    const { ko } = lagOkt([], () => 0, falskeKort(antall));
+    for (const kort of new Set(ko)) {
+      const plasser = ko.flatMap((k, i) => (k === kort ? [i] : []));
+      assert.equal(plasser.length, 2, `${antall} nye: vises og testes`);
+      assert.ok(plasser[1] - plasser[0] > 1, `${antall} nye: noe imellom`);
+    }
+  }
+  const alene = falskeKort(1);
+  assert.deepEqual(lagOkt([], () => 0, alene).ko, alene, 'et kort helt alene venter med testen');
+  assert.equal(lagOkt(falskeKort(3).slice(1), () => 0, alene).ko.filter(k => k === alene[0]).length, 2, 'med repetisjoner imellom testes det i samme økt');
+});
+
+test('kort: å vise et kort overskriver ikke fremgang som kom fra en annen enhet', () => {
+  const fremgang = tomFremgang();
+  const [kort] = falskeKort(1);
+  const okt = lagOkt([], () => 0, [kort]);
+  fremgang.kort[kort.id] = { boks: 3, forfall: NAA, sist: NAA, forst: NAA, riktige: 3, feil: 0 };
+  vistKort(okt, kort, fremgang, NAA + 1000);
+  assert.equal(fremgang.kort[kort.id].boks, 3);
+});
+
+test('kort: en strøket test teller ikke som lært, og et kort som venter på testen er stengt i sporet', () => {
+  const fremgang = tomFremgang();
+  const kort = falskeKort(3);
+  const okt = lagOkt([], () => 0, kort);
+  vistKort(okt, kort[0], fremgang, NAA);
+  okt.ko.shift();
+  assert.equal(sporSegmenter(okt, okt.ko[0].id)[0].apen, false, 'svaret skal ikke kunne ses rett før testen');
+  vurderKort(fremgang, kort[0].id, 'feil', NAA);
+  assert.equal(fremgang.kort[kort[0].id].boks, 1);
+  assert.equal(laerteKort(kort, fremgang), 0);
+  vurderKort(fremgang, kort[0].id, 'riktig', NAA);
+  assert.equal(laerteKort(kort, fremgang), 1);
+});
