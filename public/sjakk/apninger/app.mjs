@@ -5,6 +5,7 @@ import { lagEvalbar, lagretOppslag, KREDITT } from './evalbar.mjs';
 import { TRENER, norsk, medNummer, forklaring, feilKommentar, ROS, esc, hilsen } from './trener.mjs';
 import { FARGE, NIVA, flertall, skarphet, startNotasjon, stiTekst, trenerBoble } from './ui.mjs';
 import * as rep from './repetisjon.mjs';
+import { lagSynk } from './synk.mjs';
 import { valgteApninger, velgBlandetLinje } from './repertoar.mjs';
 import { lagKort } from './kort.mjs';
 import { visRepertoar } from './repertoar-side.mjs';
@@ -26,7 +27,16 @@ let ventende = null;
 let oppslag = () => null;
 let kortMinne = { nokkel: null, kort: [] };
 
-const lagre = () => rep.lagreFremgang(lager, fremgang);
+function visKonto(status) {
+  const felt = document.querySelector('#ap-konto');
+  felt.hidden = !status;
+  if (status === 'inne') felt.innerHTML = 'Lagret på <a href="/konto">kontoen din</a>.';
+  if (status === 'ute') felt.innerHTML = 'Vil du ha repertoaret på alle enhetene dine? <a href="/logg-inn?neste=/sjakk/apninger">Logg inn</a>.';
+}
+
+// A board stays as it is: what came from another device shows on the next screen.
+const synk = lagSynk({ lager, hent: () => fremgang, status: visKonto, sett(ny) { fremgang = ny; rep.lagreFremgang(lager, fremgang); if (!brett) rute(); } });
+const lagre = () => { rep.lagreFremgang(lager, fremgang); synk.endret(); };
 const tilfeldig = liste => liste[Math.floor(Math.random() * liste.length)];
 const stopp = () => { clearTimeout(timer); timer = null; };
 const fjernEvalbar = () => { evalbar?.avslutt(); evalbar = null; };
@@ -474,10 +484,12 @@ function rute() {
 document.addEventListener('keydown', event => tastLytter?.(event));
 window.addEventListener('hashchange', () => { rute(); main.focus({ preventScroll: true }); window.scrollTo({ top: 0 }); });
 window.addEventListener('storage', event => { if (event.key === rep.NOKKEL) fremgang = rep.lesFremgang(lager); });
+document.addEventListener('visibilitychange', () => synk.synlig(document.visibilityState === 'visible'));
 
 try {
   await last();
   rute();
+  synk.start();
 } catch (error) {
   console.error(error);
   main.innerHTML = '<p class="form-error" role="alert">Klarte ikke å hente åpningene. Prøv å laste siden på nytt.</p>';

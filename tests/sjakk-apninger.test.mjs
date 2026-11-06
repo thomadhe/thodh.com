@@ -11,6 +11,8 @@ import { hvitAndel, vurderingTekst, vurderingBeskrivelse, spillSlutt, lagretOpps
 import { fordel, krysser, kryssI, velgApning, settValgt, erValgt, valgteApninger, startNoder, velgBlandetLinje, STARTFORSLAG } from '../public/sjakk/apninger/repertoar.mjs';
 import { lagKort, kortId, vurderKort, kortKo, nesteEkstra, lagOkt, svarKort, vanskeligst, forfallerIMorgen, dagStart, NYE_PER_DAG, MAKS_FORFALT, OKT_STORRELSE } from '../public/sjakk/apninger/kort.mjs';
 
+import { lagSynk, slaSammen, lik, KONTO } from '../public/sjakk/apninger/synk.mjs';
+
 const DATA = new URL('../public/sjakk/apninger/data/', import.meta.url);
 const manifest = JSON.parse(readFileSync(new URL('manifest.json', DATA), 'utf8'));
 const filer = manifest.apninger.map(id => ({ id, tekst: readFileSync(new URL(`${id}.json`, DATA), 'utf8') }));
@@ -618,4 +620,81 @@ test('blandet øving: starttrekkene røper ikke åpningen før motstanderen har 
   const dypt = startNoder(finn('marshall')).filter(n => !n.rep).map(n => n.entry.hva.includes('Marshall'));
   assert.deepEqual(dypt.slice(0, -1).filter(Boolean), [], 'bare det siste svaret før treet navngir åpningen');
   assert.equal(dypt.at(-1), true);
+});
+
+test('synk: to enheter flettes post for post, og det nyeste vinner', () => {
+  const a = { ...tomFremgang(), kort: { x: { boks: 3, sist: 200 }, y: { boks: 1, sist: 100 } }, repertoar: { evans: { valgt: false, sist: 300 } }, feil: { evans: { s: { antall: 2 } } }, feller: { f: { lost: 5 } } };
+  const b = { ...tomFremgang(), kort: { x: { boks: 1, sist: 100 }, z: { boks: 2, sist: 150 } }, repertoar: { evans: { valgt: true, sist: 100 } }, feil: { evans: { s: { antall: 5 }, t: { antall: 1 } } }, feller: { f: { lost: 9 } } };
+  const ut = slaSammen(a, b);
+  assert.equal(ut.kort.x.boks, 3);
+  assert.deepEqual(Object.keys(ut.kort).sort(), ['x', 'y', 'z']);
+  assert.equal(ut.repertoar.evans.valgt, false, 'et bortvalg som er nyere, står');
+  assert.equal(ut.feil.evans.s.antall, 5);
+  assert.equal(ut.feil.evans.t.antall, 1);
+  assert.equal(ut.feller.f.lost, 9);
+  assert.ok(lik(slaSammen(a, b), slaSammen(b, a)), 'rekkefølgen spiller ingen rolle');
+  assert.ok(lik(slaSammen(ut, ut), ut));
+});
+
+function falskSynk({ svar, lokal = tomFremgang(), eier = null }) {
+  const lagret = new Map(eier ? [[KONTO, eier]] : []);
+  const logg = { kall: [], status: [], fremgang: lokal };
+  const synk = lagSynk({
+    lager: { getItem: k => lagret.get(k) ?? null, setItem: (k, v) => lagret.set(k, v) },
+    hent: () => logg.fremgang,
+    sett: ny => { logg.fremgang = ny; },
+    status: s => logg.status.push(s),
+    vent: 0,
+    nettet: async (_, valg = {}) => { const metode = valg.method ?? 'GET'; logg.kall.push({ metode, kropp: valg.body && JSON.parse(valg.body) }); const [status, data] = svar(metode, logg.kall.length); return { status, ok: status < 300, json: async () => data }; },
+  });
+  return { synk, logg };
+}
+
+test('synk: utlogget spiller sender ingenting og beholder fremgangen', async () => {
+  const lokal = { ...tomFremgang(), kort: { x: { sist: 1 } } };
+  const { synk, logg } = falskSynk({ svar: () => [401, {}], lokal });
+  await synk.start();
+  synk.endret();
+  await synk.send();
+  assert.deepEqual(logg.status, ['ute']);
+  assert.deepEqual(logg.kall.map(k => k.metode), ['GET']);
+  assert.equal(logg.fremgang, lokal);
+});
+
+test('synk: første innlogging flettes og lastes opp, og serverfeil lar fremgangen stå', async () => {
+  const lokal = { ...tomFremgang(), kort: { x: { boks: 1, sist: 1 } } };
+  const fjern = { ...tomFremgang(), kort: { y: { boks: 2, sist: 2 } } };
+  const { synk, logg } = falskSynk({ lokal, svar: metode => (metode === 'GET' ? [200, { userId: 'u', revision: 4, state: fjern }] : [200, { revision: 5 }]) });
+  await synk.start();
+  assert.deepEqual(Object.keys(logg.fremgang.kort).sort(), ['x', 'y']);
+  const put = logg.kall.find(k => k.metode === 'PUT');
+  assert.equal(put.kropp.revision, 4);
+  assert.deepEqual(Object.keys(put.kropp.state.kort).sort(), ['x', 'y']);
+  const nede = falskSynk({ lokal, svar: () => [503, {}] });
+  await nede.synk.start();
+  assert.deepEqual(nede.logg.status, [null]);
+  assert.equal(nede.logg.fremgang, lokal);
+});
+
+test('synk: ingenting nytt gir ingen opplasting, selv om databasen har stokket nøklene', async () => {
+  const lokal = { ...tomFremgang(), kort: { a: { boks: 1, sist: 1 } } };
+  const fjern = { kort: { a: { sist: 1, boks: 1 } }, feil: {}, linjer: {}, feller: {}, versjon: 1, repertoar: {} };
+  const { synk, logg } = falskSynk({ lokal, svar: () => [200, { userId: 'u', revision: 2, state: fjern }] });
+  await synk.start();
+  assert.deepEqual(logg.kall.map(k => k.metode), ['GET']);
+  assert.equal(logg.fremgang, lokal);
+});
+
+test('synk: en konflikt henter og flettes på nytt, og en annen konto arver ikke fremgangen', async () => {
+  const lokal = { ...tomFremgang(), kort: { x: { sist: 1 } } };
+  const annen = { ...tomFremgang(), kort: { y: { sist: 2 } } };
+  const { synk, logg } = falskSynk({ lokal, svar: (metode, n) => (metode === 'GET' ? [200, { userId: 'u', revision: n, state: n === 1 ? null : annen }] : n === 2 ? [409, { code: 'conflict' }] : [200, { revision: 9 }]) });
+  await synk.start();
+  assert.deepEqual(logg.kall.map(k => k.metode), ['GET', 'PUT', 'GET', 'PUT']);
+  assert.deepEqual(Object.keys(logg.kall[3].kropp.state.kort).sort(), ['x', 'y']);
+  assert.equal(logg.kall[3].kropp.revision, 3);
+  const bytte = falskSynk({ lokal, eier: 'a', svar: () => [200, { userId: 'b', revision: 1, state: annen }] });
+  await bytte.synk.start();
+  assert.deepEqual(Object.keys(bytte.logg.fremgang.kort), ['y']);
+  assert.ok(!bytte.logg.kall.some(k => k.metode === 'PUT'));
 });

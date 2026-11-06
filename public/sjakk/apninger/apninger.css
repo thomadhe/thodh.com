@@ -61,6 +61,7 @@ a { color: var(--pink); }
 .ap-spor { height: 4px; border-radius: 2px; background: #503446; overflow: hidden; }
 .ap-spor > span { display: block; height: 100%; background: var(--pink); }
 .ap-fotnote { color: var(--muted); font-size: .8rem; margin-top: 34px; max-width: 760px; }
+.ap-konto a { color: inherit; }
 
 /* Opening view */
 .ap-tilbake a { color: var(--muted); font-size: .875rem; text-decoration: none; }

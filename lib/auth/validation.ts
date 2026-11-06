@@ -8,7 +8,7 @@ export const authInput = z.object({
 }).strict();
 
 export function safeNext(value: unknown): string {
-  return value === "/konto" ? "/konto" : "/otsjoba";
+  return value === "/konto" || value === "/sjakk/apninger" ? value : "/otsjoba";
 }
 
 export function sameOrigin(request: Request): boolean {
