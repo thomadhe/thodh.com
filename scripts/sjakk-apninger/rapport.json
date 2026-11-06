@@ -1,5 +1,5 @@
 {
-  "dato": "2026-11-03",
+  "dato": "2026-11-06",
   "motor": "Stockfish 19 WASM Multithreaded",
   "dybde": 16,
   "grenseCp": 100,
@@ -15,9 +15,9 @@
   "apninger": [
     {
       "id": "kongegambitt",
-      "linjer": 16,
-      "stillinger": 89,
-      "repertoartrekk": 45,
+      "linjer": 124,
+      "stillinger": 444,
+      "repertoartrekk": 224,
       "flagget": [],
       "felleSjekk": []
     },
@@ -88,9 +88,9 @@
     },
     {
       "id": "smith-morra",
-      "linjer": 9,
-      "stillinger": 44,
-      "repertoartrekk": 22,
+      "linjer": 156,
+      "stillinger": 465,
+      "repertoartrekk": 235,
       "flagget": [],
       "felleSjekk": []
     },
@@ -103,10 +103,34 @@
       "felleSjekk": []
     },
     {
+      "id": "fransk-alapin",
+      "linjer": 25,
+      "stillinger": 86,
+      "repertoartrekk": 43,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "fransk-avbytte",
+      "linjer": 21,
+      "stillinger": 68,
+      "repertoartrekk": 34,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
       "id": "caro-kann-fremstot",
-      "linjer": 3,
-      "stillinger": 14,
-      "repertoartrekk": 7,
+      "linjer": 29,
+      "stillinger": 88,
+      "repertoartrekk": 44,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "caro-kann-fantasi",
+      "linjer": 30,
+      "stillinger": 94,
+      "repertoartrekk": 48,
       "flagget": [],
       "felleSjekk": []
     },
@@ -128,9 +152,9 @@
     },
     {
       "id": "pirc-modern",
-      "linjer": 5,
-      "stillinger": 23,
-      "repertoartrekk": 12,
+      "linjer": 38,
+      "stillinger": 100,
+      "repertoartrekk": 52,
       "flagget": [],
       "felleSjekk": []
     },
@@ -191,10 +215,34 @@
         }
       ],
       "felleSjekk": []
+    },
+    {
+      "id": "budapest-gambitt",
+      "linjer": 42,
+      "stillinger": 164,
+      "repertoartrekk": 82,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "albin-motgambitt",
+      "linjer": 69,
+      "stillinger": 264,
+      "repertoartrekk": 134,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "islandsk-gambitt",
+      "linjer": 93,
+      "stillinger": 333,
+      "repertoartrekk": 169,
+      "flagget": [],
+      "felleSjekk": []
     }
   ],
   "totalt": {
-    "repertoartrekk": 430,
+    "repertoartrekk": 1409,
     "flagget": 3
   }
 }
