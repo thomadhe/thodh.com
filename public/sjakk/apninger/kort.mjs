@@ -121,20 +121,24 @@ export function nyeIRekkefolge(ukjente) {
   return ut;
 }
 
+export const medFarge = (kort, farge) => (farge ? kort.filter(k => k.farge === farge) : kort);
+
 // What is ready now. After a long absence the most overdue cards come first and only the cap shows;
 // new cards wait until the queue is below the cap. ekstra is how many times the player asked for more.
-export function kortKo(kort, fremgang, naa = Date.now(), ekstra = 0) {
+// farge only narrows what is shown: the day's limits and the pause belong to the player, so kort is always all of them.
+export function kortKo(kort, fremgang, naa = Date.now(), ekstra = 0, farge = null) {
   const idag = dagStart(naa);
   let gjortIDag = 0, nyeIDag = 0;
   for (const post of Object.values(fremgang.kort)) {
     if (post.forst >= idag) nyeIDag += 1;
     else if (post.sist >= idag) gjortIDag += 1;
   }
-  const forfalte = kort.filter(k => fremgang.kort[k.id]?.forfall <= naa).sort((a, b) => forsinkelse(fremgang.kort[b.id], naa) - forsinkelse(fremgang.kort[a.id], naa) || fremgang.kort[a.id].boks - fremgang.kort[b.id].boks);
-  const ukjente = kort.filter(k => !fremgang.kort[k.id]);
+  const alleForfalte = kort.filter(k => fremgang.kort[k.id]?.forfall <= naa);
+  const forfalte = medFarge(alleForfalte, farge).sort((a, b) => forsinkelse(fremgang.kort[b.id], naa) - forsinkelse(fremgang.kort[a.id], naa) || fremgang.kort[a.id].boks - fremgang.kort[b.id].boks);
+  const ukjente = medFarge(kort, farge).filter(k => !fremgang.kort[k.id]);
   const perDag = nyePerDag(fremgang);
   const rolig = perDag <= ROLIG_TEMPO;
-  const pause = rolig && forfalte.length >= MAKS_FORFALT;
+  const pause = rolig && alleForfalte.length >= MAKS_FORFALT;
   const rom = rolig ? Math.max(0, MAKS_FORFALT * (1 + ekstra) - gjortIDag) : Infinity;
   const nyeRom = pause ? 0 : Math.max(0, perDag * (1 + ekstra) - nyeIDag);
   const klare = forfalte.slice(0, rom);
@@ -143,10 +147,10 @@ export function kortKo(kort, fremgang, naa = Date.now(), ekstra = 0) {
 }
 
 // The smallest "Ta flere" count that really gives cards: what was done earlier today can use up the next steps.
-export function nesteEkstra(kort, fremgang, naa = Date.now(), ekstra = 0) {
+export function nesteEkstra(kort, fremgang, naa = Date.now(), ekstra = 0, farge = null) {
   const grense = ekstra + Object.keys(fremgang.kort).length + 1;
   let neste = ekstra + 1;
-  while (neste < grense && !kortKo(kort, fremgang, naa, neste).kort.length) neste += 1;
+  while (neste < grense && !kortKo(kort, fremgang, naa, neste, farge).kort.length) neste += 1;
   return neste;
 }
 
@@ -166,6 +170,15 @@ export function oktTekst({ repetisjoner, nye }) {
   const gamle = repetisjoner ? flertall(repetisjoner, 'repetisjon', 'repetisjoner') : '';
   const ferske = nye ? (repetisjoner ? flertall(nye, 'ny', 'nye') : flertall(nye, 'nytt kort', 'nye kort')) : '';
   return [gamle, ferske].filter(Boolean).join(' og ');
+}
+
+// What the library's button says. The colours share the day's new cards, so the two numbers can add up to more than both together.
+export const klarTekst = (hvit, svart) => `Hvit: ${hvit ? flertall(hvit, 'kort', 'kort') : 'ingen kort'} · Svart: ${svart ? flertall(svart, 'kort', 'kort') : 'ingen kort'}`;
+export const delerNye = (hvit, svart, begge) => hvit.nye + svart.nye > begge.nye;
+
+// A colour's numbers for its tab. klare is what a session holds right now, the same number as on the button.
+export function kortStatus(kort, fremgang, ko) {
+  return { totalt: kort.length, klare: ko.kort.length, nye: kort.filter(k => !fremgang.kort[k.id]).length, laert: laerteKort(kort, fremgang) };
 }
 
 // The one thing to do next, whatever state the player is in.

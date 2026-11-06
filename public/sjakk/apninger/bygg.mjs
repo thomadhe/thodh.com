@@ -3,7 +3,7 @@
 import { Chess } from '../vendor/chess.mjs';
 import { TRENER, esc } from './trener.mjs';
 import { flertall, forsteSetning, helTrekk, miniBrett, sanTekst, skarphet, trenerBoble } from './ui.mjs';
-import { STARTFORSLAG, alternativer, byggSteg, dekningTekst, erValgt, fordel, forsteSteg, hullTekst, nabostSteg, omtrentProsent, settValgt, svarAndel, svarDekning, veiInnTrekk, velgApning } from './repertoar.mjs';
+import { STARTFORSLAG, alternativer, byggAdresse, byggSteg, dekningTekst, erValgt, fordel, forsteSteg, hullTekst, nabostSteg, oktAdresse, omtrentProsent, repertoarAdresse, settValgt, svarAndel, svarDekning, veiInnTrekk, velgApning } from './repertoar.mjs';
 import { lagKort, nyePerDag } from './kort.mjs';
 
 const VISTE = 3;
@@ -12,6 +12,8 @@ const adresse = (slot, bareHull) => `#/repertoar/bygg/${slot.id}${bareHull ? '/h
 
 let helListe = null;
 let kvittering = '';
+// Black straight from its tab stands on its own; Black after White is the second half of one walk.
+let etterHvit = false;
 
 const kortMinne = new WeakMap();
 export function kortFor(apning) {
@@ -66,14 +68,14 @@ function visSporsmal(ui, slots, slot, bareHull) {
   const harValg = slot.apninger.some(apning => erValgt(fremgang, apning.id));
   const andel = svarAndel(slot);
   const sporsmal = slot.sporsmal ?? (slot.linjer.length ? `Hva vil du spille når motstanderen svarer ${slot.mot}?` : 'Vil du ha med noe mer?');
-  const foran = slot.farge === 'w' && nummer === 1 ? '<p>Som hvit åpner du med 1.e4. Nå velger vi hva du spiller mot hvert svar, det vanligste først.</p>' : '';
+  const foran = nummer > 1 ? '' : slot.farge === 'w' ? '<p>Som hvit åpner du med 1.e4. Nå velger vi hva du spiller mot hvert svar, det vanligste først.</p>' : '<p>Som svart velger vi svaret ditt på det hvit åpner med, det vanligste først.</p>';
   const hvorOfte = andel ? `<p>Det møter du i ${esc(omtrentProsent(andel))} av partiene ${slot.farge === 'w' ? 'mot 1.e4' : 'som svart'}. Tallet er et grovt anslag.</p>` : '';
   const merkelapp = liste.length === 1 ? `<p>Her har jeg ett forslag. Ta det, eller hopp over.</p>` : '';
   const forrige = nabostSteg(slots, fremgang, slot.id, -1, { bareHull });
-  const tilbake = forrige ? adresse(forrige, bareHull) : slot.farge === 'b' && !bareHull ? '#/repertoar/bygg/hvit-klar' : '#/repertoar';
+  const tilbake = forrige ? adresse(forrige, bareHull) : slot.farge === 'b' && etterHvit ? '#/repertoar/bygg/hvit-klar' : repertoarAdresse(slot.farge);
   const videre = () => { const neste = nabostSteg(slots, ui.fremgang(), slot.id, 1, { bareHull }); return neste ? adresse(neste, bareHull) : etterSiste(slot.farge); };
   ui.main.innerHTML = `
-    <header class="ap-okt-topp ap-bygg-topp"><a href="#/repertoar">← Ferdig for nå</a><span class="ap-okt-teller">${slot.farge === 'w' ? 'Hvit' : 'Svart'} · ${nummer} av ${steg.length}</span><span class="ap-spor"><span style="width:${Math.round(nummer / steg.length * 100)}%"></span></span></header>
+    <header class="ap-okt-topp ap-bygg-topp"><a href="${repertoarAdresse(slot.farge)}">← Ferdig for nå</a><span class="ap-okt-teller">${slot.farge === 'w' ? 'Hvit' : 'Svart'} · ${nummer} av ${steg.length}</span><span class="ap-spor"><span style="width:${Math.round(nummer / steg.length * 100)}%"></span></span></header>
     ${kvittering ? `<p class="ap-bygg-kvittering" role="status">${esc(kvittering)}</p>` : ''}
     <section class="ap-hero ap-bygg-hero">${trenerBoble(`<p class="eyebrow">BYGG REPERTOARET · ${FARGE_NAVN[slot.farge]}</p><h1>${helTrekk(esc(sporsmal))}</h1>${foran}${hvorOfte}${merkelapp}`, { live: false })}</section>
     <ul class="ap-alternativer">${vis.map(apning => valgKort(apning, fremgang)).join('')}</ul>
@@ -124,7 +126,18 @@ function visHvitKlar(ui, slots) {
   ui.main.innerHTML = `
     <section class="ap-hero ap-bygg-hero ap-rep-hero">${trenerBoble(`<p class="eyebrow">BYGG REPERTOARET · SOM HVIT</p><h1>${tittel}</h1>${dekning.valgte ? `<p>${esc(dekningTekst(dekning, 'w'))}</p>${hullLinje(slots, fremgang, 'w')}` : '<p>Det er helt greit. Du kan ta svart nå, eller gå tilbake og velge.</p>'}`, { live: false })}</section>
     ${valgListe(slots, fremgang, 'w')}
-    <div class="ap-bygg-knapper ap-bygg-slutt">${svart ? '<a class="button primary" href="#/repertoar/bygg/svart">Fortsett med svart ▶</a>' : ''}${dekning.valgte ? `<a class="button ${svart ? 'secondary' : 'primary'}" href="#/repertoar/kort">Stopp her og start dagens økt</a>` : '<a class="button secondary" href="#/repertoar">Til repertoaret</a>'}</div>`;
+    <div class="ap-bygg-knapper ap-bygg-slutt">${svart ? '<a class="button primary" href="#/repertoar/bygg/svart/videre">Fortsett med svart ▶</a>' : ''}${dekning.valgte ? `<a class="button ${svart ? 'secondary' : 'primary'}" href="${oktAdresse('w')}">Stopp her og start dagens økt</a>` : `<a class="button secondary" href="${repertoarAdresse('w')}">Til repertoaret</a>`}</div>`;
+}
+
+// The end of Black on its own: only Black's answers, and White stays an offer.
+function visSvartKlar(ui, slots) {
+  const fremgang = ui.fremgang();
+  const dekning = svarDekning(slots, fremgang, 'b');
+  const hvitTom = !svarDekning(slots, fremgang, 'w').valgte;
+  ui.main.innerHTML = `
+    <section class="ap-hero ap-bygg-hero ap-rep-hero">${trenerBoble(`<p class="eyebrow">BYGG REPERTOARET · SOM SVART</p><h1>${dekning.valgte ? 'Da er svart på plass' : 'Ingenting er valgt ennå'}</h1>${dekning.valgte ? `<p>${esc(dekningTekst(dekning, 'b'))}</p>${hullLinje(slots, fremgang, 'b')}<p>Nå lærer jeg deg trekkene, litt hver dag. Du kan bytte når du vil.</p>` : '<p>Det går fint. Start på nytt når du er klar, eller se gjennom alt selv.</p>'}`, { live: false })}</section>
+    ${valgListe(slots, fremgang, 'b')}
+    <div class="ap-bygg-knapper ap-bygg-slutt">${dekning.valgte ? `<a class="button primary" href="${oktAdresse('b')}">Start dagens økt ▶</a>` : `<a class="button primary" href="${byggAdresse('b')}">Start på nytt</a>`}<a class="button secondary" href="${repertoarAdresse('b')}">Til repertoaret</a>${hvitTom ? `<a class="button secondary" href="${byggAdresse('w')}">Sett opp hvit også</a>` : ''}</div>`;
 }
 
 function visFerdig(ui, slots) {
@@ -145,9 +158,10 @@ export function visBygg(ui, hvor, modus) {
   document.title = 'Bygg repertoaret · Åpninger';
   const slots = fordel(ui.alle());
   const fremgang = ui.fremgang();
+  if (hvor === 'svart' || modus === 'hull') etterHvit = modus === 'videre';
   if (hvor === 'hvit-klar') { visHvitKlar(ui, slots); return; }
-  if (hvor === 'ferdig') { visFerdig(ui, slots); return; }
+  if (hvor === 'ferdig') { if (etterHvit) visFerdig(ui, slots); else visSvartKlar(ui, slots); return; }
   const slot = hvor === 'svart' || !hvor ? forsteSteg(slots, fremgang, hvor === 'svart' ? 'b' : 'w') : slots.find(s => s.id === hvor && s.apninger.length);
-  if (!slot) { location.hash = hvor === 'svart' ? '#/repertoar/bygg/ferdig' : '#/repertoar'; return; }
+  if (!slot) { location.hash = hvor === 'svart' ? '#/repertoar/bygg/ferdig' : repertoarAdresse(null); return; }
   visSporsmal(ui, slots, slot, modus === 'hull');
 }

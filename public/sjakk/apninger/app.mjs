@@ -6,13 +6,15 @@ import { TRENER, norsk, medNummer, forklaring, feilKommentar, ROS, esc, hilsen }
 import { FARGE, NIVA, flertall, skarphet, startNotasjon, stiTekst, trenerBoble } from './ui.mjs';
 import * as rep from './repetisjon.mjs';
 import { lagSynk } from './synk.mjs';
-import { valgteApninger, velgBlandetLinje } from './repertoar.mjs';
+import { fargeFra, oktAdresse, repertoarAdresse, valgteApninger, velgBlandetLinje } from './repertoar.mjs';
 import { lagKort } from './kort.mjs';
 import { visRepertoar } from './repertoar-side.mjs';
 import { nesteStegHtml, taFlere, visKortokt, visTrening } from './kort-okt.mjs';
 import { visBygg } from './bygg.mjs';
 
 const DATA = '/sjakk/apninger/data/';
+// The open tab belongs to the device, so it stays out of the progress and out of the sync.
+const FANE = 'sjakk-apninger-fane';
 const main = document.querySelector('#innhold');
 const lager = (() => { try { return window.localStorage; } catch { return { getItem: () => null, setItem() {} }; } })();
 let manifest = null;
@@ -36,8 +38,9 @@ function visKonto(status) {
   if (status === 'ute') felt.innerHTML = 'Vil du ha repertoaret på alle enhetene dine? <a href="/logg-inn?neste=/sjakk/apninger">Logg inn</a>.';
 }
 
+const erRepertoarside = hash => /^#\/repertoar(\/(hvit|svart))?$/.test(hash);
 // Only the overview pages redraw. A board or a summary stays as it is: what came from another device shows on the next screen.
-const erOversikt = () => !brett && ['', '#', '#/', '#/repertoar'].includes(location.hash);
+const erOversikt = () => !brett && (['', '#', '#/'].includes(location.hash) || erRepertoarside(location.hash));
 const synk = lagSynk({ lager, hent: () => fremgang, status: visKonto, sett(ny) { fremgang = ny; rep.lagreFremgang(lager, fremgang); if (erOversikt()) rute(); } });
 const lagre = () => { rep.lagreFremgang(lager, fremgang); synk.endret(); };
 const tilfeldig = liste => liste[Math.floor(Math.random() * liste.length)];
@@ -75,6 +78,8 @@ const ui = {
   kort: repertoarKort,
   fremgang: () => fremgang,
   lagre,
+  lagretFane() { try { return lager.getItem(FANE); } catch { return null; } },
+  huskFane(farge) { try { lager.setItem(FANE, farge); } catch { /* A full or blocked store costs the memory, not the page. */ } },
   stopp,
   etter(ms, gjor) { stopp(); timer = setTimeout(gjor, ms); },
   settTast(lytter) { tastLytter = lytter; },
@@ -116,7 +121,7 @@ function visBibliotek() {
   main.innerHTML = `
     <section class="ap-hero">${trenerBoble(`<p class="eyebrow">${TRENER.navn.toUpperCase()} · ÅPNINGSTRENER</p><h1>Åpninger med angrepslyst</h1><p>${esc(intro)}</p>${vansker ? `<p class="ap-vansker-tittel">Dette sliter du mest med:</p><ul class="ap-vansker">${vansker}</ul>` : ''}`, { live: false })}</section>
     ${nesteStegHtml(ui)}
-    ${harRepertoar ? `<p class="ap-til-repertoar"><a href="#/repertoar">Mitt repertoar</a> · ${flertall(valgte().length, 'åpning', 'åpninger')}</p>` : ''}
+    ${harRepertoar ? `<p class="ap-til-repertoar"><a href="#/repertoar">Mitt repertoar</a> · ${[['w', 'Hvit'], ['b', 'Svart']].map(([farge, navn]) => `<a href="${repertoarAdresse(farge)}">${navn}</a>: ${valgte().filter(apning => apning.farge === farge).length}`).join(' · ')}</p>` : ''}
     <div class="ap-filter" role="group" aria-label="Velg farge">${[['alle', 'Alle'], ['w', 'Som hvit'], ['b', 'Som svart']].map(([v, t]) => `<button type="button" data-farge="${v}" aria-pressed="${fargeFilter === v}">${t}</button>`).join('')}</div>
     ${grupper.map(g => `<section class="ap-gruppe" aria-labelledby="g-${g.id}"><h2 id="g-${g.id}">${esc(g.navn)}</h2><p class="ap-gruppe-tekst">${esc(g.tekst)}</p><div class="ap-kortliste">${g.apninger.map(id => apninger.get(id)).filter(Boolean).map(kort).join('')}</div></section>`).join('')}
     <p class="ap-fotnote">Alle linjer er spilt gjennom og sjekket med sjakkmotoren Stockfish. Gambiter er ofte litt tvilsomme objektivt – ${TRENER.navn} sier fra om det, trekk for trekk.</p>`;
@@ -334,7 +339,7 @@ function spillOv(apning) {
     : neste.rep ? `<button type="button" class="button secondary" data-ov="vis">${ov.vist ? 'Trekket vises' : 'Vis trekket'}</button><button type="button" class="button secondary" data-ov="hopp">Ny linje</button>` : '';
   respons(ferdig ? (ov.feil ? `Gjennomført med ${flertall(ov.feil, 'feil', 'feil')}.` : 'Feilfritt! Linjen sitter.') : ov.kort ?? (neste.rep ? 'Din tur.' : 'Motstanderen tenker …'), ferdig ? (ov.feil ? '' : 'bra') : ov.stemning);
   const egne = blandet ? [] : rep.vansker({ feil: { [apning.id]: fremgang.feil[apning.id] ?? {} } }, 2).map(v => apning.noder.get(v.sti)?.barn[0]).filter(Boolean);
-  panel().innerHTML = `${trenerBoble(tekst, { stemning: ov.stemning })}<div class="ap-kontroller ap-rad">${knapper}</div>${blandet ? blandetStatus() : ovStatus(apning)}${egne.length ? `<p class="ap-tips">${TRENER.navn} har lagt merke til at du oftest bommer på ${egne.map(n => esc(medNummer(n))).join(' og ')}.</p>` : ''}`;
+  panel().innerHTML = `${trenerBoble(tekst, { stemning: ov.stemning })}<div class="ap-kontroller ap-rad">${knapper}</div>${blandet ? blandetStatus(blandet.farge) : ovStatus(apning)}${egne.length ? `<p class="ap-tips">${TRENER.navn} har lagt merke til at du oftest bommer på ${egne.map(n => esc(medNummer(n))).join(' og ')}.</p>` : ''}`;
   panel().querySelector('[data-ov="neste"]')?.addEventListener('click', videre);
   // Skipping after a mistake still counts the line as failed, so it comes back soon.
   panel().querySelector('[data-ov="hopp"]')?.addEventListener('click', () => { if (ov.feil) { rep.vurderLinje(fremgang, apning.id, linje.id, ov.feil); lagre(); } videre(); });
@@ -394,18 +399,18 @@ function spillOv(apning) {
 // ---------- Mixed drill ----------
 const BLANDET_TITTEL = { w: 'Øv repertoaret som hvit', b: 'Øv repertoaret som svart' };
 
-function blandetStatus() {
-  const s = valgte().map(apning => rep.statusFor(apning, fremgang)).reduce((sum, d) => ({ totalt: sum.totalt + d.totalt, laert: sum.laert + d.laert, forfaller: sum.forfaller + d.forfaller, nye: sum.nye + d.nye }), { totalt: 0, laert: 0, forfaller: 0, nye: 0 });
+function blandetStatus(farge) {
+  const s = valgte().filter(apning => !farge || apning.farge === farge).map(apning => rep.statusFor(apning, fremgang)).reduce((sum, d) => ({ totalt: sum.totalt + d.totalt, laert: sum.laert + d.laert, forfaller: sum.forfaller + d.forfaller, nye: sum.nye + d.nye }), { totalt: 0, laert: 0, forfaller: 0, nye: 0 });
   return `<div class="ap-ovstatus"><span><b>${s.laert}</b>/${s.totalt} lært</span><span><b>${s.forfaller}</b> til repetisjon</span><span><b>${s.nye}</b> nye</span></div>`;
 }
 
 function visBlandet(farge) {
   const utvalg = valgte().filter(apning => !farge || apning.farge === farge);
-  if (!utvalg.length) { location.hash = '#/repertoar'; return; }
+  if (!utvalg.length) { location.hash = repertoarAdresse(farge); return; }
   const tittel = BLANDET_TITTEL[farge] ?? 'Øv hele repertoaret';
   document.title = `${tittel} · Åpninger`;
   tilstand = {};
-  lagBrettside(`<nav class="ap-tilbake"><a href="#/repertoar">← Mitt repertoar</a></nav><header class="ap-apning-topp"><p class="eyebrow">MITT REPERTOAR</p><h1>${tittel}</h1><p class="ap-startlinje">Fra første trekk. Motstanderen velger, og du følger åpningen du har valgt.</p></header>`);
+  lagBrettside(`<nav class="ap-tilbake"><a href="${repertoarAdresse(farge)}">← Mitt repertoar</a></nav><header class="ap-apning-topp"><p class="eyebrow">MITT REPERTOAR</p><h1>${tittel}</h1><p class="ap-startlinje">Fra første trekk. Motstanderen velger, og du følger åpningen du har valgt.</p></header>`);
   startBlandet(farge);
 }
 
@@ -413,7 +418,7 @@ function startBlandet(farge, forrige = null) {
   stopp();
   const valg = velgBlandetLinje(valgte(), fremgang, { farge, forrige });
   // Every choice of this colour can be gone by now, removed in another tab.
-  if (!valg) { location.hash = '#/repertoar'; return; }
+  if (!valg) { location.hash = repertoarAdresse(farge); return; }
   tilstand = { ...tilstand, fane: 'ov', ov: { linje: valg.linje, noder: valg.noder, rot: { fen: new Chess().fen(), san: null, sti: null }, grunn: valg.grunn, blandet: { farge, nokkel: valg.nokkel }, i: 0, feil: 0, forsok: 0, vist: false, melding: null, stemning: '' } };
   spillOv(valg.apning);
 }
@@ -479,15 +484,25 @@ function rute() {
   if (side === 'a' && id) visApning(id, ['om', 'laer', 'ov', 'feller'].includes(fane) ? fane : 'laer');
   else if (side === 'repertoar' && id === 'bygg') { tilstand = {}; visBygg(ui, fane, ekstra); }
   else if (side === 'repertoar' && id === 'trening') visTrening(ui, fane, ekstra);
-  else if (side === 'repertoar' && id === 'kort' && fane === 'flere') { history.replaceState(null, '', '#/repertoar/kort'); taFlere(ui); }
-  else if (side === 'repertoar' && id === 'kort') visKortokt(ui);
-  else if (side === 'repertoar' && id === 'ov') visBlandet(['w', 'b'].includes(fane) ? fane : null);
-  else if (side === 'repertoar') { tilstand = {}; ui.brettBort(); visRepertoar(ui); }
+  else if (side === 'repertoar' && id === 'kort') {
+    const farge = fargeFra(fane);
+    if ([fane, ekstra].includes('flere')) { history.replaceState(null, '', oktAdresse(farge)); taFlere(ui, farge); }
+    else visKortokt(ui, farge);
+  }
+  else if (side === 'repertoar' && id === 'ov') visBlandet(fargeFra(fane));
+  else if (side === 'repertoar') { tilstand = {}; ui.brettBort(); visRepertoar(ui, fargeFra(id)); }
   else { tilstand = {}; visBibliotek(); }
 }
 
 document.addEventListener('keydown', event => tastLytter?.(event));
-window.addEventListener('hashchange', event => { kom = new URL(event.oldURL).hash; rute(); main.focus({ preventScroll: true }); window.scrollTo({ top: 0 }); });
+window.addEventListener('hashchange', event => {
+  kom = new URL(event.oldURL).hash;
+  rute();
+  // Between the tabs the keyboard stays on the tab.
+  const fane = erRepertoarside(kom) && erRepertoarside(location.hash) ? main.querySelector('.ap-rep-faner [aria-current]') : null;
+  (fane ?? main).focus({ preventScroll: true });
+  window.scrollTo({ top: 0 });
+});
 window.addEventListener('storage', event => { if (event.key === rep.NOKKEL) fremgang = rep.lesFremgang(lager); });
 document.addEventListener('visibilitychange', () => synk.synlig(document.visibilityState === 'visible'));
 

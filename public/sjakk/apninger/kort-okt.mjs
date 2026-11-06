@@ -2,10 +2,10 @@
 import { Chess } from '../vendor/chess.mjs';
 import { piler } from './brett.mjs';
 import { INTERVALL_DAGER, noterFeil } from './repetisjon.mjs';
-import { OVELSE_STORRELSE, dagStart, forfallerIMorgen, introSett, kortKo, lagOkt, lagOvelse, merkIntro, nesteEkstra, nesteSteg, oktInnhold, oktTekst, ovelseRekke, svarKort, vanskeligst, vistKort } from './kort.mjs';
+import { OVELSE_STORRELSE, dagStart, delerNye, forfallerIMorgen, introSett, klarTekst, kortKo, lagOkt, lagOvelse, medFarge, merkIntro, nesteEkstra, nesteSteg, oktInnhold, oktTekst, ovelseRekke, svarKort, vanskeligst, vistKort } from './kort.mjs';
 import { ROS, esc, feilKommentar, medNummer, norsk, stor } from './trener.mjs';
-import { flertall, forsteSetning, sanTekst, startNotasjon, trenerBoble } from './ui.mjs';
-import { veiInnTrekk } from './repertoar.mjs';
+import { FARGE, flertall, forsteSetning, sanTekst, startNotasjon, trenerBoble } from './ui.mjs';
+import { blandetAdresse, byggAdresse, fargeFra, flereAdresse, motsatt, oktAdresse, repertoarAdresse, veiInnTrekk } from './repertoar.mjs';
 import { kortFor } from './bygg.mjs';
 import { lagSpor, sporSegmenter, statusTekst } from './spor.mjs';
 
@@ -19,36 +19,64 @@ const IKKE_TIMEPLAN = 'Teller ikke på timeplanen.';
 let ekstra = { dag: 0, antall: 0 };
 const ekstraIDag = naa => (ekstra.dag === dagStart(naa) ? ekstra.antall : 0);
 
-export function klareKort(ui) {
+export function klareKort(ui, farge = null) {
   const naa = Date.now();
-  return kortKo(ui.kort(), ui.fremgang(), naa, ekstraIDag(naa));
+  return kortKo(ui.kort(), ui.fremgang(), naa, ekstraIDag(naa), farge);
 }
 
-export function taFlere(ui) {
+export function taFlere(ui, farge = null) {
   const naa = Date.now();
-  ekstra = { dag: dagStart(naa), antall: nesteEkstra(ui.kort(), ui.fremgang(), naa, ekstraIDag(naa)) };
-  visKortokt(ui);
+  ekstra = { dag: dagStart(naa), antall: nesteEkstra(ui.kort(), ui.fremgang(), naa, ekstraIDag(naa), farge) };
+  visKortokt(ui, farge);
+}
+
+const fargeNavn = farge => FARGE[farge].toLowerCase();
+const fargeMerke = farge => (farge ? ` · ${FARGE[farge].toUpperCase()}` : '');
+// Straight into the other colour's session, when it has something ready.
+function fargeKnapp(ui, farge, klasse = 'secondary') {
+  const antall = klareKort(ui, farge).kort.length;
+  return antall ? `<a class="button ${klasse}" href="${oktAdresse(farge)}">${FARGE[farge]}: ${flertall(antall, 'kort', 'kort')}</a>` : '';
+}
+const beggeKnapp = ui => `<a class="button secondary ap-begge" href="${oktAdresse(null)}">Begge: ${flertall(klareKort(ui).kort.length, 'kort', 'kort')}</a>`;
+// New cards wait for the whole repertoire's reviews, which can all be in the other colour.
+const pauseTekst = ko => (ko.pause && !ko.kort.length ? ' Nye kort venter til repetisjonene er tatt igjen.' : '');
+
+// Both colours chosen: the library says what each has ready, and either can be started from here.
+function fargeValg(ui) {
+  const [hvit, svart] = [klareKort(ui, 'w'), klareKort(ui, 'b')];
+  const delt = delerNye(hvit, svart, klareKort(ui)) ? ' De nye kortene deles mellom fargene.' : '';
+  const start = farge => `<a class="button primary" href="${oktAdresse(farge)}">Start ${fargeNavn(farge)} ▶</a>`;
+  const klare = [[hvit, 'w'], [svart, 'b']].filter(([ko]) => ko.kort.length).map(([, farge]) => start(farge));
+  return { tekst: `${klarTekst(hvit.kort.length, svart.kort.length)}.${delt}`, knapper: `${klare.join('')}${klare.length > 1 ? beggeKnapp(ui) : ''}` };
 }
 
 // The one button at the top of the library and the repertoire page. It always says what to do next.
-export function nesteStegHtml(ui) {
-  const valgte = ui.valgte().length;
-  const ko = valgte ? klareKort(ui) : null;
-  const steg = nesteSteg(valgte, ko);
+// On a tab it speaks for that colour; on the library for the whole repertoire.
+export function nesteStegHtml(ui, fane = null) {
+  const valgte = ui.valgte();
+  const farger = new Set(valgte.map(apning => apning.farge));
+  // With one colour chosen, the library's button is that colour's and leads back to its tab.
+  const farge = fane ?? (farger.size === 1 ? [...farger][0] : null);
+  const antall = medFarge(valgte, farge).length;
+  const ko = antall ? klareKort(ui, farge) : null;
+  const steg = nesteSteg(antall, ko);
+  const merke = fargeMerke(fane);
+  const annen = fane && farger.has(motsatt(fane)) ? fargeKnapp(ui, motsatt(fane)) : '';
   const boks = ({ eyebrow, tittel, tekst, knapper }) => `<section class="ap-neste" aria-label="Neste steg"><div class="ap-neste-tekst"><p class="eyebrow">${eyebrow}</p><h2>${tittel}</h2><p>${tekst}</p></div><div class="ap-neste-knapper">${knapper}</div></section>`;
-  if (steg.type === 'bygg') return boks({ eyebrow: 'KOM I GANG', tittel: 'Bygg repertoaret', tekst: 'Noen korte spørsmål, ett om gangen. Så vet jeg hva jeg skal lære deg.', knapper: '<a class="button primary" href="#/repertoar/bygg">Begynn ▶</a>' });
-  if (steg.type === 'okt') return boks({ eyebrow: 'NESTE STEG', tittel: 'Dagens økt', tekst: `${esc(oktTekst(steg))}${steg.etterpa ? `, så ${steg.etterpa} til etterpå` : ''}`, knapper: '<a class="button primary" href="#/repertoar/kort">Start ▶</a>' });
-  const iMorgen = forfallerIMorgen(ui.kort(), ui.fremgang());
-  const senere = iMorgen ? `${flertall(iMorgen, 'kort kommer', 'kort kommer')} tilbake i morgen.` : 'Ingen kort venter nå.';
-  if (steg.type === 'flere') return boks({ eyebrow: 'NESTE STEG', tittel: 'Dagens økt er gjort', tekst: `${senere} Har du lyst på mer, står ${ko.pause ? 'flere repetisjoner' : 'nye kort'} klare.`, knapper: `<a class="button primary" href="#/repertoar/kort/flere">${flereTekst(ko)} ▶</a><a class="button secondary" href="#/repertoar/ov">Blandet øving</a>` });
-  return boks({ eyebrow: 'NESTE STEG', tittel: 'Dagens økt er gjort', tekst: `${senere} Har du lyst på mer, kan du øve hele repertoaret fra første trekk.`, knapper: '<a class="button primary" href="#/repertoar/ov">Blandet øving ▶</a>' });
+  if (steg.type === 'bygg') return boks({ eyebrow: `KOM I GANG${merke}`, tittel: fane ? `Sett opp ${fargeNavn(fane)}` : 'Bygg repertoaret', tekst: 'Noen korte spørsmål, ett om gangen. Så vet jeg hva jeg skal lære deg.', knapper: `<a class="button primary" href="${byggAdresse(fane)}">Begynn ▶</a>` });
+  if (steg.type === 'okt' && !farge) return boks({ eyebrow: 'NESTE STEG', tittel: 'Dagens økt', ...fargeValg(ui) });
+  if (steg.type === 'okt') return boks({ eyebrow: `NESTE STEG${merke}`, tittel: 'Dagens økt', tekst: `${esc(oktTekst(steg))}${steg.etterpa ? `, så ${steg.etterpa} til etterpå` : ''}`, knapper: `<a class="button primary" href="${oktAdresse(farge)}">${fane ? `Start ${fargeNavn(fane)}` : 'Start'} ▶</a>${annen ? beggeKnapp(ui) : ''}` });
+  const iMorgen = forfallerIMorgen(medFarge(ui.kort(), farge), ui.fremgang());
+  const senere = `${iMorgen ? `${flertall(iMorgen, 'kort kommer', 'kort kommer')} tilbake i morgen.` : 'Ingen kort venter nå.'}${pauseTekst(ko)}`;
+  if (steg.type === 'flere') return boks({ eyebrow: `NESTE STEG${merke}`, tittel: 'Dagens økt er gjort', tekst: `${senere} Har du lyst på mer, står ${ko.pause ? 'flere repetisjoner' : 'nye kort'} klare.`, knapper: `<a class="button primary" href="${flereAdresse(farge)}">${flereTekst(ko)} ▶</a><a class="button secondary" href="${blandetAdresse(farge)}">Blandet øving</a>${annen}` });
+  return boks({ eyebrow: `NESTE STEG${merke}`, tittel: 'Dagens økt er gjort', tekst: `${senere} Har du lyst på mer, kan du øve ${fane ? `alt du har som ${fargeNavn(fane)}` : 'hele repertoaret'} fra første trekk.`, knapper: `<a class="button primary" href="${blandetAdresse(farge)}">Blandet øving ▶</a>${annen}` });
 }
 
 // While the reviews are behind, more means more of those and no new cards.
 const flereTekst = ko => (ko.pause ? 'Ta flere repetisjoner' : 'Ta flere nye kort');
 const rolig = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 const tilfeldig = liste => liste[Math.floor(Math.random() * liste.length)];
-const tilbake = '<nav class="ap-tilbake"><a href="#/repertoar">← Mitt repertoar</a></nav>';
+const tilbake = farge => `<nav class="ap-tilbake"><a href="${repertoarAdresse(farge)}">← Mitt repertoar</a></nav>`;
 
 function nesteGang(post) {
   const dager = INTERVALL_DAGER[post.boks];
@@ -92,15 +120,16 @@ function feilTekst(kort, spilt) {
 }
 
 // The screen without a board: nothing chosen, nothing ready, or the session summary.
-function tekstSide(ui, innhold) {
+function tekstSide(ui, innhold, farge = null) {
   ui.brettBort();
-  ui.main.innerHTML = `${tilbake}<section class="ap-hero ap-rep-hero">${trenerBoble(innhold, { live: false })}</section>`;
+  ui.main.innerHTML = `${tilbake(farge)}<section class="ap-hero ap-rep-hero">${trenerBoble(innhold, { live: false })}</section>`;
 }
 
-function intetKlart(ui, ko) {
-  const iMorgen = forfallerIMorgen(ui.kort(), ui.fremgang());
-  tekstSide(ui, `<p class="eyebrow">DAGENS ØKT</p><h1>Ingen kort akkurat nå</h1><p>${iMorgen ? `Godt jobbet! ${iMorgen} kort kommer tilbake i morgen.` : 'Godt jobbet! Nå er du ajour.'}</p><div class="ap-tekst-knapper">${ko.flere ? `<button type="button" class="button primary" data-flere>${flereTekst(ko)}</button><a class="button secondary" href="#/repertoar/ov">Blandet øving</a>` : '<a class="button primary" href="#/repertoar/ov">Blandet øving</a><a class="button secondary" href="#/repertoar">Til repertoaret</a>'}</div>`);
-  ui.main.querySelector('[data-flere]')?.addEventListener('click', () => taFlere(ui));
+function intetKlart(ui, ko, farge) {
+  const iMorgen = forfallerIMorgen(medFarge(ui.kort(), farge), ui.fremgang());
+  const annen = farge ? fargeKnapp(ui, motsatt(farge)) : '';
+  tekstSide(ui, `<p class="eyebrow">DAGENS ØKT${fargeMerke(farge)}</p><h1>Ingen kort akkurat nå</h1><p>${iMorgen ? `Godt jobbet! ${iMorgen} kort kommer tilbake i morgen.` : 'Godt jobbet! Nå er du ajour.'}${pauseTekst(ko)}</p><div class="ap-tekst-knapper">${ko.flere ? `<button type="button" class="button primary" data-flere>${flereTekst(ko)}</button><a class="button secondary" href="${blandetAdresse(farge)}">Blandet øving</a>` : `<a class="button primary" href="${blandetAdresse(farge)}">Blandet øving</a><a class="button secondary" href="${repertoarAdresse(farge)}">Til repertoaret</a>`}${annen}</div>`, farge);
+  ui.main.querySelector('[data-flere]')?.addEventListener('click', () => taFlere(ui, farge));
 }
 
 // Both are practice, so they can be pressed as often as the player likes.
@@ -108,31 +137,31 @@ function repeterKnapper(ui, okt, valg = {}) {
   const bom = [...okt.bom.values()].map(({ kort }) => kort);
   return { html: `<div class="ap-kontroller ap-rad ap-okt-slutt ap-repeter"><button type="button" class="button secondary" data-repeter>Repeter disse kortene</button>${bom.length ? '<button type="button" class="button secondary" data-repeter-bom>Repeter de jeg bommet på</button>' : ''}</div><p class="ap-ovelse-linje">${IKKE_TIMEPLAN}</p>`, koble() {
     // What was left of a long practice comes after the repeat, so it is not lost.
-    const etter = { etter: valg.rest ?? [], hovedTittel: valg.hovedTittel ?? valg.tittel };
+    const etter = { etter: valg.rest ?? [], hovedTittel: valg.hovedTittel ?? valg.tittel, farge: valg.farge };
     ui.main.querySelector('[data-repeter]').addEventListener('click', () => visOvelse(ui, okt.kortliste, { tittel: 'Repeter kortene', ...etter }));
     ui.main.querySelector('[data-repeter-bom]')?.addEventListener('click', () => visOvelse(ui, bom, { tittel: 'Repeter de du bommet på', ...etter }));
   } };
 }
 
-function oppsummering(ui, okt) {
+function oppsummering(ui, okt, farge) {
   const fremgang = ui.fremgang();
-  const iMorgen = forfallerIMorgen(ui.kort(), fremgang);
+  const iMorgen = forfallerIMorgen(medFarge(ui.kort(), farge), fremgang);
   const tunge = vanskeligst(okt);
-  const igjen = klareKort(ui);
+  const igjen = klareKort(ui, farge);
   // A card alone in a session is only taught, so there can be nothing to judge.
   const testet = okt.vurdert.size;
   const dom = !testet ? 'Da er det lært. Testen kommer litt senere.' : okt.riktige === testet ? 'Alt satt på første forsøk!' : okt.riktige * 2 >= testet ? 'Godt jobbet. Det som glapp, tar vi igjen snart.' : 'Dette var harde kort, og det er derfor vi øver. De kommer tilbake til de sitter.';
   const flere = igjen.kort.length || igjen.flere;
   const laert = okt.vist.size ? `<p>Du lærte ${flertall(okt.vist.size, 'nytt trekk', 'nye trekk')}. De kommer tilbake, så de får satt seg.</p>` : '';
-  const repeter = repeterKnapper(ui, okt);
-  tekstSide(ui, `<p class="eyebrow">DAGENS ØKT · FERDIG</p><h1>${esc(dom)}</h1>${laert}`);
+  const repeter = repeterKnapper(ui, okt, { farge });
+  tekstSide(ui, `<p class="eyebrow">DAGENS ØKT${fargeMerke(farge)} · FERDIG</p><h1>${esc(dom)}</h1>${laert}`, farge);
   ui.main.insertAdjacentHTML('beforeend', `
     <div class="ap-ovstatus ap-okt-tall"><span><b>${okt.riktige}</b>av ${testet} riktig</span><span><b>${okt.hint}</b>med hint</span><span><b>${iMorgen}</b>i morgen</span></div>
     ${tunge.length ? `<section class="ap-gruppe ap-okt-tunge"><h2>Disse var tyngst</h2><ul class="ap-felleliste">${tunge.map(({ kort, antall }, i) => { const kilde = kort.kilder[0]; return `<li><button type="button" class="ap-felle" data-tung="${i}"><span>${esc(kilde.apning.navn)} · ${flertall(antall, 'bom', 'bom')}</span><b>${esc(kilde.linje)}</b><small>${esc(sanTekst(kilde.forTrekk))}</small></button></li>`; }).join('')}</ul></section>` : ''}
-    <div class="ap-kontroller ap-rad ap-okt-slutt">${flere ? `<button type="button" class="button primary" data-flere>${igjen.kort.length ? `Fortsett: ${esc(oktTekst(oktInnhold(igjen)))}` : 'Ta flere'}</button>` : ''}<a class="button ${flere ? 'secondary' : 'primary'}" href="#/repertoar">Til repertoaret</a></div>
+    <div class="ap-kontroller ap-rad ap-okt-slutt">${flere ? `<button type="button" class="button primary" data-flere>${igjen.kort.length ? `Fortsett: ${esc(oktTekst(oktInnhold(igjen)))}` : 'Ta flere'}</button>` : ''}${farge ? fargeKnapp(ui, motsatt(farge)) : ''}<a class="button ${flere ? 'secondary' : 'primary'}" href="${repertoarAdresse(farge)}">Til repertoaret</a></div>
     ${repeter.html}`);
   repeter.koble();
-  ui.main.querySelector('[data-flere]')?.addEventListener('click', () => { if (igjen.kort.length) visKortokt(ui); else taFlere(ui); });
+  ui.main.querySelector('[data-flere]')?.addEventListener('click', () => { if (igjen.kort.length) visKortokt(ui, farge); else taFlere(ui, farge); });
   ui.main.querySelectorAll('[data-tung]').forEach(knapp => knapp.addEventListener('click', () => {
     const { kilder } = tunge[Number(knapp.dataset.tung)].kort;
     const kilde = kilder.find(k => k.node) ?? kilder[0];
@@ -142,16 +171,16 @@ function oppsummering(ui, okt) {
 }
 
 function ovelseFerdig(ui, okt, valg) {
-  const { tittel, rest = [], hovedTittel = tittel } = valg;
+  const { tittel, rest = [], hovedTittel = tittel, farge = null } = valg;
   const repeter = repeterKnapper(ui, okt, valg);
-  tekstSide(ui, `<p class="eyebrow">${esc(tittel.toUpperCase())} · FERDIG</p><h1>${okt.bom.size ? 'Da har du øvd. Noen glapp, og det er bare å ta dem igjen.' : 'Alt satt!'}</h1>`);
+  tekstSide(ui, `<p class="eyebrow">${esc(tittel.toUpperCase())} · FERDIG</p><h1>${okt.bom.size ? 'Da har du øvd. Noen glapp, og det er bare å ta dem igjen.' : 'Alt satt!'}</h1>`, farge);
   ui.main.insertAdjacentHTML('beforeend', `
     <div class="ap-ovstatus ap-okt-tall"><span><b>${okt.riktige}</b>riktig</span><span><b>${okt.hint}</b>med hint</span><span><b>${okt.bom.size}</b>bom</span></div>
     ${rest.length ? `<div class="ap-kontroller ap-rad ap-okt-slutt"><button type="button" class="button primary" data-videre>Fortsett med ${flertall(rest.length, 'kort', 'kort')} til</button></div>` : ''}
     ${repeter.html}
-    <div class="ap-kontroller ap-rad ap-okt-slutt"><a class="button ${rest.length ? 'secondary' : 'primary'}" href="#/repertoar">Til repertoaret</a></div>`);
+    <div class="ap-kontroller ap-rad ap-okt-slutt"><a class="button ${rest.length ? 'secondary' : 'primary'}" href="${repertoarAdresse(farge)}">Til repertoaret</a></div>`);
   repeter.koble();
-  ui.main.querySelector('[data-videre]')?.addEventListener('click', () => visOvelse(ui, rest, { tittel: hovedTittel }));
+  ui.main.querySelector('[data-videre]')?.addEventListener('click', () => visOvelse(ui, rest, { tittel: hovedTittel, farge }));
 }
 
 // Practice: the same screen as a session, but nothing is written to the schedule.
@@ -163,32 +192,33 @@ export function visOvelse(ui, kort, valg) {
   kjorOkt(ui, lagOvelse(utvalg, ui.fremgang()), { ...valg, rest: [...kort.slice(OVELSE_STORRELSE), ...(valg.etter ?? [])] });
 }
 
-// #/repertoar/trening/<opening or "alle">/<rekke or stokket>
+// #/repertoar/trening/<opening, "alle", "hvit" or "svart">/<rekke or stokket>
 export function visTrening(ui, hvem, orden) {
   const apning = ui.alle().find(a => a.id === hvem);
-  const kort = hvem === 'alle' ? ui.kort() : apning ? kortFor(apning) : [];
+  const farge = fargeFra(hvem);
+  const kort = apning ? kortFor(apning) : hvem === 'alle' || farge ? medFarge(ui.kort(), farge) : [];
   if (!kort.length) {
-    tekstSide(ui, `<p class="eyebrow">ØV PÅ ALLE KORT</p><h1>Ingen kort å øve på ennå</h1><p>Kortene kommer fra repertoaret ditt, så vi begynner der.</p><a class="button primary" href="#/repertoar/bygg">Bygg repertoaret</a>`);
+    tekstSide(ui, `<p class="eyebrow">ØV PÅ ALLE KORT${fargeMerke(farge)}</p><h1>Ingen kort å øve på ennå</h1><p>Kortene kommer fra repertoaret ditt, så vi begynner der.</p><a class="button primary" href="${byggAdresse(farge)}">Bygg repertoaret</a>`, farge);
     return;
   }
-  visOvelse(ui, ovelseRekke(kort, { stokket: orden === 'stokket' }), { tittel: apning ? `Øv på ${apning.navn}` : 'Øv på alle kort' });
+  visOvelse(ui, ovelseRekke(kort, { stokket: orden === 'stokket' }), { tittel: apning ? `Øv på ${apning.navn}` : farge ? `Øv på alle kort som ${fargeNavn(farge)}` : 'Øv på alle kort', farge: farge ?? apning?.farge ?? null });
 }
 
-export function visKortokt(ui) {
+export function visKortokt(ui, farge = null) {
   ui.stopp();
   ui.settTast(null);
-  document.title = 'Dagens økt · Åpninger';
-  if (!ui.valgte().length) {
-    tekstSide(ui, `<p class="eyebrow">DAGENS ØKT</p><h1>Velg åpningene dine først</h1><p>Kortene kommer fra repertoaret ditt, så vi begynner der.</p><a class="button primary" href="#/repertoar/bygg">Bygg repertoaret</a>`);
+  document.title = `Dagens økt${farge ? ` · ${FARGE[farge]}` : ''} · Åpninger`;
+  if (!medFarge(ui.valgte(), farge).length) {
+    tekstSide(ui, `<p class="eyebrow">DAGENS ØKT${fargeMerke(farge)}</p><h1>Velg åpningene dine først</h1><p>Kortene kommer fra repertoaret ditt, så vi begynner der.</p><a class="button primary" href="${byggAdresse(farge)}">Bygg repertoaret</a>`, farge);
     return;
   }
-  const ko = klareKort(ui);
-  if (!ko.kort.length) { intetKlart(ui, ko); return; }
-  kjorOkt(ui, lagOkt(ko.klare, Math.random, ko.nyeKort));
+  const ko = klareKort(ui, farge);
+  if (!ko.kort.length) { intetKlart(ui, ko, farge); return; }
+  kjorOkt(ui, lagOkt(ko.klare, Math.random, ko.nyeKort), null, farge);
 }
 
-function kjorOkt(ui, okt, ovelse = null) {
-  const { brett, evalbar, panel, linje } = ui.brettside(`<header class="ap-okt-topp"><a href="#/repertoar">← Avslutt</a><span class="ap-okt-teller" id="ap-okt-teller"></span><div id="ap-okt-spor"></div>${ovelse ? `<p class="ap-ovelse-linje">${IKKE_TIMEPLAN}</p>` : ''}</header>`);
+function kjorOkt(ui, okt, ovelse = null, farge = ovelse?.farge ?? null) {
+  const { brett, evalbar, panel, linje } = ui.brettside(`<header class="ap-okt-topp"><a href="${repertoarAdresse(farge)}">← Avslutt</a><span class="ap-okt-teller" id="ap-okt-teller"></span><div id="ap-okt-spor"></div>${ovelse ? `<p class="ap-ovelse-linje">${IKKE_TIMEPLAN}</p>` : ''}</header>`);
   const teller = ui.main.querySelector('#ap-okt-teller');
   let aktiv = null;
   // Set while the player looks back at another card: { plass, kort, kilde }.
@@ -389,7 +419,7 @@ function kjorOkt(ui, okt, ovelse = null) {
   function settTeller() {
     const { laer, igjen, fersk } = aktiv;
     const merke = okt.ovelse ? 'Øving' : laer ? 'Nytt trekk' : igjen ? 'En gang til' : fersk ? 'Husker du?' : 'Repetisjon';
-    teller.textContent = `${merke} · ${okt.gjort + 1} av ${okt.gjort + okt.ko.length}`;
+    teller.textContent = `${farge ? `${FARGE[farge]} · ` : ''}${merke} · ${okt.gjort + 1} av ${okt.gjort + okt.ko.length}`;
   }
 
   function framme(sist, tastatur) {
@@ -437,7 +467,7 @@ function kjorOkt(ui, okt, ovelse = null) {
     tilbakeSer = null;
     if (!kort) {
       ui.settTast(null);
-      if (okt.ovelse) ovelseFerdig(ui, okt, ovelse); else oppsummering(ui, okt);
+      if (okt.ovelse) ovelseFerdig(ui, okt, ovelse); else oppsummering(ui, okt, farge);
       return;
     }
     const kilde = hovedKilde(kort);

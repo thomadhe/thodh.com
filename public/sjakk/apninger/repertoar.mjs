@@ -19,8 +19,29 @@ export const SLOTS = [
   { id: 'b-resten', farge: 'b', mot: '1.c4, 1.Sf3 og 1.f4', navn: 'Resten', sporsmal: 'Og mot de roligere åpningene, 1.c4, 1.Sf3 og 1.f4?', linjer: [['c4'], ['Nf3'], ['f4']] },
 ];
 
-// The owner's own example. It is only ever offered, never selected unasked.
-export const STARTFORSLAG = ['kongegambitt', 'smith-morra'];
+// The owner's own examples, one per colour. They are only ever offered, never selected unasked.
+export const FORSLAG = { w: ['kongegambitt', 'smith-morra'], b: ['e5-mot-resten', 'traxler', 'schliemann', 'budapest-gambitt'] };
+export const STARTFORSLAG = [...FORSLAG.w, ...FORSLAG.b];
+
+// The colour in an address. w and b are the old links to the mixed drill.
+const FARGE_ORD = { w: 'hvit', b: 'svart' };
+const ADRESSE_FARGE = new Map([['hvit', 'w'], ['svart', 'b'], ['w', 'w'], ['b', 'b']]);
+export const motsatt = farge => (farge === 'w' ? 'b' : 'w');
+export const fargeFra = ord => ADRESSE_FARGE.get(ord) ?? null;
+const hale = farge => (farge ? `/${FARGE_ORD[farge]}` : '');
+// No colour means both, except on the repertoire page, where it means the tab from last time.
+export const repertoarAdresse = farge => `#/repertoar${hale(farge)}`;
+export const oktAdresse = farge => `#/repertoar/kort${hale(farge)}`;
+export const flereAdresse = farge => `${oktAdresse(farge)}/flere`;
+export const blandetAdresse = farge => `#/repertoar/ov${hale(farge)}`;
+export const treningAdresse = (farge, orden) => `#/repertoar/trening/${farge ? FARGE_ORD[farge] : 'alle'}/${orden}`;
+export const byggAdresse = farge => (farge === 'b' ? '#/repertoar/bygg/svart' : '#/repertoar/bygg');
+
+// The tab from last time, or else the colour the player has something in.
+export function startFane(lagret, valgte) {
+  if (lagret === 'w' || lagret === 'b') return lagret;
+  return valgte.length && valgte.every(apning => apning.farge === 'b') ? 'b' : 'w';
+}
 
 // How often the opponent plays each first move, roughly. Deeper replies use vekt in the data.
 const SVAR_VEKT = { w: { c5: 34, e5: 30, e6: 13, c6: 10, d6: 4, d5: 4, g6: 3, Nf6: 2 }, b: { e4: 45, d4: 38, Nf3: 8, c4: 7, f4: 2 } };
