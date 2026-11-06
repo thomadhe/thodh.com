@@ -25,7 +25,7 @@
     "Lf2 binder en springer på g3 mot damen på h4."
   ],
   "feller": [
-    { "id": "se4-fanget", "type": "slå", "navn": "Springeren på e4 er fanget", "sti": "d4 d5 Be3 Nf6 e5 Ne4", "trekk": "f3 Qh4+ g3 Nxg3 Bf2", "tekst": "Svart hoppet til e4 i stedet for d7. Finn hvordan springeren går tapt.", "forklaring": "5.f3! Alle feltene er dekket. 5…Dh4+ 6.g3 Sxg3 7.Lf2! binder springeren mot damen, og hvit vinner en brikke for en bonde." }
+    { "id": "se4-fanget", "type": "slå", "navn": "Springeren på e4 er fanget", "sti": "d4 d5 Be3 Nf6 e5 Ne4", "trekk": "f3 Qh4+ g3 Nxg3 Bf2", "tekst": "Svart hoppet til e4 i stedet for d7. Finn hvordan springeren går tapt.", "forklaring": "5.f3! Alle feltene er dekket. 5…Dh4+ 6.g3 Sxg3 7.Lf2! binder springeren mot damen, og hvit vinner en brikke for en bonde eller to." }
   ],
   "sidelinjer": [
     { "navn": "Diemer-Duhm med 3.c4", "sti": "d4 d5 c4", "tekst": "Den andre gambiten mot fransk: 3.c4 dxe4 4.Sc3 Sf6 5.f3. Motoren gir svart ca. 0,8 bonde etter 3.c4 og nesten 1,5 etter 5.f3 Lb4!, så vi har valgt 3.Le3 i stedet." }
@@ -95,7 +95,7 @@
     { "sti": "d4 d5 Be3 Nf6 e5 Ne4 f3 Qh4+", "vekt": 3, "hva": "Damen sjakker." },
     { "sti": "d4 d5 Be3 Nf6 e5 Ne4 f3 Qh4+ g3", "hva": "Vi blokkerer.", "ide": "bonden angriper damen, og springeren står fortsatt i slag.", "pass": "Etter …Sxg3 kommer Lf2.", "motor": { "cp": 502, "tap": 0, "best": "g3", "dybde": 16 } },
     { "sti": "d4 d5 Be3 Nf6 e5 Ne4 f3 Qh4+ g3 Nxg3", "vekt": 3, "hva": "Springeren tar." },
-    { "sti": "d4 d5 Be3 Nf6 e5 Ne4 f3 Qh4+ g3 Nxg3 Bf2", "hva": "Løperen binder springeren.", "ide": "hxg3 truer, og springeren kan ikke flytte uten at damen på h4 faller.", "pass": "Svart taper en brikke.", "plan": "hxg3 eller Lxg3. Hvit er en brikke over for en bonde; motoren: ca. +5.", "motor": { "cp": 497, "tap": 0, "best": "Bf2", "dybde": 16 } },
+    { "sti": "d4 d5 Be3 Nf6 e5 Ne4 f3 Qh4+ g3 Nxg3 Bf2", "hva": "Løperen binder springeren.", "ide": "Lxg3 truer, og springeren kan ikke flytte uten at damen på h4 faller.", "pass": "Svart taper en brikke.", "plan": "Lxg3 vinner springeren. Ikke hxg3 mens damen står på h4, for da faller tårnet på h1. Hvit vinner en brikke for en bonde eller to; motoren: ca. +5.", "motor": { "cp": 497, "tap": 0, "best": "Bf2", "dybde": 16 } },
     { "sti": "d4 d5 Be3 Nf6 e5 Ng8", "vekt": 1, "hva": "Springeren går hjem." },
     { "sti": "d4 d5 Be3 Nf6 e5 Ng8 c3", "hva": "Vi støtter d4.", "ide": "svart har mistet to tempi, og sentrum står.", "pass": "Etter …Se7 kommer Ld3.", "plan": "Ld3, Se2 og f4. Motoren: ca. +1,0.", "motor": { "cp": 95, "tap": 0, "best": "Nf3", "dybde": 16 } },
     { "sti": "d4 d5 Be3 c5", "vekt": 2, "hva": "Svart slår mot d4." },
