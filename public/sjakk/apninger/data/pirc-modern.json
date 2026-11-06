@@ -29,7 +29,7 @@
   ],
   "feller": [
     { "id": "dxc5-sxe4", "type": "unngå", "navn": "Ikke 7.cxd6", "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3 c5 dxc5 Qa5", "trekk": "Bd3", "godta": ["Qe2", "Qd3"], "tekst": "Svart angriper c5 med damen. Bonden på d6 ser fristende ut. Spill trygt.", "forklaring": "7.cxd6? Sxe4! – springeren på c3 er bundet av damen på a5, så e4 faller med godt spill for svart. Ld3, De2 og Dd3 dekker alle e4." },
-    { "id": "sg5-f7", "type": "slå", "navn": "Sg5 etter damebyttet", "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3 c5 dxc5 dxc5", "trekk": "Qxd8+ Kxd8 Ng5", "tekst": "Svart tok tilbake med bonden i stedet for damen. Hvordan straffer du det?", "forklaring": "7.Dxd8+ Kxd8 8.Sg5! f7 er svak, og etter 8…Ke8 9.Lc4 kommer e5 og Sxf7. Svart mister materiell (motoren ca. +4)." }
+    { "id": "sg5-f7", "type": "slå", "navn": "Sg5 etter damebyttet", "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3 c5 dxc5 dxc5", "trekk": "Qxd8+ Kxd8 Ng5", "tekst": "Svart tok tilbake med bonden i stedet for damen. Hvordan straffer du det?", "forklaring": "7.Dxd8+ Kxd8 8.Sg5! f7 er svak, og etter 8…Ke8 9.Lc4 kommer e5, og f7 faller. Svart mister materiell (motoren ca. +4)." }
   ],
   "sidelinjer": [],
   "trekk": [
@@ -64,7 +64,7 @@
     { "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3 c5 dxc5 dxc5", "vekt": 3, "hva": "Svart tar tilbake." },
     { "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3 c5 dxc5 dxc5 Qxd8+", "hva": "Vi bytter damene med sjakk.", "ide": "kongen må ta, og rokaden er borte.", "pass": "Etter …Kxd8 kommer Sg5.", "motor": { "cp": 405, "tap": 0, "best": "Qxd8+", "dybde": 16 } },
     { "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3 c5 dxc5 dxc5 Qxd8+ Kxd8", "hva": "Kongen tar." },
-    { "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3 c5 dxc5 dxc5 Qxd8+ Kxd8 Ng5", "hva": "Springeren angriper f7.", "ide": "springeren angriper f7, og kongen på d8 dekker den ikke.", "pass": "Etter …Ke8 kommer Lc4.", "plan": "Lc4, e5 og Sxf7. Svart mister minst en bonde; motoren: ca. +4.", "motor": { "cp": 397, "tap": 0, "best": "Ng5", "dybde": 16 } },
+    { "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3 c5 dxc5 dxc5 Qxd8+ Kxd8 Ng5", "hva": "Springeren angriper f7.", "ide": "springeren angriper f7, og kongen på d8 dekker den ikke.", "pass": "Etter …Ke8 kommer Lc4.", "plan": "Lc4, e5 og slag på f7. Svart mister minst en bonde; motoren: ca. +4.", "motor": { "cp": 397, "tap": 0, "best": "Ng5", "dybde": 16 } },
     { "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3 Bg4", "vekt": 1, "hva": "Løperen binder springeren." },
     { "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3 Bg4 h3", "hva": "Bonden jager løperen.", "ide": "etter …Lxf3 Dxf3 har vi løperparet.", "pass": "Etter …Lxf3 tar damen.", "plan": "Dxf3, Lb5+ eller Le3 og 0-0-0. Motoren: ca. +1,4.", "motor": { "cp": 131, "tap": 6, "best": "Be3", "dybde": 16 } },
     { "sti": "d6 d4 Nf6 Nc3 g6 f4 Bg7 Nf3 a6", "vekt": 1, "hva": "Svart forbereder …b5." },

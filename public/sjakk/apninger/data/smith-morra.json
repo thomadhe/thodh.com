@@ -242,7 +242,7 @@
     { "sti": "d4 cxd4 c3 dxc3 Nxc3 e6 Nf3 a6", "vekt": 3, "hva": "Svart forbereder …b5." },
     { "sti": "d4 cxd4 c3 dxc3 Nxc3 e6 Nf3 a6 Bc4", "hva": "Løperen mot f7.", "ide": "vi fortsetter som vanlig, og etter …b5 går løperen til d3.", "pass": "Etter …Sc6 er vi i hovedlinjen.", "motor": { "cp": -24, "tap": 24, "best": "Bf4", "dybde": 16 } },
     { "sti": "d4 cxd4 c3 dxc3 Nxc3 e6 Nf3 a6 Bc4 b5", "vekt": 3, "hva": "Svart jager løperen." },
-    { "sti": "d4 cxd4 c3 dxc3 Nxc3 e6 Nf3 a6 Bc4 b5 Bd3", "hva": "Løperen går til d3.", "ide": "den dekker e4 mot …Lb7, noe den ikke gjør fra b3.", "pass": "Etter …Lb7 rokerer vi.", "vanligeFeil": { "Bb3": "7.Lb3 er det vanlige bildet, men her dekker ikke løperen e4, og motoren liker Ld3 klart bedre." }, "motor": { "cp": -26, "tap": 0, "best": "Bd3", "dybde": 16 } },
+    { "sti": "d4 cxd4 c3 dxc3 Nxc3 e6 Nf3 a6 Bc4 b5 Bd3", "hva": "Løperen går til d3.", "ide": "den dekker e4 mot …Lb7, noe den ikke gjør fra b3.", "pass": "Etter …Lb7 rokerer vi.", "vanligeFeil": { "Bb3": "7.Lb3 er det vanlige bildet, men her dekker ikke løperen e4, og motoren liker Ld3 litt bedre." }, "motor": { "cp": -26, "tap": 0, "best": "Bd3", "dybde": 16 } },
     { "sti": "d4 cxd4 c3 dxc3 Nxc3 e6 Nf3 a6 Bc4 b5 Bd3 Bb7", "vekt": 3, "hva": "Løperen presser e4." },
     { "sti": "d4 cxd4 c3 dxc3 Nxc3 e6 Nf3 a6 Bc4 b5 Bd3 Bb7 O-O", "hva": "Rokade.", "ide": "kongen trygg, og vi er klare for De2 eller Lf4.", "pass": "Etter …Sc6 spiller vi De2 og Td1.", "plan": "De2, Td1 og a4 mot b5, eller Lf4 og Tc1. Motoren: ca. −0,2.", "motor": { "cp": -20, "tap": 0, "best": "O-O", "dybde": 16 } },
     { "sti": "d4 cxd4 c3 dxc3 Nxc3 e6 Nf3 a6 Bc4 Nc6", "vekt": 3, "hva": "Svart utvikler.", "overgang": "d4 cxd4 c3 dxc3 Nxc3 Nc6 Nf3 e6 Bc4 a6" },
