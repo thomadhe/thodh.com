@@ -31,4 +31,17 @@ The engine is the npm package `stockfish`, installed outside the repo (for examp
 
 `--skriv` stores `motor` on every repertoire move and writes `rapport.json` (full runs only). Moves losing more than 100 cp are flagged; each flagged move needs a `vurdering`, or a better move. Trap moves losing more than 50 cp are reported too.
 
+## Evaluation bar
+
+`evalbar.mjs` draws the bar under the board and `motor.mjs` runs Stockfish in a Web Worker. The trainer shows the stored `motor.cp` at once, then refines it live, and stops at depth 18 or 2.5 seconds. Reuse it on any board:
+
+```js
+const bar = lagEvalbar(element, { lager: localStorage });
+const lagret = lagretOppslag(apning.noder);
+bar.settStilling(fen, { orientering: 'w', lagret: lagret(fen) });
+bar.avslutt(); // when the board goes away
+```
+
+The engine in `public/sjakk/vendor/` is `stockfish-19-lite-single.js` and `.wasm` from the npm package `stockfish` 19.0.1, unchanged. It is single-threaded, so it needs no COOP/COEP headers, and it is GPLv3: `stockfish-LICENSE.txt` sits next to it, and the page links to the source (`KREDITT` in `evalbar.mjs`). When updating the engine, change the file name in `motor.mjs` and the version in `KREDITT`.
+
 The tests check every file: schema, legal and correctly written SAN for all lines, an explanation on every repertoire move, transpositions, and the stable file format (`format.mjs`).

@@ -1,6 +1,7 @@
 import { Chess } from '../vendor/chess.mjs';
 import { lesApning, trekkNummer } from './modell.mjs';
 import { lagBrett, piler } from './brett.mjs';
+import { lagEvalbar, lagretOppslag, KREDITT } from './evalbar.mjs';
 import { TRENER, AVATAR, norsk, medNummer, forklaring, feilKommentar, ROS, esc, hilsen } from './trener.mjs';
 import * as rep from './repetisjon.mjs';
 
@@ -15,6 +16,7 @@ let fremgang = rep.lesFremgang(lager);
 let fargeFilter = 'alle';
 let timer = null;
 let brett = null;
+let evalbar = null;
 let tilstand = {};
 let tastLytter = null;
 let ventende = null;
@@ -23,6 +25,7 @@ const lagre = () => rep.lagreFremgang(lager, fremgang);
 const tilfeldig = liste => liste[Math.floor(Math.random() * liste.length)];
 const stopp = () => { clearTimeout(timer); timer = null; };
 const flertall = (n, en, flere) => `${n} ${n === 1 ? en : flere}`;
+const fjernEvalbar = () => { evalbar?.avslutt(); evalbar = null; };
 
 function startNotasjon(apning) {
   const chess = new Chess();
@@ -47,6 +50,7 @@ async function last() {
 function visBibliotek() {
   stopp();
   brett = null;
+  fjernEvalbar();
   document.title = 'Åpninger · Sjakk for to';
   const naa = Date.now();
   let forfalt = 0, laert = 0, totalt = 0;
@@ -89,8 +93,12 @@ function visApning(id, fane) {
       <nav class="ap-tilbake"><a href="#/">← Alle åpninger</a></nav>
       <header class="ap-apning-topp"><p class="eyebrow">${FARGE[apning.farge].toUpperCase()}${apning.eco ? ` · ${esc(apning.eco)}` : ''}</p><h1>${esc(apning.navn)}</h1><p class="ap-startlinje">${apning.startTrekk.length ? `Starter etter ${esc(startNotasjon(apning))}` : 'Fra utgangsstillingen'}</p></header>
       <nav class="ap-faner" aria-label="Del av åpningen">${faner.map(([f, t]) => `<a href="#/a/${id}/${f}" data-fane="${f}">${t}</a>`).join('')}</nav>
-      <div class="ap-oppsett"><section class="ap-brettsone" aria-label="Brett"><div id="ap-brett"></div><p id="ap-respons" class="ap-respons" aria-hidden="true" hidden></p><p id="ap-linje" class="ap-linje"></p></section><aside id="ap-panel" class="ap-panel"></aside></div>`;
-    brett = lagBrett(main.querySelector('#ap-brett'), { naarTrekk: trekk => tilstand.naarTrekk?.(trekk) });
+      <div class="ap-oppsett"><section class="ap-brettsone" aria-label="Brett"><div id="ap-brett"></div><div id="ap-eval"></div><p id="ap-respons" class="ap-respons" aria-hidden="true" hidden></p><p id="ap-linje" class="ap-linje"></p></section><aside id="ap-panel" class="ap-panel"></aside></div>
+      <p class="ap-fotnote">${KREDITT}</p>`;
+    fjernEvalbar();
+    evalbar = lagEvalbar(main.querySelector('#ap-eval'), { lager });
+    const lagret = lagretOppslag(apning.noder);
+    brett = lagBrett(main.querySelector('#ap-brett'), { naarTrekk: trekk => tilstand.naarTrekk?.(trekk), naarStilling: (fen, orientering) => evalbar.settStilling(fen, { orientering, lagret: lagret(fen) }) });
   }
   main.querySelectorAll('[data-fane]').forEach(a => { if (a.dataset.fane === fane) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   tilstand = { apningId: id, fane, apning };

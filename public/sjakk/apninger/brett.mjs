@@ -5,7 +5,7 @@ const GLYFER = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' };
 const NAVN = { p: 'bonde', n: 'springer', b: 'løper', r: 'tårn', q: 'dronning', k: 'konge' };
 const FILER = 'abcdefgh';
 
-export function lagBrett(rot, { naarTrekk }) {
+export function lagBrett(rot, { naarTrekk, naarStilling }) {
   rot.classList.add('ap-brett-ramme');
   rot.innerHTML = '<div class="board ap-brett" role="group" aria-label="Sjakkbrett. Piltaster flytter fokus, Enter velger og flytter."></div><svg class="ap-piler" viewBox="0 0 8 8" aria-hidden="true"><defs><marker id="ap-spiss-plan" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="2.6" markerHeight="2.6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#8fd1a0"/></marker><marker id="ap-spiss-fare" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="2.6" markerHeight="2.6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ff8f6b"/></marker><marker id="ap-spiss-hint" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="2.6" markerHeight="2.6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#e8a4bc"/></marker></defs><g></g></svg>';
   const brett = rot.querySelector('.ap-brett');
@@ -164,6 +164,7 @@ export function lagBrett(rot, { naarTrekk }) {
       chess = new Chess(tilstand.fen);
       if (ny.fen) valgt = null;
       tegn(beholdFokus);
+      naarStilling?.(tilstand.fen, tilstand.orientering);
     },
     piler(piler) { tilstand.piler = piler; tegnPiler(); },
     rist() { rot.classList.remove('ap-rist'); void rot.offsetWidth; rot.classList.add('ap-rist'); },

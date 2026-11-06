@@ -69,7 +69,8 @@ a { color: var(--pink); }
 .ap-apning-topp h1 { margin: 4px 0 2px; }
 .ap-startlinje { margin: 0; color: var(--muted); font-size: .875rem; }
 .ap-faner { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
-.ap-oppsett { display: grid; grid-template-columns: minmax(0, 600px) minmax(280px, 1fr); gap: 40px; align-items: start; }
+/* The board gives way on low windows, so the evaluation bar under it stays on screen. */
+.ap-oppsett { display: grid; grid-template-columns: minmax(0, clamp(480px, calc(100vh - 396px), 600px)) minmax(280px, 1fr); gap: 40px; align-items: start; }
 .ap-brettsone { min-width: 0; position: sticky; top: 12px; }
 .ap-brett-ramme { position: relative; padding: 11px; background: #392b35; border: 1px solid #614551; border-radius: 5px; box-shadow: 0 18px 55px #0005; }
 .ap-brett .square.ap-kan { touch-action: none; }
@@ -85,6 +86,29 @@ a { color: var(--pink); }
 .ap-spokelse { position: fixed; left: 0; top: 0; z-index: 50; display: grid; place-items: center; pointer-events: none; font-family: 'Segoe UI Symbol', 'Noto Sans Symbols 2', 'Apple Symbols', 'DejaVu Sans', serif; line-height: 1; }
 .ap-rist { animation: ap-rist .35s; }
 @keyframes ap-rist { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+/* Evaluation bar: every state keeps the same height, so nothing around it moves. */
+.ap-eval { display: flex; align-items: center; gap: 6px; height: 30px; margin-top: 8px; font-size: .78rem; color: var(--muted); }
+.ap-eval-vis { flex: 1; min-width: 0; display: flex; align-items: center; gap: 9px; }
+.ap-eval-tall { flex: none; width: 3.1em; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); transition: color .2s; }
+.ap-eval-spor { position: relative; flex: 1; min-width: 0; height: 10px; border-radius: 3px; overflow: hidden; background: #1b1220; box-shadow: inset 0 0 0 1px #614551; }
+.ap-eval-spor::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: #8c7786; }
+.ap-eval-hvit { position: absolute; inset: 0; background: #fff3e3; transform-origin: left center; transition: transform .45s cubic-bezier(.22, .8, .3, 1); }
+.ap-eval-snudd .ap-eval-hvit { transform-origin: right center; }
+.ap-eval-dybde { flex: none; display: inline-flex; align-items: center; justify-content: flex-end; gap: 5px; width: 3.3em; font-variant-numeric: tabular-nums; }
+.ap-eval-dybde::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--pink); opacity: 0; transition: opacity .2s; }
+/* The delays keep instant answers from blinking. */
+.ap-eval-regner .ap-eval-dybde::before { opacity: 1; transition-delay: .3s; animation: ap-eval-puls 1.1s ease-in-out infinite; }
+.ap-eval-gammel .ap-eval-tall { color: var(--muted); transition-delay: .15s; }
+@keyframes ap-eval-puls { 50% { transform: scale(.55); } }
+.ap-eval-tom .ap-eval-vis { visibility: hidden; }
+.ap-eval-av { display: none; flex: 1; }
+.ap-eval-skjult .ap-eval-vis { display: none; }
+.ap-eval-skjult .ap-eval-av { display: block; }
+.ap-eval-bryter { flex: none; display: grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 0; border-radius: 6px; background: none; color: #8c7786; }
+.ap-eval-bryter:hover { background: #44303e; color: var(--text); }
+.ap-eval-bryter:focus-visible { outline: 2px solid var(--pink); outline-offset: 1px; }
+.ap-eval-strek { display: none; }
+.ap-eval-skjult .ap-eval-strek { display: inline; }
 .ap-linje { margin: 12px 0 0; font-size: .875rem; color: var(--muted); line-height: 1.9; min-height: 1.9em; }
 .ap-start { color: #8c7786; }
 .ap-trekk { border: 0; background: none; color: #d7c4d0; padding: 1px 4px; border-radius: 4px; font: inherit; }
@@ -120,7 +144,6 @@ a { color: var(--pink); }
 .ap-felle:hover { border-color: #aa6a87; background: #44303e; }
 .ap-felle span { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--pink); }
 
-@media (min-width: 1000px) and (max-height: 850px) { .ap-oppsett { grid-template-columns: minmax(0, 520px) minmax(300px, 1fr); } }
 .ap-respons { display: none; }
 @media (max-width: 850px) {
   .ap-oppsett { grid-template-columns: minmax(0, 1fr); gap: 18px; }
@@ -156,4 +179,8 @@ a { color: var(--pink); }
   .ap-oppsett { gap: 12px; }
   .ap-linje { margin-top: 8px; white-space: nowrap; overflow-x: auto; scrollbar-width: none; }
 }
-@media (prefers-reduced-motion: reduce) { .ap-kort:hover { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .ap-kort:hover { transform: none; }
+  .ap-eval-hvit { transition: none; }
+  .ap-eval-regner .ap-eval-dybde::before { animation: none; }
+}
