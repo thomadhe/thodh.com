@@ -11,7 +11,7 @@
   "start": "e4 e6",
   "intro": {
     "historie": "Avbytningsvarianten har rykte som et remisvåpen fordi bondestrukturen blir symmetrisk. Med 4.c4 blir den ikke det: stillingen ligner en dronninggambitt med isolert d-bonde, der brikkene gjør jobben.",
-    "karakter": "Vi bytter på d5 og slår til mot sentrum med c4. Tar svart på c4, slår løperen tilbake med tempo. Da har vi en isolert d-bonde, men aktive brikker, e-linjen og felt som e5 og g5.",
+    "karakter": "Vi bytter på d5 og slår til mot sentrum med c4. Tar svart på c4, slår løperen tilbake. Da har vi en isolert d-bonde, men aktive brikker, e-linjen og felt som e5 og g5.",
     "passer": "… vil slippe de låste franske stillingene og heller ha fritt spill for brikkene, uten mye teori. Spiller svart presist, er det likt, men stillingen er enkel å spille for hvit."
   },
   "planer": [
@@ -26,7 +26,7 @@
   ],
   "feller": [],
   "sidelinjer": [
-    { "navn": "Rolig variant med 4.Sf3", "sti": "d4 d5 exd5 exd5 Nf3", "tekst": "Vil du ha enda mindre risiko, kan du spille 4.Sf3 og Ld3 uten c4. Stillingen blir symmetrisk og litt tørrere, men motoren liker den like godt (ca. +0,1)." }
+    { "navn": "Rolig variant med 4.Sf3", "sti": "d4 d5 exd5 exd5 Nf3", "tekst": "Vil du ha enda mindre risiko, kan du spille 4.Sf3 og Ld3 uten c4. Stillingen blir symmetrisk og litt tørrere, men motoren liker den litt bedre (ca. +0,2)." }
   ],
   "trekk": [
     { "sti": "d4", "hva": "Vi tar sentrum.", "ide": "med bønder på e4 og d4 står vi med mer plass; svart vil utfordre med …d5.", "pass": "Etter …d5 slår vi på d5.", "motor": { "cp": 24, "tap": 0, "best": "d4", "dybde": 16 } },
@@ -53,13 +53,13 @@
     { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 Be7 Nf3 O-O Be2 Nc6", "vekt": 2, "hva": "Svart utvikler." },
     { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 Be7 Nf3 O-O Be2 Nc6 O-O", "hva": "Rokade.", "ide": "kongen trygg og tårnet klart for e1.", "pass": "Etter …dxc4 slår løperen tilbake.", "plan": "cxd5 eller Lxc4, Le3 og Te1. Motoren: likt.", "motor": { "cp": 8, "tap": 0, "best": "O-O", "dybde": 16 } },
     { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 c6", "vekt": 3, "hva": "Svart dekker d5." },
-    { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 c6 Bd3", "hva": "Løperen utvikles.", "ide": "løperen peker mot kongesiden, og vi kan slå på d5 eller c4 når det passer.", "pass": "Etter …dxc4 slår løperen tilbake.", "motor": { "cp": 15, "tap": 0, "best": "Bd3", "dybde": 16 } },
+    { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 c6 Bd3", "hva": "Løperen utvikles.", "ide": "løperen peker mot kongesiden, og vi kan slå på d5 eller gå fram med c5 når det passer.", "pass": "Etter …dxc4 slår løperen tilbake.", "motor": { "cp": 15, "tap": 0, "best": "Bd3", "dybde": 16 } },
     { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 c6 Bd3 Bd6", "vekt": 3, "hva": "Svart utvikler." },
-    { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 c6 Bd3 Bd6 Nf3", "hva": "Springeren utvikles.", "ide": "vi går mot rokade.", "pass": "Etter …0-0 rokerer vi.", "plan": "0-0, Lg5 og Te1. Motoren: ca. +0,3.", "motor": { "cp": 20, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 c6 Bd3 Bd6 Nf3", "hva": "Springeren utvikles.", "ide": "vi går mot rokade.", "pass": "Etter …0-0 rokerer vi.", "plan": "0-0, Lg5 og Te1. Motoren: ca. +0,2.", "motor": { "cp": 20, "tap": 0, "best": "Nf3", "dybde": 16 } },
     { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 c6 Bd3 dxc4", "vekt": 2, "hva": "Svart tar c4." },
     { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 c6 Bd3 dxc4 Bxc4", "hva": "Løperen tar.", "ide": "vi har mistet et tempo, men får fri utvikling.", "pass": "Etter …Ld6 kommer Sf3.", "plan": "Sf3, 0-0 og Lg5. Motoren: ca. +0,2.", "motor": { "cp": 19, "tap": 0, "best": "Bxc4", "dybde": 16 } },
     { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 c6 Bd3 Be7", "vekt": 2, "hva": "Svart utvikler." },
-    { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 c6 Bd3 Be7 Nf3", "hva": "Springeren utvikles.", "ide": "vi går mot rokade.", "pass": "Etter …0-0 rokerer vi.", "plan": "0-0, Lg5 og Te1. Motoren: ca. +0,3.", "motor": { "cp": 17, "tap": 0, "best": "Nf3", "dybde": 16 } },
+    { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 c6 Bd3 Be7 Nf3", "hva": "Springeren utvikles.", "ide": "vi går mot rokade.", "pass": "Etter …0-0 rokerer vi.", "plan": "0-0, Lg5 og Te1. Motoren: ca. +0,2.", "motor": { "cp": 17, "tap": 0, "best": "Nf3", "dybde": 16 } },
     { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 dxc4", "vekt": 3, "hva": "Svart tar c4 med en gang." },
     { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 dxc4 Bxc4", "hva": "Løperen tar.", "ide": "vi har en isolert d-bonde, men løperen står aktivt.", "pass": "Etter …Ld6 eller …Le7 kommer Sf3.", "motor": { "cp": 22, "tap": 0, "best": "Bxc4", "dybde": 16 } },
     { "sti": "d4 d5 exd5 exd5 c4 Nf6 Nc3 dxc4 Bxc4 Bd6", "vekt": 3, "hva": "Svart utvikler." },
