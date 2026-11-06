@@ -2,7 +2,7 @@
 // Each question has its own address, so going back works, and a question can be opened on its own from a gap on the repertoire page.
 import { Chess } from '../vendor/chess.mjs';
 import { TRENER, esc } from './trener.mjs';
-import { flertall, forsteSetning, miniBrett, sanTekst, skarphet, trenerBoble } from './ui.mjs';
+import { flertall, forsteSetning, helTrekk, miniBrett, sanTekst, skarphet, trenerBoble } from './ui.mjs';
 import { STARTFORSLAG, alternativer, byggSteg, dekningTekst, erValgt, fordel, forsteSteg, hullTekst, nabostSteg, omtrentProsent, settValgt, svarAndel, svarDekning, veiInnTrekk, velgApning } from './repertoar.mjs';
 import { lagKort, nyePerDag } from './kort.mjs';
 
@@ -41,7 +41,7 @@ function valgKort(apning, fremgang) {
       <span class="ap-alt-tekst">
         <span class="ap-alt-navn"><b>${esc(apning.navn)}</b>${merke}</span>
         <span class="ap-veiinn">${esc(sanTekst(vei))}</span>
-        <span class="ap-alt-setning">${esc(forsteSetning(apning.intro.karakter))}</span>
+        <span class="ap-alt-setning">${esc(forsteSetning(apning.kort))}</span>
         <span class="ap-merker"><span class="ap-skarp">Skarphet ${skarphet(apning)}</span><span>${esc(omfang(apning, nyePerDag(fremgang)))}</span></span>
       </span>
     </button>
@@ -75,7 +75,7 @@ function visSporsmal(ui, slots, slot, bareHull) {
   ui.main.innerHTML = `
     <header class="ap-okt-topp ap-bygg-topp"><a href="#/repertoar">← Ferdig for nå</a><span class="ap-okt-teller">${slot.farge === 'w' ? 'Hvit' : 'Svart'} · ${nummer} av ${steg.length}</span><span class="ap-spor"><span style="width:${Math.round(nummer / steg.length * 100)}%"></span></span></header>
     ${kvittering ? `<p class="ap-bygg-kvittering" role="status">${esc(kvittering)}</p>` : ''}
-    <section class="ap-hero ap-bygg-hero">${trenerBoble(`<p class="eyebrow">BYGG REPERTOARET · ${FARGE_NAVN[slot.farge]}</p><h1>${esc(sporsmal)}</h1>${foran}${hvorOfte}${merkelapp}`, { live: false })}</section>
+    <section class="ap-hero ap-bygg-hero">${trenerBoble(`<p class="eyebrow">BYGG REPERTOARET · ${FARGE_NAVN[slot.farge]}</p><h1>${helTrekk(esc(sporsmal))}</h1>${foran}${hvorOfte}${merkelapp}`, { live: false })}</section>
     <ul class="ap-alternativer">${vis.map(apning => valgKort(apning, fremgang)).join('')}</ul>
     ${vis.length < liste.length ? `<button type="button" class="ap-lenke ap-bygg-flere" data-alle>Vis alle ${liste.length} åpningene her</button>` : ''}
     <div class="ap-bygg-knapper"><a class="button secondary" href="${tilbake}">◀ Tilbake</a><button type="button" class="button secondary" data-hopp>${harValg ? 'Behold og gå videre ▶' : 'Hopp over ▶'}</button></div>

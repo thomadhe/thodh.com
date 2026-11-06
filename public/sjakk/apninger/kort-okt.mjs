@@ -170,6 +170,7 @@ export function visKortokt(ui) {
   }
 
   const visPiler = () => [...new Map(aktiv.kort.kilder.filter(k => !k.godtatt).map(k => [k.san, { fra: k.fra, til: k.til, type: 'hint' }])).values()];
+  const visFra = () => visPiler().map(pil => pil.fra);
 
   // A new card: the arrow shows the move, the coach says why, and the player plays it.
   function visLaering() {
@@ -182,7 +183,7 @@ export function visKortokt(ui) {
     const { kort, kilde, sist } = aktiv;
     if (!kort.trekk.includes(trekk.san)) {
       brett.rist();
-      brett.sett({ sist, piler: visPiler() });
+      brett.sett({ sist, piler: visPiler(), merket: visFra() });
       ui.respons(`Følg den rosa pilen: ${norsk(kilde.san)}.`, 'feil');
       return;
     }
@@ -233,11 +234,13 @@ export function visKortokt(ui) {
     linje.textContent = sanTekst(veiInnTrekk(apning));
     linje.scrollLeft = 0;
     teller.textContent = 'Kort fortalt';
+    ui.main.classList.add('ap-kun-tekst');
     const slik = forstegang ? `<p class="ap-kilde">Slik gjør vi det: Jeg viser deg trekkene ett og ett, og du spiller dem selv. Etter noen kort spør jeg deg om dem igjen.</p>` : '';
     panel.innerHTML = `${trenerBoble(`<p class="eyebrow">KORT FORTALT · ${esc(apning.navn.toUpperCase())}</p><p class="ap-sier">${esc(forsteSetning(apning.intro.karakter))}</p><p><span class="ap-etikett plan">Planen</span>${esc(apning.planer[0])}</p>${apning.startTrekk.length ? `<p class="ap-kilde">Vi starter etter ${esc(startNotasjon(apning))}.</p>` : ''}${slik}`)}<div class="ap-kontroller ap-okt-neste"><button type="button" class="button primary" data-videre>Vis meg trekkene ▶</button><a class="ap-mer" href="#/a/${apning.id}/om">Les mer om ${esc(apning.navn)}</a></div>`;
-    panel.querySelector('[data-videre]').addEventListener('click', videre);
+    const ferdig = () => { ui.main.classList.remove('ap-kun-tekst'); videre(); };
+    panel.querySelector('[data-videre]').addEventListener('click', ferdig);
     ui.settTast(event => {
-      if (event.key === 'Enter' && !event.target.closest?.('a, button:not(.square)')) { event.preventDefault(); videre(); }
+      if (event.key === 'Enter' && !event.target.closest?.('a, button:not(.square)')) { event.preventDefault(); ferdig(); }
     });
   }
 
@@ -264,7 +267,7 @@ export function visKortokt(ui) {
       aktiv.sist = sist;
       if (laer) {
         ui.settTrekk(laertTrekk);
-        brett.sett({ sist, piler: visPiler() });
+        brett.sett({ sist, piler: visPiler(), merket: visFra() });
         ui.respons(`Spill ${norsk(kilde.san)}: følg den rosa pilen.`);
         visLaering();
       } else {

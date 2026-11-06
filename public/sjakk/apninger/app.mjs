@@ -470,6 +470,7 @@ function visFeller(apning, valgt = null) {
 // ---------- Routing ----------
 function rute() {
   const [, side, id, fane, ekstra] = location.hash.split('/');
+  main.classList.remove('ap-kun-tekst');
   tastLytter = null;
   stopp();
   if (side === 'a' && id) visApning(id, ['om', 'laer', 'ov', 'feller'].includes(fane) ? fane : 'laer');
