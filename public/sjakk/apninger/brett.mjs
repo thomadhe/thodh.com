@@ -54,7 +54,7 @@ export function lagBrett(rot, { naarTrekk, naarStilling }) {
       const navn = brikke ? `${brikke.color === 'w' ? 'hvit' : 'svart'} ${NAVN[brikke.type]}` : 'tomt felt';
       const etikett = `${felt}, ${navn}${til ? ', lovlig trekk hit' : ''}${valgt === felt ? ', valgt' : ''}`;
       const kol = i % 8, rekke = Math.floor(i / 8);
-      return `<button type="button" class="${klasser.join(' ')}" data-square="${felt}" aria-label="${etikett}" tabindex="${felt === fokus ? 0 : -1}">${kol === 0 ? `<span aria-hidden="true" class="coordinate rank">${rad}</span>` : ''}${rekke === 7 ? `<span aria-hidden="true" class="coordinate file">${felt[0]}</span>` : ''}${brikke ? `<span aria-hidden="true" class="piece ${brikke.color === 'w' ? 'white' : 'black'}">${GLYFER[brikke.type]}</span>` : ''}${til ? `<span aria-hidden="true" class="${til.captured ? 'legal-capture' : 'legal-dot'}"></span>` : ''}</button>`;
+      return `<button type="button" class="${klasser.join(' ')}" data-square="${felt}" aria-label="${etikett}" tabindex="${felt === fokus ? 0 : -1}">${kol === 0 ? `<span aria-hidden="true" class="coordinate rank">${rad}</span>` : ''}${rekke === 7 ? `<span aria-hidden="true" class="coordinate file">${felt[0]}</span>` : ''}${brikke ? `<span aria-hidden="true" class="piece ${brikke.color === 'w' ? 'white' : 'black'}${brikke.type === 'p' ? ' pawn' : ''}">${GLYFER[brikke.type]}</span>` : ''}${til ? `<span aria-hidden="true" class="${til.captured ? 'legal-capture' : 'legal-dot'}"></span>` : ''}</button>`;
     }).join('');
     brett.classList.toggle('ap-laast', tilstand.laast);
     tegnPiler();

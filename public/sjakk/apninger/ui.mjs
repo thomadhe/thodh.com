@@ -27,7 +27,7 @@ export function miniBrett(fen, orientering = 'w') {
   const rader = new Chess(fen).board();
   const ruter = (orientering === 'w' ? rader : [...rader].reverse().map(rad => [...rad].reverse())).flat();
   const lys = i => (Math.floor(i / 8) + i) % 2 === 0;
-  return `<span class="ap-mini" aria-hidden="true">${ruter.map((brikke, i) => `<i class="${lys(i) ? 'lys' : 'mork'}">${brikke ? `<span class="piece ${brikke.color === 'w' ? 'white' : 'black'}">${GLYFER[brikke.type]}</span>` : ''}</i>`).join('')}</span>`;
+  return `<span class="ap-mini" aria-hidden="true">${ruter.map((brikke, i) => `<i class="${lys(i) ? 'lys' : 'mork'}">${brikke ? `<span class="piece ${brikke.color === 'w' ? 'white' : 'black'}${brikke.type === 'p' ? ' pawn' : ''}">${GLYFER[brikke.type]}</span>` : ''}</i>`).join('')}</span>`;
 }
 
 export const skarphet = apning => `<span class="ap-skarphet" aria-label="Skarphet ${apning.skarphet} av 5">${'<i class="på"></i>'.repeat(apning.skarphet)}${'<i></i>'.repeat(5 - apning.skarphet)}</span>`;

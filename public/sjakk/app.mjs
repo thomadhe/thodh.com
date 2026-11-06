@@ -49,7 +49,7 @@ function message(text = '', clearAfter = 0) {
   $('#connection-status').textContent = text; $('#connection-status').hidden = !text;
   if (text && clearAfter) messageTimer = setTimeout(() => message(), clearAfter);
 }
-function pieceMarkup(piece) { return `<span aria-hidden="true" class="piece ${piece.color === 'w' ? 'white' : 'black'}">${glyphs[piece.type]}</span>`; }
+function pieceMarkup(piece) { return `<span aria-hidden="true" class="piece ${piece.color === 'w' ? 'white' : 'black'}${piece.type === 'p' ? ' pawn' : ''}">${glyphs[piece.type]}</span>`; }
 function canMove() { return state.status === 'playing' && !state.notices.length && !busy && (mode === 'local' || Boolean(confirmed) && state.turn === playerColor); }
 function canPremove() { return mode === 'online' && Boolean(confirmed) && state.status === 'playing' && state.turn !== playerColor && !busy; }
 const fancy = () => state.settings.minispill !== 'casino';

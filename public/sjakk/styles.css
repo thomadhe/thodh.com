@@ -41,6 +41,8 @@ button:disabled { cursor: default; }
 .piece { font-family: 'Segoe UI Symbol', 'Noto Sans Symbols 2', 'Apple Symbols', 'DejaVu Sans', serif; font-size: clamp(1.8rem, 4.8vw, 3.8rem); line-height: 1; position: relative; z-index: 1; user-select: none; pointer-events: none; }
 .piece.white { color: #fff7e9; -webkit-text-stroke: 1px #5c384d; filter: drop-shadow(0 2px 1px #31213080); }
 .piece.black { color: #2b1c2d; -webkit-text-stroke: .5px #ddbfca; filter: drop-shadow(0 2px 1px #30192b60); }
+/* Segoe UI Symbol draws the black pawn hollow, so on Windows it reads as a white one. */
+.piece.black.pawn { -webkit-text-stroke: .05em #2b1c2d; filter: drop-shadow(0 0 .6px #ddbfca) drop-shadow(0 2px 1px #30192b60); }
 .piece.drag-origin { opacity: .35; }
 .piece.drag-ghost { position: fixed; left: 0; top: 0; z-index: 60; pointer-events: none; will-change: transform; }
 .coordinate { position: absolute; z-index: 2; font: 600 .75rem/1 var(--sans); }

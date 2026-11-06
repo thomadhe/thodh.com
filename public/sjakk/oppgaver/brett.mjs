@@ -6,7 +6,7 @@ export const BRIKKENAVN = { p: 'bonde', n: 'springer', b: 'løper', r: 'tårn', 
 const fargenavn = c => (c === 'w' ? 'hvit' : 'svart');
 const reduserBevegelse = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export const brikkeHtml = (type, color) => `<span aria-hidden="true" class="piece ${color === 'w' ? 'white' : 'black'}">${GLYFER[type]}</span>`;
+export const brikkeHtml = (type, color) => `<span aria-hidden="true" class="piece ${color === 'w' ? 'white' : 'black'}${type === 'p' ? ' pawn' : ''}">${GLYFER[type]}</span>`;
 
 export function lagBrett(rot, { kanFlytte = () => true, vedTrekk = () => {} } = {}) {
   let chess = null;
