@@ -1,5 +1,5 @@
 {
-  "dato": "2026-11-03",
+  "dato": "2026-11-06",
   "motor": "Stockfish 19 WASM Multithreaded",
   "dybde": 16,
   "grenseCp": 100,
@@ -191,10 +191,58 @@
         }
       ],
       "felleSjekk": []
+    },
+    {
+      "id": "budapest-gambitt",
+      "linjer": 42,
+      "stillinger": 164,
+      "repertoartrekk": 82,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "albin-motgambitt",
+      "linjer": 69,
+      "stillinger": 264,
+      "repertoartrekk": 134,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "islandsk-gambitt",
+      "linjer": 93,
+      "stillinger": 333,
+      "repertoartrekk": 169,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "caro-kann",
+      "linjer": 64,
+      "stillinger": 241,
+      "repertoartrekk": 123,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "benko-gambitt",
+      "linjer": 51,
+      "stillinger": 208,
+      "repertoartrekk": 107,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "from-gambitt",
+      "linjer": 56,
+      "stillinger": 217,
+      "repertoartrekk": 109,
+      "flagget": [],
+      "felleSjekk": []
     }
   ],
   "totalt": {
-    "repertoartrekk": 430,
+    "repertoartrekk": 1154,
     "flagget": 3
   }
 }
