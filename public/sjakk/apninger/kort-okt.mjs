@@ -57,7 +57,7 @@ function tekstSide(ui, innhold) {
 
 function intetKlart(ui, ko) {
   const iMorgen = forfallerIMorgen(ui.kort(), ui.fremgang());
-  tekstSide(ui, `<p class="eyebrow">KORT</p><h1>Ingen kort akkurat nå</h1><p>${iMorgen ? `Godt jobbet! ${flertall(iMorgen, 'kort kommer', 'kort kommer')} tilbake i morgen.` : 'Godt jobbet! Du er à jour.'}</p>${ko.flere ? '<button type="button" class="button primary" data-flere>Ta flere</button>' : '<a class="button secondary" href="#/repertoar">Til repertoaret</a>'}`);
+  tekstSide(ui, `<p class="eyebrow">KORT</p><h1>Ingen kort akkurat nå</h1><p>${iMorgen ? `Godt jobbet! ${iMorgen} kort kommer tilbake i morgen.` : 'Godt jobbet! Nå er du ajour.'}</p>${ko.flere ? '<button type="button" class="button primary" data-flere>Ta flere</button>' : '<a class="button secondary" href="#/repertoar">Til repertoaret</a>'}`);
   ui.main.querySelector('[data-flere]')?.addEventListener('click', () => { ekstra += 1; visKortokt(ui); });
 }
 
@@ -130,7 +130,7 @@ export function visKortokt(ui) {
     });
   }
 
-  function visKort() {
+  function visKort(tastatur = false) {
     const kort = okt.ko[0];
     if (!kort) { oppsummering(ui, okt); return; }
     const kilde = kort.kilder.find(k => k.node) ?? kort.kilder[0];
@@ -150,6 +150,7 @@ export function visKortokt(ui) {
       aktiv.sist = sist;
       ui.settTrekk(svar);
       visSporsmal();
+      if (tastatur) ui.main.querySelector('.ap-brett [tabindex="0"]')?.focus({ preventScroll: true });
     });
   }
 
@@ -167,6 +168,8 @@ export function visKortokt(ui) {
       const etter = new Chess(brett.chess.fen());
       etter.move(trekk.san);
       brett.sett({ fen: etter.fen(), sist: { from: trekk.from, to: trekk.to }, laast: true, piler: piler(treff.node?.entry.piler), gli: true });
+      linje.textContent = sanTekst([...kilde.forTrekk, trekk.san]);
+      linje.scrollLeft = linje.scrollWidth;
       const ros = hint ? 'Riktig, med litt hjelp.' : tilfeldig(ROS);
       const hva = treff.node ? ` ${esc(medNummer(treff.node))} – ${esc(treff.node.entry.hva)}` : ` ${esc(norsk(trekk.san))}.`;
       tekst = `<p class="ap-sier"><strong>${ros}</strong>${hva}</p>${forklaringFor(kort, trekk.san)}`;
@@ -182,8 +185,8 @@ export function visKortokt(ui) {
     const fremover = !riktig ? 'Den kommer tilbake om litt.' : post ? (hint ? `Den blir stående der den var. ${nesteGang(post)}` : nesteGang(post)) : 'Nå satt den.';
     const siste = okt.ko.length === 1;
     panel.innerHTML = `${trenerBoble(`<p class="eyebrow">${esc(kilde.apning.navn.toUpperCase())} · ${esc(kilde.linje)}</p>${tekst}<p class="ap-kilde">${fremover}</p>`, { stemning: riktig ? 'bra' : 'feil' })}<div class="ap-kontroller ap-okt-neste"><button type="button" class="button primary" data-neste>${siste ? 'Se oppsummering ▶' : 'Neste kort ▶'}</button></div>`;
-    const neste = () => { okt.ko.shift(); visKort(); };
     const knapp = panel.querySelector('[data-neste]');
+    const neste = () => { const tastatur = knapp.matches(':focus-visible'); okt.ko.shift(); visKort(tastatur); };
     knapp.addEventListener('click', neste);
     // A keyboard player moves on with the button; everyone else has Enter anyway, without a focus ring.
     if (ui.main.querySelector('.ap-brett :focus-visible')) knapp.focus({ preventScroll: true });

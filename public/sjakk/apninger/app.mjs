@@ -300,7 +300,8 @@ function spillOv(apning) {
   const forrige = ov.i ? noder[ov.i - 1] : ov.rot ?? apning.rot;
   const neste = noder[ov.i];
   const ferdig = !neste;
-  const linjeNavn = blandet ? `${apning.navn} · ${linje.navn}` : linje.navn;
+  // In the mixed drill a name before the opponent's reply would give the reply away.
+  const linjeNavn = !blandet ? linje.navn : ferdig ? `${apning.navn} · ${linje.navn}` : ov.i >= apning.startTrekk.length ? apning.navn : 'Blandet øving';
   const videre = () => (blandet ? startBlandet(blandet.farge, blandet.nokkel) : startOv(apning, linje.id));
   if (blandet) oppslag = oppslagFor(apning);
   const ekstraPiler = ov.feilPil ? [ov.feilPil] : [];

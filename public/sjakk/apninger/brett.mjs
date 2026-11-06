@@ -30,7 +30,7 @@ export function lagBrett(rot, { naarTrekk, naarStilling }) {
     const brikke = brett.querySelector(`[data-square="${to}"] .piece`);
     const fra = brett.querySelector(`[data-square="${from}"]`)?.getBoundingClientRect();
     const til = brett.querySelector(`[data-square="${to}"]`)?.getBoundingClientRect();
-    if (!brikke?.animate || !fra || !til) return;
+    if (!brikke?.animate || !fra || !til || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
     brikke.style.zIndex = 4;
     brikke.animate([{ transform: `translate(${fra.left - til.left}px, ${fra.top - til.top}px)` }, { transform: 'none' }], { duration: 190, easing: 'ease-out' });
   }

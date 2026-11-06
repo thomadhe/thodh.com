@@ -58,13 +58,15 @@ export const valgteApninger = (fremgang, apninger) => apninger.filter(apning => 
 export function settValgt(fremgang, id, valgt, naa = Date.now()) { fremgang.repertoar[id] = { valgt, sist: naa }; }
 
 // The moves before the tree as nodes, so a drill can start from move 1. Only the last has a place in the tree.
+// The texts name the opening only once the opponent has shown the way, so the first moves give nothing away.
 export function startNoder(apning) {
   const chess = new Chess();
+  const sisteSvar = apning.startTrekk.length - (apning.startTrekk.length % 2 === (apning.farge === 'w' ? 0 : 1) ? 1 : 2);
   return apning.startTrekk.map((san, i) => {
     const nummer = trekkNummer(chess.fen());
     const trekk = chess.move(san);
     const rep = trekk.color === apning.farge;
-    return { sti: i === apning.startTrekk.length - 1 ? '' : null, san: trekk.san, fra: trekk.from, til: trekk.to, farge: trekk.color, rep, fen: chess.fen(), nummer, barn: [], entry: rep ? { hva: `Veien inn i ${apning.navn}.`, ide: `det er veien inn i ${apning.navn}.` } : { hva: `Da går vi for ${apning.navn}.` } };
+    return { sti: i === apning.startTrekk.length - 1 ? '' : null, san: trekk.san, fra: trekk.from, til: trekk.to, farge: trekk.color, rep, fen: chess.fen(), nummer, barn: [], entry: rep ? { hva: 'Det er trekket vårt her.', ide: 'det er det trekket du har valgt i repertoaret.' } : { hva: i === sisteSvar ? `Da går vi for ${apning.navn}.` : 'Et vanlig svar.' } };
   });
 }
 

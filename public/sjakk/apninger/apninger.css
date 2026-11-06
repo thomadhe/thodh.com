@@ -114,6 +114,8 @@ a { color: var(--pink); }
 .ap-eval-vent { display: none; flex: 1; }
 .ap-eval-holdt .ap-eval-vis, .ap-eval-holdt .ap-eval-av, .ap-eval-holdt .ap-eval-bryter { display: none; }
 .ap-eval-holdt .ap-eval-vent { display: block; }
+.ap-eval-holdt.ap-eval-skjult .ap-eval-vent { display: none; }
+.ap-eval-holdt.ap-eval-skjult .ap-eval-av { display: block; }
 .ap-eval-strek { display: none; }
 .ap-eval-skjult .ap-eval-strek { display: inline; }
 .ap-linje { margin: 12px 0 0; font-size: .875rem; color: var(--muted); line-height: 1.9; min-height: 1.9em; }
@@ -229,7 +231,7 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
   .ap-oppsett { grid-template-columns: minmax(0, 1fr); gap: 18px; }
   .ap-brettsone { position: static; }
   /* The explanation can be longer than the screen, and the way on should not be. */
-  .ap-okt-neste { position: sticky; bottom: 10px; z-index: 5; }
+  .ap-okt-neste { position: sticky; bottom: 10px; z-index: 5; margin-top: 30px; }
   .ap-okt-neste::before { content: ''; position: absolute; inset: -24px -6px -10px; z-index: -1; background: linear-gradient(transparent, var(--bg) 24px); pointer-events: none; }
   .ap-handlinger, .ap-slotliste { grid-template-columns: minmax(0, 1fr); }
   .ap-respons:not([hidden]) { display: block; margin: 8px 0 0; padding: 7px 12px; border: 1px solid #5b3b4d; border-radius: 8px; background: #2b1d2b; color: var(--text); font-size: .875rem; line-height: 1.4; }

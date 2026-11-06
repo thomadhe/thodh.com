@@ -573,3 +573,30 @@ test('blandet øving: et annet valgt trekk gir en linje som følger det', () => 
   assert.equal(velgBlandetLinje(valgte, tomFremgang(), { naa: NAA, spilt: ['e4', 'e5', 'd4'] }), null, 'et trekk utenfor repertoaret er en feil');
   assert.equal(velgBlandetLinje(valgte, tomFremgang(), { naa: NAA, farge: 'b' }), null);
 });
+
+test('kort: hver åpning i datamappen gir kort som stemmer med brettet', () => {
+  for (const apning of alle) {
+    for (const kort of lagKort([apning])) {
+      assert.equal(kort.farge, apning.farge);
+      assert.equal(kort.fen.split(' ')[1], kort.farge, `${apning.id}: feil side i trekket`);
+      for (const kilde of kort.kilder) {
+        const chess = new Chess();
+        for (const san of kilde.forTrekk) chess.move(san);
+        assert.equal(kortId(chess.fen(), kort.farge), kort.id, `${apning.id}: ${kilde.forTrekk.join(' ')}`);
+        const trekk = chess.move(kilde.san);
+        assert.deepEqual([trekk.from, trekk.to], [kilde.fra, kilde.til], `${apning.id}: ${kilde.san}`);
+        assert.ok(kilde.linje, `${apning.id}: linjen mangler navn`);
+        if (kilde.node) assert.ok(kilde.node.entry.ide, `${apning.id}: ${kilde.san} mangler idé`);
+      }
+    }
+  }
+});
+
+test('blandet øving: starttrekkene røper ikke åpningen før motstanderen har svart', () => {
+  const [hvit, svar] = startNoder(finn('smith-morra'));
+  assert.ok(!hvit.entry.hva.includes('Smith') && !hvit.entry.ide.includes('Smith'), 'mitt første trekk er nøytralt');
+  assert.ok(svar.entry.hva.includes('Smith-Morra'), 'navnet kommer med svaret');
+  const dypt = startNoder(finn('marshall')).filter(n => !n.rep).map(n => n.entry.hva.includes('Marshall'));
+  assert.deepEqual(dypt.slice(0, -1).filter(Boolean), [], 'bare det siste svaret før treet navngir åpningen');
+  assert.equal(dypt.at(-1), true);
+});

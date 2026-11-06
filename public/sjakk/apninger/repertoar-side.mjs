@@ -13,6 +13,7 @@ const SEKSJONER = [
 
 let apen = null;
 let melding = null;
+let angre = null;
 
 // The way into an opening, up to and including our first move in the tree.
 function veiInn(apning) {
@@ -85,7 +86,8 @@ function handlinger(ui) {
   </div>`;
 }
 
-function forslagHtml(ui, slots) {
+function forslagHtml(ui, slots, valgtNaa) {
+  if (valgtNaa) return `<aside class="ap-forslag" role="status"><p>Da er ${flertall(valgtNaa.length, 'åpning', 'åpninger')} på plass. Ombestemte du deg?</p><button type="button" class="button secondary" data-angre>Angre</button></aside>`;
   const fremgang = ui.fremgang();
   const utvalg = STARTFORSLAG.map(id => ui.alle().find(apning => apning.id === id)).filter(Boolean);
   if (!utvalg.length || slots.some(slot => slot.farge === 'w' && slot.apninger.some(apning => erValgt(fremgang, apning.id)))) return '';
@@ -99,12 +101,14 @@ export function visRepertoar(ui, fokus = null) {
   const slots = fordel(ui.alle());
   document.title = 'Mitt repertoar · Åpninger';
   const antall = ui.valgte().length;
+  const valgtNaa = angre;
+  angre = null;
   const intro = antall ? `Du har valgt ${flertall(antall, 'åpning', 'åpninger')}. Trykk på et svar for å bytte, så følger kortene og øvingen etter.` : 'Her setter vi sammen det du faktisk vil spille: ett valg mot hvert svar, med hvit og svart. Velg i ditt tempo, og bytt når du vil.';
   main.innerHTML = `
     <nav class="ap-tilbake"><a href="#/">← Alle åpninger</a></nav>
     <section class="ap-hero ap-rep-hero">${trenerBoble(`<p class="eyebrow">${TRENER.navn.toUpperCase()} · MITT REPERTOAR</p><h1>Mitt repertoar</h1><p>${esc(intro)}</p>`, { live: false })}</section>
     ${handlinger(ui)}
-    ${forslagHtml(ui, slots)}
+    ${forslagHtml(ui, slots, valgtNaa)}
     ${SEKSJONER.map(({ farge, tittel, tekst }) => `<section class="ap-gruppe"><h2>${tittel}</h2><p class="ap-gruppe-tekst">${tekst}</p><div class="ap-slotliste">${slots.filter(slot => slot.farge === farge && (slot.linjer.length || slot.apninger.length)).map(slot => slotHtml(slot, fremgang)).join('')}</div></section>`).join('')}`;
 
   const tegn = nyttFokus => visRepertoar(ui, nyttFokus);
@@ -134,9 +138,15 @@ export function visRepertoar(ui, fokus = null) {
     tegn(`[data-slot="${apen}"]`);
   });
   main.querySelector('[data-forslag]')?.addEventListener('click', () => {
-    for (const id of STARTFORSLAG) if (ui.alle().some(apning => apning.id === id)) settValgt(ui.fremgang(), id, true);
+    angre = STARTFORSLAG.filter(id => ui.alle().some(apning => apning.id === id));
+    for (const id of angre) settValgt(ui.fremgang(), id, true);
     ui.lagre();
-    tegn('.ap-handling .button');
+    tegn('[data-angre]');
+  });
+  main.querySelector('[data-angre]')?.addEventListener('click', () => {
+    for (const id of valgtNaa) settValgt(ui.fremgang(), id, false);
+    ui.lagre();
+    tegn('[data-forslag]');
   });
   if (fokus) main.querySelector(fokus)?.focus({ preventScroll: true });
 }
