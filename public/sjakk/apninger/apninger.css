@@ -236,7 +236,8 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
 .ap-neste-tekst .eyebrow { margin: 0 0 2px; font-size: .7rem; }
 .ap-neste-tekst h2 { margin: 0; font: 500 1.6rem/1.2 var(--serif); }
 .ap-neste-tekst p:last-child { margin: 3px 0 0; color: #e3d3dc; font-size: .925rem; }
-.ap-neste-knapper { flex: none; display: flex; flex-direction: column; gap: 8px; }
+.ap-neste-knapper { flex: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.ap-neste-knapper > :only-child, .ap-neste-knapper > :nth-child(3) { grid-column: 1 / -1; }
 .ap-neste-knapper .button { min-width: 150px; min-height: 48px; text-decoration: none; }
 .ap-neste-knapper .ap-begge { min-height: 40px; }
 .ap-til-repertoar { margin: 0 0 22px; color: var(--muted); font-size: .875rem; }
@@ -352,7 +353,8 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
   .brand-symbol { font-size: 2rem; }
   .ap-innhold { padding-top: 16px; }
   .ap-neste { flex-direction: column; align-items: stretch; gap: 12px; padding: 14px; }
-  .ap-neste-knapper .button { width: 100%; }
+  .ap-neste-knapper { flex: auto; }
+  .ap-neste-knapper .button { width: 100%; min-width: 0; }
   .ap-alt-knapp { grid-template-columns: 84px minmax(0, 1fr); gap: 11px; padding: 11px; }
   .ap-alt-navn b { font-size: 1.12rem; }
   .ap-alt-setning { font-size: .85rem; }

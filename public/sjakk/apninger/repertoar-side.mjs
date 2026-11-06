@@ -117,7 +117,7 @@ function fanerHtml(ui, farge) {
   const valgte = ui.valgte();
   const fane = f => {
     const klare = medFarge(valgte, f).length ? klareKort(ui, f).kort.length : 0;
-    return `<a href="${repertoarAdresse(f)}"${f === farge ? ' aria-current="page"' : ''}><span class="ap-fane-merke ${f}" aria-hidden="true"></span>${FARGE[f]}${klare ? `<span class="ap-fane-tall" aria-label="${flertall(klare, 'kort', 'kort')} klare">${klare}</span>` : ''}</a>`;
+    return `<a href="${repertoarAdresse(f)}"${f === farge ? ' aria-current="page"' : ''}${klare ? ` aria-label="${FARGE[f]}, ${flertall(klare, 'kort', 'kort')} klare"` : ''}><span class="ap-fane-merke ${f}" aria-hidden="true"></span>${FARGE[f]}${klare ? `<span class="ap-fane-tall" aria-hidden="true">${klare}</span>` : ''}</a>`;
   };
   return `<nav class="ap-rep-faner" aria-label="Velg farge">${fane('w')}${fane('b')}</nav>`;
 }
