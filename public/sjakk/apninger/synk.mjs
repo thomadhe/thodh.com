@@ -26,6 +26,8 @@ export function slaSammen(a, b) {
     feller: flett(a.feller, b.feller, nyest('lost')),
     repertoar: flett(a.repertoar, b.repertoar, nyest('sist')),
     kort: flett(a.kort, b.kort, nyest('sist')),
+    introer: flett(a.introer, b.introer, nyest('sist')),
+    tempo: nyest('sist')(a.tempo, b.tempo) ?? {},
   };
 }
 
