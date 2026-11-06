@@ -103,6 +103,8 @@ function forslagHtml(ui, slots, valgtNaa) {
 
 export function visRepertoar(ui, fokus = null) {
   const { main } = ui;
+  // A note about the last tap belongs to this visit.
+  if (!fokus) fjernet = null;
   const fremgang = ui.fremgang();
   const slots = fordel(ui.alle());
   document.title = 'Mitt repertoar · Åpninger';
