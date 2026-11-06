@@ -89,7 +89,7 @@ function handlinger(ui, farge) {
     <section class="ap-handling">
       <p class="eyebrow">TEMPO</p>
       <h2>Nye kort per dag</h2>
-      <p>${tempo === FRITT ? 'Ingen grense på nye kort. Du bestemmer selv når det er nok.' : 'Ett tall for begge fargene. Repetisjoner kommer i tillegg, så ta heller få og husk dem.'}</p>
+      <p>${tempo === FRITT ? 'Ingen grense på nye kort. Du bestemmer selv når det er nok.' : 'Ett tall for begge fargene. Repetisjoner kommer i tillegg.'}</p>
       <div class="ap-filter ap-tempo" role="group" aria-label="Nye kort per dag">${NYE_VALG.map(antall => `<button type="button" data-tempo="${antall}" aria-pressed="${tempo === antall}">${antall === FRITT ? 'Så mange jeg vil' : antall}</button>`).join('')}</div>
     </section>
     <section class="ap-handling">
