@@ -160,24 +160,24 @@
     },
     {
       "id": "schliemann",
-      "linjer": 7,
-      "stillinger": 49,
-      "repertoartrekk": 25,
+      "linjer": 102,
+      "stillinger": 347,
+      "repertoartrekk": 178,
       "flagget": [],
       "felleSjekk": []
     },
     {
       "id": "traxler",
-      "linjer": 13,
-      "stillinger": 78,
-      "repertoartrekk": 39,
+      "linjer": 128,
+      "stillinger": 438,
+      "repertoartrekk": 221,
       "flagget": [
         {
           "sti": "Nf6 Ng5 Bc5",
           "trekk": "Bc5",
-          "tap": 102,
+          "tap": 105,
           "best": "d5",
-          "cp": 110,
+          "cp": 113,
           "kommentert": true
         }
       ],
@@ -193,9 +193,9 @@
     },
     {
       "id": "e5-mot-resten",
-      "linjer": 18,
-      "stillinger": 102,
-      "repertoartrekk": 51,
+      "linjer": 325,
+      "stillinger": 1085,
+      "repertoartrekk": 553,
       "flagget": [],
       "felleSjekk": []
     },
@@ -218,9 +218,9 @@
     },
     {
       "id": "budapest-gambitt",
-      "linjer": 42,
-      "stillinger": 164,
-      "repertoartrekk": 82,
+      "linjer": 211,
+      "stillinger": 614,
+      "repertoartrekk": 314,
       "flagget": [],
       "felleSjekk": []
     },
@@ -263,10 +263,51 @@
       "repertoartrekk": 109,
       "flagget": [],
       "felleSjekk": []
+    },
+    {
+      "id": "stafford-gambitt",
+      "linjer": 59,
+      "stillinger": 184,
+      "repertoartrekk": 92,
+      "flagget": [
+        {
+          "sti": "Nf6 Nxe5 Nc6",
+          "trekk": "Nc6",
+          "tap": 160,
+          "best": "d6",
+          "cp": 198,
+          "kommentert": true
+        },
+        {
+          "sti": "Nf6 Nxe5 Nc6 Nxc6 dxc6 e5 Ne4",
+          "trekk": "Ne4",
+          "tap": 160,
+          "best": "Nd5",
+          "cp": 250,
+          "kommentert": true
+        }
+      ],
+      "felleSjekk": []
+    },
+    {
+      "id": "mot-engelsk",
+      "linjer": 24,
+      "stillinger": 78,
+      "repertoartrekk": 40,
+      "flagget": [],
+      "felleSjekk": []
+    },
+    {
+      "id": "mot-reti",
+      "linjer": 15,
+      "stillinger": 48,
+      "repertoartrekk": 24,
+      "flagget": [],
+      "felleSjekk": []
     }
   ],
   "totalt": {
-    "repertoartrekk": 1748,
-    "flagget": 3
+    "repertoartrekk": 2973,
+    "flagget": 5
   }
 }
