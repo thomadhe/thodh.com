@@ -1,15 +1,20 @@
-// "Mitt repertoar": one slot per opponent reply, for White and Black.
+// "Mitt repertoar": one tab per colour, with a slot per opponent reply. Practice follows the open tab, and "Begge" is one tap away.
 import { TRENER, esc, norsk } from './trener.mjs';
-import { NIVA, flertall, sanTekst, skarphet, trenerBoble } from './ui.mjs';
-import { STARTFORSLAG, dekningTekst, erValgt, fordel, hullTekst, kryssI, settValgt, svarDekning, veiInnTrekk, velgApning } from './repertoar.mjs';
-import { nesteStegHtml } from './kort-okt.mjs';
-import { FRITT, NYE_VALG, laerteKort, settTempo, valgtTempo } from './kort.mjs';
+import { FARGE, NIVA, flertall, sanTekst, skarphet, trenerBoble } from './ui.mjs';
+import { FORSLAG, blandetAdresse, byggAdresse, dekningTekst, erValgt, fordel, hullTekst, kryssI, repertoarAdresse, settValgt, startFane, svarDekning, treningAdresse, veiInnTrekk, velgApning } from './repertoar.mjs';
+import { klareKort, nesteStegHtml } from './kort-okt.mjs';
+import { FRITT, NYE_VALG, kortStatus, laerteKort, medFarge, settTempo, valgtTempo } from './kort.mjs';
 import { kortFor } from './bygg.mjs';
 
-const SEKSJONER = [
-  { farge: 'w', tittel: 'Som hvit', tekst: 'Du åpner med 1.e4. Velg hva du vil spille mot hvert svar.' },
-  { farge: 'b', tittel: 'Som svart', tekst: 'Velg svaret ditt på det hvit åpner med.' },
-];
+const SEKSJONER = {
+  w: { tittel: 'Som hvit', tekst: 'Du åpner med 1.e4. Velg hva du vil spille mot hvert svar.' },
+  b: { tittel: 'Som svart', tekst: 'Velg svaret ditt på det hvit åpner med.' },
+};
+const FORSLAG_TEKST = {
+  w: 'Usikker på hvor du skal begynne? Da foreslår jeg disse. Du kan bytte når du vil.',
+  b: 'Her blir det åpne stillinger og taktikk, og du tar motstanderen med ut på dypt vann tidlig. Du kan bytte når du vil.',
+};
+const navnPa = farge => FARGE[farge].toLowerCase();
 
 let apen = null;
 let melding = null;
@@ -56,78 +61,94 @@ function slotHtml(slot, fremgang) {
   </section>`;
 }
 
-function dekningRad(slots, fremgang, farge) {
-  const dekning = svarDekning(slots, fremgang, farge);
-  const tittel = farge === 'w' ? 'Som hvit' : 'Som svart';
-  const start = farge === 'w' ? '#/repertoar/bygg' : '#/repertoar/bygg/svart';
-  if (!dekning.valgte) return `<div class="ap-dekning-rad"><h3>${tittel}</h3><p>Ingenting valgt ennå. <a href="${start}">Sett opp ${farge === 'w' ? 'hvit' : 'svart'}</a></p></div>`;
-  const { hull } = dekning;
-  return `<div class="ap-dekning-rad"><h3>${tittel}</h3><span class="ap-spor"><span style="width:${Math.round(dekning.prosent / 5) * 5}%"></span></span><p>${esc(dekningTekst(dekning, farge))}</p>${hull ? `<p class="ap-dekning-hull">${esc(hullTekst(hull))} <a href="#/repertoar/bygg/${hull.slot.id}/hull">Velg et svar</a></p>` : ''}</div>`;
-}
-
-function dekningHtml(ui, slots) {
-  if (!ui.valgte().length) return '';
+// The colour's coverage, its biggest gap and its cards. A colour with nothing chosen has the next-step box to go on.
+function dekningHtml(ui, slots, farge) {
   const fremgang = ui.fremgang();
-  return `<section class="ap-dekning" aria-label="Hvor mye repertoaret dekker">${dekningRad(slots, fremgang, 'w')}${dekningRad(slots, fremgang, 'b')}</section>`;
+  const dekning = svarDekning(slots, fremgang, farge);
+  if (!dekning.valgte) return '';
+  const { hull } = dekning;
+  const { totalt, klare, nye, laert } = kortStatus(medFarge(ui.kort(), farge), fremgang, klareKort(ui, farge));
+  return `<section class="ap-dekning" aria-label="Hvor mye ${navnPa(farge)} dekker">
+    <div class="ap-dekning-rad"><span class="ap-spor"><span style="width:${Math.round(dekning.prosent / 5) * 5}%"></span></span><p>${esc(dekningTekst(dekning, farge))}</p>${hull ? `<p class="ap-dekning-hull">${esc(hullTekst(hull))} <a href="#/repertoar/bygg/${hull.slot.id}/hull">Velg et svar</a></p>` : ''}</div>
+    <div class="ap-ovstatus"><span><b>${klare}</b>klare nå</span><span><b>${nye}</b>nye</span><span><b>${laert}</b>av ${totalt} lært</span></div>
+  </section>`;
 }
 
-function handlinger(ui) {
+function handlinger(ui, farge) {
   const valgte = ui.valgte();
-  if (!valgte.length) return '';
-  const farger = new Set(valgte.map(apning => apning.farge));
+  if (!medFarge(valgte, farge).length) return '';
+  const begge = new Set(valgte.map(apning => apning.farge)).size > 1;
   const tempo = valgtTempo(ui.fremgang());
   return `<div class="ap-handlinger">
     <section class="ap-handling">
       <p class="eyebrow">BLANDET ØVING</p>
-      <h2>Øv hele repertoaret</h2>
+      <h2>Øv alt som ${navnPa(farge)}</h2>
       <p>Fra første trekk. Motstanderen velger, og du følger åpningen du har valgt.</p>
-      <div class="ap-handling-knapper"><a class="button secondary" href="#/repertoar/ov">Øv ▶</a>${farger.size > 1 ? '<a class="button secondary" href="#/repertoar/ov/w">Bare hvit</a><a class="button secondary" href="#/repertoar/ov/b">Bare svart</a>' : ''}</div>
+      <div class="ap-handling-knapper"><a class="button secondary" href="${blandetAdresse(farge)}">Øv ${navnPa(farge)} ▶</a>${begge ? `<a class="button secondary" href="${blandetAdresse(null)}">Begge</a>` : ''}</div>
     </section>
     <section class="ap-handling">
       <p class="eyebrow">TEMPO</p>
       <h2>Nye kort per dag</h2>
-      <p>${tempo === FRITT ? 'Ingen grense på nye kort. Du bestemmer selv når det er nok.' : 'Repetisjoner kommer i tillegg. Ta heller få og husk dem.'}</p>
+      <p>${tempo === FRITT ? 'Ingen grense på nye kort. Du bestemmer selv når det er nok.' : 'Ett tall for begge fargene. Repetisjoner kommer i tillegg, så ta heller få og husk dem.'}</p>
       <div class="ap-filter ap-tempo" role="group" aria-label="Nye kort per dag">${NYE_VALG.map(antall => `<button type="button" data-tempo="${antall}" aria-pressed="${tempo === antall}">${antall === FRITT ? 'Så mange jeg vil' : antall}</button>`).join('')}</div>
     </section>
     <section class="ap-handling">
       <p class="eyebrow">ØV FRITT</p>
       <h2>Øv på alle kort</h2>
       <p>Så ofte du vil, utenom dagens plan. Teller ikke på timeplanen.</p>
-      <div class="ap-handling-knapper"><a class="button secondary" href="#/repertoar/trening/alle/rekke">I rekkefølge</a><a class="button secondary" href="#/repertoar/trening/alle/stokket">Stokket</a></div>
+      <div class="ap-handling-knapper"><a class="button secondary" href="${treningAdresse(farge, 'rekke')}">I rekkefølge</a><a class="button secondary" href="${treningAdresse(farge, 'stokket')}">Stokket</a></div>
+      ${begge ? `<p class="ap-begge-linje">Begge: <a href="${treningAdresse(null, 'rekke')}">i rekkefølge</a> · <a href="${treningAdresse(null, 'stokket')}">stokket</a></p>` : ''}
     </section>
   </div>`;
 }
 
-function forslagHtml(ui, slots, valgtNaa) {
+const forslagKnapp = antall => (antall === 1 ? 'Velg den' : antall === 2 ? 'Velg begge' : `Velg alle ${antall}`);
+
+function forslagHtml(ui, slots, farge, valgtNaa) {
   if (valgtNaa) return `<aside class="ap-forslag" role="status"><p>Da er ${flertall(valgtNaa.length, 'åpning', 'åpninger')} på plass. Ombestemte du deg?</p><button type="button" class="button secondary" data-angre>Angre</button></aside>`;
   const fremgang = ui.fremgang();
-  const utvalg = STARTFORSLAG.map(id => ui.alle().find(apning => apning.id === id)).filter(Boolean);
-  if (!utvalg.length || slots.some(slot => slot.farge === 'w' && slot.apninger.some(apning => erValgt(fremgang, apning.id)))) return '';
-  const navn = utvalg.map(apning => `${apning.navn} mot ${slots.find(slot => slot.apninger.includes(apning)).mot}`);
-  return `<aside class="ap-forslag"><div><p class="eyebrow">ET FORSLAG FRA ${TRENER.navn.toUpperCase()}</p><p>Usikker på hvor du skal begynne? ${esc(navn.join(', '))}. Du kan bytte når du vil.</p></div><button type="button" class="button secondary" data-forslag>${utvalg.length === 2 ? 'Velg begge' : 'Velg den'}</button></aside>`;
+  const utvalg = FORSLAG[farge].map(id => ui.alle().find(apning => apning.id === id)).filter(Boolean);
+  if (!utvalg.length || slots.some(slot => slot.farge === farge && slot.apninger.some(apning => erValgt(fremgang, apning.id)))) return '';
+  const rader = utvalg.map(apning => `<li><span>${esc(slots.find(slot => slot.apninger.includes(apning)).navn)}</span><b>${esc(apning.navn)}</b></li>`).join('');
+  return `<aside class="ap-forslag"><div><p class="eyebrow">ET FORSLAG FRA ${TRENER.navn.toUpperCase()}</p><p>${esc(FORSLAG_TEKST[farge])}</p><ul class="ap-forslag-liste">${rader}</ul></div><button type="button" class="button secondary" data-forslag>${forslagKnapp(utvalg.length)}</button></aside>`;
 }
 
-export function visRepertoar(ui, fokus = null) {
+function fanerHtml(ui, farge) {
+  const valgte = ui.valgte();
+  const fane = f => {
+    const klare = medFarge(valgte, f).length ? klareKort(ui, f).kort.length : 0;
+    return `<a href="${repertoarAdresse(f)}"${f === farge ? ' aria-current="page"' : ''}><span class="ap-fane-merke ${f}" aria-hidden="true"></span>${FARGE[f]}${klare ? `<span class="ap-fane-tall" aria-label="${flertall(klare, 'kort', 'kort')} klare">${klare}</span>` : ''}</a>`;
+  };
+  return `<nav class="ap-rep-faner" aria-label="Velg farge">${fane('w')}${fane('b')}</nav>`;
+}
+
+export function visRepertoar(ui, fane = null, fokus = null) {
   const { main } = ui;
+  const farge = fane ?? startFane(ui.lagretFane(), ui.valgte());
+  ui.huskFane(farge);
   // A note about the last tap belongs to this visit.
   if (!fokus) fjernet = null;
   const fremgang = ui.fremgang();
   const slots = fordel(ui.alle());
-  document.title = 'Mitt repertoar · Åpninger';
-  const antall = ui.valgte().length;
-  const valgtNaa = angre;
+  document.title = `Mitt repertoar · ${FARGE[farge]} · Åpninger`;
+  const antall = medFarge(ui.valgte(), farge).length;
+  // The undo belongs to the colour the suggestion was taken on, and to the very next drawing.
+  const valgtNaa = angre?.farge === farge ? angre.ider : null;
   angre = null;
-  const intro = antall ? `Du har valgt ${flertall(antall, 'åpning', 'åpninger')}. Trykk på et svar for å bytte, så følger kortene og øvingen etter.` : 'Her setter vi sammen det du faktisk vil spille. Jeg stiller deg noen korte spørsmål, og du kan bytte når du vil.';
+  const intro = antall ? `Du har valgt ${flertall(antall, 'åpning', 'åpninger')} som ${navnPa(farge)}. Trykk på et svar for å bytte, så følger kortene og øvingen etter.` : `Her setter vi sammen det du faktisk vil spille som ${navnPa(farge)}. Jeg stiller deg noen korte spørsmål, og du kan bytte når du vil.`;
+  const { tittel, tekst } = SEKSJONER[farge];
   main.innerHTML = `
     <nav class="ap-tilbake"><a href="#/">← Alle åpninger</a></nav>
-    <section class="ap-hero ap-rep-hero">${trenerBoble(`<p class="eyebrow">${TRENER.navn.toUpperCase()} · MITT REPERTOAR</p><h1>Mitt repertoar</h1><p>${esc(intro)}</p>`, { live: false })}</section>
-    ${nesteStegHtml(ui)}
-    ${dekningHtml(ui, slots)}
-    ${forslagHtml(ui, slots, valgtNaa)}
-    ${handlinger(ui)}
-    ${SEKSJONER.map(({ farge, tittel, tekst }) => `<section class="ap-gruppe"><h2>${tittel}</h2><p class="ap-gruppe-tekst">${tekst} <a href="${farge === 'w' ? '#/repertoar/bygg' : '#/repertoar/bygg/svart'}">Ta spørsmålene ${antall ? 'på nytt' : 'i stedet'}</a></p><div class="ap-slotliste">${slots.filter(slot => slot.farge === farge && (slot.linjer.length || slot.apninger.length)).map(slot => slotHtml(slot, fremgang)).join('')}</div></section>`).join('')}`;
+    <h1 class="ap-rep-tittel">Mitt repertoar</h1>
+    ${fanerHtml(ui, farge)}
+    <section class="ap-hero ap-rep-hero">${trenerBoble(`<p>${esc(intro)}</p>`, { live: false })}</section>
+    ${nesteStegHtml(ui, farge)}
+    ${dekningHtml(ui, slots, farge)}
+    ${forslagHtml(ui, slots, farge, valgtNaa)}
+    <section class="ap-gruppe"><h2>${tittel}</h2><p class="ap-gruppe-tekst">${tekst} <a href="${byggAdresse(farge)}">Ta spørsmålene ${antall ? 'på nytt' : 'i stedet'}</a></p><div class="ap-slotliste">${slots.filter(slot => slot.farge === farge && (slot.linjer.length || slot.apninger.length)).map(slot => slotHtml(slot, fremgang)).join('')}</div></section>
+    ${handlinger(ui, farge)}`;
 
-  const tegn = nyttFokus => visRepertoar(ui, nyttFokus);
+  const tegn = nyttFokus => visRepertoar(ui, farge, nyttFokus);
   main.querySelectorAll('[data-slot]').forEach(knapp => knapp.addEventListener('click', () => {
     apen = apen === knapp.dataset.slot ? null : knapp.dataset.slot;
     melding = null;
@@ -177,8 +198,8 @@ export function visRepertoar(ui, fokus = null) {
     tegn(`[data-slot="${apen}"]`);
   });
   main.querySelector('[data-forslag]')?.addEventListener('click', () => {
-    angre = STARTFORSLAG.filter(id => ui.alle().some(apning => apning.id === id));
-    for (const id of angre) settValgt(ui.fremgang(), id, true);
+    angre = { farge, ider: FORSLAG[farge].filter(id => ui.alle().some(apning => apning.id === id)) };
+    for (const id of angre.ider) settValgt(ui.fremgang(), id, true);
     ui.lagre();
     tegn('[data-angre]');
   });

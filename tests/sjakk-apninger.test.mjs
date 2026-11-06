@@ -8,8 +8,8 @@ import { norsk, feilKommentar } from '../public/sjakk/apninger/trener.mjs';
 import { formaterApning } from '../scripts/sjakk-apninger/format.mjs';
 import { lesInfo, lagMotor, MAKS_DYBDE, MAKS_TID } from '../public/sjakk/apninger/motor.mjs';
 import { hvitAndel, vurderingTekst, vurderingBeskrivelse, spillSlutt, lagretOppslag } from '../public/sjakk/apninger/evalbar.mjs';
-import { fordel, krysser, kryssI, velgApning, settValgt, erValgt, valgteApninger, startNoder, velgBlandetLinje, STARTFORSLAG, svarDekning, dekningTekst, hullTekst, omtrentProsent, slotVekt, svarAndel, byggSteg, forsteSteg, nabostSteg, alternativer, veiInnTrekk, veiVekt, SLOTS } from '../public/sjakk/apninger/repertoar.mjs';
-import { lagKort, kortId, vurderKort, kortKo, nesteEkstra, lagOkt, svarKort, vanskeligst, forfallerIMorgen, dagStart, NYE_PER_DAG, NYE_VALG, NYE_I_OKT, FRITT, OVELSE_STORRELSE, valgtTempo, lagOvelse, ovelseRekke, MAKS_FORFALT, OKT_STORRELSE, vistKort, introSett, merkIntro, laerteKort, nyePerDag, settTempo, nesteSteg, oktInnhold, oktTekst } from '../public/sjakk/apninger/kort.mjs';
+import { fordel, krysser, kryssI, velgApning, settValgt, erValgt, valgteApninger, startNoder, velgBlandetLinje, STARTFORSLAG, FORSLAG, fargeFra, motsatt, startFane, repertoarAdresse, oktAdresse, flereAdresse, blandetAdresse, treningAdresse, byggAdresse, svarDekning, dekningTekst, hullTekst, omtrentProsent, slotVekt, svarAndel, byggSteg, forsteSteg, nabostSteg, alternativer, veiInnTrekk, veiVekt, SLOTS } from '../public/sjakk/apninger/repertoar.mjs';
+import { lagKort, kortId, vurderKort, kortKo, nesteEkstra, lagOkt, svarKort, vanskeligst, forfallerIMorgen, dagStart, NYE_PER_DAG, NYE_VALG, NYE_I_OKT, FRITT, OVELSE_STORRELSE, valgtTempo, lagOvelse, ovelseRekke, MAKS_FORFALT, OKT_STORRELSE, vistKort, introSett, merkIntro, laerteKort, nyePerDag, settTempo, nesteSteg, oktInnhold, oktTekst, medFarge, klarTekst, delerNye, kortStatus } from '../public/sjakk/apninger/kort.mjs';
 import { forsteSetning, helTrekk } from '../public/sjakk/apninger/ui.mjs';
 import { sporSegmenter, segmentNavn, segmentVed, nesteSegment } from '../public/sjakk/apninger/spor.mjs';
 
@@ -388,9 +388,52 @@ test('repertoar: et nytt valg bytter ut det som krysser, og alt kan angres', () 
 });
 
 test('startforslaget finnes, men er aldri valgt på forhånd', () => {
-  assert.deepEqual(STARTFORSLAG, ['kongegambitt', 'smith-morra'], 'fransk er spillerens eget valg');
-  for (const id of STARTFORSLAG) assert.ok(finn(id), id);
+  assert.deepEqual(FORSLAG.w, ['kongegambitt', 'smith-morra'], 'fransk er spillerens eget valg');
+  assert.deepEqual(FORSLAG.b, ['e5-mot-resten', 'traxler', 'schliemann', 'budapest-gambitt']);
+  assert.deepEqual(STARTFORSLAG, [...FORSLAG.w, ...FORSLAG.b]);
+  for (const [farge, ider] of Object.entries(FORSLAG)) for (const id of ider) assert.equal(finn(id)?.farge, farge, id);
   assert.deepEqual(valgteApninger(tomFremgang(), alle), []);
+});
+
+test('startforslaget for svart henger sammen: ingen kryss, og det kan angres uten spor av valg', () => {
+  const svarte = FORSLAG.b.map(finn);
+  svarte.forEach((a, i) => svarte.slice(i + 1).forEach(b => assert.equal(krysser(a, b), null, `${a.id} og ${b.id}`)));
+  const fremgang = tomFremgang();
+  for (const id of FORSLAG.b) settValgt(fremgang, id, true, NAA);
+  const slots = fordel(alle);
+  assert.ok(svarDekning(slots, fremgang, 'b').prosent > 50);
+  assert.equal(svarDekning(slots, fremgang, 'w').valgte, 0, 'hvit er urørt');
+  for (const id of FORSLAG.b) settValgt(fremgang, id, false, NAA);
+  assert.deepEqual(valgteApninger(fremgang, alle), []);
+});
+
+test('farger: adressene er lenkbare, og gamle lenker betyr det de alltid har gjort', () => {
+  assert.equal(repertoarAdresse('w'), '#/repertoar/hvit');
+  assert.equal(repertoarAdresse('b'), '#/repertoar/svart');
+  assert.equal(repertoarAdresse(null), '#/repertoar');
+  assert.equal(oktAdresse(null), '#/repertoar/kort', 'uten farge er det begge');
+  assert.equal(oktAdresse('b'), '#/repertoar/kort/svart');
+  assert.equal(flereAdresse(null), '#/repertoar/kort/flere');
+  assert.equal(flereAdresse('w'), '#/repertoar/kort/hvit/flere');
+  assert.equal(blandetAdresse(null), '#/repertoar/ov');
+  assert.equal(blandetAdresse('b'), '#/repertoar/ov/svart');
+  assert.equal(treningAdresse(null, 'rekke'), '#/repertoar/trening/alle/rekke');
+  assert.equal(treningAdresse('b', 'stokket'), '#/repertoar/trening/svart/stokket');
+  assert.equal(byggAdresse('w'), '#/repertoar/bygg');
+  assert.equal(byggAdresse('b'), '#/repertoar/bygg/svart');
+  for (const [ord, farge] of [['hvit', 'w'], ['svart', 'b'], ['w', 'w'], ['b', 'b']]) assert.equal(fargeFra(ord), farge, ord);
+  for (const ord of [undefined, '', 'flere', 'bygg', 'toString']) assert.equal(fargeFra(ord), null, ord);
+  assert.equal(motsatt('w'), 'b');
+});
+
+test('farger: fanen huskes, og uten minne åpner den der spilleren har noe', () => {
+  const hvit = { farge: 'w' }, svart = { farge: 'b' };
+  assert.equal(startFane('b', [hvit]), 'b', 'det som er husket, går foran');
+  assert.equal(startFane('w', [svart]), 'w');
+  assert.equal(startFane(null, []), 'w');
+  assert.equal(startFane(null, [svart]), 'b');
+  assert.equal(startFane(null, [hvit, svart]), 'w');
+  assert.equal(startFane('tull', [svart]), 'b', 'ukjent verdi er som intet minne');
 });
 
 test('fremgang fra før repertoaret beholdes og får de nye feltene', () => {
@@ -919,6 +962,82 @@ test('en økt holder det knappen lover', () => {
   assert.equal(oktTekst({ repetisjoner: 3, nye: 0 }), '3 repetisjoner');
   const okt = lagOkt(falskeKort(30), () => 0.5, falskeKort(60).slice(30));
   assert.equal(okt.totalt, OKT_STORRELSE + NYE_I_OKT);
+});
+
+const fargeKort = (hvite, svarte) => [...falskeKort(hvite).map(k => ({ ...k, id: `w${k.id}`, farge: 'w' })), ...falskeKort(svarte).map(k => ({ ...k, id: `b${k.id}`, farge: 'b' }))];
+const forfalt = (fremgang, kort) => { for (const k of kort) fremgang.kort[k.id] = { boks: 2, forfall: NAA - 86400000, sist: NAA - 5 * 86400000, forst: NAA - 9 * 86400000, riktige: 2, feil: 0 }; };
+
+test('farger: en økt for svart viser bare svarts kort', () => {
+  const kort = fargeKort(10, 10);
+  const fremgang = tomFremgang();
+  forfalt(fremgang, [...kort.slice(0, 3), ...kort.slice(10, 12)]);
+  const ko = kortKo(kort, fremgang, NAA, 0, 'b');
+  assert.ok(ko.kort.length > 0);
+  assert.ok(ko.kort.every(k => k.farge === 'b'));
+  assert.equal(ko.forfalte, 2);
+  assert.equal(kortKo(kort, fremgang, NAA).forfalte, 5, 'uten farge er det begge, som før');
+  assert.deepEqual(medFarge(kort, null), kort);
+  assert.equal(medFarge(kort, 'w').length, 10);
+});
+
+test('farger: filteret rører ikke timeplanen', () => {
+  const kort = fargeKort(8, 8);
+  const fremgang = tomFremgang();
+  forfalt(fremgang, kort.slice(0, 4));
+  const for_ = JSON.stringify(fremgang);
+  for (const farge of ['w', 'b', null]) {
+    kortKo(kort, fremgang, NAA, 0, farge);
+    nesteEkstra(kort, fremgang, NAA, 0, farge);
+    kortStatus(medFarge(kort, farge), fremgang, kortKo(kort, fremgang, NAA, 0, farge));
+  }
+  assert.equal(JSON.stringify(fremgang), for_);
+  const ko = kortKo(kort, fremgang, NAA, 0, 'w');
+  const okt = lagOkt(ko.klare, () => 0.5, ko.nyeKort);
+  assert.ok(okt.ko.every(k => k.farge === 'w'));
+  const post = svarKort(okt, ko.klare[0], 'riktig', fremgang, NAA);
+  assert.equal(post.boks, 3, 'et svar flytter kortet akkurat som i ei økt for begge');
+});
+
+test('farger: dagens nye kort er ett tall for begge', () => {
+  const kort = fargeKort(10, 10);
+  const fremgang = tomFremgang();
+  assert.equal(kortKo(kort, fremgang, NAA, 0, 'w').nye, NYE_PER_DAG);
+  assert.equal(kortKo(kort, fremgang, NAA, 0, 'b').nye, NYE_PER_DAG);
+  assert.ok(delerNye(kortKo(kort, fremgang, NAA, 0, 'w'), kortKo(kort, fremgang, NAA, 0, 'b'), kortKo(kort, fremgang, NAA)), 'knappen sier fra at de deles');
+  const hvite = kortKo(kort, fremgang, NAA, 0, 'w').nyeKort;
+  const okt = lagOkt([], () => 0.5, hvite.slice(0, 4));
+  for (const k of hvite.slice(0, 4)) vistKort(okt, k, fremgang, NAA);
+  assert.equal(kortKo(kort, fremgang, NAA, 0, 'b').nye, NYE_PER_DAG - 4, 'hvite nye kort teller også for svart');
+  assert.equal(kortKo(kort, fremgang, NAA).nye, NYE_PER_DAG - 4);
+});
+
+test('farger: pausen etter fravær gjelder hele repertoaret, og «Ta flere» finner kort i fargen', () => {
+  const kort = fargeKort(MAKS_FORFALT, 5);
+  const fremgang = tomFremgang();
+  forfalt(fremgang, kort.slice(0, MAKS_FORFALT));
+  const svart = kortKo(kort, fremgang, NAA, 0, 'b');
+  assert.equal(svart.pause, true, 'hvits etterslep holder også nye svarte kort tilbake');
+  assert.equal(svart.nye, 0);
+  assert.equal(svart.kort.length, 0);
+  const uten = tomFremgang();
+  const alleNye = fargeKort(6, 6);
+  const forste = kortKo(alleNye, uten, NAA, 0, 'w').nyeKort;
+  for (const k of forste) uten.kort[k.id] = { boks: 1, forfall: NAA + 86400000, sist: NAA, forst: NAA, riktige: 1, feil: 0 };
+  assert.equal(kortKo(alleNye, uten, NAA, 0, 'b').kort.length, 0, 'dagens nye er brukt opp på hvit');
+  const ekstra = nesteEkstra(alleNye, uten, NAA, 0, 'b');
+  assert.ok(kortKo(alleNye, uten, NAA, ekstra, 'b').kort.every(k => k.farge === 'b'));
+  assert.ok(kortKo(alleNye, uten, NAA, ekstra, 'b').kort.length > 0);
+});
+
+test('farger: det knappen og fanen sier', () => {
+  assert.equal(klarTekst(12, 8), 'Hvit: 12 kort · Svart: 8 kort');
+  assert.equal(klarTekst(1, 0), 'Hvit: 1 kort · Svart: ingen kort');
+  const kort = fargeKort(5, 5);
+  const fremgang = tomFremgang();
+  forfalt(fremgang, kort.slice(0, 2));
+  const hvite = medFarge(kort, 'w');
+  assert.deepEqual(kortStatus(hvite, fremgang, kortKo(kort, fremgang, NAA, 0, 'w')), { totalt: 5, klare: 5, nye: 3, laert: 2 });
+  assert.deepEqual(kortStatus(medFarge(kort, 'b'), fremgang, kortKo(kort, fremgang, NAA, 0, 'b')), { totalt: 5, klare: 5, nye: 5, laert: 0 });
 });
 
 test('neste steg: alltid én ting å gjøre', () => {

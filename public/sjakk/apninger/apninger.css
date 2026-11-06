@@ -156,8 +156,21 @@ a { color: var(--pink); }
 
 /* Mitt repertoar */
 .ap-rep-hero { margin-top: 12px; margin-bottom: 20px; }
+.ap-rep-tittel { margin: 12px 0 12px; }
+/* One tab per colour. The bar stands alone under the title, so it can stay in view on a phone. */
+.ap-rep-faner { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; max-width: 420px; margin: 0 0 16px; padding: 4px; border: 1px solid #7c485e; border-radius: 12px; background: var(--bg); }
+.ap-rep-faner a { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 44px; border-radius: 8px; color: var(--text); font-weight: 600; text-decoration: none; }
+.ap-rep-faner a:hover { background: #44303e; }
+.ap-rep-faner a[aria-current="page"] { background: var(--pink); color: #1a1118; }
+.ap-rep-faner a:focus-visible { outline-offset: 1px; }
+.ap-fane-merke { flex: none; width: 15px; height: 15px; border-radius: 50%; }
+.ap-fane-merke.w { background: #fff3e3; box-shadow: 0 0 0 1px #5c384d; }
+.ap-fane-merke.b { background: #1b1220; box-shadow: 0 0 0 1px #8c7786; }
+.ap-fane-tall { min-width: 22px; padding: 0 6px; border-radius: 10px; background: #4b2a3b; color: var(--pink); font-size: .75rem; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums; }
+.ap-rep-faner a[aria-current="page"] .ap-fane-tall { background: #1a1118; }
+.ap-rep-faner + .ap-rep-hero { margin-top: 0; margin-bottom: 14px; }
 .ap-rep-hero .button { margin-top: 4px; text-decoration: none; }
-.ap-handlinger { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
+.ap-handlinger { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 30px 0 14px; }
 .ap-handling { display: flex; flex-direction: column; gap: 6px; padding: 16px 17px; border: 1px solid var(--line); border-radius: 9px; background: linear-gradient(160deg, #2a1f29, #211b22); }
 .ap-handling .eyebrow { margin: 0; font-size: .7rem; }
 .ap-handling h2 { font: 500 1.4rem/1.25 var(--serif); margin: 0; }
@@ -166,10 +179,16 @@ a { color: var(--pink); }
 .ap-handling-knapper { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .ap-handling-knapper .button { text-decoration: none; }
 .ap-handling-knapper .button.primary { min-width: 110px; }
+.ap-handling p.ap-begge-linje { flex: none; margin-top: 4px; color: var(--muted); font-size: .82rem; }
 .ap-forslag { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; border: 1px dashed #7c485e; border-radius: 9px; }
 .ap-forslag p { margin: 0; color: #e3d3dc; font-size: .9rem; }
 .ap-forslag .eyebrow { margin-bottom: 4px; font-size: .7rem; color: var(--pink); }
 .ap-forslag .button { flex: none; }
+.ap-forslag-liste { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 3px; font-size: .875rem; }
+.ap-forslag-liste li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; }
+.ap-forslag-liste span { color: var(--muted); font-size: .78rem; }
+.ap-forslag-liste span::after { content: ':'; }
+.ap-forslag-liste b { font-weight: 600; }
 .ap-slotliste { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: start; }
 .ap-slot { border: 1px solid var(--line); border-radius: 9px; background: #211b22; min-width: 0; }
 .ap-slot.fylt { border-color: #5b3b4d; background: #2a1f29; }
@@ -219,13 +238,13 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
 .ap-neste-tekst p:last-child { margin: 3px 0 0; color: #e3d3dc; font-size: .925rem; }
 .ap-neste-knapper { flex: none; display: flex; flex-direction: column; gap: 8px; }
 .ap-neste-knapper .button { min-width: 150px; min-height: 48px; text-decoration: none; }
+.ap-neste-knapper .ap-begge { min-height: 40px; }
 .ap-til-repertoar { margin: 0 0 22px; color: var(--muted); font-size: .875rem; }
 .ap-rep-hero + .ap-neste { max-width: none; }
 
 /* How much the repertoire covers */
 .ap-dekning { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 26px; margin-bottom: 14px; padding: 13px 16px; border: 1px solid var(--line); border-radius: 9px; background: #211b22; }
 .ap-dekning-rad { min-width: 0; }
-.ap-dekning-rad h3 { margin: 0 0 6px; font: 500 1.05rem/1.3 var(--serif); }
 .ap-dekning-rad .ap-spor { display: block; height: 6px; margin-bottom: 7px; border-radius: 3px; }
 .ap-dekning-rad p { margin: 0; color: #d2b9c7; font-size: .85rem; }
 .ap-dekning-hull { margin-top: 3px !important; color: var(--muted) !important; }
@@ -315,6 +334,8 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
   .ap-okt-neste { position: sticky; bottom: 10px; z-index: 5; margin-top: 30px; }
   .ap-okt-neste::before { content: ''; position: absolute; inset: -24px -6px -10px; z-index: -1; background: linear-gradient(transparent, var(--bg) 24px); pointer-events: none; }
   .ap-handlinger, .ap-slotliste, .ap-dekning { grid-template-columns: minmax(0, 1fr); }
+  /* The page is long, and which colour it shows should never be out of sight. */
+  .ap-rep-faner { position: sticky; top: 6px; z-index: 6; max-width: none; box-shadow: 0 6px 16px #0007; }
   /* The introduction is reading, and the board would push it under the button. */
   .ap-kun-tekst .ap-brettsone { display: none; }
   .ap-respons:not([hidden]) { display: block; margin: 8px 0 0; padding: 7px 12px; border: 1px solid #5b3b4d; border-radius: 8px; background: #2b1d2b; color: var(--text); font-size: .875rem; line-height: 1.4; }
@@ -346,6 +367,8 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
   .ap-hero .ap-avatar svg { width: 52px; height: 52px; }
   .ap-boble { grid-template-columns: 40px minmax(0, 1fr); gap: 10px; }
   .ap-avatar svg { width: 40px; height: 40px; }
+  .ap-rep-tittel { margin: 0 0 8px; font-size: 1.55rem; }
+  .ap-rep-faner { margin-bottom: 12px; }
   .ap-faner { gap: 6px; }
   .ap-faner a { padding: 6px 12px; min-height: 38px; }
   /* Keep the board and the coach close together on a phone. */
