@@ -9,6 +9,9 @@ const VOL_MAX = 0.1;
 /** Lichess shows a "?" after ratings with an RD above this. */
 export const FORELOPIG_RD = 110;
 
+/** The rating as shown to the player, with a question mark while it is provisional. */
+export const visRating = s => `${Math.round(s.rating)}${s.rd > FORELOPIG_RD ? '?' : ''}`;
+
 const g = phi => 1 / Math.sqrt(1 + 3 * phi * phi / (Math.PI * Math.PI));
 const E = (mu, muJ, phiJ) => 1 / (1 + Math.exp(-g(phiJ) * (mu - muJ)));
 

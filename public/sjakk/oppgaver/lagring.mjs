@@ -56,6 +56,13 @@ export function lagre(t, lager = globalThis.localStorage) {
   try { lager?.setItem(NOKKEL, JSON.stringify(t)); } catch { /* The tab keeps working without storage. */ }
 }
 
+/** How the daily puzzle went, in words. */
+export function resultatTekst(d) {
+  if (d.status === 'feilet') return 'ikke løst';
+  if (d.status !== 'løst') return 'ikke ferdig';
+  return `løst på ${d.forsok <= 1 ? 'første' : `${d.forsok}.`} forsøk${d.hint ? ' med hint' : ''}`;
+}
+
 export function markerSett(t, id) {
   if (t.sett.includes(id)) return;
   t.sett.push(id);

@@ -19,7 +19,10 @@ test("authentication validates input, blocks foreign origins and external redire
   assert.equal(safeNext("https://evil.example"), "/otsjoba");
   assert.equal(safeNext("//evil.example"), "/otsjoba");
   assert.equal(safeNext("/konto"), "/konto");
+  assert.equal(safeNext("/sjakk-for-1"), "/sjakk-for-1");
+  assert.equal(safeNext("/sjakk-for-1/apninger"), "/sjakk-for-1/apninger");
   assert.equal(safeNext("/sjakk/apninger"), "/sjakk/apninger");
+  assert.equal(safeNext("/sjakk-for-1/annet"), "/otsjoba");
   assert.equal(sameOrigin(new Request("https://thodh.com/api/auth", { headers: { origin: "https://evil.example" } })), false);
   assert.equal(sameOrigin(new Request("https://thodh.com/api/auth", { headers: { origin: "https://thodh.com" } })), true);
   assert.equal(authInput.parse({ action: "login", email: " Test@Example.com ", password: "oldpw6" }).email, "test@example.com");

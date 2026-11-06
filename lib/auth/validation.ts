@@ -7,8 +7,11 @@ export const authInput = z.object({
   next: z.string().optional(),
 }).strict();
 
+// /sjakk/apninger is the old address, still in links out there; it redirects.
+const nesteSider: unknown[] = ["/konto", "/sjakk-for-1", "/sjakk-for-1/apninger", "/sjakk/apninger"];
+
 export function safeNext(value: unknown): string {
-  return value === "/konto" || value === "/sjakk/apninger" ? value : "/otsjoba";
+  return nesteSider.includes(value) ? (value as string) : "/otsjoba";
 }
 
 export function sameOrigin(request: Request): boolean {

@@ -1,7 +1,6 @@
 /* Sjakkoppgaver: builds on /sjakk/styles.css (tokens, board, buttons, modal). */
 :root { --ok: #8fd6a5; --bom: #ff8fa3; }
 .site-header { height: 96px; }
-.topplenker { display: flex; gap: 20px; }
 .liten { font-size: .8rem; line-height: 1.5; color: var(--muted); margin: 10px 0 0; }
 .lenke { color: var(--pink); text-underline-offset: 3px; }
 .lenke:hover { color: var(--text); }
@@ -132,10 +131,6 @@ footer.kreditt .text-button { padding: 8px 0; }
   .site-header { height: 64px; flex-wrap: nowrap; }
   .brand { font-size: 1.3rem; }
   .brand-symbol { font-size: 2rem; }
-  .topplenker { gap: 12px; }
-  .topplenker .hub-link { font-size: .78rem; }
-  /* The brand row is full on phones; thodh.com is one step away via Sjakk for to. */
-  .topplenker .hub-link:last-child { display: none; }
   .faner { padding-top: 10px; gap: 6px; }
   .faner button { flex: 1; padding: 7px 6px; font-size: .82rem; }
   .oppgave-status { min-height: 66px; padding: 4px 0 8px; gap: 10px; }

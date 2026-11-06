@@ -45,6 +45,17 @@ export const shippedProjects: Project[] = [
     index: "2",
   },
   {
+    id: "sjakk-1",
+    name: "Sjakk for 1",
+    href: "/sjakk-for-1",
+    description: "Sjakktrening for deg alene: åpninger med kort og en egen trener, dagens oppgave, rangerte oppgaver og Lynløp.",
+    category: "Web app · Spill",
+    status: "shipped",
+    startedAt: "2026-11-06T12:00:00+01:00",
+    progress: 100,
+    index: "3",
+  },
+  {
     id: "spill",
     name: "Daglige minigames",
     href: "/spill",
@@ -53,7 +64,7 @@ export const shippedProjects: Project[] = [
     status: "shipped",
     startedAt: "2026-10-28T13:00:00+01:00",
     progress: 100,
-    index: "3",
+    index: "4",
   },
 ]
 

@@ -7,6 +7,7 @@ export type IkonNavn =
   | "mappe"
   | "spillmappe"
   | "sjakk"
+  | "sjakk1"
   | "brev"
   | "person"
   | "papirkurv"
@@ -66,6 +67,15 @@ const tegninger: Record<IkonNavn, React.ReactNode> = {
       />
       <rect x="9" y="27" width="16" height="2" fill="#5b5b55" stroke={omriss} />
       <rect x="16" y="9" width="2" height="2" fill={omriss} />
+    </>
+  ),
+  sjakk1: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b1d2b" stroke={omriss} />
+      <rect x="15" y="5" width="2" height="6" fill="#e8a4bc" />
+      <rect x="13" y="7" width="6" height="2" fill="#e8a4bc" />
+      <path d="M8 13h6l2-2 2 2h6v4l-3 3v3H11v-3l-3-3Z" fill="#f5f5f0" stroke={omriss} />
+      <rect x="9" y="23" width="14" height="3" fill="#e8a4bc" stroke={omriss} />
     </>
   ),
   brev: (

@@ -1,8 +1,6 @@
 /* Åpninger: builds on the tokens and board styles in /sjakk/styles.css. */
 :root { --plan: #8fd1a0; --fare: #ff8f6b; --ok: #8fd1a0; }
 .site-header { flex-wrap: nowrap; }
-.ap-tittel { text-decoration: none; margin-left: auto; margin-right: 18px; }
-.ap-tittel:hover { color: var(--text); }
 .ap-innhold { padding: 26px 0 48px; outline: none; }
 .ap-laster { color: var(--muted); }
 a { color: var(--pink); }
@@ -345,10 +343,6 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
 }
 @media (max-width: 520px) {
   .site-header { gap: 8px; }
-  .ap-tittel { margin-right: 0; font-size: .68rem; letter-spacing: .1em; }
-  /* The brand already leads back to the board. */
-  .hub-links .hub-link:last-child { display: none; }
-  .hub-link { font-size: .74rem; }
   .brand { font-size: 1.3rem; }
   .brand-symbol { font-size: 2rem; }
   .ap-innhold { padding-top: 16px; }

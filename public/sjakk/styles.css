@@ -157,6 +157,10 @@ footer { border-top: 1px solid var(--line); padding: 23px 0 28px; display: flex;
 .hub-link { color: var(--muted); font-size: .85rem; text-decoration: none; white-space: nowrap; }
 .hub-link:hover { color: var(--text); }
 .site-header { flex-wrap: wrap; gap: 12px; }
+/* The header of Sjakk for 1's sections. On phones the brand is the way back, so the row keeps what fits. */
+.ap-tittel { text-decoration: none; margin-left: auto; margin-right: 18px; }
+.ap-tittel:hover { color: var(--text); }
+@media (max-width: 520px) { .ap-tittel { margin-right: 0; font-size: .68rem; letter-spacing: .1em; } .ap-tittel + .hub-links .hub-link { font-size: .78rem; } .kun-bred { display: none; } }
 
 /* Calmer setup: presets first, custom clocks folded away. */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

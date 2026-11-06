@@ -35,7 +35,7 @@ function visKonto(status) {
   const felt = document.querySelector('#ap-konto');
   felt.hidden = !status;
   if (status === 'inne') felt.innerHTML = 'Lagret på <a href="/konto">kontoen din</a>.';
-  if (status === 'ute') felt.innerHTML = 'Vil du ha repertoaret på alle enhetene dine? <a href="/logg-inn?neste=/sjakk/apninger">Logg inn</a>.';
+  if (status === 'ute') felt.innerHTML = 'Vil du ha repertoaret på alle enhetene dine? <a href="/logg-inn?neste=/sjakk-for-1/apninger">Logg inn</a>.';
 }
 
 const erRepertoarside = hash => /^#\/repertoar(\/(hvit|svart))?$/.test(hash);
@@ -108,7 +108,7 @@ function visBibliotek() {
   stopp();
   brett = null;
   fjernEvalbar();
-  document.title = 'Åpninger · Sjakk for to';
+  document.title = 'Åpninger · Sjakk for én';
   const naa = Date.now();
   let forfalt = 0, laert = 0, totalt = 0;
   for (const apning of apninger.values()) { const s = rep.statusFor(apning, fremgang, naa); forfalt += s.forfaller; laert += s.laert; totalt += s.totalt; }

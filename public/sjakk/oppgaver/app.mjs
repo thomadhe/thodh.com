@@ -1,9 +1,9 @@
 import { Chess } from '../vendor/chess.mjs';
 import { lagBrett } from './brett.mjs';
 import { Losning } from './oppgave.mjs';
-import { les, lagre, registrer, markerSett, PLASSERING } from './lagring.mjs';
+import { les, lagre, registrer, markerSett, resultatTekst, PLASSERING } from './lagring.mjs';
 import { VANSKELIGHET, malRating, bandNaer, bandFor, velgOppgave, lesRad, nivaFor, bandForNiva, dagensOppgave, iDagOslo, kortDato, dagRekke, leggTilDager } from './utvalg.mjs';
-import { FORELOPIG_RD } from './glicko.mjs';
+import { visRating } from './glicko.mjs';
 import { TEMAER, TEMAGRUPPER } from './temaer.mjs';
 import { lyd, trekklyd, lydPa, settLyd } from './lyd.mjs';
 
@@ -17,7 +17,6 @@ const esc = s => String(s).replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`);
 const fargenavn = c => (c === 'w' ? 'hvit' : 'svart');
 const stor = s => s[0].toUpperCase() + s.slice(1);
 const fortegn = n => (n > 0 ? `+${n}` : n < 0 ? `−${-n}` : '±0');
-const visRating = s => `${Math.round(s.rating)}${s.rd > FORELOPIG_RD ? '?' : ''}`;
 
 const t = les();
 let fane = null;
@@ -277,18 +276,12 @@ async function startDagens() {
   }
 }
 
-function resultatTekst(d) {
-  if (d.status === 'feilet') return 'ikke løst';
-  if (d.status !== 'løst') return 'ikke ferdig';
-  return `løst på ${d.forsok <= 1 ? 'første' : `${d.forsok}.`} forsøk${d.hint ? ' med hint' : ''}`;
-}
-
 function delTekst(dato, d) {
   const rekke = dagRekke(t.dagens, dato);
   return [
     `Dagens sjakkoppgave · ${kortDato(dato)} · ${resultatTekst(d)} ${d.status === 'løst' ? '♞' : '♟'}`,
     `Nivå ${d.niva}${rekke > 1 ? ` · 🔥 ${rekke} dager på rad` : ''}`,
-    'thodh.com/sjakk/oppgaver',
+    'thodh.com/sjakk-for-1/oppgaver',
   ].join('\n');
 }
 

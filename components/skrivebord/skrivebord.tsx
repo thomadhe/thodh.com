@@ -43,6 +43,7 @@ const dagligeProgrammer: Program[] = [
 const spillProgrammer: Program[] = [
   { id: "land", navn: "Verdens land", mal: "/spill/verdens-land", ikon: "jord" },
   { id: "hovedsteder", navn: "Hovedsteder", mal: "/spill/hovedsteder", ikon: "stjerne" },
+  { id: "sjakk-1", navn: "Sjakk for 1", mal: "/sjakk-for-1", ikon: "sjakk1" },
   { id: "sjakk", navn: "Sjakk for 2", mal: "/sjakk", logo: "/sjakk/favicon.svg" },
 ]
 
@@ -325,7 +326,7 @@ export function Skrivebord() {
       return
     }
     if (mal.startsWith("/")) {
-      // Games get the whole screen. Chess is a static page outside the Next router.
+      // Games get the whole screen. Chess (/sjakk and /sjakk-for-1) is static pages outside the Next router.
       if (mal.startsWith("/sjakk")) window.location.assign(mal)
       else router.push(mal)
       return
