@@ -247,7 +247,7 @@
     { "sti": "f5 d4 fxe4 Ng5", "vekt": 2, "hva": "Springeren går til g5." },
     { "sti": "f5 d4 fxe4 Ng5 Nxd4", "hva": "Vi slår.", "ide": "løperen på b5 er angrepet, og vi er to bønder over.", "pass": "Etter 6.La4 kommer 6…Sf6. Etter 6.Lc4 kommer 6…d5.", "motor": { "cp": -229, "tap": 0, "best": "Nxd4", "dybde": 16 } },
     { "sti": "f5 d4 fxe4 Ng5 Nxd4 Ba4", "vekt": 2, "hva": "Løperen trekker seg." },
-    { "sti": "f5 d4 fxe4 Ng5 Nxd4 Ba4 Nf6", "hva": "Springeren utvikles.", "ide": "alt er dekket.", "pass": "Etter 7.0-0 kommer 7…Le7.", "plan": "…Le7, …0-0 og …d5. Motoren gir svart to bønder.", "motor": { "cp": -266, "tap": 0, "best": "Nf6", "dybde": 16 } },
+    { "sti": "f5 d4 fxe4 Ng5 Nxd4 Ba4 Nf6", "hva": "Springeren utvikles.", "ide": "alt er dekket.", "pass": "Etter 7.0-0 kommer 7…Le7.", "plan": "…Le7, …0-0 og …d5. Motoren gir svart over to bønder.", "motor": { "cp": -266, "tap": 0, "best": "Nf6", "dybde": 16 } },
     { "sti": "f5 d4 fxe4 Ng5 Nxd4 Bc4", "vekt": 1, "hva": "Løperen peker på f7." },
     { "sti": "f5 d4 fxe4 Ng5 Nxd4 Bc4 d5", "hva": "Sentrum går fram.", "ide": "løperen jages.", "pass": "Etter 7.c3 slår vi 7…dxc4.", "plan": "Vi er to bønder over, og mer faller. Motoren gir svart fem bønder.", "motor": { "cp": -520, "tap": 0, "best": "d5", "dybde": 16 } },
     { "sti": "f5 d4 fxe4 Nfd2", "vekt": 1, "hva": "Springeren går til d2." },
