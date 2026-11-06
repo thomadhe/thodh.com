@@ -469,7 +469,7 @@
     { "sti": "Nf6 O-O Nxe4 d4 d5 Bb5", "vekt": 2, "hva": "Løperen binder." },
     { "sti": "Nf6 O-O Nxe4 d4 d5 Bb5 exd4", "hva": "Vi slår.", "ide": "vi er to bønder over.", "pass": "Etter 7.Dxd4 kommer 7…Dd7. Etter 7.Sxd4 kommer 7…Ld7.", "motor": { "cp": -94, "tap": 0, "best": "exd4", "dybde": 16 } },
     { "sti": "Nf6 O-O Nxe4 d4 d5 Bb5 exd4 Qxd4", "vekt": 2, "hva": "Damen tar." },
-    { "sti": "Nf6 O-O Nxe4 d4 d5 Bb5 exd4 Qxd4 Qd7", "hva": "Vi sperrer.", "ide": "bindingen er borte, og c6 er dekket.", "pass": "Etter 8.Lxc6 tar damen tilbake.", "plan": "…Dxc6, …Lc5 og …0-0. Motoren gir svart mer enn en halv bonde.", "motor": { "cp": -108, "tap": 0, "best": "Qd7", "dybde": 16 } },
+    { "sti": "Nf6 O-O Nxe4 d4 d5 Bb5 exd4 Qxd4 Qd7", "hva": "Vi sperrer.", "ide": "bindingen er borte, og c6 er dekket.", "pass": "Etter 8.Lxc6 tar damen tilbake.", "plan": "…Dxc6, …Lc5 og …0-0. Motoren gir svart en bonde.", "motor": { "cp": -108, "tap": 0, "best": "Qd7", "dybde": 16 } },
     { "sti": "Nf6 O-O Nxe4 d4 d5 dxe5", "vekt": 1, "hva": "Hvit slår." },
     { "sti": "Nf6 O-O Nxe4 d4 d5 dxe5 dxc4", "hva": "Vi tar løperen.", "ide": "den var angrepet.", "pass": "Etter 7.De2 kommer 7…Lf5.", "plan": "Vi er en brikke over. Motoren gir svart sju bønder.", "motor": { "cp": -701, "tap": 0, "best": "dxc4", "dybde": 16 } },
     { "sti": "Nf6 O-O Nxe4 Bd5", "vekt": 1, "hva": "Løperen går til d5." },
