@@ -9,8 +9,9 @@ import { formaterApning } from '../scripts/sjakk-apninger/format.mjs';
 import { lesInfo, lagMotor, MAKS_DYBDE, MAKS_TID } from '../public/sjakk/apninger/motor.mjs';
 import { hvitAndel, vurderingTekst, vurderingBeskrivelse, spillSlutt, lagretOppslag } from '../public/sjakk/apninger/evalbar.mjs';
 import { fordel, krysser, kryssI, velgApning, settValgt, erValgt, valgteApninger, startNoder, velgBlandetLinje, STARTFORSLAG, svarDekning, dekningTekst, hullTekst, omtrentProsent, slotVekt, svarAndel, byggSteg, forsteSteg, nabostSteg, alternativer, veiInnTrekk, veiVekt, SLOTS } from '../public/sjakk/apninger/repertoar.mjs';
-import { lagKort, kortId, vurderKort, kortKo, nesteEkstra, lagOkt, svarKort, vanskeligst, forfallerIMorgen, dagStart, NYE_PER_DAG, NYE_VALG, MAKS_FORFALT, OKT_STORRELSE, vistKort, introSett, merkIntro, laerteKort, nyePerDag, settTempo, nesteSteg, oktInnhold, oktTekst } from '../public/sjakk/apninger/kort.mjs';
+import { lagKort, kortId, vurderKort, kortKo, nesteEkstra, lagOkt, svarKort, vanskeligst, forfallerIMorgen, dagStart, NYE_PER_DAG, NYE_VALG, NYE_I_OKT, FRITT, OVELSE_STORRELSE, valgtTempo, lagOvelse, ovelseRekke, MAKS_FORFALT, OKT_STORRELSE, vistKort, introSett, merkIntro, laerteKort, nyePerDag, settTempo, nesteSteg, oktInnhold, oktTekst } from '../public/sjakk/apninger/kort.mjs';
 import { forsteSetning, helTrekk } from '../public/sjakk/apninger/ui.mjs';
+import { sporSegmenter, segmentNavn, segmentVed, nesteSegment } from '../public/sjakk/apninger/spor.mjs';
 
 import { lagSynk, slaSammen, lik, KONTO } from '../public/sjakk/apninger/synk.mjs';
 
@@ -908,20 +909,21 @@ test('læring: en feil i testen kommer tilbake uten at kortet vises som nytt igj
 
 test('en økt holder det knappen lover', () => {
   const ko = kortKo(falskeKort(40), tomFremgang(), NAA);
-  assert.deepEqual(oktInnhold(ko), { repetisjoner: 0, nye: 6 });
-  assert.deepEqual(oktInnhold({ forfalte: 30, nye: 15 }), { repetisjoner: OKT_STORRELSE, nye: 15 }, 'tempoet spilleren valgte, gjelder i økta');
+  assert.deepEqual(oktInnhold(ko), { repetisjoner: 0, nye: 6, etterpa: 0 });
+  assert.deepEqual(oktInnhold({ forfalte: 30, nye: 15 }), { repetisjoner: OKT_STORRELSE, nye: 15, etterpa: 18 }, 'de rolige tempoene får plass i én økt');
+  assert.deepEqual(oktInnhold({ forfalte: 0, nye: 40 }), { repetisjoner: 0, nye: NYE_I_OKT, etterpa: 25 });
   assert.equal(oktTekst({ repetisjoner: 8, nye: 6 }), '8 repetisjoner og 6 nye');
   assert.equal(oktTekst({ repetisjoner: 1, nye: 1 }), '1 repetisjon og 1 ny');
   assert.equal(oktTekst({ repetisjoner: 0, nye: 6 }), '6 nye kort');
   assert.equal(oktTekst({ repetisjoner: 0, nye: 1 }), '1 nytt kort');
   assert.equal(oktTekst({ repetisjoner: 3, nye: 0 }), '3 repetisjoner');
-  const okt = lagOkt(falskeKort(30), () => 0.5, falskeKort(40).slice(30));
-  assert.equal(okt.totalt, OKT_STORRELSE + 10);
+  const okt = lagOkt(falskeKort(30), () => 0.5, falskeKort(60).slice(30));
+  assert.equal(okt.totalt, OKT_STORRELSE + NYE_I_OKT);
 });
 
 test('neste steg: alltid én ting å gjøre', () => {
   assert.deepEqual(nesteSteg(0, null), { type: 'bygg' });
-  assert.deepEqual(nesteSteg(2, { forfalte: 8, nye: 6, flere: true }), { type: 'okt', repetisjoner: 8, nye: 6 });
+  assert.deepEqual(nesteSteg(2, { forfalte: 8, nye: 6, flere: true }), { type: 'okt', repetisjoner: 8, nye: 6, etterpa: 0 });
   assert.deepEqual(nesteSteg(2, { forfalte: 0, nye: 0, flere: true }), { type: 'flere' });
   assert.deepEqual(nesteSteg(2, { forfalte: 0, nye: 0, flere: false }), { type: 'ov' });
 });
@@ -930,7 +932,7 @@ test('tempo: 6 er standard, og valget styrer dagens nye', () => {
   const fremgang = tomFremgang();
   const kort = falskeKort(40);
   assert.equal(nyePerDag(fremgang), 6);
-  assert.deepEqual(NYE_VALG, [6, 10, 15]);
+  assert.deepEqual(NYE_VALG, [6, 10, 15, 25, 40, FRITT]);
   settTempo(fremgang, 15, NAA);
   assert.deepEqual(fremgang.tempo, { nye: 15, sist: NAA });
   assert.equal(kortKo(kort, fremgang, NAA).nye, 15);
@@ -996,4 +998,138 @@ test('kort: hver felle og hvert kort kan vises, med noe å si og en pil å følg
     if (kilde.felle && !kilde.node) assert.ok(kilde.felle.tekst && kilde.felle.forklaring);
     else if (kilde.node) assert.ok(kilde.node.entry.hva && kilde.node.entry.ide);
   }
+});
+
+test('tempo: mange kort per dag, og «Så mange jeg vil» har ingen grense', () => {
+  const fremgang = tomFremgang();
+  const kort = falskeKort(120);
+  settTempo(fremgang, 40, NAA);
+  assert.equal(kortKo(kort, fremgang, NAA).nye, 40);
+  settTempo(fremgang, FRITT, NAA);
+  assert.equal(valgtTempo(fremgang), FRITT);
+  assert.equal(nyePerDag(fremgang), Infinity);
+  assert.equal(JSON.parse(JSON.stringify(fremgang.tempo)).nye, FRITT, 'tåler lagring');
+  const ko = kortKo(kort, fremgang, NAA);
+  assert.equal(ko.nye, 120);
+  assert.equal(ko.flere, false);
+  assert.equal(lagOkt(ko.klare, () => 0.5, ko.nyeKort).totalt, NYE_I_OKT, 'ei økt er en porsjon');
+  const tatt = ko.nyeKort.slice(0, NYE_I_OKT);
+  const okt = lagOkt([], () => 0.5, tatt);
+  for (const k of tatt) { vistKort(okt, k, fremgang, NAA); svarKort(okt, k, 'riktig', fremgang, NAA); }
+  assert.equal(kortKo(kort, fremgang, NAA).nye, 120 - NYE_I_OKT, 'neste porsjon er klar med én gang');
+});
+
+test('tempo: pausen etter lang fravær gjelder bare de rolige tempoene', () => {
+  const kort = falskeKort(70);
+  const fremgang = tomFremgang();
+  kort.slice(0, 50).forEach(k => { fremgang.kort[k.id] = { boks: 2, forfall: NAA - 100 * DOGN, sist: NAA - 200 * DOGN, forst: NAA - 300 * DOGN, riktige: 1, feil: 0 }; });
+  for (const rolig of [6, 10, 15]) {
+    settTempo(fremgang, rolig, NAA);
+    const ko = kortKo(kort, fremgang, NAA);
+    assert.equal(ko.pause, true, String(rolig));
+    assert.equal(ko.nye, 0);
+    assert.equal(ko.forfalte, MAKS_FORFALT);
+  }
+  for (const [tempo, nye] of [[25, 20], [40, 20], [FRITT, 20]]) {
+    settTempo(fremgang, tempo, NAA);
+    const ko = kortKo(kort, fremgang, NAA);
+    assert.equal(ko.pause, false, String(tempo));
+    assert.equal(ko.nye, nye);
+    assert.equal(ko.forfalte, 50, 'ingen tak spilleren står fast bak');
+  }
+});
+
+test('spolelinje: ett segment per kort, med resultat, og det som kommer er stengt', () => {
+  const fremgang = tomFremgang();
+  const nye = falskeKort(3);
+  const rep = falskeKort(5).slice(3).map(k => { fremgang.kort[k.id] = { boks: 1, forfall: NAA - 1, sist: NAA - DOGN, forst: NAA - DOGN, riktige: 1, feil: 0 }; return k; });
+  const okt = lagOkt(rep, () => 0.5, nye);
+  assert.equal(okt.kortliste.length, 5, 'et nytt kort står to ganger i køen, men er ett segment');
+  assert.deepEqual(sporSegmenter(okt, okt.ko[0].id).map(s => s.apen), [true, false, false, false, false]);
+  vistKort(okt, nye[0], fremgang, NAA);
+  svarKort(okt, rep[0], 'riktig', fremgang, NAA);
+  svarKort(okt, rep[1], 'feil', fremgang, NAA);
+  const status = id => sporSegmenter(okt).find(s => s.kort.id === id).status;
+  assert.deepEqual([status('k0'), status('k3'), status('k4'), status('k1')], ['vist', 'riktig', 'feil', 'ny']);
+  svarKort(okt, nye[0], 'hint', fremgang, NAA);
+  assert.equal(status('k0'), 'hint', 'testen avgjør fargen');
+  svarKort(okt, rep[1], 'riktig', fremgang, NAA);
+  assert.equal(status('k4'), 'feil', 'første svar står, som i vurderingen');
+});
+
+test('spolelinje: navnet sier hvor og hvordan, men aldri trekket', () => {
+  const kort = lagKort([finn('smith-morra')]).slice(0, 2);
+  const okt = lagOkt(kort, () => 0.5);
+  okt.resultat.set(kort[0].id, 'hint');
+  const segmenter = sporSegmenter(okt, kort[1].id);
+  const her = okt.kortliste.indexOf(kort[0]);
+  assert.equal(segmentNavn(segmenter[her], her, 2), `Kort ${her + 1} av 2: Smith-Morra-gambitt, riktig med hint`);
+  const annen = 1 - her;
+  assert.match(segmentNavn(segmenter[annen], annen, 2), /ikke tatt ennå, du er her$/);
+  for (const k of lagKort([finn('smith-morra')])) assert.ok(!segmentNavn({ kort: k, status: 'ny', aktiv: false }, 0, 1).includes(k.kilder[0].san), 'trekket røpes ikke');
+});
+
+test('spolelinje: en finger lander på nærmeste kort som kan åpnes, og piltastene hopper over det stengte', () => {
+  const s = apen => ({ apen });
+  const segmenter = [s(true), s(false), s(true), s(true), s(false), s(false)];
+  assert.equal(segmentVed(segmenter, 0), 0);
+  assert.equal(segmentVed(segmenter, 0.4), 2);
+  assert.equal(segmentVed(segmenter, 0.99), 3, 'forbi det siste går ikke');
+  assert.equal(segmentVed(segmenter, -3), 0);
+  assert.equal(segmentVed(segmenter, 7), 3);
+  assert.equal(segmentVed([s(false)], 0.5), -1);
+  assert.equal(nesteSegment(segmenter, 0, 1), 2);
+  assert.equal(nesteSegment(segmenter, 3, 1), 3);
+  assert.equal(nesteSegment(segmenter, 2, -1), 0);
+  assert.equal(nesteSegment(segmenter, 0, -1), 0);
+});
+
+test('øving: rører verken bokser, forfall, feil eller introer', () => {
+  const fremgang = tomFremgang();
+  const kort = falskeKort(4);
+  vurderKort(fremgang, kort[0].id, 'riktig', NAA);
+  vurderKort(fremgang, kort[1].id, 'riktig', NAA);
+  const for_ = JSON.stringify(fremgang);
+  const okt = lagOvelse(kort, fremgang);
+  assert.equal(okt.ovelse, true);
+  assert.deepEqual([...okt.laer], ['k2', 'k3'], 'det ingen har lært, vises først');
+  assert.equal(okt.ko.length, 4, 'her vises et ukjent kort én gang');
+  assert.equal(svarKort(okt, kort[0], 'feil', fremgang, NAA + 1), null);
+  assert.equal(okt.resultat.get('k0'), 'feil');
+  assert.equal(okt.bom.size, 1);
+  okt.ko.shift();
+  assert.ok(okt.ko.includes(kort[0]), 'en bom kommer tilbake her også');
+  svarKort(okt, kort[1], 'riktig', fremgang, NAA + 1);
+  vistKort(okt, kort[2], fremgang, NAA + 1);
+  assert.ok(!okt.laer.has('k2'));
+  assert.equal(JSON.stringify(fremgang), for_, 'fremgangen er helt lik');
+});
+
+test('øving: i rekkefølge følger historien, stokket gjør det ikke, og alt er med', () => {
+  const kort = lagKort([finn('smith-morra')]);
+  const rekke = ovelseRekke(kort);
+  assert.deepEqual(rekke[0].trekk, ['c3']);
+  assert.deepEqual(rekke[1].trekk, ['Nxc3']);
+  assert.equal(new Set(rekke).size, kort.length);
+  let f = 0.37;
+  const stokket = ovelseRekke(kort, { stokket: true, tilfeldig: () => { f = (f * 9301 + 0.49297) % 1; return f; } });
+  assert.equal(new Set(stokket).size, kort.length);
+  assert.notDeepEqual(stokket.map(k => k.id), rekke.map(k => k.id));
+  assert.ok(OVELSE_STORRELSE >= 20);
+});
+
+test('repetering: de samme kortene som øving, og bare bommene når det er det spilleren vil', () => {
+  const fremgang = tomFremgang();
+  const kort = falskeKort(3);
+  const okt = lagOkt(kort, () => 0.5);
+  for (const k of kort) vurderKort(fremgang, k.id, 'riktig', NAA);
+  svarKort(okt, kort[1], 'feil', fremgang, NAA + 5);
+  const for_ = JSON.stringify(fremgang);
+  const alle3 = lagOvelse(okt.kortliste, fremgang);
+  assert.equal(alle3.ko.length, 3);
+  assert.equal(alle3.laer.size, 0, 'kjente kort spørres rett');
+  const bom = lagOvelse([...okt.bom.values()].map(v => v.kort), fremgang);
+  assert.deepEqual(bom.ko.map(k => k.id), ['k1']);
+  for (const k of alle3.ko.slice()) svarKort(alle3, k, 'riktig', fremgang, NAA + 9);
+  assert.equal(JSON.stringify(fremgang), for_);
 });

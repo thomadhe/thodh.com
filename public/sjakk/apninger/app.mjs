@@ -9,7 +9,7 @@ import { lagSynk } from './synk.mjs';
 import { valgteApninger, velgBlandetLinje } from './repertoar.mjs';
 import { lagKort } from './kort.mjs';
 import { visRepertoar } from './repertoar-side.mjs';
-import { nesteStegHtml, taFlere, visKortokt } from './kort-okt.mjs';
+import { nesteStegHtml, taFlere, visKortokt, visTrening } from './kort-okt.mjs';
 import { visBygg } from './bygg.mjs';
 
 const DATA = '/sjakk/apninger/data/';
@@ -146,7 +146,7 @@ function visApning(id, fane) {
     lagBrettside(`
       <nav class="ap-tilbake"><a href="#/">← Alle åpninger</a></nav>
       <header class="ap-apning-topp"><p class="eyebrow">${FARGE[apning.farge].toUpperCase()}${apning.eco ? ` · ${esc(apning.eco)}` : ''}</p><h1>${esc(apning.navn)}</h1><p class="ap-startlinje">${apning.startTrekk.length ? `Starter etter ${esc(startNotasjon(apning))}` : 'Fra utgangsstillingen'}</p></header>
-      <nav class="ap-faner" aria-label="Del av åpningen">${faner.map(([f, t]) => `<a href="#/a/${id}/${f}" data-fane="${f}">${t}</a>`).join('')}</nav>`);
+      <nav class="ap-faner" aria-label="Del av åpningen">${faner.map(([f, t]) => `<a href="#/a/${id}/${f}" data-fane="${f}">${t}</a>`).join('')}<a href="#/repertoar/trening/${id}/rekke">Alle kort</a></nav>`);
   }
   evalbar.hold(false);
   main.querySelectorAll('[data-fane]').forEach(a => { if (a.dataset.fane === fane) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
@@ -213,6 +213,7 @@ function visOm(apning) {
     <section class="ap-seksjon"><h2>Modellideer</h2><ul>${apning.modellideer.map(p => `<li>${esc(p)}</li>`).join('')}</ul></section>
     ${apning.sidelinjer.length ? `<section class="ap-seksjon"><h2>Sidelinjer og beslektede ideer</h2>${apning.sidelinjer.map((s, n) => `<div class="ap-sidelinje"><h3>${esc(s.navn)}</h3><p class="ap-notasjon">${esc(startNotasjon(apning))} ${esc(stiFraTrekk(apning, s.trekk))}</p><p>${esc(s.tekst)}</p>${s.kilde ? `<p class="ap-kilde">Kilde: ${esc(s.kilde)}</p>` : ''}<button type="button" class="button secondary" data-side="${n}">Spill gjennom</button></div>`).join('')}</section>` : ''}
     <section class="ap-seksjon"><h2>I tall</h2><p>${flertall(apning.linjer.length, 'linje', 'linjer')} å øve på, ${apning.stillinger} ulike stillinger og ${flertall(apning.feller.length, 'felle', 'feller')}.</p></section>
+    <section class="ap-seksjon"><h2>Øv på alle kort</h2><p>Så ofte du vil. Teller ikke på timeplanen.</p><div class="ap-kontroller ap-rad"><a class="button secondary" href="#/repertoar/trening/${apning.id}/rekke">I rekkefølge</a><a class="button secondary" href="#/repertoar/trening/${apning.id}/stokket">Stokket</a></div></section>
     <a class="button primary ap-bred" href="#/a/${apning.id}/laer">Start å lære</a>`;
   panel().querySelectorAll('[data-side]').forEach(k => k.addEventListener('click', () => { gaaTil(`#/a/${apning.id}/laer`, () => visSidelinje(apning, apning.sidelinjer[Number(k.dataset.side)], 0)); }));
 }
@@ -475,6 +476,7 @@ function rute() {
   stopp();
   if (side === 'a' && id) visApning(id, ['om', 'laer', 'ov', 'feller'].includes(fane) ? fane : 'laer');
   else if (side === 'repertoar' && id === 'bygg') { tilstand = {}; visBygg(ui, fane, ekstra); }
+  else if (side === 'repertoar' && id === 'trening') visTrening(ui, fane, ekstra);
   else if (side === 'repertoar' && id === 'kort' && fane === 'flere') { history.replaceState(null, '', '#/repertoar/kort'); taFlere(ui); }
   else if (side === 'repertoar' && id === 'kort') visKortokt(ui);
   else if (side === 'repertoar' && id === 'ov') visBlandet(['w', 'b'].includes(fane) ? fane : null);

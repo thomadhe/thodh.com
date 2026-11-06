@@ -3,7 +3,7 @@ import { TRENER, esc, norsk } from './trener.mjs';
 import { NIVA, flertall, sanTekst, skarphet, trenerBoble } from './ui.mjs';
 import { STARTFORSLAG, dekningTekst, erValgt, fordel, hullTekst, kryssI, settValgt, svarDekning, veiInnTrekk, velgApning } from './repertoar.mjs';
 import { nesteStegHtml } from './kort-okt.mjs';
-import { NYE_VALG, laerteKort, nyePerDag, settTempo } from './kort.mjs';
+import { FRITT, NYE_VALG, laerteKort, settTempo, valgtTempo } from './kort.mjs';
 import { kortFor } from './bygg.mjs';
 
 const SEKSJONER = [
@@ -75,7 +75,7 @@ function handlinger(ui) {
   const valgte = ui.valgte();
   if (!valgte.length) return '';
   const farger = new Set(valgte.map(apning => apning.farge));
-  const tempo = nyePerDag(ui.fremgang());
+  const tempo = valgtTempo(ui.fremgang());
   return `<div class="ap-handlinger">
     <section class="ap-handling">
       <p class="eyebrow">BLANDET ØVING</p>
@@ -86,8 +86,14 @@ function handlinger(ui) {
     <section class="ap-handling">
       <p class="eyebrow">TEMPO</p>
       <h2>Nye kort per dag</h2>
-      <p>Repetisjoner kommer i tillegg. Ta heller få og husk dem.</p>
-      <div class="ap-filter ap-tempo" role="group" aria-label="Nye kort per dag">${NYE_VALG.map(antall => `<button type="button" data-tempo="${antall}" aria-pressed="${tempo === antall}">${antall}</button>`).join('')}</div>
+      <p>${tempo === FRITT ? 'Ingen grense på nye kort. Du bestemmer selv når det er nok.' : 'Repetisjoner kommer i tillegg. Ta heller få og husk dem.'}</p>
+      <div class="ap-filter ap-tempo" role="group" aria-label="Nye kort per dag">${NYE_VALG.map(antall => `<button type="button" data-tempo="${antall}" aria-pressed="${tempo === antall}">${antall === FRITT ? 'Så mange jeg vil' : antall}</button>`).join('')}</div>
+    </section>
+    <section class="ap-handling">
+      <p class="eyebrow">ØV FRITT</p>
+      <h2>Øv på alle kort</h2>
+      <p>Så ofte du vil, utenom dagens plan. Teller ikke på timeplanen.</p>
+      <div class="ap-handling-knapper"><a class="button secondary" href="#/repertoar/trening/alle/rekke">I rekkefølge</a><a class="button secondary" href="#/repertoar/trening/alle/stokket">Stokket</a></div>
     </section>
   </div>`;
 }
@@ -160,7 +166,7 @@ export function visRepertoar(ui, fokus = null) {
     tegn(`[data-slot="${slotId}"]`);
   });
   main.querySelectorAll('[data-tempo]').forEach(knapp => knapp.addEventListener('click', () => {
-    settTempo(ui.fremgang(), Number(knapp.dataset.tempo));
+    settTempo(ui.fremgang(), NYE_VALG.find(antall => String(antall) === knapp.dataset.tempo));
     ui.lagre();
     tegn(`[data-tempo="${knapp.dataset.tempo}"]`);
   }));

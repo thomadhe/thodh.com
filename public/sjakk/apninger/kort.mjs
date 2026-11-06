@@ -8,7 +8,13 @@ import { flertall } from './ui.mjs';
 
 export const OKT_STORRELSE = 12;
 export const NYE_PER_DAG = 6;
-export const NYE_VALG = [6, 10, 15];
+export const FRITT = 'fri';
+export const NYE_VALG = [6, 10, 15, 25, 40, FRITT];
+// One session holds this many new cards; the rest of the day's cards are one tap away afterwards.
+export const NYE_I_OKT = 15;
+export const OVELSE_STORRELSE = 30;
+// Up to this pace the queue protects the player after a long absence. Above it the player has said what they want.
+const ROLIG_TEMPO = 15;
 export const MAKS_FORFALT = 30;
 const HOPP_EGNE_TREKK = 2;
 const GJENTA_ETTER = 3;
@@ -18,7 +24,8 @@ const BLOKK = 3;
 // A line is followed until it is less than half as likely as the best one still waiting.
 const HOLD_TRADEN = 0.5;
 
-export const nyePerDag = fremgang => (NYE_VALG.includes(fremgang.tempo?.nye) ? fremgang.tempo.nye : NYE_PER_DAG);
+export const valgtTempo = fremgang => (NYE_VALG.includes(fremgang.tempo?.nye) ? fremgang.tempo.nye : NYE_PER_DAG);
+export const nyePerDag = fremgang => { const tempo = valgtTempo(fremgang); return tempo === FRITT ? Infinity : tempo; };
 export function settTempo(fremgang, nye, naa = Date.now()) { fremgang.tempo = { nye, sist: naa }; }
 
 export const kortId = (fen, farge) => `${stilling(fen)}|${farge}`;
@@ -91,7 +98,7 @@ const forsinkelse = (post, naa) => (naa - post.forfall) / (Math.max(1, INTERVALL
 
 // The likeliest position first, then on down its likeliest line, so the moves read as a story.
 // Main lines against the most common replies come first, and side lines last.
-function nyeIRekkefolge(ukjente) {
+export function nyeIRekkefolge(ukjente) {
   const paNode = new Map(ukjente.flatMap(kort => kort.kilder.filter(kilde => kilde.node).map(kilde => [kilde.node, kort])));
   const sortert = [...ukjente].sort((a, b) => (b.vekt ?? 0) - (a.vekt ?? 0) || trekkTall(a.fen) - trekkTall(b.fen));
   const brukt = new Set();
@@ -125,9 +132,11 @@ export function kortKo(kort, fremgang, naa = Date.now(), ekstra = 0) {
   }
   const forfalte = kort.filter(k => fremgang.kort[k.id]?.forfall <= naa).sort((a, b) => forsinkelse(fremgang.kort[b.id], naa) - forsinkelse(fremgang.kort[a.id], naa) || fremgang.kort[a.id].boks - fremgang.kort[b.id].boks);
   const ukjente = kort.filter(k => !fremgang.kort[k.id]);
-  const pause = forfalte.length >= MAKS_FORFALT;
-  const rom = Math.max(0, MAKS_FORFALT * (1 + ekstra) - gjortIDag);
-  const nyeRom = pause ? 0 : Math.max(0, nyePerDag(fremgang) * (1 + ekstra) - nyeIDag);
+  const perDag = nyePerDag(fremgang);
+  const rolig = perDag <= ROLIG_TEMPO;
+  const pause = rolig && forfalte.length >= MAKS_FORFALT;
+  const rom = rolig ? Math.max(0, MAKS_FORFALT * (1 + ekstra) - gjortIDag) : Infinity;
+  const nyeRom = pause ? 0 : Math.max(0, perDag * (1 + ekstra) - nyeIDag);
   const klare = forfalte.slice(0, rom);
   const nye = nyeIRekkefolge(ukjente).slice(0, nyeRom);
   return { kort: [...klare, ...nye], klare, nyeKort: nye, forfalte: klare.length, nye: nye.length, pause, flere: forfalte.length > klare.length || (!pause && ukjente.length > nye.length) };
@@ -147,7 +156,11 @@ export function forfallerIMorgen(kort, fremgang, naa = Date.now()) {
 }
 
 // What the next session holds.
-export const oktInnhold = ko => ({ repetisjoner: Math.min(ko.forfalte, OKT_STORRELSE), nye: ko.nye });
+export function oktInnhold(ko) {
+  const repetisjoner = Math.min(ko.forfalte, OKT_STORRELSE);
+  const nye = Math.min(ko.nye, NYE_I_OKT);
+  return { repetisjoner, nye, etterpa: ko.forfalte + ko.nye - repetisjoner - nye };
+}
 
 export function oktTekst({ repetisjoner, nye }) {
   const gamle = repetisjoner ? flertall(repetisjoner, 'repetisjon', 'repetisjoner') : '';
@@ -173,21 +186,36 @@ function fordelOkt(repetisjoner, nye) {
   return [...ut, ...rest];
 }
 
+const nyOkt = (ko, laer, ovelse = false) => ({ ko, kortliste: [...new Set(ko)], totalt: new Set(ko).size, gjort: 0, ovelse, laer: new Set(laer.map(kort => kort.id)), vist: new Set(), vurdert: new Set(), resultat: new Map(), riktige: 0, hint: 0, bom: new Map() });
+
+function stokk(liste, tilfeldig) {
+  const ut = [...liste];
+  for (let i = ut.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(tilfeldig() * (i + 1));
+    [ut[i], ut[j]] = [ut[j], ut[i]];
+  }
+  return ut;
+}
+
 // nye are shown first and tested later, so they stand twice in the queue and in laer until they have been taught.
 export function lagOkt(ko, tilfeldig = Math.random, nye = []) {
-  const valgt = ko.slice(0, OKT_STORRELSE);
-  for (let i = valgt.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(tilfeldig() * (i + 1));
-    [valgt[i], valgt[j]] = [valgt[j], valgt[i]];
-  }
-  return { ko: fordelOkt(valgt, nye), totalt: valgt.length + nye.length, gjort: 0, laer: new Set(nye.map(kort => kort.id)), vist: new Set(), vurdert: new Set(), riktige: 0, hint: 0, bom: new Map() };
+  const ferske = nye.slice(0, NYE_I_OKT);
+  return nyOkt(fordelOkt(stokk(ko.slice(0, OKT_STORRELSE), tilfeldig), ferske), ferske);
 }
+
+// Practice outside the schedule. A card nobody has taught is still shown before it is asked: here once, with the arrow.
+export function lagOvelse(kort, fremgang) {
+  return nyOkt([...kort], kort.filter(k => !fremgang.kort[k.id]), true);
+}
+
+export const ovelseRekke = (kort, { stokket = false, tilfeldig = Math.random } = {}) => (stokket ? stokk(kort, tilfeldig) : nyeIRekkefolge(kort));
 
 // Shown and played once: the card is known from now on, in box 0 and due for its test. Only that test gives box 1.
 export function vistKort(okt, kort, fremgang, naa = Date.now()) {
   okt.laer.delete(kort.id);
   okt.vist.add(kort.id);
-  fremgang.kort[kort.id] = { boks: 0, forfall: dagStart(naa), sist: naa, forst: naa, riktige: 0, feil: 0, vist: naa };
+  if (!okt.resultat.has(kort.id)) okt.resultat.set(kort.id, 'vist');
+  if (!okt.ovelse) fremgang.kort[kort.id] = { boks: 0, forfall: dagStart(naa), sist: naa, forst: naa, riktige: 0, feil: 0, vist: naa };
 }
 
 export const introSett = (fremgang, apningId) => Boolean(fremgang.introer[apningId]);
@@ -202,7 +230,8 @@ export function svarKort(okt, kort, utfall, fremgang, naa = Date.now()) {
   let post = null;
   if (forste) {
     okt.vurdert.add(kort.id);
-    post = vurderKort(fremgang, kort.id, utfall, naa);
+    okt.resultat.set(kort.id, utfall);
+    if (!okt.ovelse) post = vurderKort(fremgang, kort.id, utfall, naa);
     if (utfall === 'riktig') okt.riktige += 1;
     if (utfall === 'hint') okt.hint += 1;
   }

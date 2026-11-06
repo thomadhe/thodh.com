@@ -128,7 +128,7 @@ a { color: var(--pink); }
 .ap-panel { min-width: 0; display: flex; flex-direction: column; gap: 16px; }
 .ap-kontroller { display: flex; flex-direction: column; gap: 8px; }
 .ap-kontroller.ap-rad { flex-direction: row; flex-wrap: wrap; }
-.ap-kontroller.ap-rad .button { flex: 1 1 140px; }
+.ap-kontroller.ap-rad .button { flex: 1 1 140px; text-decoration: none; }
 .ap-valg-tittel { margin: 0; font-size: .875rem; color: var(--muted); }
 .ap-valg { display: flex; flex-direction: column; gap: 7px; }
 .ap-valg .button { justify-content: flex-start; text-align: left; }
@@ -157,7 +157,7 @@ a { color: var(--pink); }
 /* Mitt repertoar */
 .ap-rep-hero { margin-top: 12px; margin-bottom: 20px; }
 .ap-rep-hero .button { margin-top: 4px; text-decoration: none; }
-.ap-handlinger { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
+.ap-handlinger { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
 .ap-handling { display: flex; flex-direction: column; gap: 6px; padding: 16px 17px; border: 1px solid var(--line); border-radius: 9px; background: linear-gradient(160deg, #2a1f29, #211b22); }
 .ap-handling .eyebrow { margin: 0; font-size: .7rem; }
 .ap-handling h2 { font: 500 1.4rem/1.25 var(--serif); margin: 0; }
@@ -278,7 +278,21 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
 .ap-okt-topp a:hover { color: var(--text); }
 .ap-okt-teller { justify-self: end; color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
 .ap-okt-topp .ap-spor { grid-column: 1 / -1; }
-.ap-okt-topp .ap-spor > span { width: 0; transition: width .25s; }
+/* The bar is thin, but the whole row takes a finger. Sideways is the bar's, up and down still scrolls the page. */
+.ap-skrubb { grid-column: 1 / -1; display: flex; align-items: stretch; gap: 2px; height: 34px; margin-top: -4px; touch-action: pan-y; cursor: pointer; }
+.ap-segment { position: relative; flex: 1 1 0; min-width: 0; padding: 0; border: 0; background: none; cursor: inherit; }
+.ap-segment::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 8px; margin-top: -4px; border-radius: 2px; background: #503446; transition: background .15s; }
+.ap-segment:disabled { cursor: default; }
+.ap-segment.s-vist::before { background: #aa6a87; }
+.ap-segment.s-riktig::before { background: var(--plan); }
+.ap-segment.s-hint::before { background: #f0d79a; }
+.ap-segment.s-feil::before { background: var(--fare); }
+.ap-segment.aktiv::before { box-shadow: 0 0 0 1px var(--text); }
+.ap-segment.ser::after { content: ''; position: absolute; left: 50%; bottom: 1px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: var(--text); }
+.ap-segment:focus-visible { outline: 2px solid var(--pink); outline-offset: 1px; border-radius: 3px; }
+.ap-ovelse-linje { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: .8rem; }
+.ap-repeter { margin-top: 12px; }
+.ap-repeter + .ap-ovelse-linje { max-width: 760px; margin-top: 8px; }
 .ap-okt-neste .button { min-height: 48px; }
 .ap-okt-tall { max-width: 760px; }
 .ap-okt-tunge { max-width: 760px; }
@@ -346,6 +360,6 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
 }
 @media (prefers-reduced-motion: reduce) {
   .ap-kort:hover { transform: none; }
-  .ap-eval-hvit, .ap-okt-topp .ap-spor > span { transition: none; }
+  .ap-eval-hvit, .ap-segment::before { transition: none; }
   .ap-eval-regner .ap-eval-dybde::before { animation: none; }
 }
