@@ -1,4 +1,4 @@
-// Builds the puzzle data for /sjakk/oppgaver from the Lichess puzzle database (CC0).
+// Builds the puzzle data for /sjakk-for-1/oppgaver from the Lichess puzzle database (CC0).
 //
 //   node scripts/sjakk-oppgaver/bygg.mjs --input <lichess_db_puzzle.csv.zst> --out public/sjakk/oppgaver/data [--per-band 2000]
 //

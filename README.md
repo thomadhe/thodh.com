@@ -12,6 +12,7 @@ Personlig prosjektoversikt med Otsjoba og Sjakk for 2;) på samme domene.
 | `/logg-inn`, `/registrer` | Innlogging, e-postlenke og registrering |
 | `/otsjoba` | Italiensk, russisk, spansk, fransk og tysk A1–C2, veiledede samtaler, ordtrening og fri samtale via lokal AI |
 | `/sjakk` | Sjakk for to på samme skjerm eller med invitasjonslenke på nett |
+| `/sjakk-for-1` | Sjakk for én: dagens økt, dagens oppgave og veien inn til åpningene (`/sjakk-for-1/apninger`) og oppgavene (`/sjakk-for-1/oppgaver`) |
 
 Karrierepiloten åpnes via en ekstern lenke til https://karrierepiloten.com.
 
@@ -43,7 +44,7 @@ node scripts/lokal-ai.mjs
 
 `app/(site)` inneholder den eksisterende forsiden og kontaktsiden. `app/(otsjoba)/otsjoba` har et eget rotoppsett med Otsjobas CSS og metadata. Vanlige lenker mellom appene laster et nytt dokument, slik at globale stiler ikke blandes.
 
-Sjakkspillet ligger i `public/sjakk`. En rewrite i `next.config.ts` serverer `index.html` på `/sjakk`. HTML-en bruker absolutte ressursbaner under `/sjakk`, slik at både direktelenker og omlasting fungerer. Lokal spilling trenger ingen spillserver. Begge spillere kan velge egen partitid, tillegg og separat trekkfrist. Leken variant og trening deler samme regler. Biblioteklisensen ligger i `public/sjakk/vendor/chess-LICENSE.txt`.
+Sjakkspillet ligger i `public/sjakk`. En rewrite i `next.config.ts` serverer `index.html` på `/sjakk`. Hjemmesiden til Sjakk for 1 ligger i `public/sjakk-for-1`. Åpningstreneren og oppgavene ligger fortsatt i `public/sjakk/apninger` og `public/sjakk/oppgaver`, men vises på `/sjakk-for-1/apninger` og `/sjakk-for-1/oppgaver` med rewrites, så importer, data, Stockfish og `/sjakk/api/apninger` er uendret. De gamle adressene sender videre med 308, og `#`-delen følger med. HTML-en bruker absolutte ressursbaner under `/sjakk`, slik at både direktelenker og omlasting fungerer. Lokal spilling trenger ingen spillserver. Begge spillere kan velge egen partitid, tillegg og separat trekkfrist. Leken variant og trening deler samme regler. Biblioteklisensen ligger i `public/sjakk/vendor/chess-LICENSE.txt`.
 
 Nettspill går via den avgrensede serverruten `/sjakk/api/rooms/[[...path]]` til sjakkserveren på Sites, med D1 som varig lagring. Ingen thodh.com-innlogging kreves. Vertens spillerplass og engangsinvitasjonen har ulike tilfeldige nøkler; motspilleren får sin egen spillerplass. Serveren verifiserer trekk, klokker og revisjoner. Utløpte rom fjernes etter sju dager. Kun spillernøkkel og rom-ID lagres i nettleseren for gjenopptakelse.
 

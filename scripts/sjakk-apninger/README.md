@@ -1,6 +1,6 @@
 # Åpninger – data and verification
 
-The opening trainer lives in `public/sjakk/apninger/`. Each opening is one JSON file in `data/`, listed in `data/manifest.json` (order and library groups).
+The opening trainer lives in `public/sjakk/apninger/` and is served at `/sjakk-for-1/apninger`. Each opening is one JSON file in `data/`, listed in `data/manifest.json` (order and library groups).
 
 ## File format (schema 1)
 

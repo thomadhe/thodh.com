@@ -73,7 +73,7 @@ function dagensHtml(o, stilling) {
   const brett = o.plassering ? miniBrett(new Chess().fen()) : stilling ? miniBrett(stilling.fen, stilling.farge) : '<span class="en-tomt-brett"></span>';
   const linjer = o.plassering
     ? `<span>Først finner vi nivået ditt.</span><span>${flertall(o.igjen, 'oppgave', 'oppgaver')} til, så er den klar.</span>`
-    : `<span>Nivå ${o.niva - 100}–${o.niva + 100}${stilling ? ` · ${FARGE[stilling.farge]} i trekket` : ''}</span><span class="${o.lost ? 'en-lost' : ''}">${o.status}</span>${o.rekke ? `<span>🔥 ${flertall(o.rekke, 'dag', 'dager')} på rad</span>` : ''}`;
+    : `<span>Nivå ${o.niva - 100}–${o.niva + 100}</span>${stilling ? `<span>${FARGE[stilling.farge]} i trekket</span>` : ''}<span class="${o.lost ? 'en-lost' : ''}">${o.status}</span>${o.rekke ? `<span>🔥 ${flertall(o.rekke, 'dag', 'dager')} på rad</span>` : ''}`;
   return `<a class="en-dagens" href="${OPPGAVER}#dagens"><span class="en-brett">${brett}</span><span class="en-rad-tekst"><b>Dagens oppgave</b>${linjer}</span><span class="en-pil" aria-hidden="true">›</span></a>`;
 }
 

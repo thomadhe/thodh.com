@@ -29,7 +29,6 @@
 /* Today's puzzle. */
 .en-dagens { gap: 16px; padding: 14px 16px; }
 .en-brett { flex: none; width: 148px; }
-.en-brett .ap-mini { display: grid; }
 .en-tomt-brett { display: block; aspect-ratio: 1; border: 2px solid #392b35; border-radius: 3px; background: repeating-conic-gradient(#86546e 0 25%, #efd9d6 0 50%) 0 0 / 25% 25%; opacity: .35; }
 .en-dagens .en-rad-tekst { gap: 3px; font-size: .9rem; }
 .en-dagens .en-rad-tekst b { margin-bottom: 2px; font: 500 1.3rem/1.25 var(--serif); }

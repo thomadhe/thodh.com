@@ -3,7 +3,7 @@ import { lagBrett } from './brett.mjs';
 import { Losning } from './oppgave.mjs';
 import { les, lagre, registrer, markerSett, resultatTekst, PLASSERING } from './lagring.mjs';
 import { VANSKELIGHET, malRating, bandNaer, bandFor, velgOppgave, lesRad, nivaFor, bandForNiva, dagensOppgave, iDagOslo, kortDato, dagRekke, leggTilDager } from './utvalg.mjs';
-import { visRating } from './glicko.mjs';
+import { FORELOPIG_RD, visRating } from './glicko.mjs';
 import { TEMAER, TEMAGRUPPER } from './temaer.mjs';
 import { lyd, trekklyd, lydPa, settLyd } from './lyd.mjs';
 

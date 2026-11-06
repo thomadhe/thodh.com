@@ -37,18 +37,21 @@ const ui = { valgte, kort, fremgang: () => fremgang };
 // Only the chosen openings: the cards need nothing else, and a new visitor needs no trees at all.
 async function lastValgte() {
   try {
-    if (!manifest) {
+    let liste = manifest;
+    if (!liste) {
       const svar = await fetch(`${APNING_DATA}manifest.json`);
       if (!svar.ok) throw new Error(`manifest ${svar.status}`);
-      manifest = await svar.json();
+      liste = await svar.json();
     }
-    const mangler = manifest.apninger.filter(id => erValgt(fremgang, id) && !apninger.has(id));
+    const mangler = liste.apninger.filter(id => erValgt(fremgang, id) && !apninger.has(id));
     const filer = await Promise.all(mangler.map(id => fetch(`${APNING_DATA}${id}.json`).then(r => (r.ok ? r.json() : null)).catch(() => null)));
     for (const data of filer.filter(Boolean)) {
       const { apning } = lesApning(data);
       if (apning) apninger.set(apning.id, apning);
     }
-    feilet = false;
+    manifest = liste;
+    // One file that does not answer costs that opening, as in the trainer. All of them must not look like an empty repertoire.
+    feilet = mangler.some(id => !apninger.has(id)) && !valgte().length;
   } catch {
     feilet = true;
   }

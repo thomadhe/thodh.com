@@ -35,7 +35,7 @@ Eier fra nå: vakt. Er ingen strøm i gang på online-sjakk, start en ny Claude-
 
 ## Etterarbeid når strømmene er flettet
 
-- Rewrites og lenker for `/sjakk/oppgaver` og `/sjakk/apninger` er på plass (kryss-lenket).
+- Øving alene har eget hjem på `/sjakk-for-1`, med `/sjakk-for-1/apninger` og `/sjakk-for-1/oppgaver` som rewrites til filene i `public/sjakk`. De gamle adressene sender videre med 308. Sjakk for 2 lenker bare til Sjakk for 1.
 - Kodegjennomgang: en egen Claude-agent (ikke den som skrev koden) ser over hver strøm før publisering.
 - Optimaliseringene kan foreslå endringer i spill.ts/spill-oversikt.tsx; legg dem inn etter at 6/7-stegern er flettet.
 
@@ -45,7 +45,7 @@ Eier fra nå: vakt. Er ingen strøm i gang på online-sjakk, start en ny Claude-
 2. 6/7-stegern: fyll på spørsmålsbanken (dag 61+, fra 1. jan. 2027) i features/spill/data/stegern/ — legg nye dager bakerst, ikke endre spilte dager, kjør kryssjekk-testen. Ideer fra agenten: logg avviste svar (uten personopplysninger) for å finne manglende gyldige svar; «du var den eneste»; øvingsmodus uten klokke på gamle dager. Tittelen avkortes til «6/7-ste…» i spillrammen på mobil — vurder kortere visningsnavn eller mindre skrift.
 3. Otsjoba: flere språk, flere leksjoner per nivå.
 4. Ytelse, neste runde: cache-headere for public/ (lyd, logoer). Gjort 3. nov.: spillsidene er ISR per dato bak proxy.ts (ruting.ts), «I dag»-panelet er memoisert, og lagret fremgang vises i første rendring ved klientnavigasjon. Gjenstår: skjelett ved hard last (krever servergjengivelse av alle spill), /spill-oversikten er fortsatt dynamisk. Proxy-hoppet gjør at server-TTFB er omtrent som før (~120–150 ms via vercel curl); gevinsten er navigasjon fra skrivebordet (~35–80 ms til innhold).
-5. Åpninger: alle åpningsfiler lastes ved oppstart (ca. 840 kB rått etter utvidelsen). Lag en liten indeks for biblioteket og repertoarsiden, og hent treet først når en åpning brukes. Mangler: svar mot 1.c4 og 1.Sf3 som svart, ekte innlogget test av synk, test på ekte telefon.
+5. Åpninger: treneren laster alle åpningsfiler ved oppstart (ca. 1,4 MB rått), mens hjemmesiden `/sjakk-for-1` bare henter de valgte. En indeks er ikke en liten endring: biblioteket, repertoarsiden og byggeflyten bruker trærne til plassering i slots, kryss, dekning og antall kort, så alt det må regnes ut på forhånd. Eieren har ikke merket treghet. Mangler: svar mot 1.c4 og 1.Sf3 som svart, ekte innlogget test av synk, test på ekte telefon.
 5. Sjakkoppgaver: tidsbonus i Lynløp, gjennomgang av bom etter løp, rating synket til kontoen, egen rating per tema, «x % løste dagens».
 
 ## Idébank
