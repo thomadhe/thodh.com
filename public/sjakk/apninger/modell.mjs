@@ -24,6 +24,9 @@ export function spill(sans, fen) {
   return { chess, trekk };
 }
 
+// The moves from the tree's root down to a node.
+export const veiTil = node => { const vei = []; for (let n = node; n?.sti; n = n.forelder) vei.unshift(n); return vei; };
+
 // Move number prefix for display, e.g. "4." or "4…".
 export function trekkNummer(fen) {
   const [, side, , , , full] = fen.split(' ');

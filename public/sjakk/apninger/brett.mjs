@@ -25,6 +25,16 @@ export function lagBrett(rot, { naarTrekk, naarStilling }) {
   const kanFlytteFra = felt => !tilstand.laast && chess.get(felt)?.color === chess.turn();
   const lovlige = felt => (felt && !tilstand.laast ? chess.moves({ square: felt, verbose: true }) : []);
 
+  // The piece on the last move's target slides in from where it came.
+  function gli({ from, to }) {
+    const brikke = brett.querySelector(`[data-square="${to}"] .piece`);
+    const fra = brett.querySelector(`[data-square="${from}"]`)?.getBoundingClientRect();
+    const til = brett.querySelector(`[data-square="${to}"]`)?.getBoundingClientRect();
+    if (!brikke?.animate || !fra || !til) return;
+    brikke.style.zIndex = 4;
+    brikke.animate([{ transform: `translate(${fra.left - til.left}px, ${fra.top - til.top}px)` }, { transform: 'none' }], { duration: 190, easing: 'ease-out' });
+  }
+
   function tegn(beholdFokus = false) {
     const mal = lovlige(valgt);
     const liste = ruter();
@@ -164,6 +174,7 @@ export function lagBrett(rot, { naarTrekk, naarStilling }) {
       chess = new Chess(tilstand.fen);
       if (ny.fen) valgt = null;
       tegn(beholdFokus);
+      if (ny.gli && tilstand.sist) gli(tilstand.sist);
       naarStilling?.(tilstand.fen, tilstand.orientering);
     },
     piler(piler) { tilstand.piler = piler; tegnPiler(); },

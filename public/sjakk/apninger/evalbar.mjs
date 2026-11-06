@@ -30,7 +30,7 @@ export function vurderingTekst(verdi) {
   if (verdi.slutt) return verdi.slutt;
   if ('matt' in verdi) return `#${verdi.matt}`;
   const bonder = Math.max(-99, Math.min(99, Math.round(verdi.cp / 10) / 10));
-  return `${bonder > 0 ? '+' : ''}${bonder.toFixed(1)}`;
+  return `${bonder > 0 ? '+' : bonder < 0 ? '−' : ''}${Math.abs(bonder).toFixed(1).replace('.', ',')}`;
 }
 
 export function vurderingBeskrivelse(verdi) {
@@ -71,7 +71,7 @@ const OYE = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke=
 
 export function lagEvalbar(rot, { lager = null } = {}) {
   rot.classList.add('ap-eval');
-  rot.innerHTML = `<div class="ap-eval-vis" role="img"><span class="ap-eval-tall" aria-hidden="true"></span><span class="ap-eval-spor" aria-hidden="true"><span class="ap-eval-hvit"></span></span><span class="ap-eval-dybde" aria-hidden="true" title="Dybde"></span></div><span class="ap-eval-av">Vurdering skjult</span><button type="button" class="ap-eval-bryter" aria-label="Vis stillingsvurdering">${OYE}</button>`;
+  rot.innerHTML = `<div class="ap-eval-vis" role="img"><span class="ap-eval-tall" aria-hidden="true"></span><span class="ap-eval-spor" aria-hidden="true"><span class="ap-eval-hvit"></span></span><span class="ap-eval-dybde" aria-hidden="true" title="Dybde"></span></div><span class="ap-eval-av">Vurdering skjult</span><span class="ap-eval-vent">Vurderingen kommer etter svaret</span><button type="button" class="ap-eval-bryter" aria-label="Vis stillingsvurdering">${OYE}</button>`;
   const vis = rot.querySelector('.ap-eval-vis');
   const tall = rot.querySelector('.ap-eval-tall');
   const hvit = rot.querySelector('.ap-eval-hvit');
@@ -85,6 +85,7 @@ export function lagEvalbar(rot, { lager = null } = {}) {
   let harStartet = false;
   let feilet = false;
   let avsluttet = false;
+  let holdt = false;
 
   const motor = lagMotor({ naarFeil() { feilet = true; if (paa) oppdater(); } });
 
@@ -123,7 +124,7 @@ export function lagEvalbar(rot, { lager = null } = {}) {
     motor.avbryt();
     rot.classList.toggle('ap-eval-skjult', !paa);
     rot.classList.remove('ap-eval-regner');
-    if (!paa || !fen) return;
+    if (!paa || !fen || holdt) return;
     const slutt = spillSlutt(fen);
     const husket = minne.get(stilling(fen));
     const kjent = slutt ? { verdi: slutt } : husket ?? lagret;
@@ -162,6 +163,13 @@ export function lagEvalbar(rot, { lager = null } = {}) {
       if (nyFen === fen) return;
       fen = nyFen;
       lagret = nyLagret;
+      oppdater();
+    },
+    // A number can give the answer away, so a bar on hold shows nothing and starts no engine.
+    hold(verdi) {
+      if (avsluttet || verdi === holdt) return;
+      holdt = verdi;
+      rot.classList.toggle('ap-eval-holdt', holdt);
       oppdater();
     },
     avslutt() {

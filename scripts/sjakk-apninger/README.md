@@ -44,4 +44,18 @@ bar.avslutt(); // when the board goes away
 
 The engine in `public/sjakk/vendor/` is `stockfish-19-lite-single.js` and `.wasm` from the npm package `stockfish` 19.0.1, unchanged. It is single-threaded, so it needs no COOP/COEP headers, and it is GPLv3: `stockfish-LICENSE.txt` sits next to it, and the page links to the source (`KREDITT` in `evalbar.mjs`). When updating the engine, change the file name in `motor.mjs` and the version in `KREDITT`.
 
+A bar can be put on hold with `bar.hold(true)`: it shows a calm line instead of the number and starts no engine. Flashcards and the Feller view use this, because a number like −4,8 tells the player that a strong move exists. In Lær and Øv the bar is always on.
+
+## Repertoire and flashcards
+
+`#/repertoar` is the player's own repertoire, `#/repertoar/ov` (optionally `/w` or `/b`) the mixed drill and `#/repertoar/kort` the flashcards. Nothing here lists openings by name, except the three in `STARTFORSLAG`, so a new data file shows up by itself.
+
+- **Slots** (`repertoar.mjs`): `fordel()` puts an opening in the deepest slot its `start` lies in, and in every slot its tree reaches. Openings of a colour that fit nothing go to "Andre". Add a slot to `SLOTS` when a new reply needs its own place.
+- **Choosing:** `krysser()` finds the first position where two openings want different moves of ours. A new choice replaces the openings in its slot that it crosses, and the player can keep both. Openings that cover different lines, like Evans and Sg5-angrepet, stand side by side.
+- **Mixed drill:** runs through the same `spillOv` as the opening view, from move 1, with `startNoder()` in front of the line. `velgBlandetLinje()` takes due lines, then new lines, then extra rounds, and walks the moves so the opponent picks by `vekt` (`SVAR_VEKT` for the first reply). Playing another chosen opening's move switches line and is no mistake.
+- **Cards** (`kort.mjs`): one card per position and colour, from every repertoire move from move 3 on, except positions with one legal move. `feller` become cards at the trap's position, with `godta`. Same key means one card: transpositions merge, and different moves are all accepted.
+- **Schedule:** Leitner per card with `INTERVALL_DAGER`. Right moves up, a hint stays in the box, wrong goes to box 1 and comes back in the session without a second review. Due dates are local midnight. `kortKo()` holds the limits: `OKT_STORRELSE`, `NYE_PER_DAG`, `MAKS_FORFALT`. Over the cap it sorts by relative overdueness and pauses new cards.
+
+Both live in the progress object under `sjakk-apninger`, with the same `VERSJON`: `repertoar` is `{ id: { valgt, sist } }`, so deselecting leaves a dated entry, and `kort` is `{ kortId: { boks, forfall, sist, forst, riktige, feil } }`. Old progress reads as before and gets empty fields.
+
 The tests check every file: schema, legal and correctly written SAN for all lines, an explanation on every repertoire move, transpositions, and the stable file format (`format.mjs`).

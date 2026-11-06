@@ -4,7 +4,8 @@ export const VERSJON = 1;
 export const INTERVALL_DAGER = [0, 1, 3, 7, 16, 35];
 const DAG = 86400000;
 
-export const tomFremgang = () => ({ versjon: VERSJON, linjer: {}, feil: {}, feller: {} });
+// repertoar and kort are later additions: old saved progress simply lacks them, and lesFremgang fills them in.
+export const tomFremgang = () => ({ versjon: VERSJON, linjer: {}, feil: {}, feller: {}, repertoar: {}, kort: {} });
 
 export function lesFremgang(lager) {
   try {
