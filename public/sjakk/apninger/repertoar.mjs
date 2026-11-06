@@ -12,18 +12,27 @@ export const SLOTS = [
   { id: 'w-d5', farge: 'w', mot: '1…d5', navn: 'Skandinavisk', linjer: [['e4', 'd5']] },
   { id: 'w-nf6', farge: 'w', mot: '1…Sf6', navn: 'Aljechin', linjer: [['e4', 'Nf6']] },
   { id: 'w-d6', farge: 'w', mot: '1…d6 / 1…g6', navn: 'Pirc og moderne', linjer: [['e4', 'd6'], ['e4', 'g6']] },
-  { id: 'b-e4', farge: 'b', mot: '1.e4 og sidesporene', navn: '1.e4 generelt', linjer: [['e4']] },
-  { id: 'b-spansk', farge: 'b', mot: '1.e4 e5 2.Sf3 Sc6 3.Lb5', navn: 'Spansk', linjer: [['e4', 'e5', 'Nf3', 'Nc6', 'Bb5']] },
-  { id: 'b-italiensk', farge: 'b', mot: '1.e4 e5 2.Sf3 Sc6 3.Lc4', navn: 'Italiensk', linjer: [['e4', 'e5', 'Nf3', 'Nc6', 'Bc4']] },
-  { id: 'b-d4', farge: 'b', mot: '1.d4', navn: 'Dronningbonden', linjer: [['d4']] },
-  { id: 'b-resten', farge: 'b', mot: '1.c4, 1.Sf3 og 1.f4', navn: 'Resten', linjer: [['c4'], ['Nf3'], ['f4']] },
+  { id: 'b-e4', farge: 'b', mot: '1.e4 og sidesporene', navn: '1.e4 generelt', sporsmal: 'Hva vil du svare når hvit åpner med 1.e4?', linjer: [['e4']] },
+  { id: 'b-spansk', farge: 'b', mot: '1.e4 e5 2.Sf3 Sc6 3.Lb5', navn: 'Spansk', sporsmal: 'Og når hvit går for spansk, 3.Lb5?', vekt: 15, linjer: [['e4', 'e5', 'Nf3', 'Nc6', 'Bb5']] },
+  { id: 'b-italiensk', farge: 'b', mot: '1.e4 e5 2.Sf3 Sc6 3.Lc4', navn: 'Italiensk', sporsmal: 'Og når hvit går for italiensk, 3.Lc4?', vekt: 10, linjer: [['e4', 'e5', 'Nf3', 'Nc6', 'Bc4']] },
+  { id: 'b-d4', farge: 'b', mot: '1.d4', navn: 'Dronningbonden', sporsmal: 'Hva vil du svare når hvit åpner med 1.d4?', linjer: [['d4']] },
+  { id: 'b-resten', farge: 'b', mot: '1.c4, 1.Sf3 og 1.f4', navn: 'Resten', sporsmal: 'Og mot de roligere åpningene, 1.c4, 1.Sf3 og 1.f4?', linjer: [['c4'], ['Nf3'], ['f4']] },
 ];
 
 // The owner's own example. It is only ever offered, never selected unasked.
-export const STARTFORSLAG = ['kongegambitt', 'smith-morra', 'fransk-fremstot'];
+export const STARTFORSLAG = ['kongegambitt', 'smith-morra'];
 
 // How often the opponent plays each first move, roughly. Deeper replies use vekt in the data.
 const SVAR_VEKT = { w: { c5: 34, e5: 30, e6: 13, c6: 10, d6: 4, d5: 4, g6: 3, Nf6: 2 }, b: { e4: 45, d4: 38, Nf3: 8, c4: 7, f4: 2 } };
+// The moves in `start` have no vekt: each opponent move there is a guess at how often it is played.
+const START_SVAR = 0.6;
+// A trap leaves the tree when the opponent goes wrong, which happens less often than the lines themselves.
+const AV_TREET = 0.25;
+
+const motstanderTrekk = (farge, ply) => ply % 2 === (farge === 'w' ? 1 : 0);
+const svarPly = farge => (farge === 'w' ? 1 : 0);
+const sum = tall => tall.reduce((a, b) => a + b, 0);
+export const mestVanlig = node => node.barn.reduce((best, barn) => ((barn.entry.vekt ?? 1) > (best.entry.vekt ?? 1) ? barn : best), node.barn[0]);
 
 // 0 when the opening has nothing to do with the moves, the length when it starts at or below them,
 // and Infinity when it starts earlier and its own tree reaches them.
@@ -37,6 +46,15 @@ function dekning(apning, linje) {
     if (!node) return 0;
   }
   return Infinity;
+}
+
+// How much of a line the opening answers: all of it, unless `start` narrows it down with further opponent moves.
+function andelAvLinje(apning, linje) {
+  const treff = dekning(apning, linje);
+  if (!treff) return 0;
+  if (treff === Infinity) return 1;
+  const smalere = apning.startTrekk.slice(linje.length).filter((_, i) => motstanderTrekk(apning.farge, linje.length + i)).length;
+  return START_SVAR ** smalere;
 }
 
 // Every opening lands in the deepest slot it starts in and in every slot its tree reaches; the rest go to "Andre".
@@ -107,6 +125,126 @@ export function velgApning(fremgang, apning, slot, naa = Date.now()) {
 export function kryssI(slot, fremgang) {
   const valgte = slot.apninger.filter(apning => erValgt(fremgang, apning.id));
   return valgte.flatMap((a, i) => valgte.slice(i + 1).flatMap(b => { const kryss = krysser(a, b); return kryss ? [{ a, b, kryss }] : []; }));
+}
+
+const linjeVekt = (farge, linje) => SVAR_VEKT[farge][linje[svarPly(farge)]] ?? 0;
+const delAv = (ytre, indre) => indre.length > ytre.length && ytre.every((san, i) => indre[i] === san);
+
+// A slot's share of the games, in percent. A slot that holds deeper slots gives their share away.
+export function slotVekt(slot) {
+  if (slot.vekt) return slot.vekt;
+  const inni = SLOTS.filter(annen => annen.vekt && annen.farge === slot.farge && annen.linjer.some(indre => slot.linjer.some(ytre => delAv(ytre, indre))));
+  return sum(slot.linjer.map(linje => linjeVekt(slot.farge, linje))) - sum(inni.map(annen => annen.vekt));
+}
+
+// Keeps the numbers as rough as they are.
+export function omtrentProsent(prosent) {
+  if (prosent <= 0) return '0 %';
+  return prosent < 2.5 ? 'under 5 %' : `omtrent ${Math.round(prosent / 5) * 5} %`;
+}
+
+// What the question says: a reply's whole share, also the part that deeper slots ask about later.
+export const svarAndel = slot => slot.vekt ?? sum(slot.linjer.map(linje => linjeVekt(slot.farge, linje)));
+
+export function dekningTekst({ prosent }, farge) {
+  const hva = farge === 'w' ? 'det motstanderen spiller mot 1.e4' : 'det hvit åpner med';
+  return prosent >= 97.5 ? `Du har svar på det aller meste av ${hva}.` : `Du har svar på ${omtrentProsent(prosent)} av ${hva}.`;
+}
+
+export function hullTekst({ slot, vekt, dekket }) {
+  return dekket > 0 ? `Størst hull: ${slot.mot}, som bare er delvis dekket.` : `Størst hull: ${slot.mot}, ${omtrentProsent(vekt)}.`;
+}
+
+// Once the chosen openings leave a slot's line with a move of ours, the player never gets there.
+function stengt(slot, valgte) {
+  const kart = valgte.filter(apning => apning.farge === slot.farge).map(egneTrekk);
+  return slot.linjer.length > 0 && slot.linjer.every(linje => {
+    const chess = new Chess();
+    return linje.some((san, ply) => {
+      const fen = chess.fen();
+      chess.move(san);
+      if (!ply || motstanderTrekk(slot.farge, ply)) return false;
+      const svar = kart.flatMap(egne => egne.get(stilling(fen))?.san ?? []);
+      return svar.length > 0 && !svar.includes(san);
+    });
+  });
+}
+
+function slotDekket(slot, valgte) {
+  if (stengt(slot, valgte)) return 1;
+  const her = slot.apninger.filter(apning => valgte.includes(apning));
+  const dekket = sum(slot.linjer.map(linje => linjeVekt(slot.farge, linje) * Math.min(1, sum(her.map(apning => andelAvLinje(apning, linje))))));
+  return dekket / (sum(slot.linjer.map(linje => linjeVekt(slot.farge, linje))) || 1);
+}
+
+const valgteI = (slots, fremgang) => [...new Set(slots.flatMap(slot => slot.apninger))].filter(apning => erValgt(fremgang, apning.id));
+
+// Roughly how much of what the opponent plays the chosen openings answer, and the biggest gap with something to fill it.
+export function svarDekning(slots, fremgang, farge) {
+  const valgte = valgteI(slots, fremgang).filter(apning => apning.farge === farge);
+  const deler = slots.filter(slot => slot.farge === farge && slot.linjer.length).map(slot => { const vekt = slotVekt(slot), dekket = slotDekket(slot, valgte); return { slot, vekt, dekket, mangler: vekt * (1 - dekket) }; });
+  const prosent = sum(deler.map(del => del.vekt * del.dekket)) / (sum(deler.map(del => del.vekt)) || 1) * 100;
+  const hull = deler.filter(del => del.slot.apninger.length && del.dekket < 1).sort((a, b) => b.mangler - a.mangler)[0] ?? null;
+  return { prosent, valgte: valgte.length, hull };
+}
+
+// The guided flow asks about the biggest replies first, and about a deeper slot right after the reply it hangs on.
+export function byggSteg(slots) {
+  const hele = slot => sum(slot.linjer.map(linje => linjeVekt(slot.farge, linje)));
+  const dybde = slot => Math.max(0, ...slot.linjer.map(linje => linje.length));
+  return slots.filter(slot => slot.apninger.length).sort((a, b) => (a.farge === b.farge ? 0 : a.farge === 'w' ? -1 : 1) || hele(b) - hele(a) || dybde(a) - dybde(b) || slotVekt(b) - slotVekt(a));
+}
+
+const harValg = (slot, fremgang) => slot.apninger.some(apning => erValgt(fremgang, apning.id));
+
+export function forsteSteg(slots, fremgang, farge, { bareHull = false } = {}) {
+  const valgte = valgteI(slots, fremgang);
+  return byggSteg(slots).find(slot => slot.farge === farge && !stengt(slot, valgte) && (!bareHull || !harValg(slot, fremgang))) ?? null;
+}
+
+// The next or previous question of the same colour, or null at the end.
+export function nabostSteg(slots, fremgang, slotId, retning, { bareHull = false } = {}) {
+  const steg = byggSteg(slots);
+  const i = steg.findIndex(slot => slot.id === slotId);
+  const valgte = valgteI(slots, fremgang);
+  const rest = retning > 0 ? steg.slice(i + 1) : steg.slice(0, Math.max(0, i)).reverse();
+  return rest.find(slot => slot.farge === steg[i]?.farge && !stengt(slot, valgte) && (!bareHull || !harValg(slot, fremgang))) ?? null;
+}
+
+// The choices to show first: what the player already has, the owner's own suggestion, then what answers most of the reply.
+export function alternativer(slot, fremgang) {
+  const dekker = apning => Math.max(0, ...slot.linjer.map(linje => andelAvLinje(apning, linje)));
+  return slot.apninger.map((apning, plass) => ({ apning, plass })).sort((a, b) => erValgt(fremgang, b.apning.id) - erValgt(fremgang, a.apning.id) || STARTFORSLAG.includes(b.apning.id) - STARTFORSLAG.includes(a.apning.id) || dekker(b.apning) - dekker(a.apning) || a.plass - b.plass).map(valg => valg.apning);
+}
+
+// The moves up to and including our second move in the tree, far enough to show what the opening is.
+export function veiInnTrekk(apning) {
+  const sans = [...apning.startTrekk];
+  let egne = 0;
+  for (let node = apning.rot; node.barn.length && egne < 2;) {
+    node = mestVanlig(node);
+    sans.push(node.san);
+    if (node.rep) egne += 1;
+  }
+  return sans;
+}
+
+// How likely the position after these moves is: SVAR_VEKT for the first reply, then vekt down the path.
+export function veiVekt(apning, trekk) {
+  const { farge, startTrekk } = apning;
+  let vekt = 1;
+  let node = apning.rot;
+  trekk.forEach((san, ply) => {
+    const iTreet = ply >= startTrekk.length;
+    const barn = iTreet ? node?.barn.find(b => b.san === san) : null;
+    if (motstanderTrekk(farge, ply)) {
+      if (ply === svarPly(farge)) vekt *= (SVAR_VEKT[farge][san] ?? 1) / 100;
+      else if (!iTreet) vekt *= START_SVAR;
+      else vekt *= barn ? (barn.entry.vekt ?? 1) / sum(node.barn.map(b => b.entry.vekt ?? 1)) : AV_TREET;
+    }
+    if (iTreet) node = barn ?? null;
+  });
+  return vekt;
 }
 
 const linjeNokkel = ({ apning, linje }) => `${apning.id}|${linje.id}`;

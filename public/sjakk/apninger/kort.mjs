@@ -1,16 +1,26 @@
 // Flashcards: one position and the repertoire move, Leitner per position. Pure functions; progress is passed in.
 import { Chess } from '../vendor/chess.mjs';
 import { deltSti, stilling, veiTil } from './modell.mjs';
-import { startNoder } from './repertoar.mjs';
-import { INTERVALL_DAGER, linjePost } from './repetisjon.mjs';
+import { mestVanlig, startNoder, veiVekt } from './repertoar.mjs';
+import { INTERVALL_DAGER } from './repetisjon.mjs';
 import { norsk } from './trener.mjs';
+import { flertall } from './ui.mjs';
 
 export const OKT_STORRELSE = 12;
 export const NYE_PER_DAG = 6;
+export const NYE_VALG = [6, 10, 15];
+export const NYE_I_OKT = 6;
 export const MAKS_FORFALT = 30;
 const HOPP_EGNE_TREKK = 2;
 const GJENTA_ETTER = 3;
 const DAG = 86400000;
+// New cards are taught a few at a time, and each batch is tested before the next one starts.
+const BLOKK = 3;
+// A line is followed until it is less than half as likely as the best one still waiting.
+const HOLD_TRADEN = 0.5;
+
+export const nyePerDag = fremgang => (NYE_VALG.includes(fremgang.tempo?.nye) ? fremgang.tempo.nye : NYE_PER_DAG);
+export function settTempo(fremgang, nye, naa = Date.now()) { fremgang.tempo = { nye, sist: naa }; }
 
 export const kortId = (fen, farge) => `${stilling(fen)}|${farge}`;
 const trekkTall = fen => Number(fen.split(' ')[5]);
@@ -58,7 +68,7 @@ export function lagKort(apninger) {
       }
     }
   }
-  return [...kort.values()].map(k => ({ ...k, trekk: [...new Set(k.kilder.map(kilde => kilde.san))] }));
+  return [...kort.values()].map(k => ({ ...k, trekk: [...new Set(k.kilder.map(kilde => kilde.san))], vekt: Math.max(...k.kilder.map(kilde => veiVekt(kilde.apning, kilde.forTrekk))) }));
 }
 
 // Midnight local time, so a card due tomorrow is there in the morning however late today's session was.
@@ -80,17 +90,29 @@ export function vurderKort(fremgang, id, utfall, naa = Date.now()) {
 
 const forsinkelse = (post, naa) => (naa - post.forfall) / (Math.max(1, INTERVALL_DAGER[post.boks]) * DAG);
 
-// Earliest positions first, known lines before unseen ones, taking turns between the openings.
-function nyeIRekkefolge(ukjente, fremgang) {
-  const kjent = ({ kilder: [{ apning, sti }] }) => apning.linjer.some(linje => (!sti || linje.id === sti || linje.id.startsWith(`${sti} `)) && linjePost(fremgang, apning.id, linje.id));
-  const sortert = ukjente.map(kort => ({ kort, kjent: kjent(kort) })).sort((a, b) => b.kjent - a.kjent || trekkTall(a.kort.fen) - trekkTall(b.kort.fen));
-  const plass = new Map();
-  const med = sortert.map(({ kort }) => {
-    const apningId = kort.kilder[0].apning.id;
-    plass.set(apningId, (plass.get(apningId) ?? 0) + 1);
-    return { kort, runde: plass.get(apningId) };
-  });
-  return med.sort((a, b) => a.runde - b.runde).map(m => m.kort);
+// The likeliest position first, then on down its likeliest line, so the moves read as a story.
+// Main lines against the most common replies come first, and side lines last.
+function nyeIRekkefolge(ukjente) {
+  const paNode = new Map(ukjente.flatMap(kort => kort.kilder.filter(kilde => kilde.node).map(kilde => [kilde.node, kort])));
+  const sortert = [...ukjente].sort((a, b) => (b.vekt ?? 0) - (a.vekt ?? 0) || trekkTall(a.fen) - trekkTall(b.fen));
+  const brukt = new Set();
+  const ut = [];
+  const ta = kort => { brukt.add(kort); ut.push(kort); };
+  let forste = 0;
+  for (const start of sortert) {
+    if (brukt.has(start)) continue;
+    ta(start);
+    let node = start.kilder.find(kilde => kilde.node)?.node;
+    while (node?.barn.length) {
+      node = mestVanlig(node);
+      const kort = paNode.get(node);
+      if (!kort || brukt.has(kort)) continue;
+      while (brukt.has(sortert[forste])) forste += 1;
+      if ((kort.vekt ?? 0) < (sortert[forste].vekt ?? 0) * HOLD_TRADEN) break;
+      ta(kort);
+    }
+  }
+  return ut;
 }
 
 // What is ready now. After a long absence the most overdue cards come first and only the cap shows;
@@ -106,10 +128,10 @@ export function kortKo(kort, fremgang, naa = Date.now(), ekstra = 0) {
   const ukjente = kort.filter(k => !fremgang.kort[k.id]);
   const pause = forfalte.length >= MAKS_FORFALT;
   const rom = Math.max(0, MAKS_FORFALT * (1 + ekstra) - gjortIDag);
-  const nyeRom = pause ? 0 : Math.max(0, NYE_PER_DAG * (1 + ekstra) - nyeIDag);
+  const nyeRom = pause ? 0 : Math.max(0, nyePerDag(fremgang) * (1 + ekstra) - nyeIDag);
   const klare = forfalte.slice(0, rom);
-  const nye = nyeIRekkefolge(ukjente, fremgang).slice(0, nyeRom);
-  return { kort: [...klare, ...nye], forfalte: klare.length, nye: nye.length, pause, flere: forfalte.length > klare.length || (!pause && ukjente.length > nye.length) };
+  const nye = nyeIRekkefolge(ukjente).slice(0, nyeRom);
+  return { kort: [...klare, ...nye], klare, nyeKort: nye, forfalte: klare.length, nye: nye.length, pause, flere: forfalte.length > klare.length || (!pause && ukjente.length > nye.length) };
 }
 
 // The smallest "Ta flere" count that really gives cards: what was done earlier today can use up the next steps.
@@ -125,14 +147,56 @@ export function forfallerIMorgen(kort, fremgang, naa = Date.now()) {
   return kort.filter(k => { const post = fremgang.kort[k.id]; return post && post.forfall > naa && post.forfall < grense; }).length;
 }
 
-export function lagOkt(ko, tilfeldig = Math.random) {
+// What the next session holds.
+export const oktInnhold = ko => ({ repetisjoner: Math.min(ko.forfalte, OKT_STORRELSE), nye: Math.min(ko.nye, NYE_I_OKT) });
+
+export function oktTekst({ repetisjoner, nye }) {
+  const gamle = repetisjoner ? flertall(repetisjoner, 'repetisjon', 'repetisjoner') : '';
+  const ferske = nye ? (repetisjoner ? flertall(nye, 'ny', 'nye') : flertall(nye, 'nytt kort', 'nye kort')) : '';
+  return [gamle, ferske].filter(Boolean).join(' og ');
+}
+
+// The one thing to do next, whatever state the player is in.
+export function nesteSteg(antallValgte, ko) {
+  if (!antallValgte) return { type: 'bygg' };
+  const innhold = oktInnhold(ko);
+  if (innhold.repetisjoner || innhold.nye) return { type: 'okt', ...innhold };
+  return { type: ko.flere ? 'flere' : 'ov' };
+}
+
+// Reviews are spread around the new cards, so a new card is tested some cards after it was taught.
+function fordelOkt(repetisjoner, nye) {
+  const ut = [];
+  const rest = [...repetisjoner];
+  const blokker = Array.from({ length: Math.ceil(nye.length / BLOKK) }, (_, i) => nye.slice(i * BLOKK, (i + 1) * BLOKK));
+  const hver = Math.ceil(rest.length / (2 * blokker.length + 1));
+  for (const blokk of blokker) ut.push(...rest.splice(0, hver), ...blokk, ...rest.splice(0, hver), ...blokk);
+  return [...ut, ...rest];
+}
+
+// nye are shown first and tested later, so they stand twice in the queue and in laer until they have been taught.
+export function lagOkt(ko, tilfeldig = Math.random, nye = []) {
   const valgt = ko.slice(0, OKT_STORRELSE);
   for (let i = valgt.length - 1; i > 0; i -= 1) {
     const j = Math.floor(tilfeldig() * (i + 1));
     [valgt[i], valgt[j]] = [valgt[j], valgt[i]];
   }
-  return { ko: valgt, totalt: valgt.length, vurdert: new Set(), riktige: 0, hint: 0, bom: new Map() };
+  const ferske = nye.slice(0, NYE_I_OKT);
+  return { ko: fordelOkt(valgt, ferske), totalt: valgt.length + ferske.length, gjort: 0, laer: new Set(ferske.map(kort => kort.id)), vist: new Set(), vurdert: new Set(), riktige: 0, hint: 0, bom: new Map() };
 }
+
+// Shown and played once: the card is known from now on, in box 0 and due for its test. Only that test gives box 1.
+export function vistKort(okt, kort, fremgang, naa = Date.now()) {
+  okt.laer.delete(kort.id);
+  okt.vist.add(kort.id);
+  fremgang.kort[kort.id] = { boks: 0, forfall: dagStart(naa), sist: naa, forst: naa, riktige: 0, feil: 0, vist: naa };
+}
+
+export const introSett = (fremgang, apningId) => Boolean(fremgang.introer[apningId]);
+export function merkIntro(fremgang, apningId, naa = Date.now()) { fremgang.introer[apningId] = { sist: naa }; }
+
+// How far the player has come with a set of cards: a card counts once its test is passed.
+export const laerteKort = (kort, fremgang) => kort.filter(k => fremgang.kort[k.id]?.boks >= 1).length;
 
 // Only the first answer counts as a review. A wrong answer brings the card back a few cards later, whatever it was the first time.
 export function svarKort(okt, kort, utfall, fremgang, naa = Date.now()) {

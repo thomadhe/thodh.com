@@ -9,7 +9,8 @@ import { lagSynk } from './synk.mjs';
 import { valgteApninger, velgBlandetLinje } from './repertoar.mjs';
 import { lagKort } from './kort.mjs';
 import { visRepertoar } from './repertoar-side.mjs';
-import { klareKort, visKortokt } from './kort-okt.mjs';
+import { nesteStegHtml, taFlere, visKortokt } from './kort-okt.mjs';
+import { visBygg } from './bygg.mjs';
 
 const DATA = '/sjakk/apninger/data/';
 const main = document.querySelector('#innhold');
@@ -26,6 +27,7 @@ let tastLytter = null;
 let ventende = null;
 let oppslag = () => null;
 let kortMinne = { nokkel: null, kort: [] };
+let kom = '';
 
 function visKonto(status) {
   const felt = document.querySelector('#ap-konto');
@@ -104,25 +106,19 @@ function visBibliotek() {
   let forfalt = 0, laert = 0, totalt = 0;
   for (const apning of apninger.values()) { const s = rep.statusFor(apning, fremgang, naa); forfalt += s.forfaller; laert += s.laert; totalt += s.totalt; }
   const vansker = rep.vansker(fremgang).map(v => { const apning = apninger.get(v.apningId); const node = apning?.noder.get(v.sti); const riktig = node?.barn[0]; return riktig ? `<li><a href="#/a/${apning.id}/ov">${esc(apning.navn)}: ${esc(medNummer(riktig))}</a> <span>(${flertall(v.antall, 'bom', 'bom')})</span></li>` : ''; }).join('');
+  const harRepertoar = valgte().length > 0;
   const intro = laert === 0
-    ? `${hilsen(new Date().getHours())}! Jeg er ${TRENER.navn}, ${TRENER.rolle}. Velg en åpning, så går vi gjennom hvert trekk sammen – hva det gjør, hvorfor vi spiller det og hva du må passe på. Når du er klar, øver vi til det sitter.`
-    : `${hilsen(new Date().getHours())} igjen! Du har lært ${flertall(laert, 'linje', 'linjer')} av ${totalt}. ${forfalt ? `${flertall(forfalt, 'linje venter', 'linjer venter')} på repetisjon – la oss ta dem først.` : 'Ingen linjer venter på repetisjon akkurat nå. Lær noe nytt, eller prøv en felle!'}`;
+    ? (harRepertoar ? `${hilsen(new Date().getHours())} igjen! Knappen under viser hva som står for tur. Vil du heller bla, ligger alle åpningene her.` : `${hilsen(new Date().getHours())}! Jeg er ${TRENER.navn}, ${TRENER.rolle}. Vi velger hva du vil spille, så lærer jeg deg det ett trekk om gangen. Vil du heller bla, ligger alle åpningene her.`)
+    : `${hilsen(new Date().getHours())} igjen! Du har lært ${flertall(laert, 'linje', 'linjer')} av ${totalt}. ${forfalt ? `${flertall(forfalt, 'linje venter', 'linjer venter')} på repetisjon i åpningene.` : 'Ingen linjer venter på repetisjon akkurat nå.'}`;
   const grupper = manifest.grupper.filter(g => fargeFilter === 'alle' || g.farge === fargeFilter);
   main.innerHTML = `
     <section class="ap-hero">${trenerBoble(`<p class="eyebrow">${TRENER.navn.toUpperCase()} · ÅPNINGSTRENER</p><h1>Åpninger med angrepslyst</h1><p>${esc(intro)}</p>${vansker ? `<p class="ap-vansker-tittel">Dette sliter du mest med:</p><ul class="ap-vansker">${vansker}</ul>` : ''}`, { live: false })}</section>
-    ${repertoarInngang()}
+    ${nesteStegHtml(ui)}
+    ${harRepertoar ? `<p class="ap-til-repertoar"><a href="#/repertoar">Mitt repertoar</a> · ${flertall(valgte().length, 'åpning', 'åpninger')}</p>` : ''}
     <div class="ap-filter" role="group" aria-label="Velg farge">${[['alle', 'Alle'], ['w', 'Som hvit'], ['b', 'Som svart']].map(([v, t]) => `<button type="button" data-farge="${v}" aria-pressed="${fargeFilter === v}">${t}</button>`).join('')}</div>
     ${grupper.map(g => `<section class="ap-gruppe" aria-labelledby="g-${g.id}"><h2 id="g-${g.id}">${esc(g.navn)}</h2><p class="ap-gruppe-tekst">${esc(g.tekst)}</p><div class="ap-kortliste">${g.apninger.map(id => apninger.get(id)).filter(Boolean).map(kort).join('')}</div></section>`).join('')}
     <p class="ap-fotnote">Alle linjer er spilt gjennom og sjekket med sjakkmotoren Stockfish. Gambiter er ofte litt tvilsomme objektivt – ${TRENER.navn} sier fra om det, trekk for trekk.</p>`;
   main.querySelectorAll('[data-farge]').forEach(knapp => knapp.addEventListener('click', () => { fargeFilter = knapp.dataset.farge; visBibliotek(); main.querySelector(`[data-farge="${fargeFilter}"]`)?.focus(); }));
-}
-
-// The way in at the top of the library, with the cards one tap away.
-function repertoarInngang() {
-  const antall = valgte().length;
-  if (!antall) return '<a class="ap-inngang" href="#/repertoar"><span class="ap-inngang-tekst"><b>Mitt repertoar</b><span>Velg favorittene dine mot hvert svar, med hvit og svart.</span></span><span class="button secondary">Sett opp</span></a>';
-  const klare = klareKort(ui).kort.length;
-  return `<div class="ap-inngang"><a class="ap-inngang-tekst" href="#/repertoar"><b>Mitt repertoar</b><span>${flertall(antall, 'åpning', 'åpninger')} · ${klare ? flertall(klare, 'kort klart', 'kort klare') : 'ingen kort klare nå'}</span></a>${klare ? `<a class="button primary" href="#/repertoar/kort">Start kort ▶</a>` : '<a class="button secondary" href="#/repertoar">Åpne</a>'}</div>`;
 }
 
 function kort(apning) {
@@ -207,7 +203,9 @@ function visOm(apning) {
   brett.sett({ fen: apning.startFen, orientering: apning.farge, laast: true });
   settLinje(apning, [], null);
   const i = apning.intro;
+  const tilbake = kom.startsWith('#/repertoar/bygg') ? 'Tilbake til spørsmålet' : kom.startsWith('#/repertoar/kort') ? 'Tilbake til dagens økt' : '';
   panel().innerHTML = `
+    ${tilbake ? `<a class="button secondary ap-bred" href="${kom}">← ${tilbake}</a>` : ''}
     ${trenerBoble(`<p>${esc(i.karakter)}</p>`, { live: false })}
     <section class="ap-seksjon"><h2>Historien</h2><p>${esc(i.historie)}</p></section>
     <section class="ap-seksjon"><h2>Passer for deg som …</h2><p>${esc(i.passer)}</p></section>
@@ -471,10 +469,12 @@ function visFeller(apning, valgt = null) {
 
 // ---------- Routing ----------
 function rute() {
-  const [, side, id, fane] = location.hash.split('/');
+  const [, side, id, fane, ekstra] = location.hash.split('/');
   tastLytter = null;
   stopp();
   if (side === 'a' && id) visApning(id, ['om', 'laer', 'ov', 'feller'].includes(fane) ? fane : 'laer');
+  else if (side === 'repertoar' && id === 'bygg') { tilstand = {}; visBygg(ui, fane, ekstra); }
+  else if (side === 'repertoar' && id === 'kort' && fane === 'flere') { history.replaceState(null, '', '#/repertoar/kort'); taFlere(ui); }
   else if (side === 'repertoar' && id === 'kort') visKortokt(ui);
   else if (side === 'repertoar' && id === 'ov') visBlandet(['w', 'b'].includes(fane) ? fane : null);
   else if (side === 'repertoar') { tilstand = {}; ui.brettBort(); visRepertoar(ui); }
@@ -482,7 +482,7 @@ function rute() {
 }
 
 document.addEventListener('keydown', event => tastLytter?.(event));
-window.addEventListener('hashchange', () => { rute(); main.focus({ preventScroll: true }); window.scrollTo({ top: 0 }); });
+window.addEventListener('hashchange', event => { kom = new URL(event.oldURL).hash; rute(); main.focus({ preventScroll: true }); window.scrollTo({ top: 0 }); });
 window.addEventListener('storage', event => { if (event.key === rep.NOKKEL) fremgang = rep.lesFremgang(lager); });
 document.addEventListener('visibilitychange', () => synk.synlig(document.visibilityState === 'visible'));
 
