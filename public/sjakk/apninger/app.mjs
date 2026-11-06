@@ -89,8 +89,9 @@ const ui = {
 async function last() {
   const svar = await fetch(`${DATA}manifest.json`);
   manifest = await svar.json();
-  const filer = await Promise.all(manifest.apninger.map(id => fetch(`${DATA}${id}.json`).then(r => r.json())));
-  for (const data of filer) {
+  // One file that does not answer costs that opening, not the whole trainer.
+  const filer = await Promise.all(manifest.apninger.map(id => fetch(`${DATA}${id}.json`).then(r => (r.ok ? r.json() : null)).catch(() => null)));
+  for (const data of filer.filter(Boolean)) {
     const { apning, feil } = lesApning(data);
     if (feil.length) console.warn(`Åpningen ${data.id} har feil:`, feil);
     if (apning) apninger.set(apning.id, apning);

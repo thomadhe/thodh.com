@@ -45,6 +45,7 @@ Eier fra nå: vakt. Er ingen strøm i gang på online-sjakk, start en ny Claude-
 2. 6/7-stegern: fyll på spørsmålsbanken (dag 61+, fra 1. jan. 2027) i features/spill/data/stegern/ — legg nye dager bakerst, ikke endre spilte dager, kjør kryssjekk-testen. Ideer fra agenten: logg avviste svar (uten personopplysninger) for å finne manglende gyldige svar; «du var den eneste»; øvingsmodus uten klokke på gamle dager. Tittelen avkortes til «6/7-ste…» i spillrammen på mobil — vurder kortere visningsnavn eller mindre skrift.
 3. Otsjoba: flere språk, flere leksjoner per nivå.
 4. Ytelse, neste runde: cache-headere for public/ (lyd, logoer). Gjort 3. nov.: spillsidene er ISR per dato bak proxy.ts (ruting.ts), «I dag»-panelet er memoisert, og lagret fremgang vises i første rendring ved klientnavigasjon. Gjenstår: skjelett ved hard last (krever servergjengivelse av alle spill), /spill-oversikten er fortsatt dynamisk. Proxy-hoppet gjør at server-TTFB er omtrent som før (~120–150 ms via vercel curl); gevinsten er navigasjon fra skrivebordet (~35–80 ms til innhold).
+5. Åpninger: alle åpningsfiler lastes ved oppstart (over 1 MB rått etter utvidelsen). Lag en liten indeks for biblioteket og repertoarsiden, og hent treet først når en åpning brukes. Mangler: svar mot 1.c4 og 1.Sf3 som svart, ekte innlogget test av synk, test på ekte telefon.
 5. Sjakkoppgaver: tidsbonus i Lynløp, gjennomgang av bom etter løp, rating synket til kontoen, egen rating per tema, «x % løste dagens».
 
 ## Idébank
