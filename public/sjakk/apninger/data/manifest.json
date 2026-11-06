@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "apninger": ["kongegambitt", "wienergambitt", "dansk-gambitt", "skotsk-gambitt", "evans-gambitt", "sg5-angrepet", "beograd-gambitt", "halloween-gambitt", "smith-morra", "fransk-fremstot", "caro-kann-fremstot", "skandinavisk", "aljechin", "pirc-modern", "schliemann", "traxler", "marshall", "e5-mot-resten", "englund"],
+  "apninger": ["kongegambitt", "wienergambitt", "dansk-gambitt", "skotsk-gambitt", "evans-gambitt", "sg5-angrepet", "beograd-gambitt", "halloween-gambitt", "smith-morra", "fransk-fremstot", "caro-kann-fremstot", "skandinavisk", "aljechin", "pirc-modern", "schliemann", "traxler", "marshall", "e5-mot-resten", "englund", "budapest-gambitt"],
   "grupper": [
     { "id": "hvit-e5", "farge": "w", "navn": "Som hvit: 1.e4 e5 – velg gambiten din", "tekst": "Mot 1…e5 holder det med én av disse. Kongegambitten, Wiener og Dansk starter på trekk 2; Skotsk gambitt, Evans og Sg5-angrepet kommer etter 2.Sf3 Sc6; Beograd og Halloween hører hjemme i firespringerspillet.", "apninger": ["kongegambitt", "dansk-gambitt", "wienergambitt", "skotsk-gambitt", "evans-gambitt", "sg5-angrepet", "beograd-gambitt", "halloween-gambitt"] },
     { "id": "hvit-resten", "farge": "w", "navn": "Som hvit: svar på resten av forsvarene", "tekst": "Et komplett 1.e4-repertoar trenger også et svar på siciliansk, fransk, caro-kann, skandinavisk, Aljechin og Pirc. Her er praktiske, aktive valg – med gambiter der det finnes gode.", "apninger": ["smith-morra", "fransk-fremstot", "caro-kann-fremstot", "skandinavisk", "aljechin", "pirc-modern"] },
     { "id": "svart-e4", "farge": "b", "navn": "Som svart mot 1.e4: 1…e5 med skarpe ideer", "tekst": "Spill 1…e5. Mot spansk velger du Marshall-angrepet (sunt) eller Schliemann (skarpt); mot 3.Lc4 tospringerforsvar med Traxler; resten dekkes av «1…e5 mot resten».", "apninger": ["marshall", "schliemann", "traxler", "e5-mot-resten"] },
-    { "id": "svart-d4", "farge": "b", "navn": "Som svart mot 1.d4", "tekst": "En overraskelsesgambit for lyn og hurtigsjakk.", "apninger": ["englund"] }
+    { "id": "svart-d4", "farge": "b", "navn": "Som svart mot 1.d4", "tekst": "Velg én gambit å møte 1.d4 med. Budapest-gambitten holder også i langsjakk. Englund er en overraskelse for lyn og hurtigsjakk.", "apninger": ["budapest-gambitt", "englund"] }
   ]
 }
