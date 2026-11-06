@@ -2,7 +2,7 @@
 import { Chess } from '../vendor/chess.mjs';
 import { piler } from './brett.mjs';
 import { INTERVALL_DAGER, noterFeil } from './repetisjon.mjs';
-import { forfallerIMorgen, kortKo, lagOkt, svarKort, vanskeligst } from './kort.mjs';
+import { dagStart, forfallerIMorgen, kortKo, lagOkt, nesteEkstra, svarKort, vanskeligst } from './kort.mjs';
 import { ROS, esc, feilKommentar, medNummer, norsk, stor } from './trener.mjs';
 import { flertall, sanTekst, trenerBoble } from './ui.mjs';
 
@@ -11,10 +11,21 @@ const FORSTE_PAUSE = 380;
 const HALVTREKK = 4;
 const HALVTREKK_IGJEN = 2;
 
-// Every "Ta flere" lasts until the page reloads.
-let ekstra = 0;
+// "Ta flere" lasts for the day, or until the page reloads.
+let ekstra = { dag: 0, antall: 0 };
+const ekstraIDag = naa => (ekstra.dag === dagStart(naa) ? ekstra.antall : 0);
 
-export const klareKort = ui => kortKo(ui.kort(), ui.fremgang(), Date.now(), ekstra);
+export function klareKort(ui) {
+  const naa = Date.now();
+  return kortKo(ui.kort(), ui.fremgang(), naa, ekstraIDag(naa));
+}
+
+function taFlere(ui) {
+  const naa = Date.now();
+  ekstra = { dag: dagStart(naa), antall: nesteEkstra(ui.kort(), ui.fremgang(), naa, ekstraIDag(naa)) };
+  visKortokt(ui);
+}
+
 const rolig = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 const tilfeldig = liste => liste[Math.floor(Math.random() * liste.length)];
 const tilbake = '<nav class="ap-tilbake"><a href="#/repertoar">← Mitt repertoar</a></nav>';
@@ -30,7 +41,9 @@ function forklaringFor(kort, san, { ideErSagt = false } = {}) {
   const kilder = kort.kilder.filter(kilde => kilde.san === san);
   const node = kilder.find(kilde => kilde.node)?.node;
   const felle = kilder.find(kilde => kilde.felle)?.felle;
+  const inn = kilder.find(kilde => kilde.innledning);
   const deler = [];
+  if (inn && !node) deler.push(`<p><span class="ap-etikett">Idé</span>Dette trekket tar deg inn i ${esc(inn.apning.navn)}.</p>`);
   if (node?.entry.ide && !ideErSagt) deler.push(`<p><span class="ap-etikett">Idé</span>${esc(stor(node.entry.ide))}</p>`);
   if (node?.entry.vurdering) deler.push(`<p><span class="ap-etikett ærlig">Ærlig talt</span>${esc(node.entry.vurdering)}</p>`);
   if (node?.entry.plan && !node.barn.length) deler.push(`<p><span class="ap-etikett plan">Planen videre</span>${esc(node.entry.plan)}</p>`);
@@ -58,7 +71,7 @@ function tekstSide(ui, innhold) {
 function intetKlart(ui, ko) {
   const iMorgen = forfallerIMorgen(ui.kort(), ui.fremgang());
   tekstSide(ui, `<p class="eyebrow">KORT</p><h1>Ingen kort akkurat nå</h1><p>${iMorgen ? `Godt jobbet! ${iMorgen} kort kommer tilbake i morgen.` : 'Godt jobbet! Nå er du ajour.'}</p>${ko.flere ? '<button type="button" class="button primary" data-flere>Ta flere</button>' : '<a class="button secondary" href="#/repertoar">Til repertoaret</a>'}`);
-  ui.main.querySelector('[data-flere]')?.addEventListener('click', () => { ekstra += 1; visKortokt(ui); });
+  ui.main.querySelector('[data-flere]')?.addEventListener('click', () => taFlere(ui));
 }
 
 function oppsummering(ui, okt) {
@@ -73,11 +86,12 @@ function oppsummering(ui, okt) {
     <div class="ap-ovstatus ap-okt-tall"><span><b>${okt.riktige}</b>av ${okt.totalt} riktig</span><span><b>${okt.hint}</b>med hint</span><span><b>${iMorgen}</b>i morgen</span></div>
     ${tunge.length ? `<section class="ap-gruppe ap-okt-tunge"><h2>Disse var tyngst</h2><ul class="ap-felleliste">${tunge.map(({ kort, antall }, i) => { const kilde = kort.kilder[0]; return `<li><button type="button" class="ap-felle" data-tung="${i}"><span>${esc(kilde.apning.navn)} · ${flertall(antall, 'bom', 'bom')}</span><b>${esc(kilde.linje)}</b><small>${esc(sanTekst(kilde.forTrekk))}</small></button></li>`; }).join('')}</ul></section>` : ''}
     <div class="ap-kontroller ap-rad ap-okt-slutt">${flere ? '<button type="button" class="button primary" data-flere>Ta flere</button>' : ''}<a class="button ${flere ? 'secondary' : 'primary'}" href="#/repertoar">Til repertoaret</a></div>`);
-  ui.main.querySelector('[data-flere]')?.addEventListener('click', () => { if (!igjen.kort.length) ekstra += 1; visKortokt(ui); });
+  ui.main.querySelector('[data-flere]')?.addEventListener('click', () => { if (igjen.kort.length) visKortokt(ui); else taFlere(ui); });
   ui.main.querySelectorAll('[data-tung]').forEach(knapp => knapp.addEventListener('click', () => {
-    const kilde = tunge[Number(knapp.dataset.tung)].kort.kilder[0];
+    const { kilder } = tunge[Number(knapp.dataset.tung)].kort;
+    const kilde = kilder.find(k => k.node) ?? kilder[0];
     if (kilde.node) ui.apneStilling(kilde.apning, kilde.node.forelder);
-    else location.hash = `#/a/${kilde.apning.id}/feller`;
+    else location.hash = `#/a/${kilde.apning.id}/${kilde.felle ? 'feller' : 'laer'}`;
   }));
 }
 
@@ -119,7 +133,8 @@ export function visKortokt(ui) {
 
   function visSporsmal() {
     const { kort, kilde, igjen, ny } = aktiv;
-    const eyebrow = `${esc(kilde.apning.navn.toUpperCase())} · ${esc(kilde.linje)}`;
+    // A trap's name can be the answer ("Rokade mot …Sxe4"), so it waits until the card is answered.
+    const eyebrow = `${esc(kilde.apning.navn.toUpperCase())} · ${kilde.felle ? 'Felle' : esc(kilde.linje)}`;
     const sporsmal = kilde.felle && !kilde.node ? esc(kilde.felle.tekst) : igjen ? 'Denne tar vi en gang til. Hva spiller du?' : ny ? 'Ny stilling. Hva spiller du her?' : 'Hva spiller du her?';
     panel.innerHTML = `${trenerBoble(`<p class="eyebrow">${eyebrow}</p><p class="ap-sier">${sporsmal}</p>`)}<div class="ap-kontroller ap-rad"><button type="button" class="button secondary" data-hint ${aktiv.klar && !aktiv.hint ? '' : 'disabled'}>${aktiv.hint ? 'Brikken er merket' : 'Hint'}</button></div>`;
     panel.querySelector('[data-hint]').addEventListener('click', () => {
@@ -132,13 +147,13 @@ export function visKortokt(ui) {
 
   function visKort(tastatur = false) {
     const kort = okt.ko[0];
+    ui.settTast(null);
     if (!kort) { oppsummering(ui, okt); return; }
     const kilde = kort.kilder.find(k => k.node) ?? kort.kilder[0];
     aktiv = { kort, kilde, igjen: okt.vurdert.has(kort.id), ny: !ui.fremgang().kort[kort.id], hint: false, klar: false, sist: null };
     ui.brukOppslag(kilde.apning);
     evalbar.hold(true);
     ui.settTrekk(null);
-    ui.settTast(null);
     ui.respons();
     teller.textContent = aktiv.igjen ? `En gang til · ${okt.ko.length} igjen` : `Kort ${okt.vurdert.size + 1} av ${okt.totalt}`;
     fremdrift.style.width = `${Math.round(okt.vurdert.size / okt.totalt * 100)}%`;

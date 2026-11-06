@@ -401,6 +401,8 @@ function visBlandet(farge) {
 function startBlandet(farge, forrige = null) {
   stopp();
   const valg = velgBlandetLinje(valgte(), fremgang, { farge, forrige });
+  // Every choice of this colour can be gone by now, removed in another tab.
+  if (!valg) { location.hash = '#/repertoar'; return; }
   tilstand = { ...tilstand, fane: 'ov', ov: { linje: valg.linje, noder: valg.noder, rot: { fen: new Chess().fen(), san: null, sti: null }, grunn: valg.grunn, blandet: { farge, nokkel: valg.nokkel }, i: 0, feil: 0, forsok: 0, vist: false, melding: null, stemning: '' } };
   spillOv(valg.apning);
 }

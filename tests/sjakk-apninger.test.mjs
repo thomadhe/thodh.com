@@ -9,7 +9,7 @@ import { formaterApning } from '../scripts/sjakk-apninger/format.mjs';
 import { lesInfo, lagMotor, MAKS_DYBDE, MAKS_TID } from '../public/sjakk/apninger/motor.mjs';
 import { hvitAndel, vurderingTekst, vurderingBeskrivelse, spillSlutt, lagretOppslag } from '../public/sjakk/apninger/evalbar.mjs';
 import { fordel, krysser, kryssI, velgApning, settValgt, erValgt, valgteApninger, startNoder, velgBlandetLinje, STARTFORSLAG } from '../public/sjakk/apninger/repertoar.mjs';
-import { lagKort, kortId, vurderKort, kortKo, lagOkt, svarKort, vanskeligst, forfallerIMorgen, dagStart, NYE_PER_DAG, MAKS_FORFALT, OKT_STORRELSE } from '../public/sjakk/apninger/kort.mjs';
+import { lagKort, kortId, vurderKort, kortKo, nesteEkstra, lagOkt, svarKort, vanskeligst, forfallerIMorgen, dagStart, NYE_PER_DAG, MAKS_FORFALT, OKT_STORRELSE } from '../public/sjakk/apninger/kort.mjs';
 
 const DATA = new URL('../public/sjakk/apninger/data/', import.meta.url);
 const manifest = JSON.parse(readFileSync(new URL('manifest.json', DATA), 'utf8'));
@@ -407,6 +407,25 @@ test('kort: hopper over de to første egne trekkene, alt før start og tvungne s
   assert.ok(evans.some(k => k.trekk.includes('b4')), 'trekk 4 teller selv om det er det første i treet');
   const svart = lagKort([finn('marshall')]);
   assert.ok(svart.every(k => k.fen.split(' ')[1] === 'b' && k.farge === 'b'));
+});
+
+test('kort: egne trekk i start teller, så to valgte åpninger kan skille lag der', () => {
+  const kort = lagKort([finn('skotsk-gambitt'), finn('evans-gambitt')]);
+  const skille = kort.find(k => k.kilder.some(kilde => kilde.forTrekk.join(' ') === 'e4 e5 Nf3 Nc6'));
+  assert.deepEqual([...skille.trekk].sort(), ['Bc4', 'd4']);
+  const evans = lagKort([finn('evans-gambitt')]).find(k => k.kilder[0].forTrekk.join(' ') === 'e4 e5 Nf3 Nc6');
+  assert.deepEqual(evans.trekk, ['Bc4']);
+  assert.equal(evans.kilder[0].node, undefined);
+});
+
+test('kort: «Ta flere» gir alltid kort, også når dagens nye er brukt opp fra før', () => {
+  const fremgang = tomFremgang();
+  const kort = falskeKort(20);
+  for (const k of kort.slice(0, 12)) vurderKort(fremgang, k.id, 'riktig', NAA);
+  assert.equal(kortKo(kort, fremgang, NAA, 1).kort.length, 0, 'ett steg holder ikke');
+  const ekstra = nesteEkstra(kort, fremgang, NAA, 0);
+  assert.equal(ekstra, 2);
+  assert.equal(kortKo(kort, fremgang, NAA, ekstra).nye, 6);
 });
 
 test('kort: kun ett lovlig trekk gir ikke kort', () => {

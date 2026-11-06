@@ -1,6 +1,7 @@
 // Flashcards: one position and the repertoire move, Leitner per position. Pure functions; progress is passed in.
 import { Chess } from '../vendor/chess.mjs';
 import { deltSti, stilling, veiTil } from './modell.mjs';
+import { startNoder } from './repertoar.mjs';
 import { INTERVALL_DAGER, linjePost } from './repetisjon.mjs';
 import { norsk } from './trener.mjs';
 
@@ -32,6 +33,14 @@ export function lagKort(apninger) {
     kort.get(id).kilder.push(kilde);
   };
   for (const apning of apninger) {
+    // Our moves inside `start` have no tree node, but another chosen opening can branch off right there.
+    const spilt = [];
+    let forrige = new Chess().fen();
+    for (const node of startNoder(apning)) {
+      if (node.rep && trekkTall(forrige) > HOPP_EGNE_TREKK && !tvunget(forrige)) legg(forrige, apning.farge, { apning, innledning: true, san: node.san, fra: node.fra, til: node.til, linje: 'Veien inn', sti: '', forTrekk: [...spilt] });
+      spilt.push(node.san);
+      forrige = node.fen;
+    }
     for (const node of apning.noder.values()) {
       if (!node.rep) continue;
       const { fen } = node.forelder;
@@ -101,6 +110,14 @@ export function kortKo(kort, fremgang, naa = Date.now(), ekstra = 0) {
   const klare = forfalte.slice(0, rom);
   const nye = nyeIRekkefolge(ukjente, fremgang).slice(0, nyeRom);
   return { kort: [...klare, ...nye], forfalte: klare.length, nye: nye.length, pause, flere: forfalte.length > klare.length || (!pause && ukjente.length > nye.length) };
+}
+
+// The smallest "Ta flere" count that really gives cards: what was done earlier today can use up the next steps.
+export function nesteEkstra(kort, fremgang, naa = Date.now(), ekstra = 0) {
+  const grense = ekstra + Object.keys(fremgang.kort).length + 1;
+  let neste = ekstra + 1;
+  while (neste < grense && !kortKo(kort, fremgang, naa, neste).kort.length) neste += 1;
+  return neste;
 }
 
 export function forfallerIMorgen(kort, fremgang, naa = Date.now()) {
