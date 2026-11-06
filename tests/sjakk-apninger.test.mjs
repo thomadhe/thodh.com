@@ -9,7 +9,7 @@ import { formaterApning } from '../scripts/sjakk-apninger/format.mjs';
 import { lesInfo, lagMotor, MAKS_DYBDE, MAKS_TID } from '../public/sjakk/apninger/motor.mjs';
 import { hvitAndel, vurderingTekst, vurderingBeskrivelse, spillSlutt, lagretOppslag } from '../public/sjakk/apninger/evalbar.mjs';
 import { fordel, krysser, kryssI, velgApning, settValgt, erValgt, valgteApninger, startNoder, velgBlandetLinje, STARTFORSLAG, svarDekning, dekningTekst, hullTekst, omtrentProsent, slotVekt, svarAndel, byggSteg, forsteSteg, nabostSteg, alternativer, veiInnTrekk, veiVekt, SLOTS } from '../public/sjakk/apninger/repertoar.mjs';
-import { lagKort, kortId, vurderKort, kortKo, nesteEkstra, lagOkt, svarKort, vanskeligst, forfallerIMorgen, dagStart, NYE_PER_DAG, NYE_VALG, NYE_I_OKT, MAKS_FORFALT, OKT_STORRELSE, vistKort, introSett, merkIntro, laerteKort, nyePerDag, settTempo, nesteSteg, oktInnhold, oktTekst } from '../public/sjakk/apninger/kort.mjs';
+import { lagKort, kortId, vurderKort, kortKo, nesteEkstra, lagOkt, svarKort, vanskeligst, forfallerIMorgen, dagStart, NYE_PER_DAG, NYE_VALG, MAKS_FORFALT, OKT_STORRELSE, vistKort, introSett, merkIntro, laerteKort, nyePerDag, settTempo, nesteSteg, oktInnhold, oktTekst } from '../public/sjakk/apninger/kort.mjs';
 import { forsteSetning, helTrekk } from '../public/sjakk/apninger/ui.mjs';
 
 import { lagSynk, slaSammen, lik, KONTO } from '../public/sjakk/apninger/synk.mjs';
@@ -909,14 +909,14 @@ test('læring: en feil i testen kommer tilbake uten at kortet vises som nytt igj
 test('en økt holder det knappen lover', () => {
   const ko = kortKo(falskeKort(40), tomFremgang(), NAA);
   assert.deepEqual(oktInnhold(ko), { repetisjoner: 0, nye: 6 });
-  assert.deepEqual(oktInnhold({ forfalte: 30, nye: 15 }), { repetisjoner: OKT_STORRELSE, nye: NYE_I_OKT });
+  assert.deepEqual(oktInnhold({ forfalte: 30, nye: 15 }), { repetisjoner: OKT_STORRELSE, nye: 15 }, 'tempoet spilleren valgte, gjelder i økta');
   assert.equal(oktTekst({ repetisjoner: 8, nye: 6 }), '8 repetisjoner og 6 nye');
   assert.equal(oktTekst({ repetisjoner: 1, nye: 1 }), '1 repetisjon og 1 ny');
   assert.equal(oktTekst({ repetisjoner: 0, nye: 6 }), '6 nye kort');
   assert.equal(oktTekst({ repetisjoner: 0, nye: 1 }), '1 nytt kort');
   assert.equal(oktTekst({ repetisjoner: 3, nye: 0 }), '3 repetisjoner');
   const okt = lagOkt(falskeKort(30), () => 0.5, falskeKort(40).slice(30));
-  assert.equal(okt.totalt, OKT_STORRELSE + NYE_I_OKT);
+  assert.equal(okt.totalt, OKT_STORRELSE + 10);
 });
 
 test('neste steg: alltid én ting å gjøre', () => {

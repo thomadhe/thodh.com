@@ -9,7 +9,6 @@ import { flertall } from './ui.mjs';
 export const OKT_STORRELSE = 12;
 export const NYE_PER_DAG = 6;
 export const NYE_VALG = [6, 10, 15];
-export const NYE_I_OKT = 6;
 export const MAKS_FORFALT = 30;
 const HOPP_EGNE_TREKK = 2;
 const GJENTA_ETTER = 3;
@@ -148,7 +147,7 @@ export function forfallerIMorgen(kort, fremgang, naa = Date.now()) {
 }
 
 // What the next session holds.
-export const oktInnhold = ko => ({ repetisjoner: Math.min(ko.forfalte, OKT_STORRELSE), nye: Math.min(ko.nye, NYE_I_OKT) });
+export const oktInnhold = ko => ({ repetisjoner: Math.min(ko.forfalte, OKT_STORRELSE), nye: ko.nye });
 
 export function oktTekst({ repetisjoner, nye }) {
   const gamle = repetisjoner ? flertall(repetisjoner, 'repetisjon', 'repetisjoner') : '';
@@ -181,8 +180,7 @@ export function lagOkt(ko, tilfeldig = Math.random, nye = []) {
     const j = Math.floor(tilfeldig() * (i + 1));
     [valgt[i], valgt[j]] = [valgt[j], valgt[i]];
   }
-  const ferske = nye.slice(0, NYE_I_OKT);
-  return { ko: fordelOkt(valgt, ferske), totalt: valgt.length + ferske.length, gjort: 0, laer: new Set(ferske.map(kort => kort.id)), vist: new Set(), vurdert: new Set(), riktige: 0, hint: 0, bom: new Map() };
+  return { ko: fordelOkt(valgt, nye), totalt: valgt.length + nye.length, gjort: 0, laer: new Set(nye.map(kort => kort.id)), vist: new Set(), vurdert: new Set(), riktige: 0, hint: 0, bom: new Map() };
 }
 
 // Shown and played once: the card is known from now on, in box 0 and due for its test. Only that test gives box 1.
