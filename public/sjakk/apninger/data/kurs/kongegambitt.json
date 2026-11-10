@@ -86,6 +86,26 @@
         { "trekk": "Nc3 Be6 Ne4 O-O Nxd6 Qxd6", "tekst": "Løperen er byttet, og du har løperparet. Bonden på f4 står der ennå, men den har mistet sin beste vakt." },
         { "tekst": "Det er hele metoden: kongen, sentrum, forsvareren av f4, og så resten av brikkene. Du trenger ikke et angrep i hvert trekk. Du trenger et mål i hvert trekk." }
       ]
+    },
+    {
+      "id": "taktikk",
+      "tittel": "Taktikk og feller du må kunne",
+      "start": "e4 e5 f4 exf4 Nf3 g5 h4",
+      "steg": [
+        { "tekst": "Fire oppgaver fra linjene våre. Motivene går igjen: en åpen linje, og en forsvarer som står dårlig." },
+        { "trekk": "h6", "tekst": "Svart dekker g5 med h-bonden. Det ser fornuftig ut." },
+        { "tekst": "Hvorfor er det en feil? Spill trekket.", "sporsmal": { "type": "trekk", "svar": ["hxg5"], "hint": "Se på h-linjen.", "forklaring": "Du slår på g5. Bonden på h6 er bundet til tårnet på h8. Slår den tilbake, tar du tårnet." } },
+        { "fra": "e4 e5 f4 exf4 Nf3 g5 h4 g4 Ne5 Nf6 Nxg4 Nxe4 d3 Nf6", "tekst": "Fra Kieseritzky. Du jaget springeren med d3, og den gikk tilbake til f6, der damen dekker den.", "felt": ["f6"] },
+        { "tekst": "Finn sjakken som endrer det.", "sporsmal": { "type": "trekk", "svar": ["Qe2+"], "hint": "Kongen til svart står på en åpen linje.", "forklaring": "Damen sjakker på e2. Dekker svart med løperen eller damen, blir den brikken bundet til kongen. Da står springeren på f6 udekket." } },
+        { "trekk": "Be7 Nxf6+", "tekst": "Løperen dekker, men den er bundet, og den stenger for damen. Springeren faller, med sjakk." },
+        { "fra": "e4 e5 f4 exf4 Nf3 g5 h4 g4 Ne5 Nf6 Nxg4 Nxe4 d3 Ng3 Bxf4 Nxh1", "tekst": "Her lot du tårnet stå, og svart tok det. Du er et helt tårn under." },
+        { "tekst": "Hva spiller du?", "sporsmal": { "type": "trekk", "svar": ["Qe2+"], "hint": "Samme linje som i forrige oppgave.", "forklaring": "Damen sjakker på e2. Svart har bare to lovlige trekk: damen eller løperen til e7." } },
+        { "trekk": "Be7", "tekst": "Løperen dekker. Det taper på stedet." },
+        { "tekst": "Finn matt i to.", "sporsmal": { "type": "trekk", "svar": ["Nf6+"], "hint": "Løperen på e7 er bundet.", "forklaring": "Springeren sjakker på f6. Løperen er bundet og kan ikke slå, og kongen har bare f8." } },
+        { "trekk": "Kf8 Bh6#", "tekst": "Kongen går til f8, og løperen setter matt. Dekker svart med damen i stedet, vinner du den med en forsert kombinasjon, og motoren sier jevnt spill." },
+        { "fra": "e4 e5 f4 exf4 Nf3 Nf6 e5 Nh5 d4 g5", "tekst": "Fra Schallopp. Svart har støttet f4 med g5, og springeren på h5 ser trygg ut.", "felt": ["h5"] },
+        { "tekst": "Finn trekket som viser at den ikke er det.", "sporsmal": { "type": "trekk", "svar": ["Nfd2"], "hint": "Hvilken brikke står mellom damen din og h5?", "forklaring": "Springeren går fra f3 til d2, og damen din sikter rett på h5. Springeren der har bare ett trygt felt, g7." } }
+      ]
     }
   ],
   "huskeregler": [
