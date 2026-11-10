@@ -2,7 +2,7 @@
   "schema": 1,
   "apning": "kongegambitt",
   "tittel": "Kongegambitt: slik bruker du kompensasjonen",
-  "minutter": 16,
+  "minutter": 20,
   "kapitler": [
     {
       "id": "ideen",
@@ -353,10 +353,11 @@
           "sporsmal": {
             "type": "trekk",
             "svar": [
-              "Nc3"
+              "Nc3",
+              "d4"
             ],
             "hint": "Hvilken brikke kan angripe damen om to trekk?",
-            "forklaring": "Springeren til c3. Neste stopp er d5, med angrep på damen og c7. En dame er en dårlig vakt: Den må flytte når den blir angrepet."
+            "forklaring": "Springeren til c3. Neste stopp er d5, med angrep på damen og c7. En dame er en dårlig vakt: Den må flytte når den blir angrepet. Bonden til d4 først er like bra, og fører ofte til det samme."
           }
         },
         {
@@ -610,7 +611,7 @@
               "c4"
             ],
             "hint": "Jag den med en bonde.",
-            "forklaring": "Bonden til c4 jager den. Det eneste gode feltet for springeren er e3. Alle andre trekk er klart dårligere."
+            "forklaring": "Bonden til c4 jager den. Det eneste gode feltet for springeren er e3. Alle andre springertrekk er klart dårligere."
           }
         },
         {
@@ -640,7 +641,7 @@
               "Rxf6"
             ],
             "hint": "f-linjen er åpen.",
-            "forklaring": "Tårnet tar springeren på f6. Den sto udekket, for g-bonden måtte slå på h6. Du er en springer over."
+            "forklaring": "Tårnet tar springeren på f6. Den sto udekket, for g-bonden måtte slå på h6. Nå har du en springer mot én bonde."
           }
         },
         {
@@ -714,7 +715,7 @@
               "Bxf7+"
             ],
             "hint": "Feltet f7, igjen.",
-            "forklaring": "Løperen ofrer seg på f7. Tar kongen, sjakker springeren på e5 og angriper løperen på g4."
+            "forklaring": "Løperen ofrer seg på f7. Tar kongen, sjakker springeren på e5 og angriper løperen på g4. Svarts beste er kongen til e7, og da er du en bonde over."
           }
         },
         {
