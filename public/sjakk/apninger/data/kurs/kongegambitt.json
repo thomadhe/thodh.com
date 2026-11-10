@@ -135,6 +135,27 @@
         { "tekst": "Her stopper vi. Du har en springer mer, og du lå under i bønder nesten hele partiet." },
         { "tekst": "Se tilbake på trekkene dine. Nesten alle truet noe: springeren mot damen, bonden mot springeren, springeren mot løperen, sjakken, og bonden mot springeren igjen. Slik bruker du et forsprang i utvikling." }
       ]
+    },
+    {
+      "id": "avslatt-og-godt-forsvar",
+      "tittel": "Når svart avslår, eller forsvarer seg godt",
+      "start": "e4 e5 f4",
+      "steg": [
+        { "trekk": "Bc5", "tekst": "Noen tar ikke bonden. Vanligst er løperen til c5. Den sikter mot g1, så du kan ikke rokere kort mens den står der.", "fare": ["c5g1"] },
+        { "tekst": "Bonden på e5 ser gratis ut. Spill det trygge trekket.", "sporsmal": { "type": "trekk", "svar": ["Nf3"], "hint": "Husk diagonalen til h4.", "forklaring": "Springeren til f3. Slår du på e5, kommer damesjakken på h4. Dekker g-bonden, faller tårnet på h1. Går kongen til e2, er det matt på e4." } },
+        { "trekk": "d6 Nc3 Nf6 Bc4 Nc6 d3", "tekst": "Dette er grunnstillingen. Du har ikke ofret noe, og f-bonden kan åpne f-linjen når du vil." },
+        { "tekst": "Planen: Springeren til a4 bytter løperen på c5, så du kan rokere. F-bonden går til f5 eller slår på e5.", "piler": ["c3a4", "f4f5"] },
+        { "fra": "e4 e5 f4 Bc5 Nf3 d6 Nc3 Nf6 Bc4 Bg4 fxe5 dxe5", "tekst": "Én felle. Svart bandt springeren din for tidlig, og du slo på e5." },
+        { "tekst": "Finn kombinasjonen.", "sporsmal": { "type": "trekk", "svar": ["Bxf7+"], "hint": "Feltet f7, igjen.", "forklaring": "Løperen ofrer seg på f7. Tar kongen, sjakker springeren på e5 og angriper løperen på g4." } },
+        { "trekk": "Kxf7 Nxe5+ Kg8 Nxg4", "tekst": "Du har vunnet to bønder, og svart har mistet rokaden." },
+        { "fra": "e4 e5 f4 d5", "tekst": "Falkbeers motgambitt. Svart slår tilbake i sentrum." },
+        { "trekk": "exd5 e4", "tekst": "Du tar. Svart skyver bonden til e4, der den tar f3 fra springeren din.", "felt": ["e4", "f3"] },
+        { "tekst": "Hva gjør du med den?", "sporsmal": { "type": "trekk", "svar": ["d3"], "hint": "Angrip den med en gang.", "forklaring": "Bonden til d3 angriper den straks. Blir den byttet bort, står du en bonde over." } },
+        { "trekk": "Nf6 dxe4 Nxe4 Nf3 Bc5 Qe2", "tekst": "Svart får aktive brikker for bonden. Damen til e2 dekker f2 og binder springeren på e4. Og tar svart på f4 i trekk tre, går springeren til f3, og du står i moderne forsvar.", "piler": ["e2e4"], "felt": ["f2"] },
+        { "fra": "e4 e5 f4 exf4 Nf3 d5 exd5 Nf6 Bb5+ c6 dxc6 Nxc6 d4 Bd6 O-O O-O", "tekst": "Til slutt det ærlige. Her har svart gjort alt riktig. Materiellet er likt, bonden på f4 står trygt, og motoren gir svart omtrent en halv bonde.", "felt": ["f4"] },
+        { "tekst": "Da finnes det ikke noe angrep. Du spiller et vanlig parti: Springeren til d2 og bonden til c3 holder sentrum, og du fullfører utviklingen.", "piler": ["b1d2", "c2c3"] },
+        { "tekst": "Hva er riktig holdning her?", "sporsmal": { "type": "valg", "valg": ["Ofre en brikke på f7 for å få i gang noe", "Spille rolig videre, med et mål for hvert trekk", "Bytte alt av og håpe på remis"], "riktig": 1, "forklaring": "Et offer uten grunnlag taper bare. Kongegambitten gir deg ikke fordel mot perfekt spill. Den gir deg stillinger du forstår bedre enn motstanderen." } }
+      ]
     }
   ],
   "huskeregler": [
