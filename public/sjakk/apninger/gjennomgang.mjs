@@ -1,10 +1,10 @@
 // "Gjennomgang": a course played like a short video on the board. Tora talks, the pieces move, arrows show the plans,
 // and now and then the player has to answer. The course itself is read and checked in kurs.mjs.
-import { TRENER, esc, norsk } from './trener.mjs';
-import { flertall, trenerBoble } from './ui.mjs';
+import { AVATAR, TRENER, esc, norsk } from './trener.mjs';
+import { flertall, kursMeta } from './ui.mjs';
 import { trekkNummer } from './modell.mjs';
 import { introSett, merkIntro } from './kort.mjs';
-import { kursStatus, lesetid, linjeTekst, merkFerdig, merkKapittel, merkSted, trekkTekst, trekkTid } from './kurs.mjs';
+import { kursStatus, lesetid, linjeTekst, merkFerdig, merkKapittel, merkSted, stegTid, trekkTekst, trekkTid } from './kurs.mjs';
 import { lagSpor } from './spor.mjs';
 import { FARTER, lagTale, stemmeKortnavn } from './tale.mjs';
 import { erValgt, fordel, settValgt, velgApning } from './repertoar.mjs';
@@ -27,6 +27,10 @@ const IKON = {
 };
 const fartTekst = fart => `${String(fart).replace('.', ',')}×`;
 const rolig = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+// One column: the board on top, Tora under it and the controls at the bottom of the screen.
+const smal = () => window.matchMedia?.('(max-width: 850px)').matches;
+const minutter = ms => Math.max(1, Math.round(ms / 60000));
+const sporsmalI = steg => steg.filter(s => s.sporsmal).length;
 
 // One voice for the whole visit: the browser loads its voices once.
 let tale = null;
@@ -37,9 +41,12 @@ const hentTale = lager => (tale ??= lagTale({ lager, naarEndret: () => naarTaleE
 export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje, avspiller, kom = '' }) {
   const stemme = hentTale(ui.lager);
   const ramme = brett.ramme;
-  const start = kursStatus(kurs, ui.fremgang());
-  const tilstand = { k: start.sted.kapittel, i: start.sted.steg, fase: 'plakat', statisk: true, resultat: new Map(), forsok: 0, hint: false };
+  const forst = kursStatus(kurs, ui.fremgang());
+  const tilstand = { k: forst.sted.kapittel, i: forst.sted.steg, fase: 'plakat', statisk: true, resultat: new Map(), forsok: 0, hint: false };
   let spiller = false;
+  let stemning = '';
+  let snakker = false;
+  let kvittering = '';
   let gen = 0;
   let snakk = null;
   const nedtellinger = new Set();
@@ -49,18 +56,18 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
   // ---------- Frame ----------
   avspiller.hidden = false;
   ui.main.classList.add('ap-gj-aktiv');
-  avspiller.innerHTML = `<div class="ap-gj-spor"></div><div class="ap-gj-knapper">
-    <button type="button" class="ap-gj-knapp" data-gj="forrige" aria-label="Forrige steg">${IKON.forrige}</button>
+  avspiller.innerHTML = `<div class="ap-gj-linje"><div class="ap-gj-spor"></div><span class="ap-gj-teller" aria-hidden="true"></span></div><div class="ap-gj-knapper">
+    <button type="button" class="ap-gj-knapp" data-gj="forrige" aria-label="Forrige steg" title="Forrige steg (pil venstre)">${IKON.forrige}</button>
     <button type="button" class="ap-gj-knapp ap-gj-spill" data-gj="spill"></button>
-    <button type="button" class="ap-gj-knapp" data-gj="neste" aria-label="Neste steg">${IKON.neste}</button>
-    <span class="ap-gj-teller" aria-hidden="true"></span>
-    <button type="button" class="ap-gj-knapp" data-gj="tale"></button>
-    <button type="button" class="ap-gj-knapp ap-gj-fart" data-gj="fart"></button>
+    <button type="button" class="ap-gj-knapp" data-gj="neste" aria-label="Neste steg" title="Neste steg (pil høyre)">${IKON.neste}</button>
+    <span class="ap-gj-luft"></span>
+    <button type="button" class="ap-gj-pille" data-gj="tale"><span class="ap-gj-pille-ikon"></span><span class="ap-gj-pille-navn">Tale</span><span class="ap-gj-pille-verdi"></span></button>
+    <button type="button" class="ap-gj-pille" data-gj="fart"><span class="ap-gj-pille-navn">Tempo</span><span class="ap-gj-pille-verdi"></span></button>
   </div>`;
-  panel.innerHTML = `<header class="ap-gj-hode"><p class="eyebrow"></p><h2></h2></header>
-    ${trenerBoble('', { live: false })}
+  // Tora and the chapter she is in are one scene: beside each other on a wide screen, the chapter next to her face on a phone.
+  panel.innerHTML = `<div class="ap-boble ap-gj-scene"><header class="ap-gj-hode"><p class="eyebrow"></p><h2></h2></header><span class="ap-avatar">${AVATAR}</span><div class="ap-boble-tekst"></div></div>
     <div class="ap-gj-handling"></div>
-    <section class="ap-gj-kapitler" aria-label="Kapitler"><ol></ol></section>
+    <details class="ap-gj-kapitler" open><summary><span class="ap-gj-kap-tittel">Kapitler</span><span class="ap-gj-kap-prikker" aria-hidden="true"></span><span class="ap-gj-kap-antall"></span></summary><ol></ol></details>
     <p class="ap-gj-stemme"></p>`;
   const el = {
     spor: avspiller.querySelector('.ap-gj-spor'),
@@ -76,6 +83,9 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     tekst: panel.querySelector('.ap-boble-tekst'),
     handling: panel.querySelector('.ap-gj-handling'),
     kapitler: panel.querySelector('.ap-gj-kapitler ol'),
+    kapittelboks: panel.querySelector('.ap-gj-kapitler'),
+    prikker: panel.querySelector('.ap-gj-kap-prikker'),
+    kapAntall: panel.querySelector('.ap-gj-kap-antall'),
     stemme: panel.querySelector('.ap-gj-stemme'),
   };
   // The text is announced when a step changes, never while the clock runs.
@@ -106,6 +116,9 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     if (!stemme.leser) return Promise.resolve();
     const denne = stemme.si(tekst);
     snakk = denne;
+    snakker = true;
+    tegnScene();
+    denne.ferdig.then(() => { if (snakk === denne) { snakker = false; tegnScene(); } });
     if (!spiller) denne.pause();
     return Promise.race([denne.ferdig, new Promise(svar => lesingAv.add(svar))]).then(() => vent(ETTER_TALE));
   }
@@ -116,8 +129,11 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     lesingAv.clear();
     snakk?.avbryt();
     snakk = null;
+    snakker = false;
+    tegnScene();
     ui.settTrekk(null);
     ramme.querySelector('.ap-kapittelkort')?.remove();
+    delete ramme.dataset.gj;
     el.spor.classList.remove('ap-gj-fyller');
   }
   function settSpiller(ja) {
@@ -126,8 +142,38 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     if (ja) snakk?.fortsett(); else snakk?.pause();
     el.spor.classList.toggle('ap-gj-stans', !ja);
     ramme.classList.toggle('ap-gj-pauset', !ja);
+    tegnScene();
     tegnKnapper();
   }
+  // The stage is the board, Tora and the controls. Play brings it into view when it does not fit where the page stands.
+  // svar: the answers and the way on count too, and when not everything fits, they go before the top of the board.
+  function tilScenen({ svar = false } = {}) {
+    const liten = smal();
+    const topp = (liten ? null : ui.main.querySelector('.ap-faner')) ?? ramme;
+    const nederst = !liten ? linje : svar && el.handling.childElementCount ? el.handling : el.boble;
+    const over = topp.getBoundingClientRect().top - (liten ? 6 : 12);
+    const under = nederst.getBoundingClientRect().bottom + 10 - (window.innerHeight - (liten ? avspiller.offsetHeight : 0));
+    if (over >= 0 && under <= 0) return;
+    // As short a way as shows it all. Too tall for the window: the top of the stage, or the answers.
+    const flytt = under > over ? (svar ? under : over) : over < 0 || liten ? over : under;
+    window.scrollBy({ top: flytt, behavior: rolig() ? 'auto' : 'smooth' });
+  }
+  // A question, its answer and the end of a chapter ask for the player, so on a phone they come up over the controls.
+  const visSvar = () => { if (smal()) tilScenen({ svar: true }); };
+  // A step whose words would end under the controls. Not when the player has scrolled away from the board.
+  function visTekst() {
+    if (!smal()) return;
+    const brettet = ramme.getBoundingClientRect();
+    if (brettet.bottom > 0 && brettet.top < window.innerHeight) tilScenen();
+  }
+  // Play from a place the player picked: a chapter, the poster or the start again.
+  function start(k, i) {
+    kvittering = '';
+    settSpiller(true);
+    kjor(k, i);
+    tilScenen();
+  }
+  const ryddBrett = () => ramme.querySelectorAll('.ap-plakat, .ap-gj-sluttkort').forEach(kort => kort.remove());
 
   // ---------- Drawing ----------
   function vis(pos, { piler = [], merket = [], laast = true, gli = false } = {}) {
@@ -135,16 +181,30 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     linje.textContent = linjeTekst(pos.san);
     linje.scrollLeft = linje.scrollWidth;
   }
-  function tekst(html, stemning = '') {
-    el.boble.className = `ap-boble ${stemning}`;
+  // The bubble's mood ('', spor, bra, feil), and a ring around Tora while she is heard.
+  function tegnScene() {
+    el.boble.className = `ap-boble ap-gj-scene ${stemning}${snakker && spiller ? ' ap-gj-snakker' : ''}`;
+  }
+  function tekst(html, ny = '') {
+    stemning = ny;
+    tegnScene();
     el.tekst.innerHTML = html;
+    // New words come in like speech, not like a slide.
+    el.tekst.classList.remove('ap-gj-ny');
+    void el.tekst.offsetWidth;
+    el.tekst.classList.add('ap-gj-ny');
   }
   function hode() {
     const k = tilstand.k;
     if (tilstand.fase === 'slutt') { el.eyebrow.textContent = 'GJENNOMGANG · FERDIG'; el.tittel.textContent = kurs.tittel; return; }
-    if (tilstand.fase === 'plakat') { el.eyebrow.textContent = `GJENNOMGANG · ${flertall(kurs.kapitler.length, 'KAPITTEL', 'KAPITLER')} · CA. ${kurs.minutter} MIN`; el.tittel.textContent = kurs.tittel; return; }
-    el.eyebrow.textContent = `KAPITTEL ${k + 1} AV ${kurs.kapitler.length}`;
+    if (tilstand.fase === 'plakat') { el.eyebrow.textContent = `GJENNOMGANG · CA. ${kurs.minutter} MIN`; el.tittel.textContent = kurs.tittel; return; }
+    el.eyebrow.textContent = `KAPITTEL ${k + 1} AV ${kurs.kapitler.length} · ${tilstand.fase === 'kapittelslutt' ? 'SETT' : `STEG ${tilstand.i + 1} AV ${kapittel(k).steg.length}`}`;
     el.tittel.textContent = kapittel(k).tittel;
+  }
+  // How long the rest of the chapter takes at this tempo. A guess, and said as one.
+  function igjen() {
+    const ms = kapittel().steg.slice(tilstand.i).reduce((sum, s) => sum + stegTid(s, stemme.fart), 0);
+    return ms < 50000 ? 'under 1 min igjen' : `ca. ${minutter(ms)} min igjen`;
   }
   function segmentNavn(segment, plass, antall) {
     const status = { ny: '', sett: ', sett', naa: '', riktig: ', riktig svar', hint: ', riktig med hint', feil: ', bom', vist: ', vist' }[segment.status] ?? '';
@@ -179,15 +239,18 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     const forst = tilstand.k === 0 && tilstand.i === 0 && !['kapittelslutt', 'slutt'].includes(fase);
     el.forrige.disabled = forst || fase === 'plakat';
     el.neste.disabled = fase === 'slutt';
-    el.teller.textContent = fase === 'slutt' ? 'Ferdig' : fase === 'plakat' ? `${kurs.minutter} min` : fase === 'kapittelslutt' ? `Kapittel ${tilstand.k + 1} ✓` : `${tilstand.i + 1} / ${kapittel().steg.length}`;
-    el.tale.innerHTML = stemme.paa && stemme.kan ? IKON.lyd : IKON.stum;
+    el.teller.textContent = fase === 'slutt' ? 'Ferdig' : fase === 'plakat' ? `ca. ${kurs.minutter} min` : fase === 'kapittelslutt' ? `Kapittel ${tilstand.k + 1} ✓` : igjen();
+    el.teller.title = ['slutt', 'plakat', 'kapittelslutt'].includes(fase) ? '' : 'Omtrent så lenge er det igjen av kapitlet';
+    const leser = stemme.paa && stemme.kan;
+    el.tale.querySelector('.ap-gj-pille-ikon').innerHTML = leser ? IKON.lyd : IKON.stum;
+    el.tale.querySelector('.ap-gj-pille-verdi').textContent = !stemme.kan ? 'ingen' : leser ? 'på' : 'av';
     el.tale.disabled = !stemme.kan;
-    el.tale.setAttribute('aria-pressed', String(stemme.paa && stemme.kan));
-    el.tale.setAttribute('aria-label', 'Les opp');
+    el.tale.setAttribute('aria-pressed', String(leser));
+    el.tale.setAttribute('aria-label', 'Tale: Tora leser opp');
     el.tale.title = !stemme.kan ? 'Ingen norsk stemme' : stemme.paa ? 'Leser opp – trykk for bare tekst' : 'Bare tekst – trykk for å lese opp';
-    el.fart.textContent = fartTekst(stemme.fart);
+    el.fart.querySelector('.ap-gj-pille-verdi').textContent = fartTekst(stemme.fart);
     el.fart.setAttribute('aria-label', `Tempo ${fartTekst(stemme.fart)}. Trykk for å bytte.`);
-    el.fart.title = 'Tempo';
+    el.fart.title = 'Tempo – trykk for å bytte';
   }
   function tegnStemme() {
     let linje = '';
@@ -204,13 +267,23 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     el.kapitler.innerHTML = kurs.kapitler.map((kap, k) => {
       const sett = Boolean(post?.kapitler?.[kap.id]);
       const her = k === tilstand.k && tilstand.fase !== 'plakat' && tilstand.fase !== 'slutt';
-      return `<li><button type="button" class="ap-gj-kap${her ? ' her' : ''}${sett ? ' sett' : ''}" data-kap="${k}"${her ? ' aria-current="step"' : ''}><span class="ap-gj-kap-nr" aria-hidden="true">${sett ? '✓' : k + 1}</span><span class="ap-gj-kap-tekst"><b>${esc(kap.tittel)}</b><small>${flertall(kap.steg.length, 'steg', 'steg')}${kap.steg.some(s => s.sporsmal) ? ` · ${flertall(kap.steg.filter(s => s.sporsmal).length, 'spørsmål', 'spørsmål')}` : ''}${sett ? ' · sett' : ''}</small></span></button></li>`;
+      const tid = minutter(kap.steg.reduce((sum, s) => sum + stegTid(s), 0));
+      return `<li><button type="button" class="ap-gj-kap${her ? ' her' : ''}${sett ? ' sett' : ''}" data-kap="${k}"${her ? ' aria-current="step"' : ''}><span class="ap-gj-kap-nr" aria-hidden="true">${sett ? '✓' : k + 1}</span><span class="ap-gj-kap-tekst"><b>${esc(kap.tittel)}</b><small>ca. ${tid} min${sporsmalI(kap.steg) ? ` · ${flertall(sporsmalI(kap.steg), 'spørsmål', 'spørsmål')}` : ''}${sett ? ' · sett' : ''}</small></span></button></li>`;
     }).join('');
-    el.kapitler.closest('section').setAttribute('aria-label', `Kapitler, ${status.sett} av ${status.antall} sett`);
-    el.kapitler.querySelectorAll('[data-kap]').forEach(knapp => knapp.addEventListener('click', () => { settSpiller(true); kjor(Number(knapp.dataset.kap), 0); }));
+    el.prikker.innerHTML = kurs.kapitler.map((kap, k) => `<i class="${post?.kapitler?.[kap.id] ? 'sett' : ''}${k === tilstand.k && tilstand.fase !== 'plakat' && tilstand.fase !== 'slutt' ? ' her' : ''}"></i>`).join('');
+    el.kapAntall.textContent = `${status.sett} av ${status.antall} sett`;
+    el.kapitler.querySelectorAll('[data-kap]').forEach(knapp => knapp.addEventListener('click', () => start(Number(knapp.dataset.kap), 0)));
     if (fokus !== null) el.kapitler.querySelector(`[data-kap="${fokus}"]`)?.focus({ preventScroll: true });
   }
-  const tegnAlt = () => { hode(); tegnSpor(); tegnKnapper(); tegnKapitler(); };
+  // The chapters are the programme before and after, and fold away while a chapter plays. Opened by hand, they stay open.
+  let visning = '';
+  function tegnOversikt() {
+    const ny = ['plakat', 'kapittelslutt', 'slutt'].includes(tilstand.fase) ? 'stille' : 'spiller';
+    if (ny === visning) return;
+    visning = ny;
+    if (!el.kapittelboks.contains(document.activeElement)) el.kapittelboks.open = ny === 'stille';
+  }
+  const tegnAlt = () => { hode(); tegnSpor(); tegnKnapper(); tegnKapitler(); tegnOversikt(); };
 
   function lagreSted() {
     merkSted(ui.fremgang(), apning.id, kapittel().id, tilstand.i);
@@ -228,7 +301,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     const g = gen;
     const nyttKapittel = k !== tilstand.k || tilstand.fase === 'plakat' || tilstand.fase === 'kapittelslutt' || tilstand.fase === 'slutt';
     Object.assign(tilstand, { k, i, fase: 'steg', statisk: false, forsok: 0, hint: false });
-    ramme.querySelector('.ap-plakat')?.remove();
+    ryddBrett();
     const s = steg();
     lagreSted();
     tegnAlt();
@@ -239,13 +312,14 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
       vis(kapittel().start);
       tekst(`<p class="eyebrow">KAPITTEL ${k + 1}</p><p class="ap-sier"><strong>${esc(kapittel().tittel)}</strong></p>`);
       if (!rolig()) {
-        ramme.insertAdjacentHTML('beforeend', `<div class="ap-kapittelkort" aria-hidden="true"><span>Kapittel ${k + 1}</span><b>${esc(kapittel().tittel)}</b></div>`);
+        ramme.insertAdjacentHTML('beforeend', `<div class="ap-kapittelkort" aria-hidden="true"><span>Kapittel ${k + 1} av ${kurs.kapitler.length}</span><b>${esc(kapittel().tittel)}</b><i></i></div>`);
       }
       await Promise.all([vent(KAPITTELKORT), si(`Kapittel ${k + 1}: ${kapittel().tittel}${/[.!?]$/.test(kapittel().tittel) ? '' : '.'}`)]);
       if (g !== gen) return;
       ramme.querySelector('.ap-kapittelkort')?.remove();
     }
     tekst(stegHtml(s));
+    visTekst();
     const fart = stemme.fart;
     // A question is read when it is asked, after its moves.
     const tale = s.sporsmal ? null : si(s.tekst);
@@ -272,7 +346,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
   function statisk(k, i) {
     avbryt();
     Object.assign(tilstand, { k, i, fase: 'steg', statisk: true, forsok: 0, hint: false });
-    ramme.querySelector('.ap-plakat')?.remove();
+    ryddBrett();
     const s = steg();
     lagreSted();
     tegnAlt();
@@ -282,6 +356,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     tekst(stegHtml(s));
     if (s.sporsmal) { sporsmal(s); return; }
     brettVist(s);
+    visTekst();
   }
 
   function gaaTil(k, i) { if (spiller) kjor(k, i); else statisk(k, i); }
@@ -300,22 +375,26 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     tegnKnapper();
     el.spor.classList.remove('ap-gj-fyller');
     if (q.type === 'trekk') {
+      // The board is the answer sheet, and says so.
+      ramme.dataset.gj = 'tur';
       vis(s.vist, { piler: s.piler, merket: s.felt, laast: false });
-      tekst(`<p class="eyebrow">SPØRSMÅL</p><p class="ap-sier">${esc(s.tekst)}</p><p class="ap-gjor">Spill trekket på brettet.</p>`);
+      tekst(`<p class="eyebrow">SPØRSMÅL</p><p class="ap-sier">${esc(s.tekst)}</p><p class="ap-gjor">Spill trekket på brettet.</p>`, 'spor');
       el.handling.innerHTML = `<div class="ap-kontroller ap-rad"><button type="button" class="button secondary" data-q="hint">Hint</button><button type="button" class="button secondary" data-q="vis">Vis meg</button></div>`;
       el.handling.querySelector('[data-q="hint"]').addEventListener('click', () => hint(s));
       el.handling.querySelector('[data-q="vis"]').addEventListener('click', () => visMeg(s));
       ui.settTrekk(trekk => svarTrekk(s, trekk));
       // On a phone the panel is under the board; the question stays in sight in the line right under it.
       ui.respons(`Spørsmål: ${s.tekst}`);
+      visTekst();
       si(s.tekst);
       return;
     }
     brettVist(s);
-    tekst(`<p class="eyebrow">SPØRSMÅL</p><p class="ap-sier">${esc(s.tekst)}</p>`);
+    tekst(`<p class="eyebrow">SPØRSMÅL</p><p class="ap-sier">${esc(s.tekst)}</p>`, 'spor');
     el.handling.innerHTML = `<div class="ap-gj-valg" role="group" aria-label="Svaralternativer">${q.valg.map((v, n) => `<button type="button" class="ap-gj-alt" data-valg="${n}"><span class="ap-gj-alt-nr" aria-hidden="true">${n + 1}</span><span>${esc(v)}</span></button>`).join('')}</div>`;
     el.handling.querySelectorAll('[data-valg]').forEach(knapp => knapp.addEventListener('click', () => svarValg(s, Number(knapp.dataset.valg))));
     ui.respons(`Spørsmål: ${s.tekst} Svarene står under.`);
+    visSvar();
     si(`${s.tekst} ${q.valg.map((v, n) => `${n + 1}: ${v}`).join('. ')}.`);
   }
 
@@ -327,7 +406,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     const knapp = el.handling.querySelector('[data-q="hint"]');
     if (knapp) { knapp.disabled = true; knapp.textContent = 'Brikken er merket'; }
     const linjeHint = s.sporsmal.hint ? `<p><span class="ap-etikett">Hint</span>${esc(s.sporsmal.hint)}</p>` : '';
-    tekst(`<p class="eyebrow">SPØRSMÅL</p><p class="ap-sier">${esc(s.tekst)}</p>${linjeHint}<p class="ap-gjor">Brikken som skal flyttes, er merket.</p>`, tilstand.forsok ? 'feil' : '');
+    tekst(`<p class="eyebrow">SPØRSMÅL</p><p class="ap-sier">${esc(s.tekst)}</p>${linjeHint}<p class="ap-gjor">Brikken som skal flyttes, er merket.</p>`, tilstand.forsok ? 'feil' : 'spor');
     ui.respons(`Brikken er merket.${s.sporsmal.hint ? ` ${s.sporsmal.hint}` : ''}`);
     if (s.sporsmal.hint) si(s.sporsmal.hint);
   }
@@ -388,6 +467,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     evalbar.hold(false);
     tegnSpor();
     tegnKnapper();
+    if (stemning) ramme.dataset.gj = stemning;
     tekst(`${topp}<p>${esc(s.sporsmal.forklaring)}</p>`, stemning);
     const siste = tilstand.i + 1 >= kapittel().steg.length;
     const videreKnapp = `<div class="ap-kontroller ap-okt-neste"><button type="button" class="button primary" data-q="videre">${siste ? 'Fullfør kapitlet ▶' : 'Fortsett ▶'}</button></div>`;
@@ -396,6 +476,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     const knapp = el.handling.querySelector('[data-q="videre"]');
     knapp.addEventListener('click', () => { settSpiller(true); videre(); });
     if (document.activeElement === document.body || el.handling.contains(document.activeElement) || ramme.contains(document.activeElement)) knapp.focus({ preventScroll: true });
+    visSvar();
     fyll(lesetid(s.sporsmal.forklaring, stemme.fart));
     await Promise.all([vent(lesetid(s.sporsmal.forklaring, stemme.fart)), si(`${sagt} ${s.sporsmal.forklaring}`)]);
     if (g !== gen) return;
@@ -415,14 +496,18 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     settSpiller(false);
     tegnAlt();
     const neste = kurs.kapitler[tilstand.k + 1];
-    tekst(`<p class="eyebrow">KAPITTEL ${tilstand.k + 1} ER SETT</p><p class="ap-sier"><strong>Godt.</strong> Neste kapittel er «${esc(neste.tittel)}».</p><p>Ta en pust i bakken, eller fortsett med en gang.</p>`, 'bra');
-    el.handling.innerHTML = `<div class="ap-kontroller ap-okt-neste"><button type="button" class="button primary" data-q="neste-kap">Neste kapittel: ${esc(neste.tittel)} ▶</button></div>`;
+    tekst(`<p class="eyebrow">KAPITTEL ${tilstand.k + 1} ER SETT</p><p class="ap-sier"><strong>Godt.</strong> Neste kapittel er «${esc(neste.tittel)}».</p>${fasit(svarI(tilstand.k))}<p>Ta en pust i bakken, eller fortsett med en gang.</p>`, 'bra');
+    el.handling.innerHTML = `<div class="ap-kontroller ap-okt-neste"><button type="button" class="button primary ap-gj-videre" data-q="neste-kap"><span class="ap-gj-videre-tekst"><small>Neste kapittel</small>${esc(neste.tittel)}</span><span aria-hidden="true">▶</span></button></div>`;
     const knapp = el.handling.querySelector('[data-q="neste-kap"]');
-    knapp.addEventListener('click', () => { settSpiller(true); kjor(tilstand.k + 1, 0); });
+    knapp.addEventListener('click', () => start(tilstand.k + 1, 0));
     if (el.handling.contains(document.activeElement) || avspiller.contains(document.activeElement) || document.activeElement === document.body) knapp.focus({ preventScroll: true });
+    visSvar();
   }
 
-  let kvittering = '';
+  // The answers given in this visit, as dots and a count. Nothing answered says nothing.
+  const svarI = k => [...tilstand.resultat].filter(([nokkel]) => k === null || nokkel.startsWith(`${k}:`)).map(([, status]) => status);
+  const fasit = svar => (svar.length ? `<p class="ap-gj-fasit"><span class="ap-gj-fasit-prikker" aria-hidden="true">${svar.map(status => `<i class="s-${status}"></i>`).join('')}</span>${svar.filter(status => status === 'riktig').length} av ${flertall(svar.length, 'spørsmål', 'spørsmål')} riktig på første forsøk</p>` : '');
+
   function slutt() {
     avbryt();
     ui.respons();
@@ -439,6 +524,9 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     const lest = spiller;
     tegnAlt();
     tegnSlutt();
+    const status = kursStatus(kurs, ui.fremgang());
+    const svar = svarI(null);
+    ramme.insertAdjacentHTML('beforeend', `<div class="ap-gj-sluttkort" aria-hidden="true"><span class="ap-gj-medalje">✓</span><b>${alle ? 'Ferdig!' : 'Slutten er nådd'}</b><span class="ap-plakat-meta"><span>${status.sett} av ${flertall(status.antall, 'kapittel', 'kapitler')} sett</span>${svar.length ? `<span>${svar.filter(s => s === 'riktig').length} av ${svar.length} riktige</span>` : ''}</span></div>`);
     if (lest) si(`Det var gjennomgangen. Her er det viktigste å huske. ${kurs.huskeregler.join(' ')}`).then(() => { if (tilstand.fase === 'slutt') settSpiller(false); });
     else settSpiller(false);
   }
@@ -449,13 +537,13 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     tekst(`<p class="eyebrow">HUSKEREGLER</p>${status.sett === status.antall ? '<p class="ap-sier"><strong>Da har du sett hele gjennomgangen.</strong> Her er det viktigste å ta med seg:</p>' : `<p class="ap-sier"><strong>Det var slutten.</strong> Her er det viktigste å ta med seg:</p>`}<ol class="ap-gj-regler">${kurs.huskeregler.map(r => `<li>${esc(r)}</li>`).join('')}</ol>${mangler.length ? `<p class="ap-kilde">Du har ikke sett ${mangler.length === 1 ? 'kapitlet' : 'kapitlene'} ${mangler.map(k => `«${esc(k.tittel)}»`).join(' og ')} ennå. De står i lista under.</p>` : ''}`, 'bra');
     const tilOkt = kom.startsWith('#/repertoar/kort');
     el.handling.innerHTML = `${kvittering ? `<p class="ap-bygg-kvittering" role="status">${esc(kvittering)}</p>` : ''}<div class="ap-kontroller ap-gj-slutt">
-      ${valgt ? '<p class="ap-gj-valgt">✓ I repertoaret ditt</p>' : '<button type="button" class="button secondary" data-slutt="legg">Legg til i repertoaret</button>'}
       <button type="button" class="button primary" data-slutt="kort">Start kortene ▶</button>
+      ${valgt ? '<p class="ap-gj-valgt">✓ I repertoaret ditt</p>' : '<button type="button" class="button secondary" data-slutt="legg">Legg til i repertoaret</button>'}
       <div class="ap-gj-sluttlenker"><button type="button" class="ap-lenke" data-slutt="igjen">Se igjen fra start</button>${tilOkt ? ` · <a href="${kom}">Tilbake til dagens økt</a>` : ''} · <a href="#/a/${apning.id}/laer">Bla i trekkene</a></div>
     </div>`;
     el.handling.querySelector('[data-slutt="legg"]')?.addEventListener('click', () => { leggTil(); tegnSlutt(); el.handling.querySelector('[data-slutt="kort"]')?.focus({ preventScroll: true }); });
     el.handling.querySelector('[data-slutt="kort"]').addEventListener('click', () => { if (!erValgt(ui.fremgang(), apning.id)) leggTil(); location.hash = startKortFor(ui, apning); });
-    el.handling.querySelector('[data-slutt="igjen"]').addEventListener('click', () => { kvittering = ''; settSpiller(true); kjor(0, 0); });
+    el.handling.querySelector('[data-slutt="igjen"]').addEventListener('click', () => start(0, 0));
   }
   function leggTil() {
     const fremgang = ui.fremgang();
@@ -468,9 +556,9 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
   // ---------- Controls ----------
   function spillPause() {
     const { fase } = tilstand;
-    if (fase === 'slutt') { kvittering = ''; settSpiller(true); kjor(0, 0); return; }
-    if (fase === 'plakat') { settSpiller(true); kjor(tilstand.k, tilstand.i); return; }
-    if (fase === 'kapittelslutt') { settSpiller(true); kjor(tilstand.k + 1, 0); return; }
+    if (fase === 'slutt') { start(0, 0); return; }
+    if (fase === 'plakat') { start(tilstand.k, tilstand.i); return; }
+    if (fase === 'kapittelslutt') { start(tilstand.k + 1, 0); return; }
     if (spiller) { settSpiller(false); return; }
     settSpiller(true);
     if (tilstand.statisk && fase === 'steg') kjor(tilstand.k, tilstand.i, { animer: false });
@@ -497,7 +585,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
   el.neste.addEventListener('click', neste);
   el.tale.addEventListener('click', () => {
     stemme.settPaa(!stemme.paa);
-    if (!stemme.paa) { for (const svar of lesingAv) svar(); lesingAv.clear(); }
+    if (!stemme.paa) { for (const svar of lesingAv) svar(); lesingAv.clear(); snakker = false; tegnScene(); }
     // Switched on mid-step: the step is read from the start. Switched off: the clock goes on with the text alone.
     if (stemme.paa && spiller && tilstand.fase === 'steg') kjor(tilstand.k, tilstand.i, { animer: false });
   });
@@ -521,11 +609,11 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
   function plakat() {
     const s = kapittel().steg[tilstand.i];
     vis(tilstand.i ? s.foer : kapittel().start);
-    const merke = start.ferdig ? 'Se igjen' : start.startet ? `Fortsett · kapittel ${tilstand.k + 1}` : 'Spill av';
-    ramme.insertAdjacentHTML('beforeend', `<button type="button" class="ap-plakat"><span class="ap-plakat-knapp" aria-hidden="true">${start.ferdig ? IKON.igjen : IKON.spill}</span><span class="ap-plakat-tekst">${merke}</span><small>${flertall(kurs.kapitler.length, 'kapittel', 'kapitler')} · ca. ${kurs.minutter} min</small></button>`);
+    const merke = forst.ferdig ? 'Se igjen' : forst.startet ? `Fortsett · kapittel ${tilstand.k + 1}` : 'Spill av';
+    ramme.insertAdjacentHTML('beforeend', `<button type="button" class="ap-plakat"><span class="ap-plakat-knapp" aria-hidden="true">${forst.ferdig ? IKON.igjen : IKON.spill}</span><span class="ap-plakat-tekst">${merke}</span>${kursMeta(kurs)}</button>`);
     ramme.querySelector('.ap-plakat').addEventListener('click', spillPause);
-    const fortsetter = start.startet && !start.ferdig;
-    tekst(`<p class="ap-sier">Brettet spiller av og jeg forklarer, steg for steg. Innimellom spør jeg deg, og da venter jeg på svaret ditt. Du kan pause og spole når du vil.</p>${fortsetter ? `<p class="ap-kilde">Du har sett ${start.sett} av ${flertall(start.antall, 'kapittel', 'kapitler')}. Vi fortsetter der du slapp.</p>` : start.ferdig ? '<p class="ap-kilde">Du har sett hele. Se den igjen, eller velg et kapittel.</p>' : ''}<p class="ap-kilde">Tastatur: mellomrom spiller og pauser, piltastene blar.</p>`);
+    const fortsetter = forst.startet && !forst.ferdig;
+    tekst(`<p class="ap-sier">Brettet spiller av og jeg forklarer, steg for steg. Innimellom spør jeg deg, og da venter jeg på svaret ditt. Du kan pause og spole når du vil.</p>${fortsetter ? `<p class="ap-kilde">Du har sett ${forst.sett} av ${flertall(forst.antall, 'kapittel', 'kapitler')}. Vi fortsetter der du slapp.</p>` : forst.ferdig ? '<p class="ap-kilde">Du har sett hele. Se den igjen, eller velg et kapittel.</p>' : ''}<p class="ap-kilde ap-gj-tastatur">Tastatur: mellomrom spiller og pauser, piltastene blar.</p>`);
     tegnAlt();
     tegnStemme();
   }
@@ -536,7 +624,8 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
       avbryt();
       spiller = false;
       naarTaleEndret = () => {};
-      ramme.querySelector('.ap-plakat')?.remove();
+      ryddBrett();
+      delete ramme.dataset.gj;
       ramme.classList.remove('ap-gj-pauset');
       evalbar.brukBryter(null);
       evalbar.hold(false);

@@ -46,6 +46,11 @@ export function fyllKursLenker(rot, ui) {
   const ukjente = plasser.map(plass => plass.dataset.kursPlass).filter(id => ui.kurs.kjent(id) === undefined);
   if (ukjente.length) ui.kurs.sjekk(ukjente).then(fyll);
 }
+// What a walkthrough holds, as small labels: on its poster and where it is offered.
+export function kursMeta(kurs) {
+  const sporsmal = kurs.kapitler.reduce((sum, kapittel) => sum + kapittel.steg.filter(steg => steg.sporsmal).length, 0);
+  return `<span class="ap-plakat-meta"><span>${flertall(kurs.kapitler.length, 'kapittel', 'kapitler')}</span>${sporsmal ? `<span>${flertall(sporsmal, 'spørsmål', 'spørsmål')}</span>` : ''}<span>ca. ${kurs.minutter} min</span></span>`;
+}
 export const kursPlass = id => `<span class="ap-kurs-plass" data-kurs-plass="${id}"></span>`;
 
 export const skarphet = apning => `<span class="ap-skarphet" aria-label="Skarphet ${apning.skarphet} av 5">${'<i class="på"></i>'.repeat(apning.skarphet)}${'<i></i>'.repeat(5 - apning.skarphet)}</span>`;

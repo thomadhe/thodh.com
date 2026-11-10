@@ -45,9 +45,9 @@ export function gjennomgangerHtml(liste, fremgang) {
     .sort((a, b) => Number(a.status.ferdig) - Number(b.status.ferdig));
   return rader.map(({ apning, kurs, status }) => rad({
     adresse: `${APNINGER}#/a/${apning.id}/gjennomgang`,
-    merke: `<span class="ap-fane-merke ${apning.farge}" aria-hidden="true"></span>`,
+    merke: `<span class="en-spill${status.ferdig ? ' sett' : ''}" aria-hidden="true"></span>`,
     tittel: esc(apning.navn),
-    tekst: status.ferdig ? 'Sett hele. Se den igjen når du vil' : status.sett ? `${status.sett} av ${flertall(status.antall, 'kapittel', 'kapitler')} sett` : `${flertall(status.antall, 'kapittel', 'kapitler')}, ideene og planene først`,
+    tekst: `${FARGE[apning.farge]} · ${status.ferdig ? 'sett hele, se den igjen når du vil' : status.sett ? `${status.sett} av ${flertall(status.antall, 'kapittel', 'kapitler')} sett` : `${flertall(status.antall, 'kapittel', 'kapitler')}, ideene og planene først`}`,
     verdi: status.ferdig ? '✓ Sett' : status.startet ? 'Fortsett' : `${kurs.minutter} min`,
     spor: status.sett && !status.ferdig ? Math.round(status.sett / status.antall * 100) : null,
   })).join('');
