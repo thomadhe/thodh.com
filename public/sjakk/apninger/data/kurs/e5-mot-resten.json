@@ -2,7 +2,7 @@
   "schema": 1,
   "apning": "e5-mot-resten",
   "tittel": "1…e5 mot resten: hva hvit prøver, og hva du svarer",
-  "minutter": 24,
+  "minutter": 26,
   "kapitler": [
     {
       "id": "ideen",
@@ -10,8 +10,7 @@
       "start": "e4",
       "steg": [
         { "trekk": "e5", "tekst": "1…e5 er det klassiske svaret på 1.e4. Men hvit har mange sidespor, og hvert av dem prøver noe eget.", "felt": ["e5"] },
-        { "tekst": "Dette kurset tar dem etter tur. For hvert sidespor spør vi: Hva prøver hvit å gjøre? Og hva er svaret ditt?" },
-        { "tekst": "Svarene bygger på tre enkle regler. Kan du dem, finner du ofte riktig trekk selv om du har glemt linjen." },
+        { "tekst": "Kurset tar dem etter tur og spør hver gang: Hva prøver hvit å gjøre, og hva svarer du? Svarene bygger på tre enkle regler." },
         { "tekst": "Regel én: Slå til i sentrum med …d5. Bruker hvit tid på noe annet enn sentrum, er …d5 nesten alltid svaret.", "piler": ["d7d5"], "felt": ["d5"] },
         { "tekst": "Regel to: Utvikle med tempo. Springeren til f6 angriper e4. Springeren til c6 dekker e5, og den jager en dame som kommer til d4.", "piler": ["g8f6", "b8c6"], "felt": ["e4"] },
         { "tekst": "Regel tre: Straff tidlige dameutfall. Dekk f7 først. Jag så damen med brikker som du ville utviklet uansett.", "felt": ["f7"] },
@@ -29,7 +28,6 @@
       "steg": [
         { "trekk": "f4", "tekst": "Kongegambitten. Hvit ofrer f-bonden. Planen er å fjerne bonden din på e5, og så ta sentrum med d4.", "fare": ["f4e5"] },
         { "trekk": "d5", "tekst": "Du tar ikke imot. Dette er Falkbeers motgambitt: Du slår til i sentrum med en gang. Regel én.", "piler": ["d5e4"] },
-        { "tekst": "Se på diagonalen fra h4 til e1. F-bonden har forlatt den, og nå er det bare luft mellom damen din og kongen.", "felt": ["h4", "e1"] },
         {
           "fra": "e4 e5 f4 d5 fxe5",
           "tekst": "Først en felle. Mange slår på e5 med en gang. Finn trekket som straffer det.",
@@ -41,10 +39,7 @@
         { "trekk": "Nf3 Nf6", "tekst": "Begge utvikler springerne. Din angriper bonden på d5.", "piler": ["f6d5"] },
         { "trekk": "c4 c6", "tekst": "Hvit dekker med c4. Du angriper en gang til med c6. Slår hvit på c6, tar springeren tilbake, og du er raskt utviklet.", "piler": ["c6d5"] },
         { "trekk": "d4 Bb4+", "tekst": "Hvit bygger sentrum. Løperen kommer ut med sjakk før du slår på d5." },
-        { "trekk": "Nc3 cxd5", "tekst": "Springeren går imellom, og du tar bonden. Akkurat nå er du en bonde over, men f4-bonden kan ikke holdes." },
-        { "trekk": "Bxf4 O-O", "tekst": "Hvit tar på f4, og du rokerer. Likt materiell, og kongen din står trygt. Hvits konge står fortsatt på e1. Motoren liker svart en anelse.", "felt": ["e1", "g8"] },
-        { "fra": "e4 e5 f4 d5 exd5 exf4 Nf3 Nf6 Bc4", "tekst": "Dekker hvit d5 med løperen i stedet, slår du likevel." },
-        { "trekk": "Nxd5 O-O Be6", "tekst": "Springeren tar på d5, og løperen på e6 støtter den. Du er ute uten problemer, og motoren liker svart litt.", "piler": ["e6d5"] },
+        { "trekk": "Nc3 cxd5 Bxf4 O-O", "tekst": "Springeren går imellom, du tar på d5, og hvit tar tilbake på f4. Du rokerer. Likt materiell, og hvits konge står fortsatt på e1. Motoren liker svart en anelse.", "felt": ["e1", "g8"] },
         { "fra": "e4 e5 f4 d5 exd5 exf4 Bc4", "tekst": "Kommer løperen ut før springeren, er feltet h4 ubevoktet." },
         { "trekk": "Qh4+ Kf1", "tekst": "Damen sjakker fra h4, og kongen må til f1. Hvit får aldri rokert, og damen dekker bonden på f4. Motoren gir deg nesten en bonde i fordel.", "piler": ["h4f4"] }
       ]
@@ -57,15 +52,13 @@
         { "trekk": "Nc3", "tekst": "Wienerpartiet. Springeren til c3 dekker e4 og d5. Ofte kommer f4 etterpå, som en kongegambitt med en brikke ekstra ute." },
         { "trekk": "Nf6", "tekst": "Du utvikler og angriper e4 med en gang. Regel to.", "piler": ["f6e4"] },
         { "trekk": "f4 d5", "tekst": "Der kommer f4. Og svaret er det samme som mot kongegambitten: d5, rett i sentrum." },
-        { "trekk": "fxe5 Nxe4", "tekst": "Hvit tar på e5, og springeren din hopper inn på e4. Der står den midt på brettet og presser c3 og f2.", "felt": ["e4"] },
-        { "trekk": "Nf3 Be7", "tekst": "Løperen til e7, så du kan rokere. Rolig og sunt." },
-        { "trekk": "d4 O-O", "tekst": "Hvit tar sentrum, og du rokerer." },
+        { "trekk": "fxe5 Nxe4", "tekst": "Hvit tar på e5, og springeren din hopper inn på e4. Der står den midt på brettet og angriper springeren på c3.", "felt": ["e4"] },
+        { "trekk": "Nf3 Be7 d4 O-O", "tekst": "Løperen går til e7, og du rokerer mens hvit tar sentrum. Rolig og sunt." },
         { "trekk": "Bd3 f5", "tekst": "Løperen angriper springeren på e4. Du støtter den med f-bonden.", "piler": ["f5e4"] },
         { "trekk": "exf6 Bxf6", "tekst": "Hvit slår en passant. Løperen tar tilbake, og nå sikter den på d4.", "piler": ["f6d4"] },
         { "trekk": "O-O Nc6", "tekst": "Springeren går også mot d4. Motoren sier helt likt, og brikkene dine står aktivt.", "piler": ["c6d4"] },
         { "fra": "e4 e5 Nc3 Nf6 f4 d5 exd5", "tekst": "Hvit kan også slå på d5 først." },
-        { "trekk": "Nxd5 fxe5 Nxc3 bxc3", "tekst": "Springeren tar tilbake, hvit tar e5, og du bytter på c3. Hvit får dobbeltbønder på c-linjen.", "felt": ["c2", "c3"] },
-        { "trekk": "Qh4+", "tekst": "Nå kommer damen med sjakk fra h4. Kongen får ikke rokere." },
+        { "trekk": "Nxd5 fxe5 Nxc3 bxc3 Qh4+", "tekst": "Springeren tar tilbake, hvit tar e5, og du bytter på c3. Hvit får dobbeltbønder, og damen sjakker fra h4. Kongen får ikke rokere.", "felt": ["c2", "c3"] },
         {
           "trekk": "g3",
           "tekst": "Setter hvit g-bonden imellom, finnes det et dobbeltangrep. Finn det.",
@@ -92,22 +85,18 @@
           "tekst": "Hvordan stopper du matten og angriper samtidig?",
           "sporsmal": { "type": "trekk", "svar": ["Nd6"], "hint": "Springeren kan dekke f7 og jage løperen.", "forklaring": "Springeren går tilbake til d6. Der dekker den f7 og angriper løperen på c4." }
         },
-        { "trekk": "Bb3 Nc6", "tekst": "Løperen trekker seg, og du dekker e5." },
-        { "trekk": "Nb5", "tekst": "Springeren går til b5. Den angriper springeren din på d6 og vil til c7, med gaffel på konge og tårn.", "fare": ["b5c7"] },
-        { "trekk": "g6 Qf3 f5", "tekst": "Du jager damen først. Hun sikter på f7 igjen, og bonden til f5 stenger f-linjen." },
-        { "trekk": "Qd5 Qe7", "tekst": "Damen kommer til d5, og hun og løperen sikter begge på f7. Damen din dekker." },
+        { "trekk": "Bb3 Nc6 Nb5", "tekst": "Løperen trekker seg, og du dekker e5. Så går springeren til b5. Den angriper springeren din og vil til c7, med gaffel på konge og tårn.", "fare": ["b5c7"] },
+        { "trekk": "g6 Qf3 f5 Qd5 Qe7", "tekst": "Du jager damen. Hun prøver f7 fra f3 og så fra d5. Du stenger f-linjen med f5 og dekker f7 med damen." },
         { "trekk": "Nxc7+ Kd8 Nxa8", "tekst": "Nå kommer gaffelen, og springeren tar tårnet på a8." },
         { "trekk": "b6", "tekst": "Og her er ideen. Springeren på a8 har bare to felt, c7 og b6, og på begge blir den slått. Den skal ingen steder.", "felt": ["a8", "c7", "b6"] },
-        { "tekst": "Regnestykket: Du gir et tårn og en bonde, og får springeren tilbake senere. Til gjengjeld kommer løperen til b7, og hvits dronningfløy står uten forsvarere." },
-        { "tekst": "Ærlig talt: Motoren gir hvit drøyt en halv bonde. Men stillingen er vanskelig å spille for hvit. Et naturlig trekk som springeren til f3 snur det i din favør. Dette er Frankenstein–Dracula." },
-        { "trekk": "d3 Bb7 h4 f4", "tekst": "Det beste for hvit er d3. Løperen kommer til b7, og med f4 stenger du løperen på c1 inne.", "piler": ["b7a8"] },
+        { "tekst": "Regnestykket: Du gir et tårn og en bonde, og får springeren senere. Motoren gir hvit drøyt en halv bonde. Men et naturlig trekk som springeren til f3 snur det i din favør. Dette er Frankenstein–Dracula." },
+        { "trekk": "d3 Bb7 h4 f4", "tekst": "Et vanlig svar er d3. Løperen kommer til b7, og med f4 stenger du løperen på c1 inne.", "piler": ["b7a8"] },
         {
           "tekst": "Hva er planen din nå?",
           "sporsmal": { "type": "valg", "valg": ["Bytte damer så fort som mulig", "Få brikkene i spill: …Lh6, …Sd4 og …e4", "Spille …a5 for å få det andre tårnet ut"], "riktig": 1, "forklaring": "Du er under i materiell, så du trenger aktive brikker, ikke bytter. Løperen til h6, springeren til d4 og bonden til e4 er motorens egen plan her. Springeren på a8 løper ingen steder." }
         },
         { "fra": "e4 e5 Nc3 Nf6 Bc4 Nxe4 Qh5 Nd6 Qxe5+", "tekst": "Mange hvitspillere vil ikke inn i dette. Da tar damen på e5 med sjakk." },
-        { "trekk": "Qe7 Qxe7+ Bxe7 Bb3 Nf5", "tekst": "Du setter damen imellom, damene byttes, og springeren går til f5. Helt likt." },
-        { "tekst": "Vil du heller unngå tårnofferet, finnes 5…Le7 i stedet for 5…Sc6. Den står i notatene til åpningen. Kortene lærer deg 5…Sc6." }
+        { "trekk": "Qe7 Qxe7+ Bxe7 Bb3 Nf5", "tekst": "Du setter damen imellom, damene byttes, og springeren går til f5. Helt likt. Vil du unngå tårnofferet helt, står 5…Le7 i notatene til åpningen." }
       ]
     },
     {
@@ -118,21 +107,19 @@
         { "trekk": "d4 exd4", "tekst": "Hvit åpner sentrum med d4 før springerne er ute. Du slår." },
         { "trekk": "c3", "tekst": "Dansk gambitt. Hvit vil gi bort en bonde eller to for å få løperne ut mot kongen din.", "fare": ["c3d4"] },
         { "trekk": "d5", "tekst": "Du tar ikke mer. Regel én: Slå til i sentrum. Nå blir det ingen gambitt." },
-        { "trekk": "exd5 Qxd5", "tekst": "Hvit slår, og damen tar tilbake. Hun står sentralt, og springeren kan ikke jage henne fra c3, for der står en bonde." },
-        { "trekk": "cxd4 Nc6", "tekst": "Hvit tar tilbake. Bonden på d4 står alene, og springeren går rett på den.", "felt": ["d4"] },
-        { "trekk": "Nf3 Bg4", "tekst": "Springeren dekker d4. Løperen binder den." },
-        { "trekk": "Be2 Bb4+", "tekst": "Løperen bryter bindingen. Du sjakker fra b4." },
+        { "trekk": "exd5 Qxd5 cxd4 Nc6", "tekst": "Damen tar tilbake på d5, og hvit tar på d4. Den bonden står alene, og springeren går rett på den.", "felt": ["d4"] },
+        { "trekk": "Nf3 Bg4 Be2 Bb4+", "tekst": "Springeren dekker d4, og løperen binder den. Hvit bryter bindingen, og du sjakker fra b4." },
         { "trekk": "Nc3 Bxf3 Bxf3 Qc4", "tekst": "Etter byttet på f3 går damen til c4. Hun ser på f1, så hvit kan ikke rokere kort.", "piler": ["c4f1"] },
         { "trekk": "Bxc6+ bxc6 Qe2+ Qxe2+ Kxe2 Ne7", "tekst": "Hvit bytter av og tvinger fram damebytte. Springeren går mot d5 eller f5." },
         { "tekst": "Se på d4. Bonden har ingen naboer, og ingen bonde kan dekke den. Motoren sier helt likt, men du vet hva du skal sikte på.", "felt": ["d4"] },
         { "fra": "e4 e5 d4 exd4 Qxd4", "tekst": "Senterspillet: Hvit tar tilbake med damen. Men en dame midt på brettet er et mål." },
         { "trekk": "Nc6", "tekst": "Springeren kommer ut med tempo. Regel to.", "fare": ["c6d4"] },
         { "trekk": "Qe3 Nf6 Nc3 Bb4", "tekst": "Damen går til e3. Du utvikler videre, og løperen binder springeren som dekker e4." },
-        { "trekk": "Bd2 O-O O-O-O Re8", "tekst": "Hvit rokerer langt, og tårnet ditt går til e8. Springeren og tårnet angriper e4, og løperen binder forsvareren.", "piler": ["f6e4", "e8e4"] },
+        { "trekk": "Bd2 O-O O-O-O Re8", "tekst": "Hvit rokerer langt, og tårnet ditt går til e8. Nå angriper både springeren og tårnet bonden på e4.", "piler": ["f6e4", "e8e4"] },
         {
           "trekk": "Qg3",
           "tekst": "Damen går til g3 og sikter på g7. Men hun har forlatt e-linjen. Hva gjør du?",
-          "sporsmal": { "type": "trekk", "svar": ["Nxe4"], "hint": "Bonden på e4 er ikke lenger godt nok dekket.", "forklaring": "Springeren slår på e4 og angriper damen på g3. Springeren på c3 kan ikke slå, den er bundet. Etter byttene er du en bonde over." }
+          "sporsmal": { "type": "trekk", "svar": ["Nxe4"], "hint": "Bonden på e4 er ikke lenger godt nok dekket.", "forklaring": "Springeren slår på e4 og angriper damen på g3. Slår springeren på c3 tilbake, tar tårnet på e4. Etter byttene er du en bonde over." }
         }
       ]
     },
@@ -147,7 +134,6 @@
         { "trekk": "Nxc6 bxc6", "tekst": "Hvit bytter på c6. Du tar tilbake mot sentrum med b-bonden." },
         { "trekk": "Bd3 d5", "tekst": "Løperen dekker e4, og du slår til i sentrum. Regel én igjen." },
         { "trekk": "exd5 cxd5 O-O O-O", "tekst": "Begge rokerer. Du har en sterk bonde på d5 og åpne linjer for løperne. Motoren sier likt." },
-        { "tekst": "Videre går c-bonden fram til c6 eller c5, og et tårn kan gå til b8, mot bonden på b2.", "piler": ["c7c5", "a8b8"] },
         { "fra": "e4 e5 Nf3 Nc6 d4 exd4 Nxd4 Nf6 Nxc6", "tekst": "Hvit kan også bytte med en gang. Det heter Mieses-varianten." },
         { "trekk": "bxc6 e5 Qe7", "tekst": "Hvit jager springeren med e-bonden. Damen til e7, og nå er bonden på e5 bundet mot kongen. Den kan ikke slå springeren.", "piler": ["e7e5"] },
         { "trekk": "Qe2 Nd5 c4 Nb6", "tekst": "Hvit dekker, og springeren går via d5 til b6. Hvit har mer plass, men du har mål på e5 og c4. Motoren sier likt." },
@@ -156,7 +142,7 @@
           "tekst": "Utvikler hvit løperen her i stedet, er noe glemt. Hva?",
           "sporsmal": { "type": "trekk", "svar": ["Qxe5+"], "hint": "Hvem dekker bonden på e5 nå?", "forklaring": "Damen tar e5 med sjakk. Ingen hvit brikke dekket bonden, så du vinner den med tempo." }
         },
-        { "tekst": "Du møter også 4.Lc4, skotsk gambitt, og 4.c3, Görings gambitt. Mot den første spiller du 4…Sf6, mot den andre 4…d5. Slå i sentrum i stedet for å samle bønder." }
+        { "tekst": "Mot 4.Lc4, skotsk gambitt, spiller du 4…Sf6. Mot 4.c3, Görings gambitt, spiller du 4…d5. Slå i sentrum i stedet for å samle bønder." }
       ]
     },
     {
@@ -164,20 +150,17 @@
       "tittel": "Firespringer og Ponziani: rolige trekk, skarpe svar",
       "start": "e4 e5 Nf3 Nc6",
       "steg": [
-        { "trekk": "Nc3 Nf6", "tekst": "Firespringerspillet. Alle fire springerne er ute, og nå bestemmer hvit retningen." },
-        { "trekk": "Bb5 Bb4", "tekst": "Spansk firespringer: Du speiler med løperen til b4." },
+        { "trekk": "Nc3 Nf6 Bb5 Bb4", "tekst": "Firespringerspillet. Alle fire springerne er ute. Mot spansk firespringer speiler du med løperen til b4." },
         { "trekk": "O-O O-O d3 d6", "tekst": "Begge rokerer, og d-bøndene dekker e-bøndene. Rolig." },
         { "trekk": "Bg5 Bxc3 bxc3 Qe7", "tekst": "Hvit binder springeren. Du bytter på c3 og setter damen på e7. Dette oppsettet heter Metger." },
         { "trekk": "Re1 Nd8", "tekst": "Springeren går tilbake til d8, på vei til e6. Derfra jager den løperen på g5 og vokter f4 og d4.", "piler": ["d8e6"] },
-        { "fra": "e4 e5 Nf3 Nc6 Nc3 Nf6 Bc4", "tekst": "Setter hvit løperen på c4, kjenner du trikset fra Wiener." },
-        { "trekk": "Nxe4 Nxe4 d5", "tekst": "Springeren slår på e4, og etter Sxe4 kommer d5 som gaffel. Du får brikken tilbake, og stillingen er lik.", "fare": ["d5c4", "d5e4"] },
         { "fra": "e4 e5 Nf3 Nc6 Nc3 Nf6 Nxe5", "tekst": "Et villere forsøk: Halloween-gambitten. Hvit ofrer en springer for bønder og et stort sentrum." },
         {
           "trekk": "Nxe5 d4",
           "tekst": "Du tar springeren, og hvit jager din med d4. Hvor skal den?",
           "sporsmal": { "type": "trekk", "svar": ["Ng6"], "hint": "Ikke tilbake til c6.", "forklaring": "Springeren til g6. Der står den trygt og vokter e5 og f4. Tilbake på c6 blir den jaget igjen av d-bonden." }
         },
-        { "trekk": "e5 Ng8", "tekst": "Hvit jager den andre springeren også, og den går hjem. Det ser rart ut, men du er en brikke over, og motoren gir deg nesten to bønder i fordel." },
+        { "trekk": "e5 Ng8", "tekst": "Hvit jager den andre springeren også, og den går hjem. Det ser rart ut, men du har en brikke for en bonde, og motoren gir deg nesten to bønder i fordel." },
         { "fra": "e4 e5 Nf3 Nc6 c3", "tekst": "Ponziani: Hvit spiller c3 for å bygge sentrum med d4." },
         { "trekk": "Nf6", "tekst": "Angrip e4 med en gang. Hvit brukte trekket på c3 i stedet for å dekke den.", "piler": ["f6e4"] },
         { "trekk": "d4 Nxe4", "tekst": "Hvit tar sentrum, og du tar bonden på e4." },
@@ -207,21 +190,20 @@
         {
           "fra": "e4 e5 Qh5 Nc6 Bc4 g6 Qf3 Nf6 d3",
           "tekst": "Spiller hvit d3 i stedet, finnes det et triks.",
-          "sporsmal": { "type": "trekk", "svar": ["Nd4"], "hint": "Springeren kan angripe damen og c2 samtidig.", "forklaring": "Springeren til d4 angriper damen og truer å slå på c2, med gaffel på konge og tårn. Damen må hjem til d1, og motoren gir deg over en bonde i fordel." }
+          "sporsmal": { "type": "trekk", "svar": ["Nd4"], "hint": "Springeren kan angripe damen og c2 samtidig.", "forklaring": "Springeren til d4 angriper damen og truer å slå på c2, med gaffel på konge og tårn. Damen går hjem til d1 for å dekke c2, og motoren gir deg over en bonde i fordel." }
         },
         { "fra": "e4 e5 Qh5 Nc6 Nf3", "tekst": "Angriper hvit e5 med springeren i stedet, kommer din egen springer med tempo." },
-        { "trekk": "Nf6", "tekst": "Springeren til f6 jager damen. Allerede nå gir motoren deg halvannen bonde i fordel.", "fare": ["f6h5"] },
-        { "fra": "e4 e5 Qf3", "tekst": "Damen til f3 er roligere. Du utvikler med springeren til f6 og c6, og spiller d5 når det passer." }
+        { "trekk": "Nf6", "tekst": "Springeren til f6 jager damen. Allerede nå gir motoren deg halvannen bonde i fordel.", "fare": ["f6h5"] }
       ]
     },
     {
       "id": "feller",
-      "tittel": "Finn trekket: sju feller",
+      "tittel": "Finn trekket: seks feller",
       "start": "e4 e5",
       "steg": [
         {
           "fra": "e4 e5 f4 d5 exd5 exf4 Nf3 Nf6 d4 Nxd5 Bxf4",
-          "tekst": "Sju raske oppgaver fra åpningene i kurset. Først Falkbeer: Hvit tok bonden på f4 med løperen. Hva nå?",
+          "tekst": "Seks raske oppgaver fra åpningene i kurset. Først Falkbeer: Hvit tok bonden på f4 med løperen. Hva nå?",
           "sporsmal": { "type": "trekk", "svar": ["Nxf4"], "hint": "Hvem ser på f4?", "forklaring": "Springeren tar løperen. Hvit glemte at springeren din på d5 ser på f4. Du vinner en hel løper." }
         },
         {
@@ -231,7 +213,7 @@
         },
         {
           "fra": "e4 e5 d4 exd4 c3 d5 exd5 Qxd5 cxd4 Nc6 Bd3",
-          "tekst": "Dansk. Hvit satte løperen på d3 og angriper damen din ikke. Hva er løst?",
+          "tekst": "Dansk. Hvit satte løperen på d3. Hva står løst?",
           "sporsmal": { "type": "trekk", "svar": ["Qxg2"], "hint": "Se på diagonalen fra d5 og ned mot h1.", "forklaring": "Damen tar g2 og truer tårnet på h1. Hvit får aldri rokert kort, og motoren gir deg rundt tre bønder i fordel." }
         },
         {
@@ -248,11 +230,6 @@
           "fra": "e4 e5 Bc4 Nf6 Nf3 Nxe4 Nxe5 d5 Bb3",
           "tekst": "Løperåpningen. Begge har tatt en bonde, og hvit trakk løperen til b3. Finn dobbeltangrepet.",
           "sporsmal": { "type": "trekk", "svar": ["Qg5"], "hint": "Ett dametrekk angriper to ting.", "forklaring": "Damen til g5 angriper springeren på e5 og bonden på g2. Hvit kan ikke dekke begge, og motoren gir deg halvannen bonde i fordel." }
-        },
-        {
-          "fra": "e4 e5 Qh5 Nc6 Bc4 g6 Qg4",
-          "tekst": "Til slutt et dameutfall. Damen gikk til g4. Finn bondetrekket som vinner en brikke.",
-          "sporsmal": { "type": "trekk", "svar": ["d5"], "hint": "Et bondetrekk som også åpner for løperen på c8.", "forklaring": "Bonden til d5 angriper løperen på c4 og åpner diagonalen fra c8 til damen på g4. Hvit kan ikke redde begge." }
         }
       ]
     },
@@ -312,8 +289,7 @@
           "tekst": "Du er en brikke over. Hva er den enkleste veien videre?",
           "sporsmal": { "type": "valg", "valg": ["Bytte brikker, særlig damene", "Ofre noe tilbake for å angripe kongen", "Holde alle brikkene på brettet"], "riktig": 0, "forklaring": "Med en brikke mer blir hvert bytte bedre for deg. Uten damer har hvit nesten ikke motspill." }
         },
-        { "trekk": "Qe7 Ne2 Be6 Kb1 Qb4", "tekst": "Damen kommer på e-linjen, løperen utvikles, og så tilbyr damen bytte fra b4." },
-        { "trekk": "a3 Qxc3 Nxc3", "tekst": "Damene er byttet. Du har en hel springer mer, og resten er teknikk." },
+        { "trekk": "Qe7 Ne2 Be6 Kb1 Qb4 a3 Qxc3 Nxc3", "tekst": "Damen kommer på e-linjen, løperen utvikles, og damen tilbyr bytte fra b4. Damene går av. Du har en hel springer mer, og resten er teknikk." },
         { "tekst": "Se hva som avgjorde: springeren med tempo mot damen, tårnet på den åpne e-linjen, og d5 i riktig øyeblikk. Ingen kunstige triks, bare de tre reglene." }
       ]
     },
@@ -326,13 +302,10 @@
         { "trekk": "Bc4 Nf6", "tekst": "Løperåpningen. Hvit setter løperen på c4, og springeren din angriper e4." },
         { "trekk": "d3 c6", "tekst": "Hvit dekker e4. Du gjør klart for d5 med c6. Da kan du slå tilbake med en bonde hvis hvit bytter på d5." },
         { "trekk": "Nf3 d5 Bb3 Bd6", "tekst": "Der kommer d5. Løperen på c4 trekker seg, og løperen din dekker e5. Du har tatt sentrum.", "felt": ["d5", "e5"] },
-        { "trekk": "Nc3 d4 Ne2 c5", "tekst": "Angriper hvit d5 med springeren, går bonden forbi med tempo. Nå har du mer plass, og løperen på b3 biter i bondekjeden din." },
         { "fra": "e4 e5 Nf3 Nc6 Be2", "tekst": "Mot rolige springertrekk gjelder samme oppskrift." },
         { "trekk": "Nf6 d3 d5", "tekst": "Springeren til f6, og når hvit bare dekker, kommer d5. Motoren liker svart litt." },
         { "fra": "e4 e5 Nc3 Nf6 g3", "tekst": "Wiener med g3: Hvit vil ha løperen på g2." },
         { "trekk": "d5 exd5 Nxd5 Bg2 Nxc3", "tekst": "D5 igjen. Etter byttet på d5 bytter du av springeren på c3, så løperen på g2 ikke får noe å presse på. Motoren sier likt." },
-        { "fra": "e4 e5 c3", "tekst": "2.c3: Hvit vil spille d4 med en bondestøtte." },
-        { "trekk": "Nf6 d4 Nxe4 dxe5 Bc5", "tekst": "Springeren angriper e4, og når hvit spiller d4, tar du bonden. Løperen kommer til c5 og sikter på f2. Motoren liker svart litt.", "fare": ["c5f2"] },
         {
           "tekst": "Hvit spiller rolig og trygt. Hva er oppskriften din?",
           "sporsmal": { "type": "valg", "valg": ["…Sf6 og …d5, fri utvikling og rokade", "…h6 og …g5 for å angripe uansett", "Vente med alle bondetrekk"], "riktig": 0, "forklaring": "Mot rolige trekk tar du sentrum med …d5 og utvikler deg. En lik stilling med svart er et godt resultat. Sjansene kommer senere." }
