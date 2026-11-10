@@ -244,7 +244,7 @@
           "tekst": "Hva er planen din?",
           "sporsmal": { "type": "valg", "valg": ["Tårnet til e8 med en gang, mot kongen", "Slå på c4, og så springeren til c6 og løperen til g4, mot d4", "Bonden til h6, og så vente"], "riktig": 1, "forklaring": "Etter …dxc4 og løperen tar tilbake, står d4 alene. Springeren på c6 og løperen på g4, som binder springeren på f3, presser den. Tårnet til e8 ser naturlig ut, men motoren liker det mindre: Hvit rokerer bare." }
         },
-        { "fra": "e4 e5 Nc3 Nf6 f4 d5 fxe5 Nxe4 Nf3 Be7 d4 O-O Bd3 f5 exf6 Bxf6 O-O Nc6", "tekst": "Andre stilling: Wiener. Hvit har bonden på d4 og to løpere som sikter mot kongen din." },
+        { "fra": "e4 e5 Nc3 Nf6 f4 d5 fxe5 Nxe4 Nf3 Be7 d4 O-O Bd3 f5 exf6 Bxf6 O-O Nc6", "tekst": "Andre stilling: Wiener. Hvit har en bonde på d4, og springeren din står langt framme på e4." },
         {
           "tekst": "Hva sikter brikkene dine på?",
           "sporsmal": { "type": "valg", "valg": ["Bonden på d4", "Bonden på a2", "Kongen på g1"], "riktig": 0, "forklaring": "Løperen på f6 og springeren på c6 sikter begge på d4. Bytter hvit på e4 for å lette presset, tar springeren etterpå bonden på d4." }
@@ -305,7 +305,7 @@
         { "fra": "e4 e5 Nf3 Nc6 Be2", "tekst": "Mot rolige springertrekk gjelder samme oppskrift." },
         { "trekk": "Nf6 d3 d5", "tekst": "Springeren til f6, og når hvit bare dekker, kommer d5. Motoren liker svart litt." },
         { "fra": "e4 e5 Nc3 Nf6 g3", "tekst": "Wiener med g3: Hvit vil ha løperen på g2." },
-        { "trekk": "d5 exd5 Nxd5 Bg2 Nxc3", "tekst": "D5 igjen. Etter byttet på d5 bytter du av springeren på c3, så løperen på g2 ikke får noe å presse på. Motoren sier likt." },
+        { "trekk": "d5 exd5 Nxd5 Bg2 Nxc3", "tekst": "Igjen kommer d5. Etter byttet på d5 bytter du av springeren på c3, så løperen på g2 ikke får noe å presse på. Motoren sier likt." },
         {
           "tekst": "Hvit spiller rolig og trygt. Hva er oppskriften din?",
           "sporsmal": { "type": "valg", "valg": ["…Sf6 og …d5, fri utvikling og rokade", "…h6 og …g5 for å angripe uansett", "Vente med alle bondetrekk"], "riktig": 0, "forklaring": "Mot rolige trekk tar du sentrum med …d5 og utvikler deg. En lik stilling med svart er et godt resultat. Sjansene kommer senere." }
