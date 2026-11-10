@@ -33,7 +33,7 @@
       "steg": [
         {"tekst":"Springeren har tatt på f7 og truer både damen og tårnet. Vi redder ingen av dem.","fare":["f7d8","f7h8"]},
         {"trekk":"Bxf2+","tekst":"Løperen slår på f2 med sjakk. Hvit kan ta løperen, eller gå til f1 og la den stå. Vi ser på det grådige først."},
-        {"trekk":"Kxf2 Nxe4+","tekst":"Springeren tar e4 med sjakk. Kongen har seks felt å velge mellom. To av dem holder. De fire andre taper."},
+        {"trekk":"Kxf2 Nxe4+","tekst":"Springeren tar e4 med sjakk. Kongen har seks felt å velge mellom. To av dem holder. De fire andre gir svart en stor fordel."},
         {"trekk":"Kg1","tekst":"Det tryggeste er g1, bak bøndene."},
         {"tekst":"Hvordan fortsetter angrepet?","sporsmal":{"type":"trekk","svar":["Qh4"],"hint":"Hvilket felt ved kongen er svakest?","forklaring":"Damen til h4 truer matt på f2. Springeren på e4 dekker feltet."}},
         {"trekk":"g3","tekst":"Hvit stenger med g-bonden og angriper damen. Nå kommer trekket du må kunne.","fare":["g3h4"]},
@@ -62,7 +62,7 @@
       "steg": [
         {"tekst":"Dette er det sunne trekket, og det du møter fra dem som kan teori. Løperen tar med sjakk."},
         {"tekst":"Hvor går kongen?","sporsmal":{"type":"trekk","svar":["Ke7"],"hint":"Kongen skal stå ved siden av løperen.","forklaring":"Til e7. Der angriper kongen løperen, og feltet f8 er ledig for tårnet."}},
-        {"tekst":"Løperen og springeren dekker hverandre. Kommer h-bonden til h6, faller en av dem. Derfor trekker hvit løperen tilbake med en gang: til d5, b3 eller c4.","fare":["e7f7"],"piler":["h7h6"]},
+        {"tekst":"Løperen er bare dekket av springeren. Kommer h-bonden til h6, faller en av dem. Derfor trekker hvit løperen tilbake med en gang: til d5, b3 eller c4.","fare":["e7f7"],"piler":["h7h6"]},
         {"trekk":"Bd5","tekst":"Først d5. Løperen står midt på brettet, dekket bare av e-bonden."},
         {"tekst":"Hva spiller du?","sporsmal":{"type":"trekk","svar":["Rf8"],"hint":"Tårnet vil ha den åpne linjen.","forklaring":"Tårnet til f8, rett mot f2. Nå ligger et triks i lufta."}},
         {"trekk":"c3","tekst":"Sett at hvit spiller c3 for å få inn d4. Ser du trikset?"},
