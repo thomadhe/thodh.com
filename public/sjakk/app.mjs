@@ -119,6 +119,8 @@ function renderBoard(restoreFocus = false) {
   if (flipped) { files.reverse(); ranks.reverse(); }
   board.classList.toggle('opposite-player', mode === 'local' && flipped);
   const movable = canMove();
+  // Casinosjakk marks the pieces the reels allow, so the board itself says what may move.
+  const hints = movable && state.settings.minispill === 'casino';
   const premoving = !movable && canPremove();
   const view = boardView();
   const legal = selected && movable ? chess.moves({ square: selected, verbose: true })
@@ -142,9 +144,10 @@ function renderBoard(restoreFocus = false) {
     if (boardPieces[square]?.code !== pieces[square]?.code) moved = true;
     const destination = legal.find(move => move.to === square);
     const check = piece?.type === 'k' && piece.color === state.turn && chess.isCheck();
+    const hint = hints && piece?.color === state.turn && chess.moves({ square, verbose: true }).length > 0;
     const next = {
-      className: ['square', (file.charCodeAt(0) - 97 + rank) % 2 === 0 ? 'light' : 'dark', selected === square ? 'selected' : '', last && [last.from, last.to].includes(square) ? 'last-move' : '', queued.has(square) ? 'premove' : '', check ? 'in-check' : ''].filter(Boolean).join(' '),
-      'aria-label': `${square}${piece ? `, ${colorName(piece.color).toLowerCase()} ${pieceNames[piece.type]}` : ', tomt felt'}${destination ? (premoving ? ', mulig forhåndstrekk' : ', lovlig trekk') : ''}${check ? ', i sjakk' : ''}`,
+      className: ['square', (file.charCodeAt(0) - 97 + rank) % 2 === 0 ? 'light' : 'dark', selected === square ? 'selected' : '', last && [last.from, last.to].includes(square) ? 'last-move' : '', queued.has(square) ? 'premove' : '', check ? 'in-check' : '', hint ? 'kan-flyttes' : ''].filter(Boolean).join(' '),
+      'aria-label': `${square}${piece ? `, ${colorName(piece.color).toLowerCase()} ${pieceNames[piece.type]}` : ', tomt felt'}${hint ? ', kan flyttes' : ''}${destination ? (premoving ? ', mulig forhåndstrekk' : ', lovlig trekk') : ''}${check ? ', i sjakk' : ''}`,
       'aria-pressed': String(selected === square),
       'aria-disabled': String(!movable && !premoving),
       tabindex: square === focusSquare ? '0' : '-1',
@@ -194,7 +197,15 @@ function renderClocks() {
   const duration = state.settings.players[state.turn].deadline * 1000;
   const width = `${duration ? Math.min(100, values.deadline / duration * 100).toFixed(1) : 100}%`;
   if ($('#timer-progress').style.width !== width) $('#timer-progress').style.width = width;
-  $('.clock-panel').classList.toggle('urgent', values.deadline !== null && values.deadline <= 10000 && state.status === 'playing');
+  const urgent = values.deadline !== null && values.deadline <= 10000 && state.status === 'playing';
+  $('.clock-panel').classList.toggle('urgent', urgent);
+  // The slot machine carries the same deadline as a fuse, since the clock is below the fold on a phone.
+  const fuse = $('#casino-frist');
+  if (fuse) {
+    fuse.parentElement.hidden = !duration || state.status !== 'playing';
+    if (fuse.style.width !== width) fuse.style.width = width;
+    fuse.parentElement.classList.toggle('urgent', urgent);
+  }
 }
 
 function syncNotice() {
@@ -226,6 +237,7 @@ function syncNotice() {
 
 function render() {
   document.body.classList.toggle('online', mode === 'online');
+  document.body.classList.toggle('casino', casinoAktiv());
   chess = state.settings.minispill === 'casino' ? casinoBrett(state) : new Chess(state.fen);
   if (selected && !(boardView()).get(selected)) selected = null;
   renderBoard(board.contains(document.activeElement));
@@ -278,6 +290,18 @@ function render() {
 let trukketRunde = null;
 let trukketVarsel = null;
 let spinner = false;
+const casinoAktiv = () => state.settings.minispill === 'casino' && Boolean(state.casino) && state.status !== 'setup';
+
+// The machine sits with the board, so a turn needs no scrolling. On wide screens the board fills the height,
+// and the machine goes to the top of the side panel instead. The same limits are in styles.css.
+const bredSkjerm = matchMedia('(min-width: 851px) and (min-height: 521px)');
+function plasserAutomat() {
+  const etter = $(bredSkjerm.matches ? '.turn-panel' : '.board-frame');
+  const panel = $('#casino-panel');
+  if (etter && panel.previousElementSibling !== etter) etter.after(panel);
+}
+bredSkjerm.addEventListener('change', plasserAutomat);
+plasserAutomat();
 
 /** The reels waiting for the lever: a failed spin (shown before its "no win" notice) or the new spin. */
 function ventendeSpinn() {
@@ -318,6 +342,7 @@ function trekkSpak() {
   casinolyd.spak();
   const spak = $('#spak');
   spak.classList.add('trukket');
+  spak.classList.remove('klar');
   setTimeout(() => spak.classList.remove('trukket'), 450);
   const stopp = [1500, 2200, 2900];
   const start = performance.now() + 250;
@@ -355,23 +380,40 @@ function trekkSpak() {
 }
 
 function renderCasino() {
-  const aktiv = state.settings.minispill === 'casino' && state.casino && state.status !== 'setup';
+  const aktiv = casinoAktiv();
   $('#casino-panel').hidden = !aktiv;
   if (!aktiv || spinner) return;
   const venter = ventendeSpinn();
   const spak = $('#spak');
+  const hadFocus = document.activeElement === spak;
   spak.disabled = !venter || (mode === 'online');
   spak.classList.toggle('klar', Boolean(venter));
+  // A disabled lever drops keyboard focus on the floor; hand it to the board, where the next step is.
+  if (hadFocus && spak.disabled) squares.get(focusSquare)?.element.focus({ preventScroll: true });
   $('#lyd-av').textContent = lydPa() ? '🔊' : '🔇';
-  if (venter) {
+  // A spun "no win" stays on the reels while its notice is up.
+  const varsel = state.notices[0];
+  const tapt = varsel?.kind === 'casino' && varsel.hjul && trukketVarsel === varsel.id ? varsel : null;
+  // Whose machine it is right now. An index.html cached from before the chip existed has no such element.
+  const tur = $('#casino-tur');
+  const farge = state.status === 'playing' ? venter?.farge ?? tapt?.recipient ?? state.turn : null;
+  if (tur) { tur.className = `casino-tur${farge ? (farge === 'w' ? ' white' : ' black') : ''}`; setText(tur, farge ? '♟' : ''); }
+  $('#casino-panel').classList.toggle('mot-svart', mode === 'local' && farge === 'b');
+  if (tapt) {
+    visHjul(tapt.hjul, tapt.hjul.map(() => 'tom'), tapt.recipient);
+    $('#casino-tekst').textContent = 'Ingen gevinst';
+    return;
+  }
+  // A spin nobody has pulled the lever for stays hidden, also behind another notice.
+  if (venter || trukketRunde !== state.casino.runde) {
     reels().forEach(el => { el.innerHTML = '<span class="spm" aria-hidden="true">?</span>'; el.className = 'hjul skjult'; el.setAttribute('aria-label', 'Ikke spunnet ennå'); });
-    $('#casino-tekst').textContent = `${colorName(venter.farge)}: trekk i spaken!`;
+    $('#casino-tekst').textContent = venter ? `${colorName(venter.farge)}: trekk i spaken!` : state.result?.title ?? '';
     return;
   }
   const { hjul, status } = state.casino;
   visHjul(hjul, status, state.turn);
   const igjen = hjul.filter((_, i) => status[i] === 'klar').map(type => pieceNames[type]);
-  $('#casino-tekst').textContent = state.status !== 'playing' ? '' : igjen.length ? `Flytt: ${igjen.join(', ')}` : 'Turen går videre';
+  $('#casino-tekst').textContent = state.status !== 'playing' ? state.result?.title ?? '' : igjen.length ? `Flytt: ${igjen.join(', ')}` : 'Turen går videre';
 }
 
 $('#spak').addEventListener('click', trekkSpak);
@@ -920,6 +962,8 @@ $('#setup-form').addEventListener('submit', async event => {
     closePush();
     mode = 'local'; room = null; revision = -1; confirmed = null; pending = []; premoves = []; connected = true; state = createSession(settings); trukketRunde = null; trukketVarsel = null; selected = null; flipped = false; shownNotice = null; localSetupPause = false;
     history.replaceState(null, '', location.pathname); message(); setupDialog.close(); render();
+    // "Nytt parti" is at the bottom of the page on a phone; a casino game starts with board and lever in view.
+    if (settings.minispill === 'casino') scrollTo({ top: 0 });
     return;
   }
   setupDialog.close();
