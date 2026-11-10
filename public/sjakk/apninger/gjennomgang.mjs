@@ -219,7 +219,8 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
 
   // ---------- Steps ----------
   const brettVist = s => vis(s.vist, { piler: s.piler, merket: s.felt });
-  const stegHtml = s => `<p class="ap-sier">${esc(s.tekst)}</p>${s.trekk.length ? `<p class="sr-only">På brettet: ${esc(trekkTekst(s))}.</p>` : ''}`;
+  // The moves first for a screen reader, then what Tora says. Hidden, so the bubble keeps its shape.
+  const stegHtml = s => `${s.trekk.length ? `<p class="sr-only">På brettet: ${esc(trekkTekst(s))}.</p>` : ''}<p class="ap-sier">${esc(s.tekst)}</p>`;
 
   // Plays a step: the moves in, the arrows, the text and its time. animer false shows the moves at once.
   async function kjor(k, i, { animer = true } = {}) {
@@ -425,9 +426,11 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
   function slutt() {
     avbryt();
     ui.respons();
-    merkFerdig(ui.fremgang(), apning.id);
+    // Finished means every chapter seen, not only the last one reached.
+    const alle = kursStatus(kurs, ui.fremgang()).sett === kurs.kapitler.length;
+    if (alle) merkFerdig(ui.fremgang(), apning.id);
     // The cards' short introduction says less than the walkthrough just did. A player with no cards yet still gets it, for how the cards work.
-    if (Object.keys(ui.fremgang().kort).length && !introSett(ui.fremgang(), apning.id)) merkIntro(ui.fremgang(), apning.id);
+    if (alle && Object.keys(ui.fremgang().kort).length && !introSett(ui.fremgang(), apning.id)) merkIntro(ui.fremgang(), apning.id);
     ui.lagre();
     tilstand.fase = 'slutt';
     const s = kapittel().steg.at(-1);
@@ -441,7 +444,9 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
   }
   function tegnSlutt() {
     const valgt = erValgt(ui.fremgang(), apning.id);
-    tekst(`<p class="eyebrow">HUSKEREGLER</p><p class="ap-sier"><strong>Da har du sett hele gjennomgangen.</strong> Her er det viktigste å ta med seg:</p><ol class="ap-gj-regler">${kurs.huskeregler.map(r => `<li>${esc(r)}</li>`).join('')}</ol>`, 'bra');
+    const status = kursStatus(kurs, ui.fremgang());
+    const mangler = kurs.kapitler.filter(k => !ui.fremgang().kurs?.[apning.id]?.kapitler?.[k.id]);
+    tekst(`<p class="eyebrow">HUSKEREGLER</p>${status.sett === status.antall ? '<p class="ap-sier"><strong>Da har du sett hele gjennomgangen.</strong> Her er det viktigste å ta med seg:</p>' : `<p class="ap-sier"><strong>Det var slutten.</strong> Her er det viktigste å ta med seg:</p>`}<ol class="ap-gj-regler">${kurs.huskeregler.map(r => `<li>${esc(r)}</li>`).join('')}</ol>${mangler.length ? `<p class="ap-kilde">Du har ikke sett ${mangler.length === 1 ? 'kapitlet' : 'kapitlene'} ${mangler.map(k => `«${esc(k.tittel)}»`).join(' og ')} ennå. De står i lista under.</p>` : ''}`, 'bra');
     const tilOkt = kom.startsWith('#/repertoar/kort');
     el.handling.innerHTML = `${kvittering ? `<p class="ap-bygg-kvittering" role="status">${esc(kvittering)}</p>` : ''}<div class="ap-kontroller ap-gj-slutt">
       ${valgt ? '<p class="ap-gj-valgt">✓ I repertoaret ditt</p>' : '<button type="button" class="button secondary" data-slutt="legg">Legg til i repertoaret</button>'}

@@ -32,7 +32,7 @@ export function miniBrett(fen, orientering = 'w') {
 }
 
 // A link to an opening's walkthrough, where it has one. The page is drawn first, and the links come once it is known.
-export const kursLenke = (kurs, fremgang, adresse = '') => `<a class="ap-kurs-lenke" href="${adresse}#/a/${kurs.apning}/gjennomgang"><span class="ap-kurs-ikon" aria-hidden="true"></span>Se gjennomgangen<small>${esc(kursMerke(kurs, fremgang))}</small></a>`;
+export const kursLenke = (kurs, fremgang, adresse = '') => `<a class="ap-kurs-lenke" href="${adresse}#/a/${kurs.apning}/gjennomgang"><span class="ap-kurs-ikon" aria-hidden="true"></span><span class="ap-kurs-navn">Se gjennomgangen</span><small>${esc(kursMerke(kurs, fremgang))}</small></a>`;
 export function fyllKursLenker(rot, ui) {
   const plasser = [...rot.querySelectorAll('[data-kurs-plass]')];
   if (!plasser.length || !ui.kurs) return;

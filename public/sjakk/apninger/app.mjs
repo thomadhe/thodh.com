@@ -184,6 +184,8 @@ function visApning(id, fane) {
       if (!funnet || tilstand.apningId !== id || !nav) return;
       nav.innerHTML = fanerHtml(apning, funnet);
       merkFane(tilstand.fane);
+      // The page about the opening points to the walkthrough first, once it is known to be there.
+      if (tilstand.fane === 'om') visOm(apning);
     });
   }
   evalbar.hold(false);
