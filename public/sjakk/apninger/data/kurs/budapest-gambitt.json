@@ -88,7 +88,7 @@
       "start": "d4 Nf6 c4 e5 dxe5 Ng4",
       "steg": [
         { "trekk": "e4", "tekst": "Her vil ikke hvit holde bonden i det hele tatt. Hvit bygger et bredt sentrum, og damen angriper samtidig springeren på g4. Dette er Aljechins trekk.", "fare": ["d1g4"] },
-        { "trekk": "Nxe5 f4", "tekst": "Du tar bonden, og hvit jager springeren med f-bonden. Hvor skal den?", "sporsmal": { "type": "trekk", "svar": ["Nec6"], "hint": "Velg feltet der springeren ser på d4.", "forklaring": "Springeren til c6. Derfra ser den på d4, og løperen får snart c5 eller b4 med tempo. På g6 står den dårligere: Der gir motoren hvit halvannen bonde." } },
+        { "trekk": "Nxe5 f4", "tekst": "Du tar bonden, og hvit jager springeren med f-bonden. Hvor skal den?", "sporsmal": { "type": "trekk", "svar": ["Nec6"], "hint": "Velg feltet der springeren ser på d4.", "forklaring": "Springeren til c6. Derfra ser den på d4, og løperen får snart c5 eller b4 med tempo. På g6 står den dårligere: Der gir motoren hvit mer enn en bonde." } },
         { "tekst": "Se på hvits bønder. De ser sterke ut. Men alle har rykket fram, og bak dem er det hull: feltet d4 og diagonalen ned mot g1.", "felt": ["d4", "e3", "g1"], "piler": ["f8c5"] },
         { "trekk": "Nf3 Bc5", "tekst": "Løperen tar diagonalen. Så lenge den står der, får ikke hvit rokert kort.", "piler": ["c5g1"] },
         { "trekk": "Nc3 d6", "tekst": "Bonden til d6 åpner for den andre løperen og gjør det tyngre for hvit å gå fram med e-bonden." },
@@ -97,7 +97,7 @@
         { "trekk": "Be3", "tekst": "Løperen til e3 stenger diagonalen før løperen din kommer dit. Hvor går den da?", "sporsmal": { "type": "trekk", "svar": ["Bb4+"], "hint": "Du kjenner feltet fra kapittelet om løperen på f4.", "forklaring": "Sjakk fra b4. Hvit må svare på sjakken, og setter han springeren på c3, bytter du og gir ham dobbeltbønder igjen." } },
         { "trekk": "Nc3 Bxc3+ bxc3 Qe7", "tekst": "Kjenner du igjen mønsteret? Bytt på c3, dobbeltbønder, og damen til e7. Denne gangen angriper hun bonden på e4.", "piler": ["e7e4"], "felt": ["c3", "c4"] },
         { "trekk": "Bd3 b6", "tekst": "Hvit dekker, og du spiller b6. Springeren går via a6 til c5, og løperen kommer til b7 eller a6. Alt sikter på c4 og e4. Motoren sier helt likt.", "piler": ["b8a6", "c8b7"], "felt": ["c4", "e4"] },
-        { "tekst": "Oppsummert: Mot det brede sentrumet slår du ikke med bønder. Du setter brikker i hullene: løperen på c5 eller b4, og springere på c6 og d4. Motoren gir hvit litt over en halv bonde i hovedlinjen, så spill nøyaktig." }
+        { "tekst": "Oppsummert: Mot det brede sentrumet slår du ikke med bønder. Du setter brikker i hullene: løperen på c5 eller b4, og springere på c6 og d4. Motoren gir hvit mellom en halv og en hel bonde i hovedlinjen, så spill nøyaktig." }
       ]
     },
     {
