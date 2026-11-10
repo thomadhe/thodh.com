@@ -106,6 +106,35 @@
         { "fra": "e4 e5 f4 exf4 Nf3 Nf6 e5 Nh5 d4 g5", "tekst": "Fra Schallopp. Svart har støttet f4 med g5, og springeren på h5 ser trygg ut.", "felt": ["h5"] },
         { "tekst": "Finn trekket som viser at den ikke er det.", "sporsmal": { "type": "trekk", "svar": ["Nfd2"], "hint": "Hvilken brikke står mellom damen din og h5?", "forklaring": "Springeren går fra f3 til d2, og damen din sikter rett på h5. Springeren der har bare ett trygt felt, g7." } }
       ]
+    },
+    {
+      "id": "eksempelparti",
+      "tittel": "Eksempelparti: bønder under, men alltid et mål",
+      "start": "e4 e5 f4 exf4 Nf3",
+      "steg": [
+        { "tekst": "Nå et helt parti. Det er et eksempelparti, satt sammen for å vise planene, og trekkene er sjekket med motor. Prøv å gjette hvits trekk." },
+        { "trekk": "d5 exd5 Qxd5", "tekst": "Moderne forsvar, og svart slår tilbake med damen. Du er en bonde under." },
+        { "trekk": "Nc3 Qe6+ Be2", "tekst": "Springeren jager damen, damen sjakker, og løperen dekker. Du har tre brikker ute. Svart har bare damen." },
+        { "trekk": "Bd6 O-O", "tekst": "Løperen dekker f4, og du rokerer. Kongen er trygg.", "felt": ["f4"] },
+        { "trekk": "Nc6", "tekst": "Svart utvikler springeren." },
+        { "tekst": "Hva spiller du?", "sporsmal": { "type": "trekk", "svar": ["d4"], "hint": "Spørsmål to på lista: sentrum.", "forklaring": "Bonden til d4. Løperen på c1 sikter på f4, og bonden truer å gå til d5 med gaffel på damen og springeren." } },
+        { "trekk": "Qh6", "tekst": "Damen går unna gaffelen og dekker f4 en gang til.", "fare": ["h6f4"] },
+        { "trekk": "d5 Nce7", "tekst": "Du går fram likevel og vinner plass." },
+        { "tekst": "Hvem dekker f4, og hva gjør du med det?", "sporsmal": { "type": "valg", "valg": ["Løperen og damen. Springeren til e4 angriper løperen.", "Bare damen. Løperen tar på f4 nå.", "Ingen. Tårnet tar på f4."], "riktig": 0, "forklaring": "To brikker dekker f4, så du kan ikke slå ennå. Løperen på d6 kan byttes, og springeren til e4 angriper den." } },
+        { "trekk": "Ne4 Nf6 Nxd6+ cxd6", "tekst": "Du bytter av løperen. Nå passer damen alene på f4.", "felt": ["f4"] },
+        { "trekk": "Bb5+ Kf8", "tekst": "Løperen sjakker, og kongen går til f8. Legg merke til hvor den står: på f-linjen.", "felt": ["f8"] },
+        { "trekk": "Qd4", "tekst": "Damen til midten. Nå er f4 angrepet to ganger og dekket én.", "piler": ["d4f4", "c1f4"] },
+        { "trekk": "Nfxd5", "tekst": "Svart tar en bonde til, og springeren på d5 dekker f4. Du er to bønder under. Men svart har kongen på f8 og tre brikker som ikke er med.", "fare": ["d5f4"] },
+        { "tekst": "Springeren på d5 er den nye forsvareren. Hva gjør du?", "sporsmal": { "type": "trekk", "svar": ["c4"], "hint": "Jag den med en bonde.", "forklaring": "Bonden til c4 jager den. Det eneste gode feltet for springeren er e3. Alle andre trekk er klart dårligere." } },
+        { "trekk": "Nf6", "tekst": "Svart trekker springeren til f6. Det ser trygt ut, men det er feilen som avgjør." },
+        { "tekst": "Hva nå?", "sporsmal": { "type": "trekk", "svar": ["Bxf4"], "hint": "Bonden på f4 har mistet en forsvarer.", "forklaring": "Løperen tar på f4 og angriper damen. Tårnet på f1 står bak springeren og sikter mot f6 og kongen. Damen tar på d6 vinner også, men dette er sterkest." } },
+        { "trekk": "Nf5 Bxh6 Nxd4 Nxd4 gxh6", "tekst": "Svart redder seg over i damebytte, og alt byttes av." },
+        { "tekst": "Og nå?", "sporsmal": { "type": "trekk", "svar": ["Rxf6"], "hint": "f-linjen er åpen.", "forklaring": "Tårnet tar springeren på f6. Den sto udekket, for g-bonden måtte slå på h6. Du er en springer over." } },
+        { "trekk": "Kg7 Raf1", "tekst": "Kongen angriper tårnet. Du flytter det ikke, du dobler på f-linjen. Nå er f7 angrepet to ganger.", "piler": ["f6f7"], "felt": ["f7"] },
+        { "trekk": "Rg8 Rxf7+ Kh8", "tekst": "Svart søker motspill, og tårnet slår inn på f7 med sjakk. Det er feltet fra første kapittel.", "felt": ["f7"] },
+        { "tekst": "Her stopper vi. Du har en springer mer, og du lå under i bønder nesten hele partiet." },
+        { "tekst": "Se tilbake på trekkene dine. Nesten alle truet noe: springeren mot damen, bonden mot springeren, springeren mot løperen, sjakken, og bonden mot springeren igjen. Slik bruker du et forsprang i utvikling." }
+      ]
     }
   ],
   "huskeregler": [
