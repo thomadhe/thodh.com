@@ -537,6 +537,8 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
   @supports selector(:has(a)) {
     .ap-gj-aktiv { padding-bottom: 48px; }
     .app-shell:has(.ap-gj-aktiv) { padding-bottom: 104px; }
+    /* What is scrolled to or tabbed to stops above the controls, not under them. */
+    html:has(.ap-gj-aktiv) { scroll-padding-bottom: 112px; }
   }
   .ap-gj-aktiv .ap-okt-neste { position: static; margin-top: 0; }
   .ap-gj-aktiv .ap-okt-neste::before { content: none; }

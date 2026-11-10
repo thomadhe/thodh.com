@@ -31,6 +31,7 @@ const rolig = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matc
 const smal = () => window.matchMedia?.('(max-width: 850px)').matches;
 const minutter = ms => Math.max(1, Math.round(ms / 60000));
 const sporsmalI = steg => steg.filter(s => s.sporsmal).length;
+const kapittelMeta = kap => `ca. ${minutter(kap.steg.reduce((sum, s) => sum + stegTid(s), 0))} min${sporsmalI(kap.steg) ? ` · ${flertall(sporsmalI(kap.steg), 'spørsmål', 'spørsmål')}` : ''}`;
 
 // One voice for the whole visit: the browser loads its voices once.
 let tale = null;
@@ -267,12 +268,11 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     el.kapitler.innerHTML = kurs.kapitler.map((kap, k) => {
       const sett = Boolean(post?.kapitler?.[kap.id]);
       const her = k === tilstand.k && tilstand.fase !== 'plakat' && tilstand.fase !== 'slutt';
-      const tid = minutter(kap.steg.reduce((sum, s) => sum + stegTid(s), 0));
-      return `<li><button type="button" class="ap-gj-kap${her ? ' her' : ''}${sett ? ' sett' : ''}" data-kap="${k}"${her ? ' aria-current="step"' : ''}><span class="ap-gj-kap-nr" aria-hidden="true">${sett ? '✓' : k + 1}</span><span class="ap-gj-kap-tekst"><b>${esc(kap.tittel)}</b><small>ca. ${tid} min${sporsmalI(kap.steg) ? ` · ${flertall(sporsmalI(kap.steg), 'spørsmål', 'spørsmål')}` : ''}${sett ? ' · sett' : ''}</small></span></button></li>`;
+      return `<li><button type="button" class="ap-gj-kap${her ? ' her' : ''}${sett ? ' sett' : ''}" data-kap="${k}"${her ? ' aria-current="step"' : ''}><span class="ap-gj-kap-nr" aria-hidden="true">${sett ? '✓' : k + 1}</span><span class="ap-gj-kap-tekst"><b>${esc(kap.tittel)}</b><small>${kapittelMeta(kap)}${sett ? ' · sett' : ''}</small></span></button></li>`;
     }).join('');
     el.prikker.innerHTML = kurs.kapitler.map((kap, k) => `<i class="${post?.kapitler?.[kap.id] ? 'sett' : ''}${k === tilstand.k && tilstand.fase !== 'plakat' && tilstand.fase !== 'slutt' ? ' her' : ''}"></i>`).join('');
     el.kapAntall.textContent = `${status.sett} av ${status.antall} sett`;
-    el.kapitler.querySelectorAll('[data-kap]').forEach(knapp => knapp.addEventListener('click', () => start(Number(knapp.dataset.kap), 0)));
+    el.kapitler.querySelectorAll('[data-kap]').forEach(knapp => knapp.addEventListener('click', () => velgKapittel(Number(knapp.dataset.kap))));
     if (fokus !== null) el.kapitler.querySelector(`[data-kap="${fokus}"]`)?.focus({ preventScroll: true });
   }
   // The chapters are the programme before and after, and fold away while a chapter plays. Opened by hand, they stay open.
@@ -282,6 +282,12 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     if (ny === visning) return;
     visning = ny;
     if (!el.kapittelboks.contains(document.activeElement)) el.kapittelboks.open = ny === 'stille';
+  }
+  // A chapter picked from the list folds it, and the focus waits on the list's heading.
+  function velgKapittel(k) {
+    el.kapittelboks.querySelector('summary').focus({ preventScroll: true });
+    el.kapittelboks.open = false;
+    start(k, 0);
   }
   const tegnAlt = () => { hode(); tegnSpor(); tegnKnapper(); tegnKapitler(); tegnOversikt(); };
 
@@ -310,7 +316,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     evalbar.hold(false);
     if (i === 0 && animer && nyttKapittel) {
       vis(kapittel().start);
-      tekst(`<p class="eyebrow">KAPITTEL ${k + 1}</p><p class="ap-sier"><strong>${esc(kapittel().tittel)}</strong></p>`);
+      tekst(`<p class="eyebrow">KAPITTEL ${k + 1} AV ${kurs.kapitler.length}</p><p class="ap-sier"><strong>${esc(kapittel().tittel)}</strong></p><p class="ap-kilde">${kapittelMeta(kapittel())}</p>`);
       if (!rolig()) {
         ramme.insertAdjacentHTML('beforeend', `<div class="ap-kapittelkort" aria-hidden="true"><span>Kapittel ${k + 1} av ${kurs.kapitler.length}</span><b>${esc(kapittel().tittel)}</b><i></i></div>`);
       }
@@ -534,7 +540,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     const valgt = erValgt(ui.fremgang(), apning.id);
     const status = kursStatus(kurs, ui.fremgang());
     const mangler = kurs.kapitler.filter(k => !ui.fremgang().kurs?.[apning.id]?.kapitler?.[k.id]);
-    tekst(`<p class="eyebrow">HUSKEREGLER</p>${status.sett === status.antall ? '<p class="ap-sier"><strong>Da har du sett hele gjennomgangen.</strong> Her er det viktigste å ta med seg:</p>' : `<p class="ap-sier"><strong>Det var slutten.</strong> Her er det viktigste å ta med seg:</p>`}<ol class="ap-gj-regler">${kurs.huskeregler.map(r => `<li>${esc(r)}</li>`).join('')}</ol>${mangler.length ? `<p class="ap-kilde">Du har ikke sett ${mangler.length === 1 ? 'kapitlet' : 'kapitlene'} ${mangler.map(k => `«${esc(k.tittel)}»`).join(' og ')} ennå. De står i lista under.</p>` : ''}`, 'bra');
+    tekst(`<p class="eyebrow">HUSKEREGLER</p>${status.sett === status.antall ? '<p class="ap-sier"><strong>Da har du sett hele gjennomgangen.</strong> Her er det viktigste å ta med seg:</p>' : `<p class="ap-sier"><strong>Det var slutten.</strong> Her er det viktigste å ta med seg:</p>`}<ol class="ap-gj-regler">${kurs.huskeregler.map(r => `<li>${esc(r)}</li>`).join('')}</ol>${mangler.length ? `<p class="ap-kilde">Du har ikke sett ${mangler.length === 1 ? 'kapitlet' : 'kapitlene'} ${mangler.map(k => `«${esc(k.tittel)}»`).join(' og ')} ennå. ${mangler.length === 1 ? 'Det' : 'De'} står i lista under.</p>` : ''}`, 'bra');
     const tilOkt = kom.startsWith('#/repertoar/kort');
     el.handling.innerHTML = `${kvittering ? `<p class="ap-bygg-kvittering" role="status">${esc(kvittering)}</p>` : ''}<div class="ap-kontroller ap-gj-slutt">
       <button type="button" class="button primary" data-slutt="kort">Start kortene ▶</button>
