@@ -62,7 +62,7 @@ function oppslagFor(apning) {
 
 // Board, evaluation bar and panel. Everything with a board uses this, so the layout stays the same.
 function lagBrettside(topp) {
-  main.innerHTML = `${topp}<div class="ap-oppsett"><section class="ap-brettsone" aria-label="Brett"><div id="ap-brett"></div><div id="ap-eval"></div><div id="ap-avspiller" class="ap-avspiller" hidden></div><p id="ap-respons" class="ap-respons" aria-hidden="true" hidden></p><p id="ap-linje" class="ap-linje"></p></section><aside id="ap-panel" class="ap-panel"></aside></div><p class="ap-fotnote">${KREDITT}</p>`;
+  main.innerHTML = `${topp}<div class="ap-oppsett"><section class="ap-brettsone" aria-label="Brett"><div id="ap-brett"></div><div id="ap-avspiller" class="ap-avspiller" hidden></div><div id="ap-eval"></div><p id="ap-respons" class="ap-respons" aria-hidden="true" hidden></p><p id="ap-linje" class="ap-linje"></p></section><aside id="ap-panel" class="ap-panel"></aside></div><p class="ap-fotnote">${KREDITT}</p>`;
   fjernEvalbar();
   evalbar = lagEvalbar(main.querySelector('#ap-eval'), { lager });
   brett = lagBrett(main.querySelector('#ap-brett'), { naarTrekk: trekk => tilstand.naarTrekk?.(trekk), naarStilling: (fen, orientering) => evalbar.settStilling(fen, { orientering, lagret: oppslag(fen) }) });
@@ -156,6 +156,14 @@ function fanerHtml(apning, kurs) {
 }
 function merkFane(fane) {
   main.querySelectorAll('[data-fane]').forEach(a => { if (a.dataset.fane === fane) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  // On a phone the tabs are one row that scrolls sideways, and the open tab should be in it.
+  const nav = main.querySelector('.ap-faner');
+  const aktiv = nav?.querySelector('[aria-current="page"]');
+  if (!aktiv || nav.scrollWidth <= nav.clientWidth) return;
+  // No further than it takes, so the first tabs stay in sight when they can.
+  const a = aktiv.getBoundingClientRect(), n = nav.getBoundingClientRect();
+  if (a.left < n.left + 16) nav.scrollLeft += a.left - n.left - 16;
+  else if (a.right > n.right - 40) nav.scrollLeft += a.right - n.right + 40;
 }
 
 function visApning(id, fane) {

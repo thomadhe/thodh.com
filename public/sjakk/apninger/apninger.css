@@ -325,80 +325,176 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
 .ap-tekst-knapper { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .ap-tekst-knapper .button { margin-top: 0; }
 
-/* Gjennomgang: the course played like a video. The controls sit under the board, like a player's. */
-.ap-avspiller { margin-top: 6px; }
-/* The controls take a row under the board, so the board gives way a little more on low windows. */
-@media (min-width: 851px) { .ap-gj-aktiv .ap-oppsett { grid-template-columns: minmax(0, clamp(400px, calc(100vh - 486px), 600px)) minmax(300px, 1fr); } }
-.ap-gj-spor.ap-skrubb { margin-top: 0; height: 30px; }
-.ap-gj-spor .ap-segment::before { height: 6px; margin-top: -3px; }
-.ap-gj-spor .ap-segment.s-sett::before, .ap-gj-spor .ap-segment.s-naa::before { background: #7c485e; }
+/* Gjennomgang: the course played like a lesson video. The board and Tora are the stage. The controls sit under the board, and at the bottom of the screen on a phone. */
+.ap-avspiller { margin-top: 8px; }
+/* Play scrolls the tabs to the top of the window, so the board takes the height that is left under them. */
+@media (min-width: 851px) { .ap-gj-aktiv .ap-oppsett { grid-template-columns: minmax(0, clamp(400px, calc(100vh - 256px), 600px)) minmax(320px, 1fr); } }
+.ap-gj-aktiv .ap-faner { scroll-margin-top: 12px; }
+.ap-gj-aktiv .ap-brett-ramme { scroll-margin-top: 6px; transition: border-color .25s, box-shadow .25s; }
+/* The board says when it is the player's turn, and how the answer went. */
+.ap-brett-ramme[data-gj="tur"] { border-color: #f0d79a; box-shadow: 0 0 0 3px #f0d79a3d, 0 18px 55px #0005; }
+.ap-brett-ramme[data-gj="bra"] { border-color: var(--plan); box-shadow: 0 0 0 3px #8fd1a03d, 0 18px 55px #0005; }
+.ap-brett-ramme[data-gj="feil"] { border-color: #b8604a; box-shadow: 0 0 0 3px #ff8f6b33, 0 18px 55px #0005; }
+/* Arrows and squares come in with the step. Not while the player answers: every tap draws the board again. */
+.ap-gj-aktiv .ap-brett.ap-laast + .ap-piler .ap-pil, .ap-gj-aktiv .ap-brett.ap-laast .square.ap-merket::after { animation: ap-gj-tone .32s ease-out backwards; }
+@keyframes ap-gj-tone { from { opacity: 0; } }
+
+/* The bar: one piece per step. The row is tall enough for a finger, and takes a little of the room around it too. */
+.ap-gj-linje { display: flex; align-items: center; gap: 12px; }
+.ap-gj-spor.ap-skrubb { position: relative; flex: 1; min-width: 0; height: 32px; margin-top: 0; gap: 3px; }
+.ap-gj-spor.ap-skrubb::before { content: ''; position: absolute; inset: -8px 0 -4px; }
+.ap-gj-spor .ap-segment::before { height: 8px; margin-top: -4px; border-radius: 4px; }
+.ap-gj-spor .ap-segment.s-sett::before, .ap-gj-spor .ap-segment.s-naa::before { background: #8f5b74; }
 .ap-gj-spor .ap-segment.s-vist::before { background: #aa6a87; }
-/* A question is marked before it is answered, so the player knows one is coming. */
-.ap-gj-spor .ap-segment.ap-gj-q.s-ny::before, .ap-gj-spor .ap-segment.ap-gj-q.s-sett::before, .ap-gj-spor .ap-segment.ap-gj-q.s-naa::before { background: #6b5a35; box-shadow: inset 0 0 0 1px #f0d79a; }
-.ap-gj-spor .ap-segment.aktiv::before { box-shadow: none; height: 8px; margin-top: -4px; }
+/* A question is marked before it is answered, so the player knows one is coming: a gold piece with a dot over it. */
+.ap-gj-spor .ap-segment.ap-gj-q { background: radial-gradient(circle at 50% 5px, #f0d79a 0 2.4px, transparent 3.2px); }
+.ap-gj-spor .ap-segment.ap-gj-q.s-ny::before, .ap-gj-spor .ap-segment.ap-gj-q.s-sett::before, .ap-gj-spor .ap-segment.ap-gj-q.s-naa::before { background: #5d4d2e; box-shadow: inset 0 0 0 1.5px #f0d79a; }
+.ap-gj-spor .ap-segment.aktiv::before { height: 12px; margin-top: -6px; border-radius: 6px; box-shadow: none; opacity: .5; }
 /* The step being played fills up as its time runs. Still, it is simply full. */
-.ap-gj-spor .ap-segment.ser::after { left: 0; right: auto; top: 50%; bottom: auto; width: 100%; height: 8px; margin: -4px 0 0; border-radius: 2px; background: var(--pink); }
+.ap-gj-spor .ap-segment.ser::after { left: 0; right: auto; top: 50%; bottom: auto; width: 100%; height: 12px; margin: -6px 0 0; border-radius: 6px; background: var(--pink); }
+.ap-gj-spor .ap-segment.ap-gj-q.ser::after, .ap-gj-spor .ap-segment.s-hint.ser::after { background: #f0d79a; }
+.ap-gj-spor .ap-segment.s-riktig.ser::after { background: var(--plan); }
+.ap-gj-spor .ap-segment.s-feil.ser::after { background: var(--fare); }
+.ap-gj-spor .ap-segment.s-vist.ser::after { background: #aa6a87; }
 .ap-gj-spor.ap-gj-fyller .ap-segment.ser::after { animation: ap-gj-fyll var(--ap-gj-tid, 6s) linear both; }
 .ap-gj-spor.ap-gj-stans .ap-segment.ser::after { animation-play-state: paused; }
 @keyframes ap-gj-fyll { from { width: 0; } to { width: 100%; } }
-.ap-gj-knapper { display: flex; align-items: center; gap: 6px; }
-.ap-gj-knapp { flex: none; display: grid; place-items: center; width: 42px; height: 42px; padding: 0; border: 1px solid #7c485e; border-radius: 50%; background: #ffffff03; color: var(--text); font: inherit; }
+.ap-gj-teller { flex: none; min-width: 8.3em; color: var(--muted); font-size: .8rem; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+
+/* The buttons: back, play, on. Then what Tora's voice does, said in words. */
+.ap-gj-knapper { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.ap-gj-luft { flex: 1; }
+.ap-gj-knapp { flex: none; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid #7c485e; border-radius: 50%; background: #ffffff03; color: var(--text); font: inherit; transition: background .15s, border-color .15s, transform .15s; }
 .ap-gj-knapp:hover:not(:disabled) { border-color: var(--pink); background: #44303e; }
 .ap-gj-knapp:disabled { opacity: .4; cursor: default; }
-.ap-gj-knapp:focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
-.ap-gj-spill { width: 50px; height: 50px; border-color: var(--pink); background: var(--pink); color: #1a1118; }
-.ap-gj-spill:hover:not(:disabled) { background: #f2bccf; color: #1a1118; }
-.ap-gj-spill svg { width: 24px; height: 24px; }
-.ap-gj-teller { flex: 1; min-width: 0; text-align: center; color: var(--muted); font-size: .82rem; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ap-gj-knapp[data-gj="tale"][aria-pressed="false"] { color: #8c7786; }
-.ap-gj-fart { width: auto; min-width: 54px; padding: 0 10px; border-radius: 21px; font-size: .85rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ap-gj-knapp:focus-visible, .ap-gj-pille:focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
+.ap-gj-spill { width: 54px; height: 54px; border-color: var(--pink); background: var(--pink); color: #1a1118; box-shadow: 0 6px 18px #0006; }
+.ap-gj-spill:hover:not(:disabled) { background: #f2bccf; color: #1a1118; transform: scale(1.05); }
+.ap-gj-spill svg { width: 26px; height: 26px; }
+.ap-gj-pille { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 15px; border: 1px solid #59414f; border-radius: 22px; background: #ffffff03; color: var(--text); font: inherit; font-size: .82rem; white-space: nowrap; transition: background .15s, border-color .15s; }
+.ap-gj-pille:hover:not(:disabled) { border-color: var(--pink); background: #44303e; }
+.ap-gj-pille:disabled { opacity: .5; cursor: default; }
+.ap-gj-pille-ikon { display: grid; place-items: center; color: var(--muted); }
+.ap-gj-pille-ikon svg { width: 18px; height: 18px; }
+.ap-gj-pille-navn { color: var(--muted); }
+.ap-gj-pille-verdi { font-weight: 600; font-variant-numeric: tabular-nums; }
+.ap-gj-pille[data-gj="fart"] { min-width: 7.7em; justify-content: center; }
+.ap-gj-pille[aria-pressed="true"] { border-color: #7c485e; }
+.ap-gj-pille[aria-pressed="true"] .ap-gj-pille-ikon, .ap-gj-pille[aria-pressed="true"] .ap-gj-pille-verdi { color: var(--pink); }
+.ap-gj-pille[aria-pressed="false"] .ap-gj-pille-verdi { color: var(--muted); }
 
-/* The poster before the first step, and the chapter's title card. */
-.ap-plakat { position: absolute; inset: 11px; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 2px; background: #17131899; color: var(--text); font: inherit; cursor: pointer; }
-.ap-plakat:hover .ap-plakat-knapp { transform: scale(1.06); }
+/* Three cards lie on the board: the poster before the first step, a chapter's title, and the end. */
+.ap-plakat, .ap-kapittelkort, .ap-gj-sluttkort { position: absolute; inset: 11px; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 16px; border: 0; border-radius: 2px; background: radial-gradient(circle at 50% 46%, #2b1c2dc2, #171318db 75%); color: var(--text); font: inherit; text-align: center; }
+.ap-plakat { cursor: pointer; text-decoration: none; }
+.ap-tilbud-plakat:not(.ap-kun-tekst *) { display: none; }
+.ap-boble-tekst .ap-plakat-meta { justify-content: flex-start; margin-top: 12px; }
 .ap-plakat:focus-visible { outline: 3px solid var(--pink); outline-offset: -3px; }
-.ap-plakat-knapp { display: grid; place-items: center; width: 84px; height: 84px; border-radius: 50%; background: var(--pink); color: #1a1118; box-shadow: 0 10px 30px #0008; transition: transform .15s; }
-.ap-plakat-knapp svg { width: 40px; height: 40px; }
-.ap-plakat-tekst { margin-top: 6px; font: 500 1.45rem/1.2 var(--serif); text-shadow: 0 2px 10px #000a; }
-.ap-plakat small { color: #e3d3dc; font-size: .85rem; text-shadow: 0 1px 6px #000a; }
-.ap-kapittelkort { position: absolute; left: 50%; top: 50%; z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 4px; max-width: 80%; padding: 16px 24px; border: 1px solid #aa6a87; border-radius: 12px; background: #1b1220eb; box-shadow: 0 16px 40px #000a; text-align: center; transform: translate(-50%, -50%); pointer-events: none; animation: ap-gj-kort 1.7s ease both; }
-.ap-kapittelkort span { color: var(--pink); font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
-.ap-kapittelkort b { font: 500 1.5rem/1.25 var(--serif); }
+.ap-plakat-knapp { position: relative; display: grid; place-items: center; width: 92px; height: 92px; border-radius: 50%; background: var(--pink); color: #1a1118; box-shadow: 0 0 0 9px #e8a4bc2b, 0 14px 34px #000a; transition: transform .15s; }
+.ap-plakat-knapp::after { content: ''; position: absolute; inset: -9px; border-radius: 50%; border: 2px solid var(--pink); opacity: 0; animation: ap-gj-ring 2.4s ease-out infinite; }
+.ap-plakat:hover .ap-plakat-knapp { transform: scale(1.06); }
+.ap-plakat-knapp svg { width: 44px; height: 44px; }
+.ap-plakat-tekst, .ap-gj-sluttkort b { margin-top: 8px; font: 500 1.7rem/1.2 var(--serif); text-shadow: 0 2px 10px #000a; }
+.ap-plakat-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.ap-plakat-meta span { padding: 3px 11px; border: 1px solid #ffffff2e; border-radius: 13px; background: #171318b3; color: #e3d3dc; font-size: .8rem; white-space: nowrap; }
+@keyframes ap-gj-ring { 0% { opacity: .7; transform: scale(1); } 70%, 100% { opacity: 0; transform: scale(1.32); } }
+.ap-kapittelkort { z-index: 5; gap: 8px; background: #1b1220eb; pointer-events: none; animation: ap-gj-kort 1.7s ease both; }
+.ap-kapittelkort span { color: var(--pink); font-size: .75rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; }
+.ap-kapittelkort b { max-width: 15em; font: 500 2rem/1.2 var(--serif); text-shadow: 0 2px 12px #000a; }
+.ap-kapittelkort i { width: 44px; height: 2px; margin-top: 6px; border-radius: 1px; background: var(--pink); }
 .ap-gj-pauset .ap-kapittelkort { animation-play-state: paused; }
-@keyframes ap-gj-kort { 0% { opacity: 0; transform: translate(-50%, -44%); } 14%, 82% { opacity: 1; transform: translate(-50%, -50%); } 100% { opacity: 0; } }
+@keyframes ap-gj-kort { 0% { opacity: 0; } 14%, 82% { opacity: 1; } 100% { opacity: 0; } }
+.ap-gj-sluttkort { pointer-events: none; animation: ap-gj-tone .5s ease-out backwards; }
+.ap-gj-medalje { display: grid; place-items: center; width: 84px; height: 84px; border: 2px solid var(--plan); border-radius: 50%; background: #22382a; color: var(--plan); font-size: 2.5rem; line-height: 1; box-shadow: 0 0 0 9px #8fd1a01f, 0 14px 34px #000a; }
 
-/* The panel: the chapter, Tora, the answer and the chapters. */
-.ap-gj-hode .eyebrow { margin: 0 0 2px; font-size: .7rem; }
-.ap-gj-hode h2 { margin: 0; font: 500 1.45rem/1.25 var(--serif); }
+/* Tora and the chapter she is in. */
+.ap-boble.ap-gj-scene { grid-template-columns: 52px minmax(0, 1fr); gap: 12px 14px; }
+.ap-gj-hode { grid-column: 1 / -1; min-width: 0; }
+.ap-gj-hode .eyebrow { margin: 0 0 2px; font-size: .7rem; letter-spacing: .12em; }
+.ap-gj-hode h2 { margin: 0; font: 500 1.5rem/1.25 var(--serif); }
+.ap-gj-scene .ap-avatar { position: relative; border-radius: 50%; }
+/* A ring around her while she is heard. */
+.ap-gj-snakker .ap-avatar::after { content: ''; position: absolute; inset: -4px; border: 2px solid var(--pink); border-radius: 50%; animation: ap-gj-tale 1.3s ease-out infinite; }
+@keyframes ap-gj-tale { 0% { opacity: .9; transform: scale(.94); } 100% { opacity: 0; transform: scale(1.22); } }
+/* The bubble keeps room for three lines, so what is under it does not jump from step to step. */
+.ap-gj-scene .ap-boble-tekst { min-height: 6.7em; padding: 15px 18px; font-size: 1.04rem; line-height: 1.5; }
+.ap-gj-ny { animation: ap-gj-inn .28s ease-out; }
+@keyframes ap-gj-inn { from { opacity: 0; transform: translateY(5px); } }
+.ap-gj-scene .ap-boble-tekst > .eyebrow { display: flex; align-items: center; letter-spacing: .12em; }
+.ap-gj-scene.spor .ap-boble-tekst { min-height: 0; border-color: #a58c52; background: linear-gradient(150deg, #33291f, #2b1d2b 70%); }
+.ap-gj-scene.spor .ap-boble-tekst > .eyebrow, .ap-gj-scene.spor .ap-gjor { color: #f0d79a !important; }
+.ap-gj-scene.spor .ap-boble-tekst > .eyebrow::before { content: '?'; display: grid; place-items: center; width: 19px; height: 19px; margin-right: 8px; border-radius: 50%; background: #f0d79a; color: #1a1118; font-size: .8rem; font-weight: 700; letter-spacing: 0; }
+.ap-gj-scene.spor .ap-gjor { border-top-color: #6b5a35; }
+.ap-gj-scene.bra .ap-boble-tekst > .eyebrow, .ap-gj-scene.bra .ap-sier strong { color: var(--plan); }
+.ap-gj-scene.feil .ap-boble-tekst > .eyebrow, .ap-gj-scene.feil .ap-sier strong { color: var(--fare); }
+@media (hover: none) { .ap-gj-tastatur { display: none; } }
+
+/* The answer, and the way on. */
 .ap-gj-handling:empty { display: none; }
-.ap-gj-valg { display: grid; gap: 8px; }
-.ap-gj-alt { display: flex; align-items: flex-start; gap: 11px; width: 100%; min-height: 48px; padding: 11px 13px; border: 1px solid #7c485e; border-radius: 9px; background: #ffffff03; color: var(--text); text-align: left; font: inherit; font-size: .925rem; line-height: 1.4; }
+.ap-gj-handling .ap-okt-neste .button { min-height: 50px; font-size: .95rem; font-weight: 600; }
+.ap-gj-handling .button:focus-visible { outline-offset: 2px; }
+.ap-gj-valg { display: grid; gap: 8px; margin-bottom: 8px; }
+.ap-gj-alt { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 11px 14px; border: 1px solid #7c485e; border-radius: 10px; background: #ffffff03; color: var(--text); text-align: left; font: inherit; font-size: .95rem; line-height: 1.4; transition: background .15s, border-color .15s; }
 .ap-gj-alt:hover:not(:disabled) { border-color: var(--pink); background: #3b2432; }
 .ap-gj-alt:focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
-.ap-gj-alt:disabled { cursor: default; opacity: .7; }
+.ap-gj-alt:disabled { cursor: default; opacity: .6; }
 .ap-gj-alt.riktig { border-color: #5c9b6c; background: #1f2a22; opacity: 1; }
 .ap-gj-alt.feil { border-color: #b8604a; background: #2e1d1d; opacity: 1; }
-.ap-gj-alt-nr { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border: 1px solid #8c7786; border-radius: 50%; color: var(--muted); font-size: .75rem; font-weight: 600; }
+.ap-gj-alt-nr { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border: 1px solid #8c7786; border-radius: 50%; color: var(--muted); font-size: .78rem; font-weight: 600; }
+/* Right and wrong are a sign as well as a colour. */
+.ap-gj-alt.riktig .ap-gj-alt-nr, .ap-gj-alt.feil .ap-gj-alt-nr { font-size: 0; }
+.ap-gj-alt.riktig .ap-gj-alt-nr::after, .ap-gj-alt.feil .ap-gj-alt-nr::after { font-size: .85rem; }
 .ap-gj-alt.riktig .ap-gj-alt-nr { border-color: var(--plan); background: var(--plan); color: #1a1118; }
+.ap-gj-alt.riktig .ap-gj-alt-nr::after { content: '✓'; }
 .ap-gj-alt.feil .ap-gj-alt-nr { border-color: var(--fare); color: var(--fare); }
-.ap-gj-kapitler ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-.ap-gj-kap { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: center; width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; background: #211b22; color: var(--text); text-align: left; font: inherit; }
-.ap-gj-kap:hover { border-color: #aa6a87; }
-.ap-gj-kap:focus-visible { outline: 3px solid var(--pink); outline-offset: 1px; }
-.ap-gj-kap.her { border-color: var(--pink); background: #3b2432; }
-.ap-gj-kap-nr { display: grid; place-items: center; width: 26px; height: 26px; border: 1px solid #8c7786; border-radius: 50%; color: var(--muted); font-size: .78rem; font-weight: 600; }
-.ap-gj-kap.her .ap-gj-kap-nr { border-color: var(--pink); color: var(--pink); }
+.ap-gj-alt.feil .ap-gj-alt-nr::after { content: '✕'; }
+.ap-gj-videre { justify-content: space-between; gap: 14px; padding: 9px 18px; text-align: left; }
+.ap-gj-videre-tekst { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
+.ap-gj-videre small { font-size: .68rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; opacity: .72; }
+.ap-gj-fasit { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; color: var(--text) !important; font-size: .875rem; }
+.ap-gj-fasit-prikker { display: inline-flex; gap: 4px; }
+.ap-gj-fasit-prikker i { width: 10px; height: 10px; border-radius: 50%; background: #aa6a87; }
+.ap-gj-fasit-prikker .s-riktig { background: var(--plan); }
+.ap-gj-fasit-prikker .s-hint { background: #f0d79a; }
+.ap-gj-fasit-prikker .s-feil { background: var(--fare); }
+
+/* The chapters: the programme before and after, one folded line while a chapter plays. */
+.ap-gj-kapitler { border: 1px solid var(--line); border-radius: 10px; background: #211b22; }
+.ap-gj-kapitler summary { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 14px; border-radius: 10px; font-size: .9rem; font-weight: 600; list-style: none; cursor: pointer; }
+.ap-gj-kapitler summary::-webkit-details-marker { display: none; }
+.ap-gj-kapitler summary:hover { background: #ffffff08; }
+.ap-gj-kapitler summary:focus-visible { outline: 3px solid var(--pink); outline-offset: -3px; }
+.ap-gj-kapitler summary::after { content: ''; flex: none; width: 7px; height: 7px; margin: -4px 3px 0 2px; border: solid var(--muted); border-width: 0 2px 2px 0; transform: rotate(45deg); transition: transform .15s; }
+.ap-gj-kapitler[open] summary::after { margin-top: 4px; transform: rotate(-135deg); }
+.ap-gj-kap-prikker { display: inline-flex; align-items: center; gap: 5px; margin-left: auto; }
+.ap-gj-kap-prikker i { width: 8px; height: 8px; border-radius: 50%; background: #503446; }
+.ap-gj-kap-prikker i.sett { background: var(--plan); }
+.ap-gj-kap-prikker i.her { background: var(--pink); box-shadow: 0 0 0 3px #e8a4bc33; }
+.ap-gj-kap-antall { color: var(--muted); font-size: .8rem; font-weight: 400; white-space: nowrap; }
+.ap-gj-kapitler ol { list-style: none; margin: 0; padding: 0 6px 6px; display: grid; gap: 2px; }
+.ap-gj-kap { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 11px; align-items: center; width: 100%; min-height: 52px; padding: 7px 9px; border: 1px solid transparent; border-radius: 8px; background: none; color: var(--text); text-align: left; font: inherit; }
+.ap-gj-kap:hover { background: #ffffff0a; }
+.ap-gj-kap:focus-visible { outline: 3px solid var(--pink); outline-offset: -2px; }
+.ap-gj-kap.her { border-color: #7c485e; background: #3b2432; }
+.ap-gj-kap-nr { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid #8c7786; border-radius: 50%; color: var(--muted); font-size: .78rem; font-weight: 600; }
+.ap-gj-kap.her .ap-gj-kap-nr { border-color: var(--pink); background: var(--pink); color: #1a1118; }
 .ap-gj-kap.sett .ap-gj-kap-nr { border-color: var(--plan); background: #22382a; color: var(--plan); }
-.ap-gj-kap-tekst { display: flex; flex-direction: column; min-width: 0; }
+.ap-gj-kap-tekst { display: flex; flex-direction: column; min-width: 0; line-height: 1.35; }
 .ap-gj-kap-tekst b { font-weight: 600; font-size: .925rem; }
 .ap-gj-kap-tekst small { color: var(--muted); font-size: .75rem; }
-.ap-gj-stemme { margin: -4px 0 0; color: var(--muted); font-size: .78rem; }
+.ap-gj-stemme { margin: -6px 2px 0; color: #8c7786; font-size: .75rem; }
 .ap-gj-stemme:empty { display: none; }
-.ap-gj-regler { margin: 0; padding-left: 20px; display: grid; gap: 7px; color: #e3d3dc; }
-.ap-gj-slutt .button { text-decoration: none; min-height: 48px; }
+
+/* The end: the rules to keep, and what to do with them. */
+.ap-gj-regler { list-style: none; counter-reset: regel; margin: 2px 0 0; padding: 0; }
+.ap-gj-regler li { counter-increment: regel; display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; padding: 9px 0; border-top: 1px solid #ffffff17; color: var(--text); }
+.ap-gj-regler li::before { content: counter(regel); color: var(--plan); font: 500 1.3rem/1.15 var(--serif); text-align: center; }
+.ap-gj-regler + p { margin-top: 10px; }
+.ap-gj-slutt .button { text-decoration: none; min-height: 50px; }
+.ap-gj-slutt .button.primary { font-size: .95rem; font-weight: 600; }
 .ap-gj-valgt { margin: 0; padding: 10px; border: 1px solid #5c9b6c; border-radius: 6px; color: var(--plan); text-align: center; font-weight: 600; font-size: .9rem; }
 .ap-gj-sluttlenker { margin-top: 4px; color: var(--muted); font-size: .85rem; text-align: center; }
 .ap-gj-sluttlenker .ap-lenke { font-weight: 500; }
+.ap-gj-sluttlenker a, .ap-gj-sluttlenker .ap-lenke { display: inline-block; padding: 11px 3px; }
 
 /* "Se gjennomgangen" wherever an opening is chosen. */
 .ap-kurs-plass:empty { display: none; }
@@ -429,6 +525,33 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
   .ap-respons:not([hidden]) { display: block; margin: 8px 0 0; padding: 7px 12px; border: 1px solid #5b3b4d; border-radius: 8px; background: #2b1d2b; color: var(--text); font-size: .875rem; line-height: 1.4; }
   .ap-respons.bra { border-color: #5c9b6c; background: #1f2a22; }
   .ap-respons.feil { border-color: #b8604a; background: #2e1d1d; }
+  /* Gjennomgang in one column: Tora stands right under the board, and the controls at the bottom of the screen, under the thumb.
+     Her bubble says what the line under the board says elsewhere, and names the moves the move list would. */
+  .ap-gj-aktiv .ap-brettsone { position: relative; top: 0; }
+  .ap-gj-aktiv .ap-linje, .ap-gj-aktiv .ap-respons:not([hidden]) { display: none; }
+  .ap-gj-aktiv .ap-avspiller { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; margin: 0; padding: 4px max(25px, calc(50vw - 325px)) calc(8px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid #4a3442; background: #1c151c; box-shadow: 0 -10px 30px #0007; }
+  .ap-gj-aktiv .ap-gj-spor.ap-skrubb { height: 28px; }
+  .ap-gj-aktiv .ap-gj-spor.ap-skrubb::before { inset: -12px 0 -4px; }
+  .ap-gj-aktiv .ap-gj-knapper { margin-top: 0; }
+  .ap-gj-aktiv { padding-bottom: 150px; }
+  @supports selector(:has(a)) {
+    .ap-gj-aktiv { padding-bottom: 48px; }
+    .app-shell:has(.ap-gj-aktiv) { padding-bottom: 104px; }
+    /* What is scrolled to or tabbed to stops above the controls, not under them. */
+    html:has(.ap-gj-aktiv) { scroll-padding-bottom: 112px; }
+  }
+  .ap-gj-aktiv .ap-okt-neste { position: static; margin-top: 0; }
+  .ap-gj-aktiv .ap-okt-neste::before { content: none; }
+  /* The evaluation is off unless the player wants it. Off, its switch stands beside the chapter and takes no row of its own. */
+  .ap-gj-aktiv .ap-eval.ap-eval-skjult { position: absolute; top: 100%; right: -8px; width: 44px; height: 44px; margin-top: 18px; }
+  .ap-gj-aktiv .ap-eval.ap-eval-skjult .ap-eval-av { display: none; }
+  .ap-gj-aktiv .ap-eval.ap-eval-skjult .ap-eval-bryter { width: 44px; height: 44px; }
+  .ap-boble.ap-gj-scene { grid-template-columns: 44px minmax(0, 1fr); gap: 8px 11px; }
+  .ap-gj-scene .ap-avatar { grid-column: 1; grid-row: 1; align-self: center; }
+  .ap-gj-scene .ap-avatar svg { width: 44px; height: 44px; }
+  .ap-gj-hode { grid-column: 2; grid-row: 1; align-self: center; min-height: 44px; display: flex; flex-direction: column; justify-content: center; padding-right: 36px; }
+  .ap-gj-hode h2 { font-size: 1.2rem; line-height: 1.2; }
+  .ap-gj-scene .ap-boble-tekst { grid-column: 1 / -1; grid-row: 2; min-height: 5.6em; padding: 13px 15px; }
 }
 @media (max-width: 520px) {
   .site-header { gap: 8px; }
@@ -454,35 +577,68 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
   .ap-avatar svg { width: 40px; height: 40px; }
   .ap-rep-tittel { margin: 0 0 8px; font-size: 1.55rem; }
   .ap-rep-faner { margin-bottom: 12px; }
-  .ap-faner { gap: 6px; }
-  .ap-faner a { padding: 6px 12px; min-height: 38px; }
+  /* The tabs are one row that scrolls sideways, and fades out where there is more. */
+  .ap-faner { flex-wrap: nowrap; gap: 6px; margin-inline: -16px; padding: 3px 16px; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); }
+  .ap-faner::-webkit-scrollbar { display: none; }
+  .ap-faner a { flex: none; padding: 6px 14px; min-height: 44px; white-space: nowrap; }
+  .ap-faner a:focus-visible { outline-offset: -3px; }
   /* Keep the board and the coach close together on a phone. */
   .ap-tilbake { display: none; }
   .ap-apning-topp { margin: 0 0 10px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .ap-apning-topp h1 { font-size: 1.55rem; margin: 0; order: -1; }
   .ap-apning-topp .eyebrow { font-size: .65rem; }
   .ap-startlinje { display: none; }
-  .ap-faner { margin-bottom: 12px; }
+  .ap-faner { margin-bottom: 9px; }
   .ap-oppsett { gap: 12px; }
   .ap-linje { margin-top: 8px; white-space: nowrap; overflow-x: auto; scrollbar-width: none; }
-  .ap-plakat { inset: 6px; }
-  .ap-plakat-knapp { width: 68px; height: 68px; }
-  .ap-plakat-knapp svg { width: 32px; height: 32px; }
-  .ap-plakat-tekst { font-size: 1.25rem; }
-  .ap-gj-knapper { gap: 5px; }
-  .ap-gj-knapp { width: 40px; height: 40px; }
-  .ap-gj-spill { width: 48px; height: 48px; }
-  .ap-gj-hode h2 { font-size: 1.25rem; }
-  .ap-kapittelkort b { font-size: 1.2rem; }
+  .ap-plakat, .ap-kapittelkort, .ap-gj-sluttkort { inset: 6px; gap: 8px; }
+  .ap-plakat-knapp { width: 76px; height: 76px; }
+  .ap-plakat-knapp svg { width: 36px; height: 36px; }
+  .ap-gj-medalje { width: 70px; height: 70px; font-size: 2.1rem; }
+  .ap-plakat-tekst, .ap-gj-sluttkort b { font-size: 1.4rem; }
+  .ap-kapittelkort b { font-size: 1.5rem; }
+  .ap-gj-aktiv .ap-avspiller { padding-inline: 16px; }
+  .ap-gj-aktiv .ap-eval.ap-eval-skjult { margin-top: 12px; }
+  .ap-gj-linje { gap: 10px; }
+  .ap-gj-teller { min-width: 0; font-size: .78rem; }
+  .ap-gj-knapper { gap: 7px; }
+  .ap-gj-spill { width: 52px; height: 52px; }
+  /* What a button does is written over what it is set to, so both fit beside the play button. */
+  .ap-gj-pille { display: grid; grid-template-columns: auto auto; justify-content: center; align-items: center; gap: 0 4px; min-width: 66px; min-height: 48px; padding: 4px 10px; border-radius: 12px; line-height: 1.2; }
+  .ap-gj-pille-navn { grid-column: 1 / -1; grid-row: 1; font-size: .64rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; text-align: center; }
+  .ap-gj-pille-ikon, .ap-gj-pille-verdi { grid-row: 2; }
+  .ap-gj-pille-ikon svg { width: 16px; height: 16px; }
+  .ap-gj-pille[data-gj="fart"] { min-width: 66px; }
+  .ap-gj-pille[data-gj="fart"] .ap-gj-pille-verdi { grid-column: 1 / -1; text-align: center; }
+  .ap-gj-scene .ap-boble-tekst { font-size: .97rem; line-height: 1.45; }
+  .ap-gj-alt { min-height: 50px; padding: 9px 12px; }
   /* Beside the name and Fjern there is room for the sign only; the name is still there for a screen reader. */
   .ap-slot-valgte .ap-kurs-navn { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .ap-slot-valgte .ap-kurs-ikon { width: 26px; height: 26px; }
   .ap-slot-valgte .ap-kurs-ikon::after { left: 10px; top: 8px; border-width: 5px 0 5px 7px; }
+}
+/* A phone on its side: the board as tall as the window lets it be, Tora beside it. */
+@media (max-width: 850px) and (orientation: landscape) and (max-height: 520px) {
+  .ap-gj-aktiv .ap-oppsett { position: relative; grid-template-columns: minmax(0, calc(100vh - 112px)) minmax(0, 1fr); gap: 16px; }
+  .ap-gj-aktiv .ap-brettsone { position: static; }
+  .ap-gj-aktiv .ap-eval.ap-eval-skjult { top: 0; margin-top: 0; }
+  .ap-gj-aktiv .ap-brett-ramme { padding: 6px; }
+  .ap-gj-aktiv .ap-piler { inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); }
+  .ap-gj-aktiv .ap-plakat, .ap-gj-aktiv .ap-kapittelkort, .ap-gj-aktiv .ap-gj-sluttkort { inset: 6px; gap: 6px; }
+  .ap-gj-aktiv .ap-plakat-knapp { width: 60px; height: 60px; }
+  .ap-gj-aktiv .ap-plakat-knapp svg { width: 30px; height: 30px; }
+  .ap-gj-aktiv .ap-gj-medalje { width: 56px; height: 56px; font-size: 1.7rem; }
+  .ap-gj-aktiv .ap-plakat-tekst, .ap-gj-aktiv .ap-gj-sluttkort b, .ap-gj-aktiv .ap-kapittelkort b { margin-top: 2px; font-size: 1.2rem; }
+  .ap-gj-aktiv .ap-plakat-meta span { padding: 1px 8px; font-size: .72rem; }
+}
+@media (max-width: 350px) {
+  .ap-gj-knapper { gap: 4px; }
+  .ap-gj-pille, .ap-gj-pille[data-gj="fart"] { min-width: 58px; padding-inline: 6px; }
+  .ap-gj-teller { font-size: .72rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ap-kort:hover { transform: none; }
   .ap-eval-hvit, .ap-segment::before { transition: none; }
   .ap-eval-regner .ap-eval-dybde::before { animation: none; }
   .ap-gj-spor.ap-gj-fyller .ap-segment.ser::after { animation: none; }
-  .ap-plakat-knapp { transition: none; }
 }

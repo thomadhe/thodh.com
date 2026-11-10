@@ -4,7 +4,7 @@ import { piler } from './brett.mjs';
 import { INTERVALL_DAGER, noterFeil } from './repetisjon.mjs';
 import { OVELSE_STORRELSE, dagStart, delerNye, forfallerIMorgen, introSett, klarTekst, kortKo, lagOkt, lagOvelse, medFarge, merkIntro, nesteEkstra, nesteSteg, oktInnhold, oktTekst, ovelseRekke, svarKort, vanskeligst, vistKort } from './kort.mjs';
 import { ROS, esc, feilKommentar, medNummer, norsk, stor } from './trener.mjs';
-import { FARGE, flertall, forsteSetning, sanTekst, startNotasjon, trenerBoble } from './ui.mjs';
+import { FARGE, flertall, forsteSetning, kursMeta, sanTekst, startNotasjon, trenerBoble } from './ui.mjs';
 import { blandetAdresse, byggAdresse, fargeFra, flereAdresse, motsatt, oktAdresse, repertoarAdresse, veiInnTrekk } from './repertoar.mjs';
 import { kortFor } from './bygg.mjs';
 import { lagSpor, sporSegmenter, statusTekst } from './spor.mjs';
@@ -505,8 +505,10 @@ function kjorOkt(ui, okt, ovelse = null, farge = ovelse?.farge ?? null) {
     ui.main.classList.add('ap-kun-tekst');
     aktiv = null;
     const se = `#/a/${apning.id}/gjennomgang`;
-    panel.innerHTML = `${trenerBoble(`<p class="eyebrow">GJENNOMGANG · ${esc(apning.navn.toUpperCase())}</p><p class="ap-sier">Før jeg lærer deg trekkene: Jeg har en gjennomgang av ${esc(apning.navn)}, omtrent ${flertall(kurs.minutter, 'minutt', 'minutter')}.</p><p>Der viser jeg ideene og planene på brettet, så trekkene gir mening. Vil du se den først? Kortene venter.</p>`)}<div class="ap-kontroller ap-okt-neste"><a class="button primary" href="${se}">Se gjennomgangen ▶</a><button type="button" class="button secondary" data-videre>Nei takk, ta kortene</button></div>`;
-    const ferdig = () => { ui.main.classList.remove('ap-kun-tekst'); videre(); };
+    panel.innerHTML = `${trenerBoble(`<p class="eyebrow">GJENNOMGANG · ${esc(apning.navn.toUpperCase())}</p><p class="ap-sier">Før jeg lærer deg trekkene: Jeg har en gjennomgang av ${esc(apning.navn)}, omtrent ${flertall(kurs.minutter, 'minutt', 'minutter')}.</p><p>Der viser jeg ideene og planene på brettet, så trekkene gir mening. Vil du se den først? Kortene venter.</p>${kursMeta(kurs)}`)}<div class="ap-kontroller ap-okt-neste"><a class="button primary" href="${se}">Se gjennomgangen ▶</a><button type="button" class="button secondary" data-videre>Nei takk, ta kortene</button></div>`;
+    // The board shows what is offered: the walkthrough's poster. The button beside it is the one a keyboard and a screen reader meet.
+    brett.ramme.insertAdjacentHTML('beforeend', `<a class="ap-plakat ap-tilbud-plakat" href="${se}" tabindex="-1" aria-hidden="true"><span class="ap-plakat-knapp"><svg viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg></span><span class="ap-plakat-tekst">Gjennomgang</span></a>`);
+    const ferdig = () => { ui.main.classList.remove('ap-kun-tekst'); brett.ramme.querySelector('.ap-tilbud-plakat')?.remove(); videre(); };
     panel.querySelector('[data-videre]').addEventListener('click', ferdig);
     enter = () => { location.hash = se; };
   }
