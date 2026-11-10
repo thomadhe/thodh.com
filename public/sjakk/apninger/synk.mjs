@@ -18,6 +18,17 @@ function flett(a = {}, b = {}, velg) {
   return ut;
 }
 
+const tidligst = (x, y) => (x && y ? Math.min(x, y) : x || y || undefined);
+// A course is only ever seen more, so two devices add up: every chapter either has seen, the first time it was seen,
+// and the place to go on from is the one left last.
+export function flettKurs(x = {}, y = {}) {
+  const ut = { kapitler: flett(x.kapitler, y.kapitler, Math.min), sist: Math.max(x.sist ?? 0, y.sist ?? 0) };
+  for (const felt of ['ferdig', 'tilbudt']) { const tid = tidligst(x[felt], y[felt]); if (tid) ut[felt] = tid; }
+  const sted = nyest('sist')(x.sted, y.sted);
+  if (sted) ut.sted = sted;
+  return ut;
+}
+
 export function slaSammen(a, b) {
   return {
     ...tomFremgang(),
@@ -28,6 +39,7 @@ export function slaSammen(a, b) {
     kort: flett(a.kort, b.kort, nyest('sist')),
     introer: flett(a.introer, b.introer, nyest('sist')),
     tempo: nyest('sist')(a.tempo, b.tempo) ?? {},
+    kurs: flett(a.kurs, b.kurs, flettKurs),
   };
 }
 

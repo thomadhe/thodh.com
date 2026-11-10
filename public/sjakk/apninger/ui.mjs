@@ -1,7 +1,8 @@
 // Small building blocks shared by the views.
 import { Chess } from '../vendor/chess.mjs';
 import { trekkNummer } from './modell.mjs';
-import { AVATAR, norsk } from './trener.mjs';
+import { AVATAR, esc, norsk } from './trener.mjs';
+import { kursMerke } from './kurs.mjs';
 
 export const FARGE = { w: 'Hvit', b: 'Svart' };
 export const NIVA = { lett: 'Lett', middels: 'Middels', vanskelig: 'Krevende' };
@@ -29,5 +30,22 @@ export function miniBrett(fen, orientering = 'w') {
   const lys = i => (Math.floor(i / 8) + i) % 2 === 0;
   return `<span class="ap-mini" aria-hidden="true">${ruter.map((brikke, i) => `<i class="${lys(i) ? 'lys' : 'mork'}">${brikke ? `<span class="piece ${brikke.color === 'w' ? 'white' : 'black'}${brikke.type === 'p' ? ' pawn' : ''}">${GLYFER[brikke.type]}</span>` : ''}</i>`).join('')}</span>`;
 }
+
+// A link to an opening's walkthrough, where it has one. The page is drawn first, and the links come once it is known.
+export const kursLenke = (kurs, fremgang, adresse = '') => `<a class="ap-kurs-lenke" href="${adresse}#/a/${kurs.apning}/gjennomgang"><span class="ap-kurs-ikon" aria-hidden="true"></span>Se gjennomgangen<small>${esc(kursMerke(kurs, fremgang))}</small></a>`;
+export function fyllKursLenker(rot, ui) {
+  const plasser = [...rot.querySelectorAll('[data-kurs-plass]')];
+  if (!plasser.length || !ui.kurs) return;
+  const fyll = () => {
+    for (const plass of plasser) {
+      const kurs = ui.kurs.kjent(plass.dataset.kursPlass);
+      if (kurs && plass.isConnected && !plass.firstChild) plass.innerHTML = kursLenke(kurs, ui.fremgang());
+    }
+  };
+  fyll();
+  const ukjente = plasser.map(plass => plass.dataset.kursPlass).filter(id => ui.kurs.kjent(id) === undefined);
+  if (ukjente.length) ui.kurs.sjekk(ukjente).then(fyll);
+}
+export const kursPlass = id => `<span class="ap-kurs-plass" data-kurs-plass="${id}"></span>`;
 
 export const skarphet = apning => `<span class="ap-skarphet" aria-label="Skarphet ${apning.skarphet} av 5">${'<i class="på"></i>'.repeat(apning.skarphet)}${'<i></i>'.repeat(5 - apning.skarphet)}</span>`;

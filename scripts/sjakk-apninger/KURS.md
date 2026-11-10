@@ -45,3 +45,17 @@ Rules:
 - Where the course shows a position that is in the opening's tree with our side to move, it must show the tree's repertoire move, or say plainly that it is showing an alternative. The course and the flashcards may never teach different moves for the same position.
 - Every concrete claim is tested against the position with chess.js and the engine (Stockfish, see README). An example game is called an example game ("eksempelparti"); it is not attributed to real players unless the game is certain and checked.
 - Write for a club player who knows the rules and basic tactics, not for a GM. Short sentences, one idea per step, the board doing the work.
+
+## Additions (compatible with schema 1)
+- `"alternativ": true` on a step (or on a chapter, for all its steps) says that the step deliberately shows another move than the tree's in a tree position, and that the text says so. It only silences the verifier's warning; nothing else changes.
+- A `fra` that branches off the current line is played in from where it branches (at most the last 8 half-moves), so the player sees where the new line goes. A `fra` far away is set at once except for its last 8 half-moves.
+- `manifest.json` may list the openings that have a course: `"kurs": ["smith-morra", …]`. When the list is there, the trainer only asks for those files; without it, it asks for an opening's file when a page needs it. The verifier checks that the list and the files agree.
+
+## How it is played and read
+- Steps play by themselves: the moves first, then the arrows and squares, and the text stays as long as it takes to read (about 170 words a minute, never under 3 seconds), or as long as the speech takes. Questions stop and wait.
+- The text is read aloud by the browser's Norwegian voice, if the player wants. Write moves as in the rest of the coach text and they are spoken naturally: `3.Sf3` is "tre springer f3", `4…Lc5` is "fire, løper c5", `…Dd4`, `exd5` ("e tar d5"), `0-0` ("kort rokade"), `Lxf7+` ("løper tar f7, sjakk"), `…Sf6–g4` ("springer fra f6 til g4"). `!` and `?` after a move are not read. Avoid other notation in prose (no `+/=`, no evaluations like `+0,5`).
+- A `trekk` question asks for the move on the board; `hint` is shown on request and after the second wrong try, and the piece to move is marked. A `valg` question gets one try, then the right answer is shown. Both show `forklaring` and go on.
+- Pre-recorded sound per step (for example a `lyd` URL) is not part of the format yet; do not add it.
+
+## Checking
+`node scripts/sjakk-apninger/verifiser-kurs.mjs` checks every file in `data/kurs/` (or `--fil <path>` for a draft anywhere; `--streng` also fails on warnings): every `trekk`, `fra`, `start` and `svar` with chess.js (legal and written as chess.js writes it), squares in `piler`, `fare` and `felt`, ids, that `apning` exists, and it warns where the course plays another move than the tree in a tree position with our side to move, on unknown fields, on texts over 420 characters, on 4–6 `huskeregler`, and when `minutter` is far from what the steps take. `npm test` runs the same checks on every course in `data/kurs/`. An error hides the chapter (or the course) in the trainer.

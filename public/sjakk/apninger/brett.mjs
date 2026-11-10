@@ -180,6 +180,8 @@ export function lagBrett(rot, { naarTrekk, naarStilling }) {
     piler(piler) { tilstand.piler = piler; tegnPiler(); },
     rist() { rot.classList.remove('ap-rist'); void rot.offsetWidth; rot.classList.add('ap-rist'); },
     get chess() { return chess; },
+    // The frame around the board, for what a view lays on top of it.
+    get ramme() { return rot; },
   };
 }
 

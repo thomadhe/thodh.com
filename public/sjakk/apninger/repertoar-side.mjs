@@ -1,6 +1,6 @@
 // "Mitt repertoar": one tab per colour, with a slot per opponent reply. Practice follows the open tab, and "Begge" is one tap away.
 import { TRENER, esc, norsk } from './trener.mjs';
-import { FARGE, NIVA, flertall, sanTekst, skarphet, trenerBoble } from './ui.mjs';
+import { FARGE, NIVA, flertall, fyllKursLenker, kursPlass, sanTekst, skarphet, trenerBoble } from './ui.mjs';
 import { FORSLAG, blandetAdresse, byggAdresse, dekningTekst, erValgt, fordel, hullTekst, kryssI, repertoarAdresse, settValgt, startFane, svarDekning, treningAdresse, veiInnTrekk, velgApning } from './repertoar.mjs';
 import { klareKort, nesteStegHtml } from './kort-okt.mjs';
 import { FRITT, NYE_VALG, kortStatus, laerteKort, medFarge, settTempo, valgtTempo } from './kort.mjs';
@@ -36,6 +36,7 @@ function valgRad(apning, slot, fremgang) {
       <span class="ap-valginnhold"><b>${esc(apning.navn)}</b><span class="ap-veiinn">${esc(sanTekst(veiInnTrekk(apning)))}</span><span class="ap-merker"><span>${NIVA[apning.niva]}</span><span>${esc(apning.karakter)}</span>${skarphet(apning)}</span><span class="ap-valgstatus">${statusTekst(apning, fremgang)}</span></span>
     </button>
     <a class="ap-apne" href="#/a/${apning.id}/om" aria-label="Les om ${esc(apning.navn)}">Les om</a>
+    ${kursPlass(apning.id)}
   </li>`;
 }
 
@@ -54,7 +55,7 @@ function slotHtml(slot, fremgang) {
   const nyMelding = melding?.slotId === slot.id ? `<p class="ap-notat" role="status">${esc(melding.tekst)} <button type="button" class="ap-lenke" data-behold="${slot.id}">${melding.ider.length > 1 ? 'Behold alle' : 'Behold begge'}</button></p>` : '';
   return `<section class="ap-slot${erApen ? ' apen' : ''}${valgte.length ? ' fylt' : ''}">
     <button type="button" class="ap-slot-topp" data-slot="${slot.id}" aria-expanded="${erApen}">${hode}<span class="ap-slot-handling">${erApen ? 'Lukk' : valgte.length ? 'Endre' : 'Velg'}</span></button>
-    ${valgte.length && !erApen ? `<ul class="ap-slot-valgte">${valgte.map(apning => `<li><a href="#/a/${apning.id}/laer"><b>${esc(apning.navn)}</b><span>${statusTekst(apning, fremgang)}</span></a><button type="button" class="ap-fjern" data-fjern="${apning.id}" aria-label="Fjern ${esc(apning.navn)}">Fjern</button></li>`).join('')}</ul>` : ''}
+    ${valgte.length && !erApen ? `<ul class="ap-slot-valgte">${valgte.map(apning => `<li><a href="#/a/${apning.id}/laer"><b>${esc(apning.navn)}</b><span>${statusTekst(apning, fremgang)}</span></a>${kursPlass(apning.id)}<button type="button" class="ap-fjern" data-fjern="${apning.id}" aria-label="Fjern ${esc(apning.navn)}">Fjern</button></li>`).join('')}</ul>` : ''}
     ${fjernet?.slotId === slot.id ? `<p class="ap-notat" role="status">${esc(fjernet.navn)} er tatt ut. Fremgangen ligger trygt om du velger den igjen. <button type="button" class="ap-lenke" data-angre-fjern>Angre</button></p>` : ''}
     ${erApen ? `<ul class="ap-valgliste">${slot.apninger.map(apning => valgRad(apning, slot, fremgang)).join('')}</ul>${nyMelding}` : ''}
     ${kryssNotat(slot, fremgang)}
@@ -208,5 +209,6 @@ export function visRepertoar(ui, fane = null, fokus = null) {
     ui.lagre();
     tegn('[data-forslag]');
   });
+  fyllKursLenker(main, ui);
   if (fokus) main.querySelector(fokus)?.focus({ preventScroll: true });
 }

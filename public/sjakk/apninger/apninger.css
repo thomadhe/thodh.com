@@ -325,6 +325,91 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
 .ap-tekst-knapper { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .ap-tekst-knapper .button { margin-top: 0; }
 
+/* Gjennomgang: the course played like a video. The controls sit under the board, like a player's. */
+.ap-avspiller { margin-top: 6px; }
+.ap-gj-spor.ap-skrubb { margin-top: 0; height: 30px; }
+.ap-gj-spor .ap-segment::before { height: 6px; margin-top: -3px; }
+.ap-gj-spor .ap-segment.s-sett::before, .ap-gj-spor .ap-segment.s-naa::before { background: #7c485e; }
+.ap-gj-spor .ap-segment.s-vist::before { background: #aa6a87; }
+/* A question is marked before it is answered, so the player knows one is coming. */
+.ap-gj-spor .ap-segment.ap-gj-q.s-ny::before, .ap-gj-spor .ap-segment.ap-gj-q.s-sett::before, .ap-gj-spor .ap-segment.ap-gj-q.s-naa::before { background: #6b5a35; box-shadow: inset 0 0 0 1px #f0d79a; }
+.ap-gj-spor .ap-segment.aktiv::before { box-shadow: none; height: 8px; margin-top: -4px; }
+/* The step being played fills up as its time runs. Still, it is simply full. */
+.ap-gj-spor .ap-segment.ser::after { left: 0; right: auto; top: 50%; bottom: auto; width: 100%; height: 8px; margin: -4px 0 0; border-radius: 2px; background: var(--pink); }
+.ap-gj-spor.ap-gj-fyller .ap-segment.ser::after { animation: ap-gj-fyll var(--ap-gj-tid, 6s) linear both; }
+.ap-gj-spor.ap-gj-stans .ap-segment.ser::after { animation-play-state: paused; }
+@keyframes ap-gj-fyll { from { width: 0; } to { width: 100%; } }
+.ap-gj-knapper { display: flex; align-items: center; gap: 6px; }
+.ap-gj-knapp { flex: none; display: grid; place-items: center; width: 42px; height: 42px; padding: 0; border: 1px solid #7c485e; border-radius: 50%; background: #ffffff03; color: var(--text); font: inherit; }
+.ap-gj-knapp:hover:not(:disabled) { border-color: var(--pink); background: #44303e; }
+.ap-gj-knapp:disabled { opacity: .4; cursor: default; }
+.ap-gj-knapp:focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
+.ap-gj-spill { width: 50px; height: 50px; border-color: var(--pink); background: var(--pink); color: #1a1118; }
+.ap-gj-spill:hover:not(:disabled) { background: #f2bccf; color: #1a1118; }
+.ap-gj-spill svg { width: 24px; height: 24px; }
+.ap-gj-teller { flex: 1; min-width: 0; text-align: center; color: var(--muted); font-size: .82rem; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ap-gj-knapp[data-gj="tale"][aria-pressed="false"] { color: #8c7786; }
+.ap-gj-fart { width: auto; min-width: 54px; padding: 0 10px; border-radius: 21px; font-size: .85rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* The poster before the first step, and the chapter's title card. */
+.ap-plakat { position: absolute; inset: 11px; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 2px; background: #17131899; color: var(--text); font: inherit; cursor: pointer; }
+.ap-plakat:hover .ap-plakat-knapp { transform: scale(1.06); }
+.ap-plakat:focus-visible { outline: 3px solid var(--pink); outline-offset: -3px; }
+.ap-plakat-knapp { display: grid; place-items: center; width: 84px; height: 84px; border-radius: 50%; background: var(--pink); color: #1a1118; box-shadow: 0 10px 30px #0008; transition: transform .15s; }
+.ap-plakat-knapp svg { width: 40px; height: 40px; }
+.ap-plakat-tekst { margin-top: 6px; font: 500 1.45rem/1.2 var(--serif); text-shadow: 0 2px 10px #000a; }
+.ap-plakat small { color: #e3d3dc; font-size: .85rem; text-shadow: 0 1px 6px #000a; }
+.ap-kapittelkort { position: absolute; left: 50%; top: 50%; z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 4px; max-width: 80%; padding: 16px 24px; border: 1px solid #aa6a87; border-radius: 12px; background: #1b1220eb; box-shadow: 0 16px 40px #000a; text-align: center; transform: translate(-50%, -50%); pointer-events: none; animation: ap-gj-kort 1.7s ease both; }
+.ap-kapittelkort span { color: var(--pink); font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.ap-kapittelkort b { font: 500 1.5rem/1.25 var(--serif); }
+@keyframes ap-gj-kort { 0% { opacity: 0; transform: translate(-50%, -44%); } 14%, 82% { opacity: 1; transform: translate(-50%, -50%); } 100% { opacity: 0; } }
+
+/* The panel: the chapter, Tora, the answer and the chapters. */
+.ap-gj-hode .eyebrow { margin: 0 0 2px; font-size: .7rem; }
+.ap-gj-hode h2 { margin: 0; font: 500 1.45rem/1.25 var(--serif); }
+.ap-gj-handling:empty { display: none; }
+.ap-gj-valg { display: grid; gap: 8px; }
+.ap-gj-alt { display: flex; align-items: flex-start; gap: 11px; width: 100%; min-height: 48px; padding: 11px 13px; border: 1px solid #7c485e; border-radius: 9px; background: #ffffff03; color: var(--text); text-align: left; font: inherit; font-size: .925rem; line-height: 1.4; }
+.ap-gj-alt:hover:not(:disabled) { border-color: var(--pink); background: #3b2432; }
+.ap-gj-alt:focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
+.ap-gj-alt:disabled { cursor: default; opacity: .7; }
+.ap-gj-alt.riktig { border-color: #5c9b6c; background: #1f2a22; opacity: 1; }
+.ap-gj-alt.feil { border-color: #b8604a; background: #2e1d1d; opacity: 1; }
+.ap-gj-alt-nr { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border: 1px solid #8c7786; border-radius: 50%; color: var(--muted); font-size: .75rem; font-weight: 600; }
+.ap-gj-alt.riktig .ap-gj-alt-nr { border-color: var(--plan); background: var(--plan); color: #1a1118; }
+.ap-gj-alt.feil .ap-gj-alt-nr { border-color: var(--fare); color: var(--fare); }
+.ap-gj-kapitler ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.ap-gj-kap { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: center; width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; background: #211b22; color: var(--text); text-align: left; font: inherit; }
+.ap-gj-kap:hover { border-color: #aa6a87; }
+.ap-gj-kap:focus-visible { outline: 3px solid var(--pink); outline-offset: 1px; }
+.ap-gj-kap.her { border-color: var(--pink); background: #3b2432; }
+.ap-gj-kap-nr { display: grid; place-items: center; width: 26px; height: 26px; border: 1px solid #8c7786; border-radius: 50%; color: var(--muted); font-size: .78rem; font-weight: 600; }
+.ap-gj-kap.her .ap-gj-kap-nr { border-color: var(--pink); color: var(--pink); }
+.ap-gj-kap.sett .ap-gj-kap-nr { border-color: var(--plan); background: #22382a; color: var(--plan); }
+.ap-gj-kap-tekst { display: flex; flex-direction: column; min-width: 0; }
+.ap-gj-kap-tekst b { font-weight: 600; font-size: .925rem; }
+.ap-gj-kap-tekst small { color: var(--muted); font-size: .75rem; }
+.ap-gj-stemme { margin: -4px 0 0; color: var(--muted); font-size: .78rem; }
+.ap-gj-stemme:empty { display: none; }
+.ap-gj-regler { margin: 0; padding-left: 20px; display: grid; gap: 7px; color: #e3d3dc; }
+.ap-gj-slutt .button { text-decoration: none; min-height: 48px; }
+.ap-gj-valgt { margin: 0; padding: 10px; border: 1px solid #5c9b6c; border-radius: 6px; color: var(--plan); text-align: center; font-weight: 600; font-size: .9rem; }
+.ap-gj-sluttlenker { margin-top: 4px; color: var(--muted); font-size: .85rem; text-align: center; }
+.ap-gj-sluttlenker .ap-lenke { font-weight: 500; }
+
+/* "Se gjennomgangen" wherever an opening is chosen. */
+.ap-kurs-plass:empty { display: none; }
+.ap-kurs-lenke { display: inline-flex; align-items: center; gap: 7px; padding: 6px 0; color: var(--pink); font-size: .82rem; font-weight: 600; text-decoration: none; }
+.ap-kurs-lenke:hover { text-decoration: underline; }
+.ap-kurs-lenke small { color: var(--muted); font-weight: 400; }
+.ap-kurs-lenke small::before { content: '·'; margin-right: 6px; }
+.ap-kurs-ikon { flex: none; width: 18px; height: 18px; border-radius: 50%; background: var(--pink); position: relative; }
+.ap-kurs-ikon::after { content: ''; position: absolute; left: 7px; top: 5px; border-style: solid; border-width: 4px 0 4px 6px; border-color: transparent transparent transparent #1a1118; }
+.ap-alt .ap-kurs-plass { display: block; padding: 2px 14px 0; }
+.ap-valgrad .ap-kurs-plass { display: block; padding: 0 10px 2px 43px; }
+.ap-slot-valgte .ap-kurs-lenke small { display: none; }
+.ap-slot-valgte .ap-kurs-plass { flex: none; }
+
 .ap-respons { display: none; }
 @media (max-width: 850px) {
   .ap-oppsett { grid-template-columns: minmax(0, 1fr); gap: 18px; }
@@ -376,9 +461,20 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
   .ap-faner { margin-bottom: 12px; }
   .ap-oppsett { gap: 12px; }
   .ap-linje { margin-top: 8px; white-space: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .ap-plakat { inset: 6px; }
+  .ap-plakat-knapp { width: 68px; height: 68px; }
+  .ap-plakat-knapp svg { width: 32px; height: 32px; }
+  .ap-plakat-tekst { font-size: 1.25rem; }
+  .ap-gj-knapper { gap: 5px; }
+  .ap-gj-knapp { width: 40px; height: 40px; }
+  .ap-gj-spill { width: 48px; height: 48px; }
+  .ap-gj-hode h2 { font-size: 1.25rem; }
+  .ap-kapittelkort b { font-size: 1.2rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ap-kort:hover { transform: none; }
   .ap-eval-hvit, .ap-segment::before { transition: none; }
   .ap-eval-regner .ap-eval-dybde::before { animation: none; }
+  .ap-gj-spor.ap-gj-fyller .ap-segment.ser::after { animation: none; }
+  .ap-plakat-knapp { transition: none; }
 }

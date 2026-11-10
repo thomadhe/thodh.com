@@ -35,22 +35,23 @@ export function nesteSegment(segmenter, fra, retning) {
   return fra;
 }
 
-export function lagSpor(rot, { naarValgt }) {
+// navn and etikett let another kind of bar use it: the walkthrough's steps.
+export function lagSpor(rot, { naarValgt, navn = segmentNavn, etikett = 'Kortene i økta. Piltastene går frem og tilbake.' }) {
   let segmenter = [];
   let vist = -1;
   let dra = null;
   rot.classList.add('ap-skrubb');
   rot.setAttribute('role', 'group');
-  rot.setAttribute('aria-label', 'Kortene i økta. Piltastene går frem og tilbake.');
+  rot.setAttribute('aria-label', etikett);
 
   function oppdater() {
     const knapper = rot.children;
     segmenter.forEach((segment, i) => {
       const knapp = knapper[i];
-      knapp.className = `ap-segment s-${segment.status}${segment.aktiv ? ' aktiv' : ''}${i === vist ? ' ser' : ''}`;
+      knapp.className = `ap-segment s-${segment.status}${segment.aktiv ? ' aktiv' : ''}${i === vist ? ' ser' : ''}${segment.klasse ? ` ${segment.klasse}` : ''}`;
       knapp.disabled = !segment.apen;
       knapp.tabIndex = i === vist ? 0 : -1;
-      knapp.setAttribute('aria-label', segmentNavn(segment, i, segmenter.length));
+      knapp.setAttribute('aria-label', navn(segment, i, segmenter.length));
       if (i === vist) knapp.setAttribute('aria-current', 'step'); else knapp.removeAttribute('aria-current');
     });
   }

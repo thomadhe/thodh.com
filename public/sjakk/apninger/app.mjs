@@ -11,6 +11,8 @@ import { lagKort } from './kort.mjs';
 import { visRepertoar } from './repertoar-side.mjs';
 import { nesteStegHtml, taFlere, visKortokt, visTrening } from './kort-okt.mjs';
 import { visBygg } from './bygg.mjs';
+import { lagKursLager } from './kurs.mjs';
+import { visGjennomgang } from './gjennomgang.mjs';
 
 const DATA = '/sjakk/apninger/data/';
 // The open tab belongs to the device, so it stays out of the progress and out of the sync.
@@ -30,6 +32,10 @@ let ventende = null;
 let oppslag = () => null;
 let kortMinne = { nokkel: null, kort: [] };
 let kom = '';
+let avspiller = null;
+// Walkthroughs are fetched when a page needs one. manifest.kurs, when it is there, says which exist.
+const kursLager = lagKursLager({ adresse: id => `${DATA}kurs/${id}.json`, apning: id => apninger.get(id), liste: () => manifest?.kurs ?? null });
+const stoppAvspiller = () => { avspiller?.avslutt(); avspiller = null; };
 
 function visKonto(status) {
   const felt = document.querySelector('#ap-konto');
@@ -42,7 +48,8 @@ const erRepertoarside = hash => /^#\/repertoar(\/(hvit|svart))?$/.test(hash);
 // Only the overview pages redraw. A board or a summary stays as it is: what came from another device shows on the next screen.
 const erOversikt = () => !brett && (['', '#', '#/'].includes(location.hash) || erRepertoarside(location.hash));
 const synk = lagSynk({ lager, hent: () => fremgang, status: visKonto, sett(ny) { fremgang = ny; rep.lagreFremgang(lager, fremgang); if (erOversikt()) rute(); } });
-const lagre = () => { rep.lagreFremgang(lager, fremgang); synk.endret(); };
+// synk: false keeps a small change (where a walkthrough stands) on the device until the next real save.
+const lagre = ({ synk: send = true } = {}) => { rep.lagreFremgang(lager, fremgang); if (send) synk.endret(); };
 const tilfeldig = liste => liste[Math.floor(Math.random() * liste.length)];
 const stopp = () => { clearTimeout(timer); timer = null; };
 const fjernEvalbar = () => { evalbar?.avslutt(); evalbar = null; };
@@ -55,7 +62,7 @@ function oppslagFor(apning) {
 
 // Board, evaluation bar and panel. Everything with a board uses this, so the layout stays the same.
 function lagBrettside(topp) {
-  main.innerHTML = `${topp}<div class="ap-oppsett"><section class="ap-brettsone" aria-label="Brett"><div id="ap-brett"></div><div id="ap-eval"></div><p id="ap-respons" class="ap-respons" aria-hidden="true" hidden></p><p id="ap-linje" class="ap-linje"></p></section><aside id="ap-panel" class="ap-panel"></aside></div><p class="ap-fotnote">${KREDITT}</p>`;
+  main.innerHTML = `${topp}<div class="ap-oppsett"><section class="ap-brettsone" aria-label="Brett"><div id="ap-brett"></div><div id="ap-eval"></div><div id="ap-avspiller" class="ap-avspiller" hidden></div><p id="ap-respons" class="ap-respons" aria-hidden="true" hidden></p><p id="ap-linje" class="ap-linje"></p></section><aside id="ap-panel" class="ap-panel"></aside></div><p class="ap-fotnote">${KREDITT}</p>`;
   fjernEvalbar();
   evalbar = lagEvalbar(main.querySelector('#ap-eval'), { lager });
   brett = lagBrett(main.querySelector('#ap-brett'), { naarTrekk: trekk => tilstand.naarTrekk?.(trekk), naarStilling: (fen, orientering) => evalbar.settStilling(fen, { orientering, lagret: oppslag(fen) }) });
@@ -73,6 +80,8 @@ function repertoarKort() {
 // What the repertoire page and the flashcards need from the app, so they can live in their own files.
 const ui = {
   main,
+  lager,
+  kurs: kursLager,
   alle: alleApninger,
   valgte,
   kort: repertoarKort,
@@ -141,22 +150,44 @@ function kort(apning) {
 }
 
 // ---------- Opening view ----------
+function fanerHtml(apning, kurs) {
+  const faner = [...(kurs ? [['gjennomgang', 'Gjennomgang']] : []), ['om', 'Om åpningen'], ['laer', 'Lær'], ['ov', 'Øv'], ['feller', `Feller${apning.feller.length ? ` (${apning.feller.length})` : ''}`]];
+  return `${faner.map(([f, t]) => `<a href="#/a/${apning.id}/${f}" data-fane="${f}">${t}</a>`).join('')}<a href="#/repertoar/trening/${apning.id}/rekke">Alle kort</a>`;
+}
+function merkFane(fane) {
+  main.querySelectorAll('[data-fane]').forEach(a => { if (a.dataset.fane === fane) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+}
+
 function visApning(id, fane) {
   stopp();
+  stoppAvspiller();
   const apning = apninger.get(id);
   if (!apning) { location.hash = '#/'; return; }
-  document.title = `${apning.navn} · Åpninger`;
-  const faner = [['om', 'Om åpningen'], ['laer', 'Lær'], ['ov', 'Øv'], ['feller', `Feller${apning.feller.length ? ` (${apning.feller.length})` : ''}`]];
+  const kurs = kursLager.kjent(id);
+  // Not known yet: the page waits for the answer, which is quick, before it shows the walkthrough or leaves it out.
+  if (fane === 'gjennomgang' && !kurs) {
+    if (kurs === null) { history.replaceState(null, '', `#/a/${id}/laer`); visApning(id, 'laer'); return; }
+    const her = location.hash;
+    kursLager.hent(id).then(() => { if (location.hash === her) visApning(id, fane); });
+    return;
+  }
+  document.title = `${fane === 'gjennomgang' ? 'Gjennomgang' : apning.navn} · ${fane === 'gjennomgang' ? apning.navn : 'Åpninger'}`;
   const nyVisning = tilstand.apningId !== id || !main.querySelector('.ap-oppsett');
   if (nyVisning) {
     oppslag = oppslagFor(apning);
     lagBrettside(`
       <nav class="ap-tilbake"><a href="#/">← Alle åpninger</a></nav>
       <header class="ap-apning-topp"><p class="eyebrow">${FARGE[apning.farge].toUpperCase()}${apning.eco ? ` · ${esc(apning.eco)}` : ''}</p><h1>${esc(apning.navn)}</h1><p class="ap-startlinje">${apning.startTrekk.length ? `Starter etter ${esc(startNotasjon(apning))}` : 'Fra utgangsstillingen'}</p></header>
-      <nav class="ap-faner" aria-label="Del av åpningen">${faner.map(([f, t]) => `<a href="#/a/${id}/${f}" data-fane="${f}">${t}</a>`).join('')}<a href="#/repertoar/trening/${id}/rekke">Alle kort</a></nav>`);
+      <nav class="ap-faner" aria-label="Del av åpningen">${fanerHtml(apning, kurs)}</nav>`);
+    if (kurs === undefined) kursLager.hent(id).then(funnet => {
+      const nav = main.querySelector('.ap-faner');
+      if (!funnet || tilstand.apningId !== id || !nav) return;
+      nav.innerHTML = fanerHtml(apning, funnet);
+      merkFane(tilstand.fane);
+    });
   }
   evalbar.hold(false);
-  main.querySelectorAll('[data-fane]').forEach(a => { if (a.dataset.fane === fane) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  merkFane(fane);
   tilstand = { apningId: id, fane, apning };
   const etter = ventende;
   ventende = null;
@@ -164,7 +195,14 @@ function visApning(id, fane) {
   else if (fane === 'om') visOm(apning);
   else if (fane === 'ov') startOv(apning);
   else if (fane === 'feller') visFeller(apning);
+  else if (fane === 'gjennomgang') visKurs(apning, kurs);
   else visLaer(apning, apning.rot);
+}
+
+function visKurs(apning, kurs) {
+  respons();
+  tilstand.naarTrekk = null;
+  avspiller = visGjennomgang(ui, { apning, kurs, brett, evalbar, panel: panel(), linje: linjeFelt(), avspiller: main.querySelector('#ap-avspiller'), kom });
 }
 
 // Switch tab and then show a specific view (hashchange fires after microtasks, so the view waits for it).
@@ -221,7 +259,7 @@ function visOm(apning) {
     ${apning.sidelinjer.length ? `<section class="ap-seksjon"><h2>Sidelinjer og beslektede ideer</h2>${apning.sidelinjer.map((s, n) => `<div class="ap-sidelinje"><h3>${esc(s.navn)}</h3><p class="ap-notasjon">${esc(startNotasjon(apning))} ${esc(stiFraTrekk(apning, s.trekk))}</p><p>${esc(s.tekst)}</p>${s.kilde ? `<p class="ap-kilde">Kilde: ${esc(s.kilde)}</p>` : ''}<button type="button" class="button secondary" data-side="${n}">Spill gjennom</button></div>`).join('')}</section>` : ''}
     <section class="ap-seksjon"><h2>I tall</h2><p>${flertall(apning.linjer.length, 'linje', 'linjer')} å øve på, ${apning.stillinger} ulike stillinger og ${flertall(apning.feller.length, 'felle', 'feller')}.</p></section>
     <section class="ap-seksjon"><h2>Øv på alle kort</h2><p>Så ofte du vil. Teller ikke på timeplanen.</p><div class="ap-kontroller ap-rad"><a class="button secondary" href="#/repertoar/trening/${apning.id}/rekke">I rekkefølge</a><a class="button secondary" href="#/repertoar/trening/${apning.id}/stokket">Stokket</a></div></section>
-    <a class="button primary ap-bred" href="#/a/${apning.id}/laer">Start å lære</a>`;
+    ${kursLager.kjent(apning.id) ? `<a class="button primary ap-bred" href="#/a/${apning.id}/gjennomgang">Se gjennomgangen ▶</a><a class="button secondary ap-bred" href="#/a/${apning.id}/laer">Start å lære</a>` : `<a class="button primary ap-bred" href="#/a/${apning.id}/laer">Start å lære</a>`}`;
   panel().querySelectorAll('[data-side]').forEach(k => k.addEventListener('click', () => { gaaTil(`#/a/${apning.id}/laer`, () => visSidelinje(apning, apning.sidelinjer[Number(k.dataset.side)], 0)); }));
 }
 
@@ -481,7 +519,8 @@ function rute() {
   main.classList.remove('ap-kun-tekst');
   tastLytter = null;
   stopp();
-  if (side === 'a' && id) visApning(id, ['om', 'laer', 'ov', 'feller'].includes(fane) ? fane : 'laer');
+  stoppAvspiller();
+  if (side === 'a' && id) visApning(id, ['gjennomgang', 'om', 'laer', 'ov', 'feller'].includes(fane) ? fane : 'laer');
   else if (side === 'repertoar' && id === 'bygg') { tilstand = {}; visBygg(ui, fane, ekstra); }
   else if (side === 'repertoar' && id === 'trening') visTrening(ui, fane, ekstra);
   else if (side === 'repertoar' && id === 'kort') {

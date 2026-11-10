@@ -1,13 +1,14 @@
 // The home of everything you do alone. It saves nothing of its own: the numbers are the trainer's and the puzzles'.
 import { lesApning } from '../sjakk/apninger/modell.mjs';
 import { lagKort } from '../sjakk/apninger/kort.mjs';
+import { lagKursLager } from '../sjakk/apninger/kurs.mjs';
 import { erValgt } from '../sjakk/apninger/repertoar.mjs';
 import { NOKKEL as FREMGANG, lagreFremgang, lesFremgang } from '../sjakk/apninger/repetisjon.mjs';
 import { lagSynk } from '../sjakk/apninger/synk.mjs';
 import { hilsen } from '../sjakk/apninger/trener.mjs';
 import { NOKKEL as OPPGAVE_LAGER, les } from '../sjakk/oppgaver/lagring.mjs';
 import { bandForNiva, iDagOslo } from '../sjakk/oppgaver/utvalg.mjs';
-import { apningerHtml, feilHtml, finnDagens, nesteHtml, oppgaveOversikt, oppgaveStilling, oppgaverHtml, venterHtml } from './oversikt.mjs';
+import { apningerHtml, feilHtml, finnDagens, gjennomgangerHtml, nesteHtml, oppgaveOversikt, oppgaveStilling, oppgaverHtml, venterHtml } from './oversikt.mjs';
 
 const APNING_DATA = '/sjakk/apninger/data/';
 const OPPGAVE_DATA = '/sjakk/oppgaver/data/';
@@ -21,6 +22,8 @@ const apninger = new Map();
 let kortMinne = { nokkel: null, kort: [] };
 let stilling = null;
 let stillingFor = null;
+// The walkthroughs of the chosen openings, fetched after the openings themselves.
+const kursLager = lagKursLager({ adresse: id => `${APNING_DATA}kurs/${id}.json`, apning: id => apninger.get(id), liste: () => manifest?.kurs ?? null });
 
 const harValgt = () => Object.values(fremgang.repertoar).some(post => post?.valgt === true);
 const valgte = () => (manifest?.apninger ?? []).map(id => apninger.get(id)).filter(apning => apning && erValgt(fremgang, apning.id));
@@ -91,6 +94,9 @@ function tegn() {
   sett('#en-neste', venter ? venterHtml : feilet && harValgt() ? feilHtml : nesteHtml(ui));
   sett('#en-apninger', apningerHtml(ui, { venter, antall: manifest?.apninger.length }));
   sett('#en-oppgaver', oppgaverHtml(oversikt, stilling));
+  const kurs = gjennomgangerHtml(valgte().map(apning => ({ apning, kurs: kursLager.kjent(apning.id) })).filter(({ kurs: k }) => k), fremgang);
+  $('#en-kurs').hidden = !kurs;
+  sett('#en-gjennomganger', kurs);
   hentStilling(t, dato, oversikt);
 }
 
@@ -104,6 +110,8 @@ function visKonto(status) {
 async function oppdater() {
   await lastValgte();
   tegn();
+  const ider = valgte().map(apning => apning.id);
+  if (!kursLager.alleKjent(ider)) { await kursLager.sjekk(ider); tegn(); }
 }
 
 const synk = lagSynk({ lager, hent: () => fremgang, status: visKonto, sett(ny) { fremgang = ny; lagreFremgang(lager, fremgang); oppdater(); } });

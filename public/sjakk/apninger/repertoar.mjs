@@ -109,8 +109,9 @@ export function startNoder(apning) {
   });
 }
 
+// Our move in every position of the opening where it is our turn, keyed by the position.
 const egneCache = new WeakMap();
-function egneTrekk(apning) {
+export function egneTrekk(apning) {
   if (egneCache.has(apning)) return egneCache.get(apning);
   const kart = new Map();
   let fen = new Chess().fen();

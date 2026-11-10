@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "apning": "smith-morra",
+  "tittel": "Smith-Morra: en prøvetur",
+  "minutter": 3,
+  "kapitler": [
+    {
+      "id": "ideen",
+      "tittel": "Hvorfor ofre en bonde?",
+      "start": "e4 c5",
+      "steg": [
+        { "trekk": "d4 cxd4 c3", "tekst": "Vi spiller 2.d4, og etter 2…cxd4 ofrer vi en bonde med 3.c3. Tar svart, kommer springeren ut med tempo.", "piler": ["b1c3"] },
+        { "trekk": "dxc3 Nxc3", "tekst": "Etter 3…dxc3 4.Sxc3 har vi en springer ute. Svart har brukt tre trekk på den samme bonden.", "felt": ["c3"] },
+        { "tekst": "Hva har hvit fått for bonden?", "sporsmal": { "type": "valg", "valg": ["Raskere utvikling og åpne linjer", "En sterkere bondestruktur", "En bonde mer om litt"], "riktig": 0, "forklaring": "Hvit har en springer ute og åpne linjer for løperne og damen. Bonden er borte, men tiden er vår." } }
+      ]
+    },
+    {
+      "id": "oppstillingen",
+      "tittel": "Standardoppstillingen",
+      "start": "e4 c5 d4 cxd4 c3 dxc3 Nxc3",
+      "steg": [
+        { "trekk": "Nc6 Nf3 d6 Bc4", "tekst": "Springeren til f3 og løperen til c4. Løperen sikter mot f7, det svakeste punktet i svarts leir.", "piler": ["c4f7"], "felt": ["f7"] },
+        { "trekk": "e6 O-O Nf6 Qe2 Be7 Rd1", "tekst": "Så rokerer vi, setter damen på e2 og tårnet på d1. Tårnet står på samme linje som svarts dame.", "piler": ["d1d8"], "felt": ["d6"] },
+        { "fra": "e4 c5 d4 cxd4 c3 dxc3 Nxc3 Nc6 Nf3 d6 Bc4 e6 O-O Nf6 Qe2 Be7 Rd1 a6", "tekst": "Svart spilte 9…a6 i stedet for å rokere. Hva gjør du nå?", "sporsmal": { "type": "trekk", "svar": ["e5"], "hint": "Tårnet på d1 og damen på d8 står på samme linje.", "forklaring": "10.e5! åpner d-linjen. Svart kan ikke ta tilbake uten å miste damen." } },
+        { "trekk": "dxe5 Rxd8+", "tekst": "Tar svart med 10…dxe5, slår tårnet damen med sjakk: 11.Txd8+.", "fare": ["d1d8"] }
+      ]
+    },
+    {
+      "id": "lg4",
+      "tittel": "Når svart binder springeren",
+      "start": "e4 c5 d4 cxd4 c3 dxc3 Nxc3 Nc6 Nf3 d6 Bc4 Bg4",
+      "steg": [
+        { "tekst": "Svart har bundet springeren med 6…Lg4. Den bindingen kan vi snu mot svart.", "fare": ["g4d1"], "felt": ["f7"] },
+        { "tekst": "Finn trekket som setter alt i gang.", "sporsmal": { "type": "trekk", "svar": ["Bxf7+"], "hint": "Begynn med sjakk på f7.", "forklaring": "7.Lxf7+! Kongen må ta, og nå kommer springeren med sjakk fra g5." } },
+        { "trekk": "Kxf7 Ng5+ Ke8 Qxg4", "tekst": "Etter 7…Kxf7 8.Sg5+ Ke8 9.Dxg4 har vi vunnet bonden tilbake, og svarts konge kan ikke rokere.", "piler": ["d1g4"] }
+      ]
+    }
+  ],
+  "huskeregler": [
+    "Bonden er prisen for tid: bruk den til å utvikle, ikke til å hente den tilbake.",
+    "Standardoppstillingen er Sc3, Sf3, Lc4, 0-0, De2 og Td1.",
+    "Tårnet på d1 og damen på d8 på samme linje er et signal: se etter e5.",
+    "Binder svart med …Lg4 før rokaden, se på Lxf7+ og Sg5+."
+  ]
+}

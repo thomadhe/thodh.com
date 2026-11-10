@@ -77,7 +77,11 @@ export function lagEvalbar(rot, { lager = null } = {}) {
   const hvit = rot.querySelector('.ap-eval-hvit');
   const dybdeFelt = rot.querySelector('.ap-eval-dybde');
   const bryter = rot.querySelector('.ap-eval-bryter');
-  let paa = lager?.getItem(NOKKEL) !== 'av';
+  // A view can keep its own switch, with its own default: the walkthrough starts with the bar off.
+  let nokkel = NOKKEL;
+  let standard = true;
+  const lesPaa = () => { const lagret = lager?.getItem(nokkel); return lagret ? lagret !== 'av' : standard; };
+  let paa = lesPaa();
   let fen = null;
   let lagret = null;
   let runde = 0;
@@ -148,7 +152,7 @@ export function lagEvalbar(rot, { lager = null } = {}) {
     settBryter();
     oppdater();
     if (!paa) motor.avslutt();
-    lager?.setItem(NOKKEL, paa ? 'på' : 'av');
+    try { lager?.setItem(nokkel, paa ? 'på' : 'av'); } catch { /* The switch lasts for this visit. */ }
   });
   settBryter();
   tall.textContent = '…';
@@ -164,6 +168,18 @@ export function lagEvalbar(rot, { lager = null } = {}) {
       fen = nyFen;
       lagret = nyLagret;
       oppdater();
+    },
+    // null goes back to the bar's own switch.
+    brukBryter(ny = null, nyStandard = true) {
+      if (avsluttet) return;
+      nokkel = ny ?? NOKKEL;
+      standard = ny ? nyStandard : true;
+      const forrige = paa;
+      paa = lesPaa();
+      if (paa === forrige) return;
+      settBryter();
+      oppdater();
+      if (!paa) motor.avslutt();
     },
     // A number can give the answer away, so a bar on hold shows nothing and starts no engine.
     hold(verdi) {

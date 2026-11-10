@@ -8,6 +8,7 @@ import { FARGE, flertall, forsteSetning, sanTekst, startNotasjon, trenerBoble } 
 import { blandetAdresse, byggAdresse, fargeFra, flereAdresse, motsatt, oktAdresse, repertoarAdresse, veiInnTrekk } from './repertoar.mjs';
 import { kortFor } from './bygg.mjs';
 import { lagSpor, sporSegmenter, statusTekst } from './spor.mjs';
+import { kursTilbys, merkTilbudt } from './kurs.mjs';
 
 const STEG = 300;
 const FORSTE_PAUSE = 380;
@@ -19,9 +20,30 @@ const IKKE_TIMEPLAN = 'Teller ikke på timeplanen.';
 let ekstra = { dag: 0, antall: 0 };
 const ekstraIDag = naa => (ekstra.dag === dagStart(naa) ? ekstra.antall : 0);
 
+// After a walkthrough, its opening's new cards come first: for the day, or until the page reloads.
+let forrang = { dag: 0, apningId: null };
+const forrangIDag = naa => (forrang.dag === dagStart(naa) ? forrang.apningId : null);
+
 export function klareKort(ui, farge = null) {
   const naa = Date.now();
-  return kortKo(ui.kort(), ui.fremgang(), naa, ekstraIDag(naa), farge);
+  return kortKo(ui.kort(), ui.fremgang(), naa, ekstraIDag(naa), farge, forrangIDag(naa));
+}
+
+// "Start kortene" at the end of a walkthrough. The opening must be chosen already, since cards come from the repertoire.
+// When the day's new cards are used up, the session takes more, as "Ta flere" would. Returns where to go.
+export function startKortFor(ui, apning) {
+  const naa = Date.now();
+  forrang = { dag: dagStart(naa), apningId: apning.id };
+  const egen = kort => kort.kilder.some(kilde => kilde.apning.id === apning.id);
+  const ukjente = medFarge(ui.kort(), apning.farge).filter(kort => egen(kort) && !ui.fremgang().kort[kort.id]);
+  if (ukjente.length && !klareKort(ui, apning.farge).nyeKort.some(egen)) ekstra = { dag: dagStart(naa), antall: nesteEkstra(ui.kort(), ui.fremgang(), naa, ekstraIDag(naa), apning.farge) };
+  return oktAdresse(apning.farge);
+}
+
+// The walkthrough to offer before an opening's first new card, if there is one and it was never offered.
+function kursTilbud(ui, apning) {
+  const kurs = ui.kurs?.kjent(apning.id);
+  return kurs && kursTilbys(kurs, ui.fremgang()) ? kurs : null;
 }
 
 export function taFlere(ui, farge = null) {
@@ -214,6 +236,13 @@ export function visKortokt(ui, farge = null) {
   }
   const ko = klareKort(ui, farge);
   if (!ko.kort.length) { intetKlart(ui, ko, farge); return; }
+  // Whether the new cards' openings have a walkthrough is asked for once, before the session starts.
+  const ider = [...new Set(ko.nyeKort.flatMap(kort => kort.kilder.map(kilde => kilde.apning.id)))];
+  if (ui.kurs && !ui.kurs.alleKjent(ider)) {
+    const her = location.hash;
+    ui.kurs.sjekk(ider).then(() => { if (location.hash === her) visKortokt(ui, farge); });
+    return;
+  }
   kjorOkt(ui, lagOkt(ko.klare, Math.random, ko.nyeKort), null, farge);
 }
 
@@ -461,6 +490,27 @@ function kjorOkt(ui, okt, ovelse = null, farge = ovelse?.farge ?? null) {
     enter = ferdig;
   }
 
+  // Once per opening, before its first new card: the walkthrough is there if the player wants it first. Never a wall.
+  function visKursTilbud(apning, kurs, videre) {
+    merkTilbudt(ui.fremgang(), apning.id);
+    ui.lagre();
+    ui.brukOppslag(apning);
+    ui.settTrekk(null);
+    ui.respons();
+    evalbar.hold(true);
+    brett.sett({ fen: apning.startFen, orientering: apning.farge, laast: true });
+    linje.textContent = sanTekst(veiInnTrekk(apning));
+    linje.scrollLeft = 0;
+    teller.textContent = 'Før vi begynner';
+    ui.main.classList.add('ap-kun-tekst');
+    aktiv = null;
+    const se = `#/a/${apning.id}/gjennomgang`;
+    panel.innerHTML = `${trenerBoble(`<p class="eyebrow">GJENNOMGANG · ${esc(apning.navn.toUpperCase())}</p><p class="ap-sier">Før jeg lærer deg trekkene: Jeg har en gjennomgang av ${esc(apning.navn)}, omtrent ${flertall(kurs.minutter, 'minutt', 'minutter')}.</p><p>Der viser jeg ideene og planene på brettet, så trekkene gir mening. Vil du se den først? Kortene venter.</p>`)}<div class="ap-kontroller ap-okt-neste"><a class="button primary" href="${se}">Se gjennomgangen ▶</a><button type="button" class="button secondary" data-videre>Nei takk, ta kortene</button></div>`;
+    const ferdig = () => { ui.main.classList.remove('ap-kun-tekst'); videre(); };
+    panel.querySelector('[data-videre]').addEventListener('click', ferdig);
+    enter = () => { location.hash = se; };
+  }
+
   function visKort(tastatur = false) {
     const kort = okt.ko[0];
     enter = null;
@@ -474,6 +524,8 @@ function kjorOkt(ui, okt, ovelse = null, farge = ovelse?.farge ?? null) {
     // Taught on another device since the session began: then this is its test.
     if (!okt.ovelse && ui.fremgang().kort[kort.id]) okt.laer.delete(kort.id);
     const laer = okt.laer.has(kort.id);
+    const tilbud = laer && !okt.ovelse ? kursTilbud(ui, kilde.apning) : null;
+    if (tilbud) { visKursTilbud(kilde.apning, tilbud, () => visKort(tastatur)); return; }
     if (laer && !okt.ovelse && !introSett(ui.fremgang(), kilde.apning.id)) { visIntro(kilde.apning, () => visKort(tastatur)); return; }
     aktiv = { kort, kilde, laer, igjen: okt.vurdert.has(kort.id), fersk: okt.vist.has(kort.id), hint: false, klar: false, sist: null, svart: null, bilde: null };
     ui.brukOppslag(kilde.apning);

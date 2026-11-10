@@ -2,7 +2,7 @@
 // Each question has its own address, so going back works, and a question can be opened on its own from a gap on the repertoire page.
 import { Chess } from '../vendor/chess.mjs';
 import { TRENER, esc } from './trener.mjs';
-import { flertall, forsteSetning, helTrekk, miniBrett, sanTekst, skarphet, trenerBoble } from './ui.mjs';
+import { flertall, forsteSetning, fyllKursLenker, helTrekk, kursPlass, miniBrett, sanTekst, skarphet, trenerBoble } from './ui.mjs';
 import { STARTFORSLAG, alternativer, byggAdresse, byggSteg, dekningTekst, erValgt, fordel, forsteSteg, hullTekst, nabostSteg, oktAdresse, omtrentProsent, repertoarAdresse, settValgt, svarAndel, svarDekning, veiInnTrekk, velgApning } from './repertoar.mjs';
 import { lagKort, nyePerDag } from './kort.mjs';
 
@@ -48,6 +48,7 @@ function valgKort(apning, fremgang) {
       </span>
     </button>
     <a class="ap-apne" href="#/a/${apning.id}/om" aria-label="Les om ${esc(apning.navn)}">Les om</a>
+    ${kursPlass(apning.id)}
   </li>`;
 }
 
@@ -84,6 +85,7 @@ function visSporsmal(ui, slots, slot, bareHull) {
     ${harValg ? '<p class="ap-bygg-fjern"><button type="button" class="ap-lenke" data-fjern>Fjern valget her</button></p>' : ''}
     ${dekningLinje(slots, fremgang, slot.farge)}`;
   kvittering = '';
+  fyllKursLenker(ui.main, ui);
 
   ui.main.querySelector('[data-alle]')?.addEventListener('click', () => { helListe = slot.id; visSporsmal(ui, slots, slot, bareHull); ui.main.querySelector('.ap-alternativer button')?.focus({ preventScroll: true }); });
   ui.main.querySelector('[data-hopp]').addEventListener('click', () => { location.hash = videre(); });

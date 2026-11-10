@@ -34,6 +34,11 @@
 .en-dagens .en-rad-tekst b { margin-bottom: 2px; font: 500 1.3rem/1.25 var(--serif); }
 .en-lost { color: var(--ok); }
 
+/* The walkthroughs, under both rooms. */
+.en-kurs { grid-column: 1 / -1; }
+.en-kurs[hidden] { display: none; }
+.en-kurs-tekst { margin: -4px 0 10px; color: var(--muted); font-size: .875rem; }
+
 @media (max-width: 850px) {
   .en-rom { grid-template-columns: minmax(0, 1fr); gap: 24px; }
   #en-neste .ap-neste { flex-direction: column; align-items: stretch; gap: 14px; }

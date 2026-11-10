@@ -121,12 +121,20 @@ export function nyeIRekkefolge(ukjente) {
   return ut;
 }
 
+// The cards from one opening first, each part in its own order.
+export function forstFra(kort, apningId) {
+  if (!apningId) return kort;
+  const fra = k => k.kilder.some(kilde => kilde.apning.id === apningId);
+  return [...kort.filter(fra), ...kort.filter(k => !fra(k))];
+}
+
 export const medFarge = (kort, farge) => (farge ? kort.filter(k => k.farge === farge) : kort);
 
 // What is ready now. After a long absence the most overdue cards come first and only the cap shows;
 // new cards wait until the queue is below the cap. ekstra is how many times the player asked for more.
 // farge only narrows what is shown: the day's limits and the pause belong to the player, so kort is always all of them.
-export function kortKo(kort, fremgang, naa = Date.now(), ekstra = 0, farge = null) {
+// forst is an opening whose new cards come before the others, as after its walkthrough.
+export function kortKo(kort, fremgang, naa = Date.now(), ekstra = 0, farge = null, forst = null) {
   const idag = dagStart(naa);
   let gjortIDag = 0, nyeIDag = 0;
   for (const post of Object.values(fremgang.kort)) {
@@ -142,7 +150,7 @@ export function kortKo(kort, fremgang, naa = Date.now(), ekstra = 0, farge = nul
   const rom = rolig ? Math.max(0, MAKS_FORFALT * (1 + ekstra) - gjortIDag) : Infinity;
   const nyeRom = pause ? 0 : Math.max(0, perDag * (1 + ekstra) - nyeIDag);
   const klare = forfalte.slice(0, rom);
-  const nye = nyeIRekkefolge(ukjente).slice(0, nyeRom);
+  const nye = forstFra(nyeIRekkefolge(ukjente), forst).slice(0, nyeRom);
   return { kort: [...klare, ...nye], klare, nyeKort: nye, forfalte: klare.length, nye: nye.length, pause, flere: forfalte.length > klare.length || (!pause && ukjente.length > nye.length) };
 }
 

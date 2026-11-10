@@ -4,6 +4,8 @@ import { kortStatus, medFarge } from '../sjakk/apninger/kort.mjs';
 import { klareKort, nesteStegHtml } from '../sjakk/apninger/kort-okt.mjs';
 import { byggAdresse, repertoarAdresse } from '../sjakk/apninger/repertoar.mjs';
 import { FARGE, flertall, miniBrett } from '../sjakk/apninger/ui.mjs';
+import { kursStatus } from '../sjakk/apninger/kurs.mjs';
+import { esc } from '../sjakk/apninger/trener.mjs';
 import { visRating } from '../sjakk/oppgaver/glicko.mjs';
 import { PLASSERING, resultatTekst } from '../sjakk/oppgaver/lagring.mjs';
 import { dagRekke, dagensOppgave, lesRad, nivaFor } from '../sjakk/oppgaver/utvalg.mjs';
@@ -35,6 +37,20 @@ export function apningerHtml(ui, { venter = false, antall = null } = {}) {
     rad({ adresse: `${APNINGER}${byggAdresse(null)}`, tittel: 'Bygg repertoaret', tekst: harValgt ? 'Ta spørsmålene på nytt' : 'Noen korte spørsmål, ett om gangen' }),
     rad({ adresse: `${APNINGER}#/`, tittel: 'Alle åpninger', tekst: antall ? `Bla i alle ${antall}` : 'Bla i hele biblioteket' }),
   ].join('');
+}
+
+// The chosen openings' walkthroughs, the ones not finished first. liste is [{ apning, kurs }]; nothing to show gives ''.
+export function gjennomgangerHtml(liste, fremgang) {
+  const rader = liste.map(({ apning, kurs }) => ({ apning, kurs, status: kursStatus(kurs, fremgang) }))
+    .sort((a, b) => Number(a.status.ferdig) - Number(b.status.ferdig));
+  return rader.map(({ apning, kurs, status }) => rad({
+    adresse: `${APNINGER}#/a/${apning.id}/gjennomgang`,
+    merke: `<span class="ap-fane-merke ${apning.farge}" aria-hidden="true"></span>`,
+    tittel: esc(apning.navn),
+    tekst: status.ferdig ? 'Sett hele. Se den igjen når du vil' : status.sett ? `${status.sett} av ${flertall(status.antall, 'kapittel', 'kapitler')} sett` : `${flertall(status.antall, 'kapittel', 'kapitler')}, ideene og planene først`,
+    verdi: status.ferdig ? '✓ Sett' : status.startet ? 'Fortsett' : `${kurs.minutter} min`,
+    spor: status.sett && !status.ferdig ? Math.round(status.sett / status.antall * 100) : null,
+  })).join('');
 }
 
 // Today's puzzle and rating as saved. Before the placement is done, the level is not known yet.
