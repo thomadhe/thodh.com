@@ -62,6 +62,30 @@
         { "trekk": "Bc4 Bh4+", "tekst": "Du utvikler løperen mot f7 og lar sjakken komme." },
         { "tekst": "Sjakk! Hva gjør du?", "sporsmal": { "type": "trekk", "svar": ["Kf1"], "hint": "Ikke svekk bøndene foran kongen.", "forklaring": "Kongen til f1. Du mister rokaden, men kongen står trygt, og løperen på h4 har ikke mer å gjøre der. Bonden til g3 gir bare bort enda en bonde." } }
       ]
+    },
+    {
+      "id": "planen",
+      "tittel": "En bonde under. Hva gjør du nå?",
+      "start": "e4 e5 f4 exf4 Nf3",
+      "steg": [
+        { "tekst": "Dette er det viktigste kapittelet. Du er en bonde under og har litt bedre utvikling. Hva gjør du? Still fire spørsmål, alltid i samme rekkefølge." },
+        { "tekst": "Én: Er kongen trygg? Se etter sjakker på h4 og på e-linjen.", "felt": ["h4", "e1"] },
+        { "tekst": "To: Kan jeg spille d4? Da får du sentrum, og løperen på c1 sikter mot f4.", "piler": ["d2d4"] },
+        { "tekst": "Tre, og viktigst: Hvem dekker f4? Finn forsvareren. Jag den, bytt den eller bind den.", "felt": ["f4"] },
+        { "tekst": "Fire: Hvilken brikke står hjemme? Få den ut, helst med en trussel. Og når f4 har falt, hører tårnet hjemme på f-linjen." },
+        { "fra": "e4 e5 f4 exf4 Nf3 h6 d4 g5 h4 Bg7 hxg5 hxg5 Rxh8 Bxh8", "tekst": "Første stilling. Svart har rukket h6 og løperen til g7. Du byttet på g5 og h8, men kjeden står, og g-bonden dekker f4.", "felt": ["g5", "f4"] },
+        { "tekst": "Hvordan angriper du kjeden nå?", "sporsmal": { "type": "trekk", "svar": ["g3"], "hint": "Angrip spissen av kjeden med en bonde.", "forklaring": "Bonden til g3 angriper f4. Lar svart den stå, slår du selv på f4 når det passer. Da er kjeden brutt." } },
+        { "trekk": "fxg3 Nxg5", "tekst": "Og tar svart på g3, slår springeren på g5. Du er fortsatt en bonde under, men kjeden er borte, og motoren gir deg omtrent en bonde i fordel." },
+        { "fra": "e4 e5 f4 exf4 Nf3 g5 h4 g4 Ne5 d6 Nxg4 Nf6 Nxf6+ Qxf6", "tekst": "Andre stilling. Materiellet er likt, men bonden på f4 lever. Damen dekker den.", "fare": ["f6f4"] },
+        { "tekst": "Hva spiller du?", "sporsmal": { "type": "trekk", "svar": ["Nc3"], "hint": "Hvilken brikke kan angripe damen om to trekk?", "forklaring": "Springeren til c3. Neste stopp er d5, med angrep på damen og c7. En dame er en dårlig vakt: Den må flytte når den blir angrepet." } },
+        { "fra": "e4 e5 f4 exf4 Nf3 Be7 Bc4 Nf6 e5 Ng4 O-O Nc6", "tekst": "Tredje stilling. Du har rokert og er en bonde under. Ingen dekker f4. Men bonden din på e5 er angrepet to ganger og dekket én.", "felt": ["e5", "f4"] },
+        { "tekst": "Hva spiller du?", "sporsmal": { "type": "trekk", "svar": ["d4"], "hint": "Ett trekk dekker e5 og åpner for løperen.", "forklaring": "Bonden til d4 dekker e5 og åpner for løperen. Sentrum først, igjen." } },
+        { "trekk": "O-O Bxf4", "tekst": "Rokerer svart, tar du bonden. Materiellet er likt, og tårnet står alt på f-linjen." },
+        { "fra": "e4 e5 f4 exf4 Nf3 d5 exd5 Nf6 Bb5+ c6 dxc6 bxc6 Bc4 Nd5 O-O Bd6", "tekst": "Fjerde stilling, fra moderne forsvar. To brikker dekker f4: løperen på d6 og springeren på d5.", "fare": ["d6f4", "d5f4"] },
+        { "tekst": "Hva er planen?", "sporsmal": { "type": "valg", "valg": ["Springeren til c3 og e4, for å bytte løperen på d6", "Bonden til g3, som mot kjeden", "Damesjakk på e2, for å bytte dronninger"], "riktig": 0, "forklaring": "Løperen på d6 er forsvareren du kan nå. Springeren går via c3 til e4 og bytter den. Bonden til g3 hører hjemme mot en bondekjede. Her svekker den bare kongen din." } },
+        { "trekk": "Nc3 Be6 Ne4 O-O Nxd6 Qxd6", "tekst": "Løperen er byttet, og du har løperparet. Bonden på f4 står der ennå, men den har mistet sin beste vakt." },
+        { "tekst": "Det er hele metoden: kongen, sentrum, forsvareren av f4, og så resten av brikkene. Du trenger ikke et angrep i hvert trekk. Du trenger et mål i hvert trekk." }
+      ]
     }
   ],
   "huskeregler": [
