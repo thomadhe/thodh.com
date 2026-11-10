@@ -119,7 +119,7 @@
         {"tekst":"Hva spiller du?","sporsmal":{"type":"trekk","svar":["Qf6+"],"hint":"Damen kan sjakke.","forklaring":"Damesjakk på f6. Tar kongen springeren, sjakker damen på f4, og kongen jages ut på brettet. Går kongen unna i stedet, blir det matt."}},
         {"fra":"e4 e5 Nf3 Nc6 Bc4 Nf6 Ng5 Bc5 Nxf7 Bxf2+ Kxf2 Nxe4+ Kf1","tekst":"Her gikk kongen til f1."},
         {"trekk":"Qh4 Qe1","tekst":"Vi spiller damen til h4 som vanlig, og hvit dekker f2 med damen."},
-        {"tekst":"Finn trekket som vinner materiell.","sporsmal":{"type":"trekk","svar":["Ng3+"],"hint":"Løperen på c4 er udekket.","forklaring":"Springersjakk på g3. Uansett hvem som slår springeren, tar damen løperen på c4 med sjakk. Etterpå faller springeren på f7."}},
+        {"tekst":"Finn trekket som vinner materiell.","sporsmal":{"type":"trekk","svar":["Ng3+"],"hint":"Løperen på c4 er udekket.","forklaring":"Springersjakk på g3. Slår hvit springeren, tar damen løperen på c4 med sjakk, og etterpå faller springeren på f7. Går kongen til g1, tar damen løperen likevel."}},
         {"fra":"e4 e5 Nf3 Nc6 Bc4 Nf6 Ng5 Bc5 Nxf7 Bxf2+ Kxf2 Nxe4+ Kg1 Qh4 Nxh8","tekst":"Kongen gikk riktig til g1, men så tok hvit tårnet i stedet for å dekke seg."},
         {"tekst":"Avslutt.","sporsmal":{"type":"trekk","svar":["Qf2#"],"forklaring":"Matt på f2. Springeren på e4 dekker damen."}},
         {"fra":"e4 e5 Nf3 Nc6 Bc4 Nf6 Ng5 Bc5 Nxf7 Bxf2+ Kxf2 Nxe4+ Kg1 Qh4 g3 Nxg3 Nxh8 Nd4 Bf1","tekst":"Vi er i hovedlinjen. Hvit trakk løperen hjem til f1 for å dekke."},
@@ -179,7 +179,7 @@
         {"fra":"e4 e5 Nf3 Nc6 Bc4 Nf6 Ng5 Bc5 d4","tekst":"Så de rolige svarene etter at vi har spilt Traxler. Her angriper d-bonden løperen vår."},
         {"trekk":"d5","tekst":"Motstøt igjen. Nå er løperen på c4 også angrepet. Hvits beste er å slå på d5 med løperen, og motoren gir da hvit en halv bonde.","fare":["d5c4"]},
         {"fra":"e4 e5 Nf3 Nc6 Bc4 Nf6 Ng5 Bc5 O-O","tekst":"Og her rokerer hvit i stedet for å ta på f7."},
-        {"trekk":"O-O","tekst":"Da rokerer vi også. Tårnet dekker f7, og hvit har brukt to trekk på en springer som ikke lenger truer noe. Motoren gir svart en halv bonde."},
+        {"trekk":"O-O","tekst":"Da rokerer vi også. Tårnet dekker f7, og hvit har brukt to trekk på en springer som ikke lenger truer noe. Motoren gir svart litt."},
         {"tekst":"Hvilket trekk går igjen mot nesten alt det rolige?","sporsmal":{"type":"valg","valg":["Bonden til d5: den dekker en springer på e4 eller angriper løperen på c4.","Bonden til h6 for å stoppe springeren.","Damen til e7 for å dekke f7."],"riktig":0,"forklaring":"Står e4 udekket, tar vi den. Og motstøtet d5 kommer i nesten hver linje."}},
         {"tekst":"Så den ærlige dommen. Traxler er objektivt tvilsomt: tar hvit med løperen og spiller nøyaktig, står hvit omtrent en bonde bedre. Vil du ha et sunt svar, er bonden til d5 i fjerde trekk det riktige."},
         {"tekst":"Det Traxler gir deg, er stillinger der ett feil kongetrekk taper for hvit, og der du kjenner planene bedre enn motstanderen."}
