@@ -2,7 +2,7 @@
   "schema": 1,
   "apning": "kongegambitt",
   "tittel": "Kongegambitt: slik bruker du kompensasjonen",
-  "minutter": 15,
+  "minutter": 16,
   "kapitler": [
     {
       "id": "ideen",
@@ -40,7 +40,7 @@
         { "tekst": "Det holder. Tar svart tårnet, kommer damen til e2 med sjakk, og så springeren til f6. Det løser du selv i taktikkapittelet.", "piler": ["d1e2", "g4f6"] },
         { "fra": "e4 e5 f4 exf4 Nf3 g5 h4 g4 Ne5 Nf6 Nxg4 d5", "tekst": "Det andre hovedsvaret er d5. Bonden angriper e4, og løperen på c8 sikter på springeren din.", "fare": ["d5e4", "c8g4"] },
         { "trekk": "Nxf6+ Qxf6 Nc3", "tekst": "Du bytter på f6 med sjakk, og damen slår tilbake. Springeren til c3 dekker e4 og angriper d5.", "piler": ["c3d5"] },
-        { "trekk": "Qg7 Qf3", "tekst": "Svart truer sjakk på g3. Damen til f3 stopper den og angriper f4.", "felt": ["g3", "f4"] },
+        { "trekk": "Qg7 Qf3", "tekst": "Svart truer sjakk på g3. Damen til f3 dekker feltet og angriper f4.", "felt": ["g3", "f4"] },
         { "tekst": "Nå er både d5 og f4 angrepet, og ingen av dem er dekket. Materiellet er likt, og motoren sier jevnt spill. Kampen står om bonden på f4.", "felt": ["d5", "f4"] }
       ]
     },
@@ -78,7 +78,7 @@
         { "trekk": "fxg3 Nxg5", "tekst": "Og tar svart på g3, slår springeren på g5. Du er fortsatt en bonde under, men kjeden er borte, og motoren gir deg omtrent en bonde i fordel." },
         { "fra": "e4 e5 f4 exf4 Nf3 g5 h4 g4 Ne5 d6 Nxg4 Nf6 Nxf6+ Qxf6", "tekst": "Andre stilling. Materiellet er likt, men bonden på f4 lever. Damen dekker den.", "fare": ["f6f4"] },
         { "tekst": "Hva spiller du?", "sporsmal": { "type": "trekk", "svar": ["Nc3"], "hint": "Hvilken brikke kan angripe damen om to trekk?", "forklaring": "Springeren til c3. Neste stopp er d5, med angrep på damen og c7. En dame er en dårlig vakt: Den må flytte når den blir angrepet." } },
-        { "fra": "e4 e5 f4 exf4 Nf3 Be7 Bc4 Nf6 e5 Ng4 O-O Nc6", "tekst": "Tredje stilling. Du har rokert og er en bonde under. Ingen dekker f4. Men bonden din på e5 er angrepet to ganger og dekket én.", "felt": ["e5", "f4"] },
+        { "fra": "e4 e5 f4 exf4 Nf3 Be7 Bc4 Nf6 e5 Ng4 O-O Nc6", "tekst": "Tredje stilling. Du har rokert og er en bonde under. Ingen dekker f4. Men bonden din på e5 er angrepet to ganger og dekket én gang.", "felt": ["e5", "f4"] },
         { "tekst": "Hva spiller du?", "sporsmal": { "type": "trekk", "svar": ["d4"], "hint": "Ett trekk dekker e5 og åpner for løperen.", "forklaring": "Bonden til d4 dekker e5 og åpner for løperen. Sentrum først, igjen." } },
         { "trekk": "O-O Bxf4", "tekst": "Rokerer svart, tar du bonden. Materiellet er likt, og tårnet står alt på f-linjen." },
         { "fra": "e4 e5 f4 exf4 Nf3 d5 exd5 Nf6 Bb5+ c6 dxc6 bxc6 Bc4 Nd5 O-O Bd6", "tekst": "Fjerde stilling, fra moderne forsvar. To brikker dekker f4: løperen på d6 og springeren på d5.", "fare": ["d6f4", "d5f4"] },
@@ -123,7 +123,7 @@
         { "tekst": "Hvem dekker f4, og hva gjør du med det?", "sporsmal": { "type": "valg", "valg": ["Løperen og damen. Springeren til e4 angriper løperen.", "Bare damen. Løperen tar på f4 nå.", "Ingen. Tårnet tar på f4."], "riktig": 0, "forklaring": "To brikker dekker f4, så du kan ikke slå ennå. Løperen på d6 kan byttes, og springeren til e4 angriper den." } },
         { "trekk": "Ne4 Nf6 Nxd6+ cxd6", "tekst": "Du bytter av løperen. Nå passer damen alene på f4.", "felt": ["f4"] },
         { "trekk": "Bb5+ Kf8", "tekst": "Løperen sjakker, og kongen går til f8. Legg merke til hvor den står: på f-linjen.", "felt": ["f8"] },
-        { "trekk": "Qd4", "tekst": "Damen til midten. Nå er f4 angrepet to ganger og dekket én.", "piler": ["d4f4", "c1f4"] },
+        { "trekk": "Qd4", "tekst": "Damen til midten. Nå er f4 angrepet to ganger og dekket én gang.", "piler": ["d4f4", "c1f4"] },
         { "trekk": "Nfxd5", "tekst": "Svart tar en bonde til, og springeren på d5 dekker f4. Du er to bønder under. Men svart har kongen på f8 og tre brikker som ikke er med.", "fare": ["d5f4"] },
         { "tekst": "Springeren på d5 er den nye forsvareren. Hva gjør du?", "sporsmal": { "type": "trekk", "svar": ["c4"], "hint": "Jag den med en bonde.", "forklaring": "Bonden til c4 jager den. Det eneste gode feltet for springeren er e3. Alle andre trekk er klart dårligere." } },
         { "trekk": "Nf6", "tekst": "Svart trekker springeren til f6. Det ser trygt ut, men det er feilen som avgjør." },
@@ -141,8 +141,8 @@
       "tittel": "Når svart avslår, eller forsvarer seg godt",
       "start": "e4 e5 f4",
       "steg": [
-        { "trekk": "Bc5", "tekst": "Noen tar ikke bonden. Vanligst er løperen til c5. Den sikter mot g1, så du kan ikke rokere kort mens den står der.", "fare": ["c5g1"] },
-        { "tekst": "Bonden på e5 ser gratis ut. Spill det trygge trekket.", "sporsmal": { "type": "trekk", "svar": ["Nf3"], "hint": "Husk diagonalen til h4.", "forklaring": "Springeren til f3. Slår du på e5, kommer damesjakken på h4. Dekker g-bonden, faller tårnet på h1. Går kongen til e2, er det matt på e4." } },
+        { "trekk": "Bc5", "tekst": "Noen tar ikke bonden. Et vanlig svar er løperen til c5. Den sikter mot g1, så du kan ikke rokere kort mens den står der.", "fare": ["c5g1"] },
+        { "tekst": "Bonden på e5 ser gratis ut. Spill det trygge trekket.", "sporsmal": { "type": "trekk", "svar": ["Nf3"], "hint": "Husk diagonalen til h4.", "forklaring": "Springeren til f3. Slår du på e5, kommer damesjakken på h4. Setter du g-bonden imellom, faller tårnet på h1. Går kongen til e2, er det matt på e4." } },
         { "trekk": "d6 Nc3 Nf6 Bc4 Nc6 d3", "tekst": "Dette er grunnstillingen. Du har ikke ofret noe, og f-bonden kan åpne f-linjen når du vil." },
         { "tekst": "Planen: Springeren til a4 bytter løperen på c5, så du kan rokere. F-bonden går til f5 eller slår på e5.", "piler": ["c3a4", "f4f5"] },
         { "fra": "e4 e5 f4 Bc5 Nf3 d6 Nc3 Nf6 Bc4 Bg4 fxe5 dxe5", "tekst": "Én felle. Svart bandt springeren din for tidlig, og du slo på e5." },
@@ -161,9 +161,9 @@
   "huskeregler": [
     "Springeren til f3 først. Den stopper damesjakken på h4, også når svart avslår med løperen til c5.",
     "Spør alltid: Hvem dekker f4? Jag, bytt eller bind forsvareren.",
-    "Spill d4 så snart du kan. Da ser løperen på c1 mot f4.",
+    "Kongen først, så sentrum. Bonden til d4 gir løperen på c1 fri vei mot f4.",
     "Mot bondekjeden: h4 med en gang, og g3 når kjeden står fast.",
-    "Utvikling før materiell. Tell brikker i spill, ikke bønder.",
+    "Få ut brikkene med trusler. Tell brikker i spill, ikke bønder.",
     "Når f4 har falt: tårn til f-linjen, og se etter f7."
   ]
 }
