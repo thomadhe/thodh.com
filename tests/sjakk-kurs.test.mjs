@@ -7,7 +7,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { lesApning } from '../public/sjakk/apninger/modell.mjs';
 import { KURS_SCHEMA, kursMerke, kursStatus, kursTid, kursTilbys, lagKursLager, lesKurs, lesetid, linjeTekst, merkFerdig, merkKapittel, merkSted, merkTilbudt, trekkTekst, trekkTid } from '../public/sjakk/apninger/kurs.mjs';
-import { FARTER, TALE_NOKKEL, lagTale, lesInnstilling, setninger, stemmeKortnavn, stemmePoeng, taleTekst, tallOrd, velgStemme } from '../public/sjakk/apninger/tale.mjs';
+import { FARTER, TALE_NOKKEL, biter, lagTale, lesInnstilling, setninger, stemmeKortnavn, stemmePoeng, taleTekst, tallOrd, velgStemme } from '../public/sjakk/apninger/tale.mjs';
 import { slaSammen, flettKurs, lik } from '../public/sjakk/apninger/synk.mjs';
 import { lesFremgang, tomFremgang } from '../public/sjakk/apninger/repetisjon.mjs';
 import { forstFra, kortKo, lagKort } from '../public/sjakk/apninger/kort.mjs';
@@ -199,6 +199,8 @@ test('tale: trener-notasjonen blir norsk tale', () => {
   assert.equal(tallOrd(21), 'tjueen');
   assert.equal(tallOrd(40), 'førti');
   assert.deepEqual(setninger('2.f4! Hvit ofrer. Hva nå? Vi ser.'), ['to f4.', 'Hvit ofrer.', 'Hva nå?', 'Vi ser.']);
+  assert.deepEqual(biter(['En.', 'To.', 'Tre.'], 8), ['En. To.', 'Tre.']);
+  assert.deepEqual(biter(['En lang setning.', 'Kort.'], 5), ['En lang setning.', 'Kort.']);
 });
 
 const STEMMER = [
@@ -233,7 +235,7 @@ const minne = () => { const data = new Map(); return { getItem: k => data.get(k)
 
 test('tale: setning for setning, pause sier setningen på nytt, og avbrudd stopper alt', async () => {
   const synth = lagSynth();
-  const tale = lagTale({ synth, Ytring, lager: minne() });
+  const tale = lagTale({ synth, Ytring, lager: minne(), maksBit: 1 });
   assert.equal(tale.leser, true);
   assert.equal(tale.stemme.name, STEMMER[3].name);
   let ferdig = false;
@@ -293,6 +295,9 @@ test('fremgang: kapitler, ferdig, tilbudt og stedet, med sist på hver post', ()
   assert.equal(fremgang.kurs['smith-morra'].kapitler.ideen, 200);
   assert.equal(fremgang.kurs['smith-morra'].sist, 300);
   assert.equal(kursMerke(kurs, fremgang), '1 av 3 kapitler');
+  // Once the chapter it was in is seen, the place left off gives way to the next chapter not seen.
+  merkSted(fremgang, 'smith-morra', 'ideen', 2, 310);
+  assert.deepEqual(kursStatus(kurs, fremgang).sted, { kapittel: 1, steg: 0 });
   merkFerdig(fremgang, 'smith-morra', 400);
   const s = kursStatus(kurs, fremgang);
   assert.equal(s.ferdig, true);

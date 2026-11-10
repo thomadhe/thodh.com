@@ -223,7 +223,8 @@ export function kursStatus(kurs, fremgang) {
   const sett = kurs.kapitler.filter(k => p?.kapitler?.[k.id]).length;
   const forsteUsett = kurs.kapitler.findIndex(k => !p?.kapitler?.[k.id]);
   const stedK = p?.sted ? kurs.kapitler.findIndex(k => k.id === p.sted.kapittel) : -1;
-  const sted = stedK >= 0 && !p.ferdig ? { kapittel: stedK, steg: Math.min(Math.max(0, p.sted.steg | 0), kurs.kapitler[stedK].steg.length - 1) } : { kapittel: Math.max(0, forsteUsett), steg: 0 };
+  // The place left off counts while its chapter is unfinished; after that the next chapter not seen is where to go on.
+  const sted = stedK >= 0 && !p.ferdig && !p.kapitler?.[p.sted.kapittel] ? { kapittel: stedK, steg: Math.min(Math.max(0, p.sted.steg | 0), kurs.kapitler[stedK].steg.length - 1) } : { kapittel: Math.max(0, forsteUsett), steg: 0 };
   return { sett, antall: kurs.kapitler.length, ferdig: Boolean(p?.ferdig), startet: Boolean(p && (sett || p.sted)), tilbudt: Boolean(p?.tilbudt), sted };
 }
 

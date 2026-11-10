@@ -2,6 +2,8 @@
 // and now and then the player has to answer. The course itself is read and checked in kurs.mjs.
 import { TRENER, esc, norsk } from './trener.mjs';
 import { flertall, trenerBoble } from './ui.mjs';
+import { trekkNummer } from './modell.mjs';
+import { introSett, merkIntro } from './kort.mjs';
 import { kursStatus, lesetid, linjeTekst, merkFerdig, merkKapittel, merkSted, trekkTekst, trekkTid } from './kurs.mjs';
 import { lagSpor } from './spor.mjs';
 import { FARTER, lagTale, stemmeKortnavn } from './tale.mjs';
@@ -41,9 +43,12 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
   let gen = 0;
   let snakk = null;
   const nedtellinger = new Set();
+  // Waits on speech that is switched off midway, so the step goes on with the text alone.
+  const lesingAv = new Set();
 
   // ---------- Frame ----------
   avspiller.hidden = false;
+  ui.main.classList.add('ap-gj-aktiv');
   avspiller.innerHTML = `<div class="ap-gj-spor"></div><div class="ap-gj-knapper">
     <button type="button" class="ap-gj-knapp" data-gj="forrige" aria-label="Forrige steg">${IKON.forrige}</button>
     <button type="button" class="ap-gj-knapp ap-gj-spill" data-gj="spill"></button>
@@ -88,7 +93,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
   function vent(ms) {
     return new Promise(svar => {
       const n = { igjen: ms, start: 0, t: null };
-      n.gaa = () => { n.start = performance.now(); n.t = setTimeout(() => { nedtellinger.delete(n); svar(); }, Math.max(0, n.igjen)); };
+      n.gaa = () => { if (n.t !== null) return; n.start = performance.now(); n.t = setTimeout(() => { nedtellinger.delete(n); svar(); }, Math.max(0, n.igjen)); };
       n.stans = () => { if (n.t === null) return; clearTimeout(n.t); n.t = null; n.igjen -= performance.now() - n.start; };
       nedtellinger.add(n);
       if (spiller) n.gaa();
@@ -102,12 +107,13 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     const denne = stemme.si(tekst);
     snakk = denne;
     if (!spiller) denne.pause();
-    return denne.ferdig.then(() => vent(ETTER_TALE));
+    return Promise.race([denne.ferdig, new Promise(svar => lesingAv.add(svar))]).then(() => vent(ETTER_TALE));
   }
   function avbryt() {
     gen += 1;
     for (const n of nedtellinger) clearTimeout(n.t);
     nedtellinger.clear();
+    lesingAv.clear();
     snakk?.avbryt();
     snakk = null;
     ui.settTrekk(null);
@@ -119,6 +125,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     for (const n of nedtellinger) (ja ? n.gaa : n.stans)();
     if (ja) snakk?.fortsett(); else snakk?.pause();
     el.spor.classList.toggle('ap-gj-stans', !ja);
+    ramme.classList.toggle('ap-gj-pauset', !ja);
     tegnKnapper();
   }
 
@@ -193,6 +200,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
   function tegnKapitler() {
     const status = kursStatus(kurs, ui.fremgang());
     const post = ui.fremgang().kurs?.[kurs.apning];
+    const fokus = el.kapitler.contains(document.activeElement) ? document.activeElement.dataset.kap : null;
     el.kapitler.innerHTML = kurs.kapitler.map((kap, k) => {
       const sett = Boolean(post?.kapitler?.[kap.id]);
       const her = k === tilstand.k && tilstand.fase !== 'plakat' && tilstand.fase !== 'slutt';
@@ -200,6 +208,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     }).join('');
     el.kapitler.closest('section').setAttribute('aria-label', `Kapitler, ${status.sett} av ${status.antall} sett`);
     el.kapitler.querySelectorAll('[data-kap]').forEach(knapp => knapp.addEventListener('click', () => { settSpiller(true); kjor(Number(knapp.dataset.kap), 0); }));
+    if (fokus !== null) el.kapitler.querySelector(`[data-kap="${fokus}"]`)?.focus({ preventScroll: true });
   }
   const tegnAlt = () => { hode(); tegnSpor(); tegnKnapper(); tegnKapitler(); };
 
@@ -223,6 +232,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     lagreSted();
     tegnAlt();
     el.handling.innerHTML = '';
+    ui.respons();
     evalbar.hold(false);
     if (i === 0 && animer && nyttKapittel) {
       vis(kapittel().start);
@@ -230,7 +240,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
       if (!rolig()) {
         ramme.insertAdjacentHTML('beforeend', `<div class="ap-kapittelkort" aria-hidden="true"><span>Kapittel ${k + 1}</span><b>${esc(kapittel().tittel)}</b></div>`);
       }
-      await Promise.all([vent(KAPITTELKORT), si(`Kapittel ${k + 1}. ${kapittel().tittel}.`)]);
+      await Promise.all([vent(KAPITTELKORT), si(`Kapittel ${k + 1}: ${kapittel().tittel}${/[.!?]$/.test(kapittel().tittel) ? '' : '.'}`)]);
       if (g !== gen) return;
       ramme.querySelector('.ap-kapittelkort')?.remove();
     }
@@ -266,6 +276,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     lagreSted();
     tegnAlt();
     el.handling.innerHTML = '';
+    ui.respons();
     evalbar.hold(false);
     tekst(stegHtml(s));
     if (s.sporsmal) { sporsmal(s); return; }
@@ -294,6 +305,8 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
       el.handling.querySelector('[data-q="hint"]').addEventListener('click', () => hint(s));
       el.handling.querySelector('[data-q="vis"]').addEventListener('click', () => visMeg(s));
       ui.settTrekk(trekk => svarTrekk(s, trekk));
+      // On a phone the panel is under the board; the question stays in sight in the line right under it.
+      ui.respons(`Spørsmål: ${s.tekst}`);
       si(s.tekst);
       return;
     }
@@ -301,6 +314,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     tekst(`<p class="eyebrow">SPØRSMÅL</p><p class="ap-sier">${esc(s.tekst)}</p>`);
     el.handling.innerHTML = `<div class="ap-gj-valg" role="group" aria-label="Svaralternativer">${q.valg.map((v, n) => `<button type="button" class="ap-gj-alt" data-valg="${n}"><span class="ap-gj-alt-nr" aria-hidden="true">${n + 1}</span><span>${esc(v)}</span></button>`).join('')}</div>`;
     el.handling.querySelectorAll('[data-valg]').forEach(knapp => knapp.addEventListener('click', () => svarValg(s, Number(knapp.dataset.valg))));
+    ui.respons(`Spørsmål: ${s.tekst} Svarene står under.`);
     si(`${s.tekst} ${q.valg.map((v, n) => `${n + 1}: ${v}`).join('. ')}.`);
   }
 
@@ -313,6 +327,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     if (knapp) { knapp.disabled = true; knapp.textContent = 'Brikken er merket'; }
     const linjeHint = s.sporsmal.hint ? `<p><span class="ap-etikett">Hint</span>${esc(s.sporsmal.hint)}</p>` : '';
     tekst(`<p class="eyebrow">SPØRSMÅL</p><p class="ap-sier">${esc(s.tekst)}</p>${linjeHint}<p class="ap-gjor">Brikken som skal flyttes, er merket.</p>`, tilstand.forsok ? 'feil' : '');
+    ui.respons(`Brikken er merket.${s.sporsmal.hint ? ` ${s.sporsmal.hint}` : ''}`);
     if (s.sporsmal.hint) si(s.sporsmal.hint);
   }
 
@@ -327,6 +342,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
       vis(s.vist, { piler: [...s.piler, { fra: trekk.from, til: trekk.to, type: 'fare' }], merket, laast: false });
       const hjelp = tilstand.forsok >= 2 && q.hint ? `<p><span class="ap-etikett">Hint</span>${esc(q.hint)}</p>` : '';
       tekst(`<p class="eyebrow">SPØRSMÅL</p><p class="ap-sier">${esc(norsk(trekk.san))} er ikke det jeg ser etter. ${tilstand.forsok >= 2 ? 'Brikken som skal flyttes, er merket.' : 'Prøv igjen, eller ta et hint.'}</p>${hjelp}<p class="ap-kilde">${esc(s.tekst)}</p>`, 'feil');
+      ui.respons(`${norsk(trekk.san)} er ikke det jeg ser etter. ${tilstand.forsok >= 2 ? `Brikken er merket.${q.hint ? ` ${q.hint}` : ''}` : 'Prøv igjen.'}`, 'feil');
       si(`Ikke helt. ${tilstand.forsok >= 2 && q.hint ? q.hint : 'Prøv igjen.'}`);
       if (tilstand.forsok >= 2) { tilstand.hint = true; const knapp = el.handling.querySelector('[data-q="hint"]'); if (knapp) { knapp.disabled = true; knapp.textContent = 'Brikken er merket'; } }
       return;
@@ -334,20 +350,25 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     noter(tilstand.hint ? 'hint' : 'riktig');
     const annet = trekk.san !== q.riktig.san;
     const ros = tilstand.hint ? 'Riktig, med litt hjelp.' : 'Riktig!';
+    const nr = trekkNummer(s.vist.fen);
+    ui.respons(`${ros} ${nr}${norsk(trekk.san)}`, 'bra');
     vis(s.etter, { piler: annet ? [{ fra: q.riktig.from, til: q.riktig.to, type: 'hint' }] : [], gli: !annet });
-    forklar(s, `<p class="ap-sier"><strong>${ros}</strong> ${annet ? `${esc(norsk(trekk.san))} virker også. Vi går videre med ${esc(norsk(q.riktig.san))}.` : esc(norsk(trekk.san))}</p>`, 'bra', annet ? `${ros} Vi går videre med ${norsk(q.riktig.san)}.` : ros);
+    forklar(s, `<p class="ap-sier"><strong>${ros}</strong> ${annet ? `${esc(nr + norsk(trekk.san))} virker også. Vi går videre med ${esc(nr + norsk(q.riktig.san))}.` : `${esc(nr + norsk(trekk.san))}.`}</p>`, 'bra', annet ? `${ros} Vi går videre med ${norsk(q.riktig.san)}.` : ros);
   }
 
   function visMeg(s) {
     noter('vist');
     vis(s.etter, { piler: [{ fra: s.sporsmal.riktig.from, til: s.sporsmal.riktig.to, type: 'hint' }], gli: true });
-    forklar(s, `<p class="ap-sier">Trekket er <strong>${esc(norsk(s.sporsmal.riktig.san))}</strong>.</p>`, '', `Trekket er ${norsk(s.sporsmal.riktig.san)}.`);
+    const trekk = trekkNummer(s.vist.fen) + norsk(s.sporsmal.riktig.san);
+    ui.respons(`Trekket er ${trekk}.`);
+    forklar(s, `<p class="ap-sier">Trekket er <strong>${esc(trekk)}</strong>.</p>`, '', `Trekket er ${trekk}.`);
   }
 
   function svarValg(s, n) {
     const q = s.sporsmal;
     const riktig = n === q.riktig;
     noter(riktig ? 'riktig' : 'feil');
+    ui.respons(riktig ? 'Riktig!' : `Ikke helt. Svaret er: ${q.valg[q.riktig]}.`, riktig ? 'bra' : 'feil');
     el.handling.querySelectorAll('[data-valg]').forEach(knapp => {
       const m = Number(knapp.dataset.valg);
       knapp.disabled = true;
@@ -383,6 +404,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
   // ---------- Chapter and course end ----------
   function kapittelSlutt() {
     avbryt();
+    ui.respons();
     merkKapittel(ui.fremgang(), apning.id, kapittel().id);
     ui.lagre();
     if (sisteKapittel()) { slutt(); return; }
@@ -402,15 +424,20 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
   let kvittering = '';
   function slutt() {
     avbryt();
+    ui.respons();
     merkFerdig(ui.fremgang(), apning.id);
+    // The cards' short introduction says less than the walkthrough just did. A player with no cards yet still gets it, for how the cards work.
+    if (Object.keys(ui.fremgang().kort).length && !introSett(ui.fremgang(), apning.id)) merkIntro(ui.fremgang(), apning.id);
     ui.lagre();
     tilstand.fase = 'slutt';
     const s = kapittel().steg.at(-1);
     vis(s.etter);
-    settSpiller(false);
+    // Played to the end: the rules are read too, and then the player stands still.
+    const lest = spiller;
     tegnAlt();
     tegnSlutt();
-    si(`Det var gjennomgangen. Her er det viktigste å huske. ${kurs.huskeregler.join(' ')}`);
+    if (lest) si(`Det var gjennomgangen. Her er det viktigste å huske. ${kurs.huskeregler.join(' ')}`).then(() => { if (tilstand.fase === 'slutt') settSpiller(false); });
+    else settSpiller(false);
   }
   function tegnSlutt() {
     const valgt = erValgt(ui.fremgang(), apning.id);
@@ -465,6 +492,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
   el.neste.addEventListener('click', neste);
   el.tale.addEventListener('click', () => {
     stemme.settPaa(!stemme.paa);
+    if (!stemme.paa) { for (const svar of lesingAv) svar(); lesingAv.clear(); }
     // Switched on mid-step: the step is read from the start. Switched off: the clock goes on with the text alone.
     if (stemme.paa && spiller && tilstand.fase === 'steg') kjor(tilstand.k, tilstand.i, { animer: false });
   });
@@ -492,7 +520,7 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
     ramme.insertAdjacentHTML('beforeend', `<button type="button" class="ap-plakat"><span class="ap-plakat-knapp" aria-hidden="true">${start.ferdig ? IKON.igjen : IKON.spill}</span><span class="ap-plakat-tekst">${merke}</span><small>${flertall(kurs.kapitler.length, 'kapittel', 'kapitler')} · ca. ${kurs.minutter} min</small></button>`);
     ramme.querySelector('.ap-plakat').addEventListener('click', spillPause);
     const fortsetter = start.startet && !start.ferdig;
-    tekst(`<p class="ap-sier"><strong>${esc(kurs.tittel)}</strong></p><p>Brettet spiller av og jeg forklarer, steg for steg. Innimellom spør jeg deg, og da venter jeg på svaret ditt. Du kan pause og spole når du vil.</p>${fortsetter ? `<p class="ap-kilde">Du har sett ${start.sett} av ${flertall(start.antall, 'kapittel', 'kapitler')}. Vi fortsetter der du slapp.</p>` : start.ferdig ? '<p class="ap-kilde">Du har sett hele. Se den igjen, eller velg et kapittel.</p>' : ''}<p class="ap-kilde">Tastatur: mellomrom spiller og pauser, piltastene blar.</p>`);
+    tekst(`<p class="ap-sier">Brettet spiller av og jeg forklarer, steg for steg. Innimellom spør jeg deg, og da venter jeg på svaret ditt. Du kan pause og spole når du vil.</p>${fortsetter ? `<p class="ap-kilde">Du har sett ${start.sett} av ${flertall(start.antall, 'kapittel', 'kapitler')}. Vi fortsetter der du slapp.</p>` : start.ferdig ? '<p class="ap-kilde">Du har sett hele. Se den igjen, eller velg et kapittel.</p>' : ''}<p class="ap-kilde">Tastatur: mellomrom spiller og pauser, piltastene blar.</p>`);
     tegnAlt();
     tegnStemme();
   }
@@ -504,9 +532,12 @@ export function visGjennomgang(ui, { apning, kurs, brett, evalbar, panel, linje,
       spiller = false;
       naarTaleEndret = () => {};
       ramme.querySelector('.ap-plakat')?.remove();
+      ramme.classList.remove('ap-gj-pauset');
       evalbar.brukBryter(null);
       evalbar.hold(false);
+      ui.respons();
       avspiller.hidden = true;
+      ui.main.classList.remove('ap-gj-aktiv');
       avspiller.innerHTML = '';
       ui.settTast(null);
     },

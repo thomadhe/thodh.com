@@ -327,6 +327,8 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
 
 /* Gjennomgang: the course played like a video. The controls sit under the board, like a player's. */
 .ap-avspiller { margin-top: 6px; }
+/* The controls take a row under the board, so the board gives way a little more on low windows. */
+@media (min-width: 851px) { .ap-gj-aktiv .ap-oppsett { grid-template-columns: minmax(0, clamp(400px, calc(100vh - 486px), 600px)) minmax(300px, 1fr); } }
 .ap-gj-spor.ap-skrubb { margin-top: 0; height: 30px; }
 .ap-gj-spor .ap-segment::before { height: 6px; margin-top: -3px; }
 .ap-gj-spor .ap-segment.s-sett::before, .ap-gj-spor .ap-segment.s-naa::before { background: #7c485e; }
@@ -362,6 +364,7 @@ button.ap-slot-topp:focus-visible { outline: 3px solid var(--pink); outline-offs
 .ap-kapittelkort { position: absolute; left: 50%; top: 50%; z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 4px; max-width: 80%; padding: 16px 24px; border: 1px solid #aa6a87; border-radius: 12px; background: #1b1220eb; box-shadow: 0 16px 40px #000a; text-align: center; transform: translate(-50%, -50%); pointer-events: none; animation: ap-gj-kort 1.7s ease both; }
 .ap-kapittelkort span { color: var(--pink); font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
 .ap-kapittelkort b { font: 500 1.5rem/1.25 var(--serif); }
+.ap-gj-pauset .ap-kapittelkort { animation-play-state: paused; }
 @keyframes ap-gj-kort { 0% { opacity: 0; transform: translate(-50%, -44%); } 14%, 82% { opacity: 1; transform: translate(-50%, -50%); } 100% { opacity: 0; } }
 
 /* The panel: the chapter, Tora, the answer and the chapters. */

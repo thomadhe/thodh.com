@@ -53,6 +53,17 @@ export function taleTekst(tekst) {
 // Sentences, so speech can stop and pick up again at a sentence, and long texts do not trip the browser.
 export const setninger = tekst => taleTekst(tekst).split(/(?<=[.!?:])\s+(?=\S)/u).filter(s => s.trim());
 
+// Sentences said together, up to a length: every utterance costs an online voice a moment before it starts,
+// and a short step reads best in one breath.
+export function biter(deler, maks = 240) {
+  const ut = [];
+  for (const del of deler) {
+    if (ut.length && ut.at(-1).length + del.length + 1 <= maks) ut[ut.length - 1] += ` ${del}`;
+    else ut.push(del);
+  }
+  return ut;
+}
+
 // The best Norwegian voice: Bokmål before Norwegian before Nynorsk, natural and online voices first.
 export function stemmePoeng(stemme) {
   const sprak = String(stemme?.lang ?? '').toLowerCase().replace('_', '-');
@@ -93,7 +104,7 @@ export function lesInnstilling(lager) {
 }
 
 // synth is window.speechSynthesis (or a stand-in in tests). Ytring is the SpeechSynthesisUtterance class.
-export function lagTale({ synth = globalThis.speechSynthesis, Ytring = globalThis.SpeechSynthesisUtterance, lager = null, naarEndret = () => {} } = {}) {
+export function lagTale({ synth = globalThis.speechSynthesis, Ytring = globalThis.SpeechSynthesisUtterance, lager = null, naarEndret = () => {}, maksBit = 240 } = {}) {
   let innstilling = lesInnstilling(lager);
   let stemme = null;
   let lastet = false;
@@ -117,7 +128,7 @@ export function lagTale({ synth = globalThis.speechSynthesis, Ytring = globalThi
   // One run of speech. ferdig resolves when the last sentence is said, or never when it is stopped.
   function si(steg) {
     aktiv?.avbryt();
-    const deler = setninger(typeof steg === 'string' ? steg : steg.tekst);
+    const deler = biter(setninger(typeof steg === 'string' ? steg : steg.tekst), maksBit);
     let i = 0, pauset = false, stoppet = false, vakt = null, runde = 0;
     let ferdigSvar;
     const ferdig = new Promise(svar => { ferdigSvar = svar; });
