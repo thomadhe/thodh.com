@@ -102,10 +102,10 @@
         {"tekst":"Neste skritt er å flytte springeren fra f6. Da ser tårnet helt ned til f3, og dame, løper og tårn presser på samme punkt. Motoren gir svart en liten fordel.","piler":["f6d7","f8f3"]},
         {"fra":"e4 e5 Nf3 Nc6 Bc4 Nf6 Ng5 Bc5 Bxf7+ Ke7 Bb3 Qe8 d3 d6 O-O Bg4 Nf3 Qh5 h3","tekst":"Tredje stilling. Hva om hvit jager løperen og bytter damer? Da er vi vel bare en bonde under?"},
         {"trekk":"Bxf3 Qxf3 Qxf3 gxf3","tekst":"Vi bytter alt på f3. Hvit sitter igjen med dobbeltbønder foran kongen."},
-        {"tekst":"Hvor går springeren?","sporsmal":{"type":"trekk","svar":["Nd4"],"hint":"Den skal angripe to ting.","forklaring":"Til d4. Den angriper bonden på f3 og løperen på b3. Bonden kommer tilbake, og motoren gir svart litt."}},
+        {"tekst":"Hvor går springeren?","sporsmal":{"type":"trekk","svar":["Nd4"],"hint":"Den skal angripe to ting.","forklaring":"Til d4. Den angriper bonden på f3 og løperen på b3, og den andre springeren er på vei til h5 og f4. Vi er fortsatt en bonde under, men motoren kaller stillingen lik."}},
         {"fra":"e4 e5 Nf3 Nc6 Bc4 Nf6 Ng5 Bc5 Bxf7+ Ke7 Bc4 Qe8 Nc3","tekst":"Fjerde stilling. Løperen står på c4, og springeren på c3 sikter mot d5.","fare":["c3d5"]},
         {"tekst":"Hva spiller du først?","sporsmal":{"type":"trekk","svar":["h6"],"hint":"Punkt fire kommer før punkt to her.","forklaring":"H-bonden først. Spiller vi d6 nå, kommer springersjakken på d5 mens springeren på g5 fortsatt står der. Da gir motoren hvit nesten to bønder."}},
-        {"tekst":"Hva er riktig holdning når du er en bonde under i Traxler?","sporsmal":{"type":"valg","valg":["Vinne bonden tilbake så fort som mulig.","Få alle brikkene med mot f-linjen og kongefløyen før noe annet.","Bytte damer og håpe på remis."],"riktig":1,"forklaring":"Bonden kommer ofte tilbake av seg selv når presset mot f3 og f2 er stort nok."}}
+        {"tekst":"Hva er riktig holdning når du er en bonde under i Traxler?","sporsmal":{"type":"valg","valg":["Vinne bonden tilbake så fort som mulig.","Få alle brikkene med mot f-linjen og kongefløyen før noe annet.","Bytte damer og håpe på remis."],"riktig":1,"forklaring":"Aktiviteten er det du har betalt for. Slipper du presset mot f3 og f2, er du bare en bonde under."}}
       ]
     },
     {
