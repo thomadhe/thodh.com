@@ -42,7 +42,7 @@
         {"trekk":"Nh4 Be6 O-O Qd6","tekst":"Springeren havner på kanten. Vi utvikler løperen og damen, og planen er lang rokade. Motoren gir hvit en halv bonde.","piler":["e8c8"]},
         {"fra":"e4 e5 Nf3 Nc6 Bb5 f5 Nc3 fxe4 Bxc6","tekst":"Noen bytter på c6 før de tar tilbake på e4."},
         {"trekk":"bxc6 Nxe4 d5","tekst":"Vi tar med b-bonden, og den støtter d5. Springeren jages, og sentrum er vårt. Motoren sier likt."},
-        {"tekst":"Hvilken regel gjelder når springerne byttes på f6?","sporsmal":{"type":"valg","valg":["Alltid damen.","Alltid g-bonden.","Damen når e5 er trygg. G-bonden når vi har spilt d5 og e5 trenger støtte."],"riktig":2,"forklaring":"Uten d5 tar damen. Etter d5 er springeren på c6 bundet av løperen, og da må g-bonden dekke e5."}}
+        {"tekst":"Springerne byttes på f6. Hvilken regel gjelder?","sporsmal":{"type":"valg","valg":["Alltid damen.","Alltid g-bonden.","Damen når e5 er trygg. G-bonden når vi har spilt d5 og e5 trenger støtte."],"riktig":2,"forklaring":"Uten d5 tar damen. Etter d5 er springeren på c6 bundet av løperen, og da må g-bonden dekke e5."}}
       ]
     },
     {

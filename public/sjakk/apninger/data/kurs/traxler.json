@@ -71,7 +71,7 @@
         {"fra":"e4 e5 Nf3 Nc6 Bc4 Nf6 Ng5 Bc5 Bxf7+ Ke7 Bd5 Rf8 O-O","tekst":"Derfor rokerer hvit først. Da er trikset borte, og vi bygger opp i ro."},
         {"trekk":"d6","tekst":"Bonden til d6 åpner for løperen på c8.","piler":["c8g4"]},
         {"trekk":"c3 Bg4","tekst":"Løperen kommer ut med angrep på damen.","fare":["g4d1"]},
-        {"trekk":"Nf3 Qe8","tekst":"Springeren må tilbake og stenge. Damen vår går til e8, på vei mot h5. Motoren gir hvit en halv bonde.","piler":["e8h5"]},
+        {"trekk":"Nf3 Qe8","tekst":"Springeren går tilbake og stenger. Damen vår går til e8, på vei mot h5. Motoren gir hvit en halv bonde.","piler":["e8h5"]},
         {"fra":"e4 e5 Nf3 Nc6 Bc4 Nf6 Ng5 Bc5 Bxf7+ Ke7 Bb3","tekst":"Så b3. Her står løperen trygt."},
         {"trekk":"Qe8","tekst":"Mot b3 går damen til e8 med en gang. Derfra når den g6 og h5, og tårnet får f8 etterpå.","piler":["e8g6","e8h5"]},
         {"trekk":"d3 d6 O-O Bg4","tekst":"Hvit utvikler seg, og vi gjør det samme som før: bonden til d6 og løperen til g4."},
