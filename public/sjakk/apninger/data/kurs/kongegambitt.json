@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "apning": "kongegambitt",
+  "tittel": "Kongegambitt: slik bruker du kompensasjonen",
+  "minutter": 15,
+  "kapitler": [
+    {
+      "id": "ideen",
+      "tittel": "Hva gir du, og hva får du?",
+      "start": "e4 e5",
+      "steg": [
+        { "trekk": "f4", "tekst": "Dette er kongegambitten. Allerede i trekk to tilbyr du f-bonden.", "felt": ["f4"] },
+        { "trekk": "exf4", "tekst": "Svart tar. Du er en bonde under. Hva har du fått igjen?" },
+        { "tekst": "Først: sentrum. Svarts e-bonde er lokket bort. Spiller du d4, står du med to bønder i midten.", "piler": ["d2d4"], "felt": ["e4", "d4"] },
+        { "tekst": "Så: f-linjen. Når du har rokert, sikter tårnet på f1 mot f7. Det feltet dekkes bare av kongen.", "felt": ["f7"] },
+        { "tekst": "Og tid. Vil svart beholde bonden, koster det flere bondetrekk. Imens får du ut brikkene." },
+        { "tekst": "Prisen er kongen din. Diagonalen fra e1 til h4 er åpen, og svart truer damesjakk på h4.", "fare": ["d8h4"], "felt": ["e1"] },
+        { "tekst": "Hvilket trekk stopper sjakken og utvikler en brikke?", "sporsmal": { "type": "trekk", "svar": ["Nf3"], "hint": "En springer kan dekke h4.", "forklaring": "Springeren til f3. Den dekker h4, og den støtter d4 i neste trekk. Spiller du d4 først, kommer sjakken, og kongen må ut i midten." } },
+        { "tekst": "Se på bonden på f4. Den er svarts gevinst, men også en sperre: Løperen din kommer ikke til f4, og f-linjen er stengt. Mye av partiet handler om den bonden.", "felt": ["f4"] },
+        { "fra": "e4 e5 f4 exf4 Nf3 d6 d4 Be7 Bxf4", "tekst": "Slik ser drømmen ut. Svart spilte rolig, du fikk inn d4, og løperen tok bonden. Materiellet er likt, og du har sentrum.", "felt": ["e4", "d4"] },
+        { "tekst": "Gode motstandere gir deg ikke det. De holder bonden med g5, eller gir den tilbake med d5. De stillingene handler kurset om." },
+        { "tekst": "En ærlig ting: Motoren mener svart står litt bedre etter trekk to, omtrent en halv bonde. Men svart må spille presist, og du kjenner planene." }
+      ]
+    },
+    {
+      "id": "kieseritzky",
+      "tittel": "Svart holder bonden: g5 og Kieseritzky",
+      "start": "e4 e5 f4 exf4 Nf3",
+      "steg": [
+        { "trekk": "g5", "tekst": "Det vanligste svaret. G-bonden dekker f4, og den truer å gå til g4 og jage springeren din.", "fare": ["g5g4"] },
+        { "trekk": "h4", "tekst": "Du angriper kjeden med en gang. Det haster: Får svart tid til både h6 og løperen til g7, står kjeden støtt.", "piler": ["h4g5"] },
+        { "tekst": "Akkurat nå kan ikke svart holde bonden på g5. Etter h6 slår du på g5, og slår h-bonden tilbake, faller tårnet på h8.", "piler": ["h4g5", "h1h8"] },
+        { "trekk": "g4 Ne5", "tekst": "Derfor går bonden fram, og springeren din hopper til e5. Der sikter den på g4 og f7.", "piler": ["e5g4", "e5f7"] },
+        { "trekk": "Nf6", "tekst": "Svarts vanligste trekk. Springeren angriper e4 og dekker g4.", "fare": ["f6e4"] },
+        { "tekst": "Hva spiller du? Tenk på materiellet.", "sporsmal": { "type": "trekk", "svar": ["Nxg4"], "hint": "Springeren din kan slå en bonde.", "forklaring": "Springeren tar på g4, og materiellet er likt. Bytter svart springere, slår damen din tilbake, og du står best." } },
+        { "fra": "e4 e5 f4 exf4 Nf3 g5 h4 g4 Ne5 Nf6 d4 d6 Nd3 Nxe4 Bxf4", "tekst": "Et sidesprang: Den gamle hovedlinjen er d4. Det er ikke vårt trekk. Svart jager springeren og tar på e4, og du er en bonde under. Motoren gir svart omtrent 0,8." },
+        { "fra": "e4 e5 f4 exf4 Nf3 g5 h4 g4 Ne5 Nf6 Nxg4", "tekst": "Vårt trekk gir svart bare 0,2. Derfor tar vi bonden straks." },
+        { "trekk": "Nxe4", "tekst": "Svart tar ofte på e4 og er en bonde over igjen. Springeren truer også å hoppe til g3 og angripe tårnet ditt.", "fare": ["e4g3"] },
+        { "tekst": "Her finnes bare ett godt trekk. Hvilket?", "sporsmal": { "type": "trekk", "svar": ["d3"], "hint": "Jag springeren, og slipp løperen din fri.", "forklaring": "Bonden til d3. Springeren må flytte, og løperen på c1 ser helt fram til f4. Springeren til c3 ser naturlig ut, men da dekker svart med d5 og beholder bonden." } },
+        { "trekk": "Ng3 Bxf4", "tekst": "Springeren angriper tårnet. Du tar f4 med løperen, angriper springeren, og lar tårnet stå!", "piler": ["f4g3"], "fare": ["g3h1"] },
+        { "tekst": "Det holder. Tar svart tårnet, kommer damen til e2 med sjakk, og så springeren til f6. Det løser du selv i taktikkapittelet.", "piler": ["d1e2", "g4f6"] },
+        { "fra": "e4 e5 f4 exf4 Nf3 g5 h4 g4 Ne5 Nf6 Nxg4 d5", "tekst": "Det andre hovedsvaret er d5. Bonden angriper e4, og løperen på c8 sikter på springeren din.", "fare": ["d5e4", "c8g4"] },
+        { "trekk": "Nxf6+ Qxf6 Nc3", "tekst": "Du bytter på f6 med sjakk, og damen slår tilbake. Springeren til c3 dekker e4 og angriper d5.", "piler": ["c3d5"] },
+        { "trekk": "Qg7 Qf3", "tekst": "Svart truer sjakk på g3. Damen til f3 stopper den og angriper f4.", "felt": ["g3", "f4"] },
+        { "tekst": "Nå er både d5 og f4 angrepet, og ingen av dem er dekket. Materiellet er likt, og motoren sier jevnt spill. Kampen står om bonden på f4.", "felt": ["d5", "f4"] }
+      ]
+    }
+  ],
+  "huskeregler": [
+    "Springeren til f3 først. Den stopper damesjakken på h4, også når svart avslår med løperen til c5.",
+    "Spør alltid: Hvem dekker f4? Jag, bytt eller bind forsvareren.",
+    "Spill d4 så snart du kan. Da ser løperen på c1 mot f4.",
+    "Mot bondekjeden: h4 med en gang, og g3 når kjeden står fast.",
+    "Utvikling før materiell. Tell brikker i spill, ikke bønder.",
+    "Når f4 har falt: tårn til f-linjen, og se etter f7."
+  ]
+}
