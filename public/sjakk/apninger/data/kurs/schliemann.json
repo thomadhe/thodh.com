@@ -27,15 +27,15 @@
       "steg": [
         {"tekst":"Hvit dekker e4 med springeren. Det er hovedlinjen."},
         {"trekk":"fxe4 Nxe4","tekst":"Vi slår, og springeren tar tilbake. Nå står den midt på brettet."},
-        {"tekst":"Hva spiller du?","sporsmal":{"type":"trekk","svar":["Nf6"],"hint":"Utvikle en brikke og angrip springeren.","forklaring":"Springeren til f6 utfordrer hvits beste brikke. Det finnes et skarpere trekk med d-bonden, men det krever mye mer teori."}},
+        {"tekst":"Hva spiller du?","sporsmal":{"type":"trekk","svar":["Nf6","d5"],"hint":"Utvikle en brikke og angrip springeren.","forklaring":"Springeren til f6 utfordrer hvits beste brikke, og det er trekket vi bygger på. Motoren regner d5 som omtrent like bra, så det godtas også, men det krever mye mer teori."}},
         {"trekk":"Nxf6+","tekst":"Hvit bytter springere med sjakk."},
         {"tekst":"Hvordan tar du tilbake?","sporsmal":{"type":"trekk","svar":["Qxf6"],"hint":"Hold bondestillingen hel.","forklaring":"Med damen. Den står aktivt på f-linjen og dekker e5, og g-bonden blir stående foran kongen."}},
         {"trekk":"Qe2","tekst":"Damen til e2. Hvit truer å bytte på c6 og ta bonden på e5.","fare":["b5c6","f3e5"]},
         {"trekk":"Be7","tekst":"Vi utvikler løperen og gjør klar rokade. Bonden på e5 lar vi gå."},
         {"trekk":"Bxc6 bxc6 Nxe5","tekst":"Hvit bytter og tar bonden. Nå er vi en bonde under."},
         {"trekk":"Bb7 O-O O-O-O","tekst":"Løperen går til b7, og vi rokerer langt. Motoren gir hvit bare litt. Hva vi gjør herfra, ser vi på i kapitlet om planer."},
-        {"fra":"e4 e5 Nf3 Nc6 Bb5 f5 Nc3 fxe4 Nxe4 Nf6 Qe2","tekst":"Hvit kan også spille damen til e2 med en gang og binde e-bonden vår."},
-        {"tekst":"Hva spiller du?","sporsmal":{"type":"trekk","svar":["d5"],"hint":"Sentrum.","forklaring":"Bonden til d5 angriper springeren og åpner for løperen på c8."}},
+        {"fra":"e4 e5 Nf3 Nc6 Bb5 f5 Nc3 fxe4 Nxe4 Nf6 Qe2","tekst":"Hvit kan også spille damen til e2 med en gang. Hun står bak springeren på e-linjen og sikter på e5."},
+        {"tekst":"Hva spiller du?","sporsmal":{"type":"trekk","svar":["d5","Nxe4","Qe7"],"hint":"Sentrum.","forklaring":"Bonden til d5 angriper springeren og åpner for løperen på c8. Motoren regner springeren tar e4 og damen til e7 som like gode, så de godtas også."}},
         {"trekk":"Nxf6+","tekst":"Hvit bytter med sjakk. Denne gangen er svaret et annet."},
         {"tekst":"Hvordan tar du tilbake nå?","sporsmal":{"type":"trekk","svar":["gxf6"],"hint":"Bonden på e5 trenger støtte.","forklaring":"Med g-bonden. Den dekker e5, og vi får en bred bondefront: d5, e5 og f6."}},
         {"trekk":"d4 e4","tekst":"Hvit angriper sentrum, og vi skyver forbi. Springeren på f3 må flytte.","fare":["e4f3"]},
@@ -63,13 +63,13 @@
         {"tekst":"Løperen på b5 står løst. Hva spiller du?","sporsmal":{"type":"trekk","svar":["c6"],"hint":"Angrip løperen.","forklaring":"C-bonden angriper løperen. Flytter den seg, kommer damen til a5 med sjakk og dobbeltangrep."}},
         {"trekk":"Nc3","tekst":"Derfor lar hvit løperen stå og utvikler springeren."},
         {"trekk":"cxb5 Nxe4","tekst":"Vi tar løperen, og springeren tar bonden på e4. Vi har en løper for en bonde. Men hvit har sjakker både på d6 og på h5.","fare":["e4d6","d1h5"]},
-        {"tekst":"Hva spiller du?","sporsmal":{"type":"trekk","svar":["d5"],"hint":"Sentrum.","forklaring":"D-bonden angriper springeren og åpner for løperen på c8."}},
+        {"tekst":"Hva spiller du?","sporsmal":{"type":"trekk","svar":["d5","d6"],"hint":"Sentrum.","forklaring":"D-bonden angriper springeren og åpner for løperen på c8. Bonden til d6 er like bra: Etter exd6 står du i nøyaktig samme stilling."}},
         {"trekk":"exd6","tekst":"Hvit slår i forbigående. Nå står en hvit bonde på d6, og den ser gratis ut."},
         {"tekst":"Tar du den?","sporsmal":{"type":"trekk","svar":["Nf6"],"hint":"Utvikle en brikke og angrip springeren.","forklaring":"Ikke ennå. Slår løperen på d6 nå, tar springeren den med sjakk. Tar damen vår tilbake, slår hvits dame den. Derfor springeren til f6 først."}},
         {"tekst":"Nå har vi en løper for to bønder, og springeren på e4 er utfordret. Motoren gir svart en liten fordel."},
         {"fra":"e4 e5 Nf3 Nc6 Bb5 f5 d4 fxe4 Bxc6","tekst":"Den rolige veien etter d4 er å bytte på c6 før springeren slår."},
         {"trekk":"dxc6 Nxe5","tekst":"Vi tar med d-bonden, og springeren tar e5. Nå truer damesjakken på h5.","fare":["d1h5"]},
-        {"tekst":"Hvilket trekk stopper den?","sporsmal":{"type":"trekk","svar":["Nf6"],"hint":"Dekk feltet h5.","forklaring":"Springeren til f6 dekker h5. Løperen til d6 ser naturlig ut, men da kommer sjakken, og etter g6 slår springeren på g6."}},
+        {"tekst":"Hvilket trekk stopper den?","sporsmal":{"type":"trekk","svar":["Nf6","Qh4","Bf5"],"hint":"Dekk feltet h5.","forklaring":"Springeren til f6 dekker h5. Damen til h4 og løperen til f5 holder like godt og godtas også. Løperen til d6 ser naturlig ut, men da kommer sjakken, og etter g6 slår springeren på g6."}},
         {"trekk":"Nc3 Be7 O-O O-O","tekst":"Vi utvikler løperen og rokerer. Materiellet er likt, vi har løperparet, og motoren sier likt."}
       ]
     },
@@ -79,7 +79,7 @@
       "start": "e4 e5 Nf3 Nc6 Bb5 f5",
       "steg": [
         {"tekst":"Den som vil unngå alt bråk, velger gjerne ett av to trekk: bonden til d3, eller å bytte på c6 med en gang."},
-        {"trekk":"d3","tekst":"Bonden til d3 dekker e4 uten å love noe. Det er her motoren gir hvit mest: godt og vel en halv bonde."},
+        {"trekk":"d3","tekst":"Bonden til d3 dekker e4 uten å love noe. Sammen med springeren til c3 er det her motoren gir hvit mest: godt og vel en halv bonde."},
         {"trekk":"fxe4 dxe4 Nf6","tekst":"Vi bytter på e4 likevel og utvikler springeren. Hvit beholder en bonde på e4, så sentrum får vi ikke. Det vi får, er f-linjen."},
         {"trekk":"O-O Bc5","tekst":"Hvit rokerer, og løperen vår går til c5. Sammen med et tårn på f-linjen sikter den på f2.","piler":["c5f2"]},
         {"trekk":"Nc3 d6","tekst":"Bonden til d6 dekker både e5 og løperen, og den åpner for løperen på c8. Så rokerer vi kort."},
@@ -94,7 +94,7 @@
         {"trekk":"fxe4 Bxc6 dxc6 Nxe5 Qd4","tekst":"Hvit bytter og tar på e5. Damen til d4 angriper springeren og dekker bonden på e4. Motoren gir svart godt og vel en halv bonde.","fare":["d4e5"]},
         {"fra":"e4 e5 Nf3 Nc6 Bb5 f5 Qe2","tekst":"Og damen til e2 dekker e4 en gang til."},
         {"trekk":"fxe4 Qxe4 Nf6 Qe2 Bd6","tekst":"Vi slår, damen tar tilbake, og springeren jager den hjem. Løperen på d6 dekker e5. Motoren sier likt."},
-        {"tekst":"Så den ærlige dommen. Schliemann er sunnere enn ryktet. I linjene i dette kurset gir motoren hvit fra null til godt og vel en halv bonde."},
+        {"tekst":"Så den ærlige dommen. Schliemann er sunnere enn ryktet. Mot hvits beste trekk gir motoren hvit fra null til godt og vel en halv bonde."},
         {"tekst":"Prisen er en luftig konge. Du må like stillinger der du selv har initiativet, og der ett slurvete trekk kan koste en sjakk på h5."}
       ]
     },
@@ -109,7 +109,7 @@
         {"tekst":"Fire: e-bonden forsvarer vi med naturlige trekk, aldri med passive. Tar hvit den, er løperparet og de åpne linjene betalingen."},
         {"tekst":"Første stilling. Hvit har tatt e-bonden, og vi er en bonde under. Løperen på c5 sikter på f2, og tårnet står klart på f-linjen.","fare":["c5f2"]},
         {"trekk":"Nc3","tekst":"Hvit utvikler springeren og dekker e4."},
-        {"tekst":"Hvor gjør den andre løperen mest nytte?","sporsmal":{"type":"trekk","svar":["Ba6"],"hint":"Den lange diagonalen mot f1.","forklaring":"På a6. Derfra angriper den tårnet på f1, som er med på å dekke f2."}},
+        {"tekst":"Hvordan får du den andre løperen i spill?","sporsmal":{"type":"trekk","svar":["Ba6","d6"],"hint":"Den lange diagonalen mot f1.","forklaring":"Til a6. Derfra angriper den tårnet på f1, som er med på å dekke f2. Bonden til d6, som åpner veien for løperen, er like god, og godtas også."}},
         {"trekk":"Nd3 Bb6","tekst":"Hvits beste er springeren tilbake til d3, med angrep på løperen. Vi trekker den til b6 og beholder diagonalen."},
         {"tekst":"Herfra er planen damen til e8, et tårn til b-linjen, og bonden til d5. Motoren gir hvit godt og vel en halv bonde. Dette er linjen der vi må jobbe hardest.","piler":["d8e8","a8b8","d7d5"]},
         {"fra":"e4 e5 Nf3 Nc6 Bb5 f5 Nc3 fxe4 Nxe4 Nf6 Nxf6+ Qxf6 Qe2 Be7 Bxc6 bxc6 Nxe5 Bb7 O-O O-O-O","tekst":"Andre stilling, fra hovedlinjen. Også her er vi en bonde under. Løperen på b7 står foreløpig bak sin egen bonde på c6.","felt":["c6"]},
@@ -120,7 +120,7 @@
         {"trekk":"c3","tekst":"Hvit støtter d4."},
         {"tekst":"Hvor skal kongen?","sporsmal":{"type":"trekk","svar":["O-O-O"],"hint":"Ikke bak den åpne g-linjen.","forklaring":"Lang rokade. På kongefløyen er g-linjen halvåpen, og den vil vi bruke selv."}},
         {"tekst":"Så kommer f-bonden til f5 og støtter e4, og tårnene får g-linjen. Hvit vil sprenge med f3. Motoren gir hvit en halv bonde.","piler":["f6f5","h8g8"]},
-        {"tekst":"Du er en bonde under i Schliemann. Hva gjør du?","sporsmal":{"type":"valg","valg":["Bytter brikker og håper på remis.","Får løperne og tårnene ut på åpne linjer mot kongen før jeg tenker på bonden.","Tar bonden tilbake med en gang, uansett hva det koster."],"riktig":1,"forklaring":"Løperparet og de åpne linjene er det du har fått for bonden. De er bare verdt noe mens brikkene er aktive."}}
+        {"tekst":"Her er materiellet likt. Men tenk deg at du er en bonde under i Schliemann. Hva gjør du?","sporsmal":{"type":"valg","valg":["Bytter brikker og håper på remis.","Får løperne og tårnene ut på åpne linjer mot kongen før jeg tenker på bonden.","Tar bonden tilbake med en gang, uansett hva det koster."],"riktig":1,"forklaring":"Løperparet og de åpne linjene er det du har fått for bonden. De er bare verdt noe mens brikkene er aktive."}}
       ]
     },
     {
