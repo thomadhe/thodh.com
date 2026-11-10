@@ -373,3 +373,9 @@ test('forsiden: gjennomganger for valgte åpninger, de uferdige først', () => {
   assert.match(html, /✓ Sett/);
   assert.match(html, /3 kapitler, ideene og planene først/);
 });
+
+test('tale: en setning etter et merket trekk som starter med «Den» eller «Ser», er en ny setning', () => {
+  assert.equal(taleTekst('Springeren går til d5! Den angriper c7.'), 'Springeren går til d5. Den angriper c7.');
+  assert.equal(taleTekst('Spill e5? Ser du hvorfor?'), 'Spill e5. Ser du hvorfor?');
+  assert.equal(taleTekst('Le2! Tg8 kommer.'), 'løper e2, tårn g8 kommer.');
+});

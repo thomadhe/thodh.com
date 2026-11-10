@@ -16,8 +16,8 @@ const UTENFOR = '(?<![\\p{L}\\p{N}])';
 const ETTER = '(?![\\p{L}\\p{N}])';
 // A move in the coach's notation, with an optional move number in front: "3.Sf3", "4…Lc5", "…Dd4", "exd5", "0-0", "e8=D+".
 const TREKK = new RegExp(`${UTENFOR}(?:(\\d{1,3})\\s?(\\.\\.\\.|…|\\.)\\s?|(…|\\.\\.\\.))?(0-0-0|O-O-O|0-0|O-O|([KDTLS])([a-h]?[1-8]?)(x?)([a-h][1-8])|([a-h])(?:x([a-h][1-8])|([1-8]))(?:=([DTLS]))?)([+#])?([!?]{1,2})?${ETTER}`, 'gu');
-// What follows a move is another move, not a new sentence.
-const NESTE_TREKK = /^\s+(?:\d{1,3}\s?(?:\.\.\.|…|\.)\s?|…)?(?:[KDTLS][a-h1-8x]|0-0|O-O)/;
+// What follows a move is another move, not a new sentence. A whole move, so "Den" or "Ser" is not taken for one.
+const NESTE_TREKK = /^\s+(?:\d{1,3}\s?(?:\.\.\.|…|\.)\s?|…)?(?:[KDTLS][a-h]?[1-8]?x?[a-h][1-8]|0-0|O-O)(?![\p{L}\p{N}])/u;
 // A piece's route: "Sf6–g4" or "f2-f4".
 const VEI = new RegExp(`${UTENFOR}(?:…|\\.\\.\\.)?([KDTLS])?([a-h][1-8])[–-]([a-h][1-8])${ETTER}`, 'gu');
 
