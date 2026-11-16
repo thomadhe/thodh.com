@@ -34,7 +34,7 @@ export default async function Page({ params }: PageProps<"/spill/gjettelos/[dag]
             Årstall teller etter hvor lenge siden det var, regnet fra {AARSTALL_REFERANSE}. Å bomme med 10 år på noe fra 1900-tallet koster
             omtrent like mye som å bomme med ett år på noe fra de siste årene.
           </p>
-          <p>Skriv tall som «5 500 000», «5,5 mill.» eller «2 mrd.». Knappene under feltet legger til tusen, millioner eller milliarder.</p>
+          <p>Skriv tallet, for eksempel «5 500 000». «5,5 mill.» og «2 mrd.» går også.</p>
         </>
       }
     >

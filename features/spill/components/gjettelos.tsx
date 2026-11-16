@@ -37,12 +37,6 @@ const tom = (): Tilstand => ({ v: 1, svar: [], videre: 0, resultat: { status: "p
 const AKSENT = "#818cf8"
 const TELL_MS = 1100
 
-const FAKTORER = [
-  { navn: "tusen", ord: "tusen" },
-  { navn: "mill.", ord: "mill." },
-  { navn: "mrd.", ord: "mrd." },
-]
-
 async function spor(body: { dato: string; nr: number; gjett: number }): Promise<Fasit> {
   const svar = await fetch("/spill/api/gjettelos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
   const data = await svar.json().catch(() => ({ melding: "Noe gikk galt." }))
@@ -246,7 +240,7 @@ export function Gjettelos({ dato, sporsmal, repris = false }: { dato: string; sp
   const send = async () => {
     if (opptatt || visNr !== null || ferdig) return
     if (tolket === null) {
-      setMelding(s.aarstall ? "Skriv et årstall, for eksempel 1905." : "Skriv et tall større enn null, for eksempel 2 500 eller 1,5 mill.")
+      setMelding(s.aarstall ? "Skriv et årstall, for eksempel 1905." : "Skriv et tall større enn null, for eksempel 2 500.")
       return
     }
     const n = t.svar.length
@@ -405,23 +399,6 @@ export function Gjettelos({ dato, sporsmal, repris = false }: { dato: string; sp
             </label>
 
             <div className="flex min-h-9 flex-wrap items-center gap-2">
-              {s.aarstall
-                ? null
-                : FAKTORER.map((f) => (
-                    <button
-                      key={f.navn}
-                      type="button"
-                      onClick={() => {
-                        const uten = tekst.replace(/\s*(?:tusen|k|mill\.?|millioner|mrd\.?|milliarder)\s*$/i, "").trim()
-                        setTekst(`${uten || "1"} ${f.ord}`)
-                        setMelding(null)
-                        felt.current?.focus({ preventScroll: true })
-                      }}
-                      className="h-8 rounded-full border border-black/10 bg-neutral-100/70 px-3 font-mono text-[11px] text-neutral-700 transition hover:border-black/25 hover:text-neutral-950"
-                    >
-                      + {f.navn}
-                    </button>
-                  ))}
               <p className="ml-auto min-w-0 truncate font-mono text-[11px] tabular-nums text-neutral-500" aria-live="polite">
                 {tekst.trim() && tolket !== null ? `= ${medEnhet(tolket, s)}` : ""}
               </p>
