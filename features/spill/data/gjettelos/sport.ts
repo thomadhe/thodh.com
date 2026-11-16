@@ -14,7 +14,7 @@ export const sport = lag("sport", [
   ["tour-etapper", 2, "Hvor mange etapper har Tour de France?", "etapper", 21, "Tour de France"],
   ["vm-2026-lag", 2, "Hvor mange lag spiller fotball-VM for herrer i 2026?", "lag", 48, "FIFA"],
   ["haaland-36", 2, "Hvor mange Premier League-mål scoret Erling Haaland i sin første sesong i Manchester City?", "mål", 36, "Premier League", { info: "Rekord for én sesong, 2022–23." }],
-  ["beijing-gull", 2, "Hvor mange gull vant Norge i vinter-OL i Beijing 2022?", "gull", 16, "IOC", { info: "Rekord for ett vinter-OL." }],
+  ["beijing-gull", 2, "Hvor mange gull vant Norge i vinter-OL i Beijing 2022?", "gull", 16, "IOC", { info: "Det var rekord til Norge tok 18 gull i Milano Cortina 2026." }],
   ["beijing-medaljer", 3, "Hvor mange medaljer vant Norge til sammen i vinter-OL i Beijing 2022?", "medaljer", 37, "IOC"],
   ["vinter-ol-gull", 3, "Hvor mange gull hadde Norge vunnet i vinter-OL til og med Beijing 2022?", "gull", 148, "Olympedia"],
   ["carlsen-rating", 2, "Hva var Magnus Carlsens høyeste sjakkrating?", "ratingpoeng", 2882, "FIDE", { info: "Mai 2014, den høyeste noensinne." }],

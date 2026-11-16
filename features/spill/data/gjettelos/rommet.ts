@@ -24,7 +24,7 @@ export const rommet = lag("rommet", [
   ["venus-dogn", 3, "Venus snurrer svært sakte. Hvor mange jorddøgn tar én omdreining?", "døgn", 243, "NASA"],
   ["neptun-ar", 3, "Hvor mange jordår bruker Neptun på én runde rundt sola?", "år", 165, "NASA"],
   ["proxima", 3, "Hvor mange lysår unna ligger Proxima Centauri, den nærmeste stjernen etter sola?", "lysår", 4.24, "NASA"],
-  ["manevandrere", 1, "Hvor mange mennesker har gått på månen?", "mennesker", 12, "NASA", { per: "2025" }],
+  ["manevandrere", 1, "Hvor mange mennesker har gått på månen?", "mennesker", 12, "NASA", { per: "2026" }],
   ["avogadro", 3, "Hvor mange molekyler er det i ett mol, altså Avogadros tall?", "molekyler", 6.022e23, "BIPM"],
   ["gull-tetthet", 3, "Hvor mange gram veier én kubikkcentimeter gull?", "gram", 19.3, "Fysikkens tabeller"],
   ["jern-smelter", 3, "Ved hvilken temperatur smelter jern?", "°C", 1538, "Fysikkens tabeller"],

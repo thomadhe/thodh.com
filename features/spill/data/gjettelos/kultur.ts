@@ -48,7 +48,7 @@ export const kultur = lag("kultur", [
   ["grieg-fodt", 3, "Hvilket år ble Edvard Grieg født?", "årstall", 1843, "Store norske leksikon"],
   ["kardemomme", 2, "Hvilket år kom «Folk og røvere i Kardemomme by» av Thorbjørn Egner?", "årstall", 1955, "Store norske leksikon"],
   ["pippi", 2, "Hvilket år kom den første boka om Pippi Langstrømpe?", "årstall", 1945, "Astrid Lindgren-selskapet"],
-  ["sofies-verden", 3, "Hvor mange eksemplarer har «Sofies verden» av Jostein Gaarder solgt?", "eksemplarer", 40000000, "Aschehoug", { ca: true }],
+  ["sofies-verden", 3, "Hvor mange eksemplarer har «Sofies verden» av Jostein Gaarder solgt, ifølge Store norske leksikon?", "eksemplarer", 30000000, "Store norske leksikon", { ca: true, info: "Leksikonet sier over 30 millioner. Andre kilder sier opptil 40 millioner." }],
   ["skam", 2, "Hvilket år hadde NRK-serien «Skam» premiere?", "årstall", 2015, "NRK"],
   ["love-me-do", 3, "Hvilket år kom «Love Me Do», The Beatles' første singel?", "årstall", 1962, "EMI"],
   ["simpsons", 2, "Hvilket år kom «The Simpsons» som egen TV-serie?", "årstall", 1989, "Fox"],

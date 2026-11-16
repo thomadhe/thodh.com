@@ -77,7 +77,7 @@ export const gjettelosPlan: readonly (readonly string[])[] = [
   ["verden:norden", "historie:kon-tiki", "teknologi:tetris", "hverdag:a4-vekt", "okonomi:coca-cola"],
   ["rommet:omkrets", "sport:sjakk-apning", "natur:regnskog", "kultur:dukkehjem", "norge:atlanterhavsveien"],
   ["okonomi:dollarseddel", "kropp:ribbein", "hverdag:syttende-mai", "teknologi:eniac", "historie:hadrians-mur"],
-  ["kultur:harry-potter-antall", "sport:beijing-gull", "rekorder:kiptum", "natur:solformorkelse", "verden:havdybde"],
+  ["kultur:harry-potter-antall", "sport:beijing-gull", "rekorder:sawe", "natur:solformorkelse", "verden:havdybde"],
   ["hverdag:skuddar", "teknologi:wikipedia", "rommet:gull-tetthet", "norge:nidarosdomen", "okonomi:voc"],
   ["sport:maraton", "historie:wright", "verden:vatikanet", "rekorder:lengste-flyrute", "kropp:stigboylen"],
   ["norge:bergen-folketall", "teknologi:lyspare", "natur:bambus", "hverdag:400-ar", "rommet:venus-dogn"],
