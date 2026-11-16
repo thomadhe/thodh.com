@@ -54,6 +54,8 @@ Vercel må ha serverhemmelighetene `SJAKK_SITE_BYPASS` (eksisterende Sites-tilga
 
 6/7-stegern lagrer ingenting på serveren. For hvert vurderte svar sender ruten `/spill/api/67-stegern` en HMAC-kvittering av dato, spørsmålsnummer og normalisert svar. Spørsmål 6 sjekker bare et tidligere svar som har riktig kvittering, og et riktig svar gir en billett som finalen krever. Nøkkelen kan settes med `STEGERN_HEMMELIGHET`. Ellers avledes den fra `SJAKK_GATEWAY_KEY`, som Vercel allerede har, og selve sjakknøkkelen signerer aldri noe. Uten noen av dem (lokalt) lages en nøkkel som bare gjelder til serveren starter på nytt.
 
+Gjetteløs (`/spill/gjettelos`) har fem tallspørsmål om dagen. Siden får bare spørsmålene; fasit, kilde og poeng kommer fra `/spill/api/gjettelos` etter at spilleren har gjettet. Poeng per spørsmål er 100 × minste / største av gjetning og fasit, altså 100 · 2^(−|log₂(gjett/fasit)|): halvparten eller dobbelt gir 50, og 10 % unna gir rundt 90 uansett størrelsesorden. Årstall regnes som år før 2030 før samme formel brukes. Spørsmålene ligger per kategori i `features/spill/data/gjettelos/`, og dagsplanen i `plan.ts` lages med `node scripts/spill/lag-gjettelos-plan.mjs`. Skriptet beholder dagene som finnes og legger nye bakerst.
+
 ## Otsjoba
 
 `features/otsjoba` inneholder komponentene som brukes av den opprinnelige Otsjoba-appen, læringsinnhold, UI-komponenter og lagring. Portrettene ligger i `public/otsjoba/tutors`. Importene og ressursbanene er tilpasset dette prosjektet. Videre endringer for thodh.com gjøres her; det er ingen automatisk synkronisering med det separate Otsjoba-repositoriet.

@@ -47,6 +47,6 @@ export const config = {
     "/api/auth/:path*",
     "/sjakk/api/apninger",
     // The daily games (features/spill/lib/spill.ts; a test keeps the two lists in step), with or without a date segment.
-    "/spill/:spill(mer-eller-mindre|anelseslos|stavebien|sanglos|omriss|canvas|soket|emovi|rusle|tilkoblinger|havet|heksagonal-jakt|67-stegern)/:dag?",
+    "/spill/:spill(mer-eller-mindre|anelseslos|stavebien|sanglos|omriss|canvas|soket|emovi|rusle|tilkoblinger|havet|heksagonal-jakt|67-stegern|gjettelos)/:dag?",
   ],
 };

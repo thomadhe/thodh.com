@@ -13,6 +13,16 @@ import { erRiktigStavet } from "../features/spill/lib/stavebien-regler"
 import { gridDisk, gridRing } from "h3-js"
 import { avstandKm, MAKS_POENG, NIVAER, nivaaForZoom, rundePoeng, utfallForAvstand } from "../features/spill/lib/heksagon"
 import { celleFor, nivaaFor, omriss, sentrum, synligeCeller, vurder } from "../features/spill/lib/heksagon-celler"
+import { gjettelosSporsmal } from "../features/spill/data/gjettelos"
+import { gjettelosPlan } from "../features/spill/data/gjettelos/plan"
+import { AARSTALL_REFERANSE, ANTALL, avvik, formaterTall, GJETTELOS_START, KATEGORIER, poengFor, tolkAar, tolkGjett, tolkTall } from "../features/spill/lib/gjettelos"
+import {
+  dagensSporsmal as gjettelosDag,
+  dagFor as gjettelosFor,
+  erRepris as erGjettelosRepris,
+  kanSpillesGjettelos,
+  vurder as vurderGjett,
+} from "../features/spill/lib/server/gjettelos-logikk"
 import { stegernDager } from "../features/spill/data/stegern"
 import { sp } from "../features/spill/data/stegern/typer"
 import { GJENTA_DM, hoppDm, MAKS_DM, NORMALE, STEGERN_START } from "../features/spill/lib/stegern"
@@ -457,4 +467,152 @@ test("6/7-stegern: hver dag i banken er velformet", () => {
       assert.equal(finnAlternativ(o, "xqzv"), null, hvor)
     }
   }
+})
+
+// Gjetteløs
+
+test("Gjetteløs: poeng er relative og like for alle størrelser", () => {
+  assert.equal(poengFor(2469, 2469), 100)
+  assert.equal(poengFor(50, 100), 50)
+  assert.equal(poengFor(200, 100), 50)
+  assert.equal(poengFor(90, 100), 90)
+  assert.equal(poengFor(10, 100), 10)
+  // 10 % off scores the same whether the answer is 8 or 8 billion.
+  assert.equal(poengFor(8.8, 8), poengFor(8.8e9, 8e9))
+  assert.equal(poengFor(1.1e20, 1e20), 91)
+  assert.equal(poengFor(0, 100), 0)
+  assert.equal(poengFor(-5, 100), 0)
+  // Years count from AARSTALL_REFERANSE, so the score compares how long ago guess and answer are.
+  const ref = AARSTALL_REFERANSE
+  assert.equal(poengFor(1905, 1905, true), 100)
+  assert.equal(poengFor(1915, 1905, true), Math.round((100 * (ref - 1915)) / (ref - 1905)))
+  // 10 years off something 100 years back is as bad as 1 year off something 10 years back.
+  assert.equal(poengFor(ref - 90, ref - 100, true), poengFor(ref - 9, ref - 10, true))
+  assert.equal(poengFor(ref, 1905, true), 0)
+  assert.equal(poengFor(ref + 10, 1905, true), 0)
+  assert.ok(poengFor(1955, 1905, true) < poengFor(1915, 1905, true))
+})
+
+test("Gjetteløs: tall skrevet på norsk tolkes riktig", () => {
+  const tilfeller: [string, number | null][] = [
+    ["2469", 2469],
+    ["1 200 000", 1200000],
+    ["1 200 000", 1200000],
+    ["1,5 mill", 1500000],
+    ["1,5 mill.", 1500000],
+    ["2 mrd", 2e9],
+    ["2 milliarder", 2e9],
+    ["12 tusen", 12000],
+    ["1.500", 1500],
+    ["1.200.000", 1200000],
+    ["3.5", 3.5],
+    ["9,58", 9.58],
+    ["6e23", 6e23],
+    ["43 trillioner", 43e18],
+    ["0", null],
+    ["", null],
+    ["abc", null],
+    ["1,2,3", null],
+    ["5 kilo", null],
+  ]
+  for (const [tekst, ventet] of tilfeller) assert.equal(tolkTall(tekst), ventet, tekst)
+  assert.equal(tolkAar("1905"), 1905)
+  assert.equal(tolkAar("1 905"), null)
+  assert.equal(tolkAar("19,05"), null)
+  assert.equal(tolkGjett("1,5 mill", false), 1500000)
+  assert.equal(tolkGjett("1814", true), 1814)
+})
+
+test("Gjetteløs: visning av tall og avvik", () => {
+  const mellomrom = (s: string) => s.replace(/\s/g, " ")
+  assert.equal(formaterTall(1905, true), "1905")
+  assert.equal(mellomrom(formaterTall(2469)), "2 469")
+  assert.equal(mellomrom(formaterTall(5594340)), "5 594 340")
+  assert.equal(formaterTall(149600000), "149,6 mill.")
+  assert.equal(mellomrom(formaterTall(19742e9)), "19 742 mrd.")
+  assert.equal(formaterTall(0.44), "0,44")
+  assert.equal(formaterTall(273.15), "273,15")
+  assert.match(formaterTall(1e120), /10¹²⁰$/)
+  assert.equal(avvik(100, 100), "helt riktig")
+  assert.equal(avvik(88, 100), "12 % for lavt")
+  assert.equal(avvik(320, 100), "3,2 ganger for høyt")
+  assert.equal(avvik(1915, 1905, true), "10 år for sent")
+})
+
+test("Gjetteløs: spørsmålsbanken er velformet og bred", () => {
+  assert.ok(gjettelosSporsmal.length >= 400, `${gjettelosSporsmal.length} spørsmål`)
+  const ider = new Set<string>()
+  const tekster = new Set<string>()
+  for (const s of gjettelosSporsmal) {
+    assert.ok(!ider.has(s.id), `dobbel id ${s.id}`)
+    assert.ok(!tekster.has(s.tekst), `dobbelt spørsmål ${s.tekst}`)
+    ider.add(s.id)
+    tekster.add(s.tekst)
+    assert.ok(s.id.startsWith(`${s.kategori}:`), s.id)
+    assert.ok(s.kategori in KATEGORIER, s.id)
+    assert.ok([1, 2, 3].includes(s.vansk), s.id)
+    assert.ok(s.tekst.endsWith("?"), s.id)
+    assert.ok(s.kilde.trim().length > 0, `${s.id} mangler kilde`)
+    assert.ok(Number.isFinite(s.fasit) && s.fasit > 0, s.id)
+    assert.equal(poengFor(s.fasit, s.fasit, s.aarstall), 100, s.id)
+    assert.ok(s.per === undefined || /\d{4}/.test(s.per), `${s.id}: per ${s.per}`)
+    if (s.aarstall) assert.ok(Number.isInteger(s.fasit) && s.fasit < AARSTALL_REFERANSE, `${s.id}: årstall ${s.fasit}`)
+  }
+  // No category dominates, and nature (where the animals are) stays a small share.
+  const perKategori = new Map<string, number>()
+  for (const s of gjettelosSporsmal) perKategori.set(s.kategori, (perKategori.get(s.kategori) ?? 0) + 1)
+  assert.equal(perKategori.size, Object.keys(KATEGORIER).length)
+  for (const [k, n] of perKategori) assert.ok(n / gjettelosSporsmal.length <= 0.12, `${k}: ${n}`)
+  assert.ok((perKategori.get("natur") ?? 0) / gjettelosSporsmal.length <= 0.06)
+})
+
+test("Gjetteløs: dagsplanen har fem kategorier, lett og vanskelig, og ingen gjentakelser", () => {
+  const etterId = new Map(gjettelosSporsmal.map((s) => [s.id, s]))
+  assert.ok(gjettelosPlan.length >= 80, `${gjettelosPlan.length} dager`)
+  const brukt = new Set<string>()
+  for (const [i, dag] of gjettelosPlan.entries()) {
+    const hvor = `dag ${i + 1}`
+    assert.equal(dag.length, ANTALL, hvor)
+    const sporsmal = dag.map((id) => {
+      const s = etterId.get(id)
+      assert.ok(s, `${hvor}: ukjent id ${id}`)
+      assert.ok(!brukt.has(id), `${hvor}: ${id} er brukt før`)
+      brukt.add(id)
+      return s
+    })
+    assert.equal(new Set(sporsmal.map((s) => s.kategori)).size, ANTALL, `${hvor}: samme kategori to ganger`)
+    assert.ok(sporsmal.some((s) => s.vansk === 1), `${hvor}: ingen lette`)
+    assert.ok(sporsmal.some((s) => s.vansk === 3), `${hvor}: ingen vanskelige`)
+    assert.ok(sporsmal.filter((s) => s.aarstall).length <= 2, `${hvor}: for mange årstall`)
+    const vansk = sporsmal.map((s) => s.vansk)
+    assert.deepEqual(vansk, [...vansk].sort(), `${hvor}: letteste først`)
+  }
+})
+
+test("Gjetteløs: dagens spørsmål, repris og skjult fasit", () => {
+  assert.equal(spill.find((s) => s.id === "gjettelos")?.start, GJETTELOS_START)
+  assert.deepEqual(rutSpill("/spill/gjettelos", "2026-11-01", "2026-11-20"), { type: "redirect", sti: "/spill/gjettelos" })
+  assert.deepEqual(rutSpill("/spill/gjettelos", null, GJETTELOS_START), { type: "rewrite", sti: `/spill/gjettelos/i-dag-${GJETTELOS_START}` })
+  assert.equal(kanSpillesGjettelos(leggTilDager(GJETTELOS_START, -1), "2027-01-01"), false)
+  assert.equal(kanSpillesGjettelos(GJETTELOS_START, "2027-01-01"), true)
+  assert.equal(kanSpillesGjettelos("2027-01-02", "2027-01-01"), false)
+
+  for (let i = 0; i < 140; i++) {
+    const dato = leggTilDager(GJETTELOS_START, i)
+    const dag = gjettelosDag(dato)
+    assert.equal(dag.length, ANTALL)
+    assert.deepEqual(gjettelosDag(dato), dag, "deterministisk")
+    // The page never gets the answer or the source.
+    for (const s of dag) assert.deepEqual(Object.keys(s).sort(), ["aarstall", "enhet", "kategori", "tekst", "vansk"])
+  }
+  assert.equal(erGjettelosRepris(leggTilDager(GJETTELOS_START, gjettelosPlan.length - 1)), false)
+  assert.equal(erGjettelosRepris(leggTilDager(GJETTELOS_START, gjettelosPlan.length)), true)
+  assert.deepEqual(gjettelosDag(leggTilDager(GJETTELOS_START, gjettelosPlan.length)), gjettelosDag(GJETTELOS_START))
+
+  const [forste] = gjettelosFor(GJETTELOS_START)
+  const svar = vurderGjett(GJETTELOS_START, 0, forste.fasit * 2)
+  assert.equal(svar.fasit, forste.fasit)
+  assert.equal(svar.kilde, forste.kilde)
+  assert.equal(svar.poeng, poengFor(forste.fasit * 2, forste.fasit, forste.aarstall))
+  assert.equal(vurderGjett(GJETTELOS_START, 0, forste.fasit).poeng, 100)
 })

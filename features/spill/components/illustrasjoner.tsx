@@ -209,6 +209,21 @@ function Stegern() {
   )
 }
 
+function Gjettelos() {
+  // A guess landing near the answer on a log scale.
+  return (
+    <svg viewBox="0 0 160 64" className="h-20 w-auto" aria-hidden="true">
+      <text x="80" y="24" textAnchor="middle" fontSize="22" fontWeight="900" fontFamily="var(--font-visning), sans-serif" fill="#f4f4f5">
+        ≈ 2 469
+      </text>
+      <rect x="10" y="42" width="140" height="6" rx="3" fill="rgb(0 0 0 / 0.4)" />
+      <rect x="45" y="42" width="70" height="6" rx="3" fill="#34d399" opacity="0.8" />
+      <rect x="79" y="36" width="2" height="18" rx="1" fill="#f4f4f5" />
+      <circle cx="94" cy="45" r="7" fill="#818cf8" stroke="#2b2d31" strokeWidth="2.5" />
+    </svg>
+  )
+}
+
 export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   "mer-eller-mindre": MerEllerMindre,
   anelseslos: Anelseslos,
@@ -223,4 +238,5 @@ export const illustrasjoner: Record<SpillId, () => React.JSX.Element> = {
   havet: Havet,
   "heksagonal-jakt": HeksagonalJakt,
   "67-stegern": Stegern,
+  gjettelos: Gjettelos,
 }

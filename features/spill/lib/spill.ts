@@ -1,5 +1,5 @@
 /** Daily games: one puzzle per day, with calendar and stored results. */
-export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas" | "soket" | "emovi" | "rusle" | "tilkoblinger" | "havet" | "heksagonal-jakt" | "67-stegern"
+export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas" | "soket" | "emovi" | "rusle" | "tilkoblinger" | "havet" | "heksagonal-jakt" | "67-stegern" | "gjettelos"
 /** Free-play quizzes without a daily puzzle. */
 export type QuizId = "verdens-land" | "hovedsteder"
 
@@ -134,6 +134,16 @@ export const spill: Spill[] = [
     ikon: "67",
     farge: "bg-[#2b2d31] text-lime-400",
     start: "2026-11-02",
+  },
+  {
+    id: "gjettelos",
+    navn: "Gjetteløs",
+    href: "/spill/gjettelos",
+    kort: "Hvor mange? Hvor høy? Hvilket år?",
+    regel: "Fem tallspørsmål. Gjett så nær du kan: riktig gir 100 poeng, halvparten eller dobbelt gir 50.",
+    ikon: "≈",
+    farge: "bg-indigo-400 text-neutral-950",
+    start: "2026-11-16",
   },
 ]
 
