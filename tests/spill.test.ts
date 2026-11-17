@@ -648,21 +648,24 @@ test("Gjetteløs: spørsmålsbanken er velformet, bred og mest anslag", () => {
   }
   // Most questions are estimates to reason about, and years are few.
   const anslag = gjettelosSporsmal.filter((s) => s.stil === "anslag").length
-  assert.ok(anslag / gjettelosSporsmal.length > 0.55, `${anslag} anslag`)
+  assert.ok(anslag / gjettelosSporsmal.length >= 0.65, `${anslag} anslag`)
   assert.ok(gjettelosSporsmal.filter((s) => s.aarstall).length / gjettelosSporsmal.length <= 0.05)
-  // No category dominates, and nature (where the animals are) stays a small share.
+  // No category dominates, and nature and animals stay a modest share each.
   const perKategori = new Map<string, number>()
   for (const s of gjettelosSporsmal) perKategori.set(s.kategori, (perKategori.get(s.kategori) ?? 0) + 1)
   assert.ok(perKategori.size >= ANTALL, `${perKategori.size} kategorier`)
   for (const [k, n] of perKategori) assert.ok(n / gjettelosSporsmal.length <= 0.15, `${k}: ${n}`)
-  assert.ok((perKategori.get("natur") ?? 0) / gjettelosSporsmal.length <= 0.08)
+  assert.ok((perKategori.get("natur") ?? 0) / gjettelosSporsmal.length <= 0.06, `natur: ${perKategori.get("natur")}`)
+  const dyr = perKategori.get("dyr") ?? 0
+  assert.ok(dyr / gjettelosSporsmal.length >= 0.06 && dyr / gjettelosSporsmal.length <= 0.1, `dyr: ${dyr}`)
 })
 
-// Days 0–2 (16–18 November 2026) were played before the bank was rewritten. They must stay exactly as they were.
+// Days 0–3 (16–19 November 2026) were played before the bank was last changed. They must stay exactly as they were.
 const GJETTELOS_SPILTE_DAGER = [
   ["historie:elizabeth", "rommet:nullpunkt", "sport:paris-ovelser", "verden:sprak", "kultur:sonetter"],
   ["historie:forste-verdenskrig", "norge:preikestolen", "teknologi:bitcoin-maks", "sport:monaco", "kultur:avatar"],
   ["verden:usa-flagg", "historie:fn", "rommet:iss-hoyde", "kultur:undset-nobel", "sport:curlingstein"],
+  ["okonomi:gullbarre", "teknologi:e-avfall", "kropp:malaria", "norge:oslo-folketall", "verden:flukt"],
 ]
 const GJETTELOS_SPILTE_SPORSMAL = [
   {"id":"historie:elizabeth","kategori":"historie","vansk":1,"tekst":"Hvor mange år var dronning Elizabeth 2. monark?","enhet":"år","fasit":70,"aarstall":false,"ca":false,"kilde":"Britannica","info":"Fra 1952 til 2022."},
@@ -680,12 +683,17 @@ const GJETTELOS_SPILTE_SPORSMAL = [
   {"id":"rommet:iss-hoyde","kategori":"rommet","vansk":2,"tekst":"Hvor høyt over bakken går Den internasjonale romstasjonen?","enhet":"km","fasit":400,"aarstall":false,"ca":true,"kilde":"NASA"},
   {"id":"kultur:undset-nobel","kategori":"kultur","vansk":3,"tekst":"Hvilket år fikk Sigrid Undset nobelprisen i litteratur?","enhet":"årstall","fasit":1928,"aarstall":true,"ca":false,"kilde":"Nobelprisen"},
   {"id":"sport:curlingstein","kategori":"sport","vansk":3,"tekst":"Hvor mye kan en curlingstein veie på det meste?","enhet":"kg","fasit":19.96,"aarstall":false,"ca":false,"kilde":"World Curling"},
+  {"id":"okonomi:gullbarre","kategori":"okonomi","vansk":3,"tekst":"Hvor mye veier en standard gullbarre på verdensmarkedet (400 unser)?","enhet":"kg","fasit":12.4,"aarstall":false,"ca":true,"kilde":"London Bullion Market Association"},
+  {"id":"teknologi:e-avfall","kategori":"teknologi","vansk":2,"tekst":"Hvor mange tonn elektronisk avfall ble kastet i verden i 2022?","enhet":"tonn","fasit":62000000,"aarstall":false,"ca":true,"per":"2022","kilde":"Global E-waste Monitor 2024 (FN)","info":"Bare 22 prosent ble dokumentert samlet inn og gjenvunnet."},
+  {"id":"kropp:malaria","kategori":"kropp","vansk":3,"tekst":"Hvor mange mennesker døde av malaria i 2023?","enhet":"mennesker","fasit":597000,"aarstall":false,"ca":true,"per":"2023","kilde":"WHO, World Malaria Report 2024","info":"Det var 263 millioner tilfeller. Rundt 95 prosent av dødsfallene var i Afrika."},
+  {"id":"norge:oslo-folketall","kategori":"norge","vansk":1,"tekst":"Hvor mange innbyggere har Oslo kommune?","enhet":"innbyggere","fasit":724290,"aarstall":false,"ca":false,"per":"1.1.2025","kilde":"SSB"},
+  {"id":"verden:flukt","kategori":"verden","vansk":2,"tekst":"Hvor mange mennesker var på flukt fra hjemmene sine ved utgangen av 2024?","enhet":"mennesker","fasit":123200000,"aarstall":false,"ca":false,"per":"2024","kilde":"UNHCR","info":"Én av 67 mennesker på jorda."},
 ]
 
 test("Gjetteløs: dagsplanen har fem kategorier, blandet rekkefølge og ingen gjentakelser", () => {
   const etterId = new Map(gjettelosSporsmal.map((s) => [s.id, s]))
   assert.ok(gjettelosPlan.length >= 80, `${gjettelosPlan.length} dager`)
-  assert.deepEqual(gjettelosPlan.slice(0, 3), GJETTELOS_SPILTE_DAGER)
+  assert.deepEqual(gjettelosPlan.slice(0, GJETTELOS_SPILTE_DAGER.length), GJETTELOS_SPILTE_DAGER)
   for (const gammel of GJETTELOS_SPILTE_SPORSMAL) {
     const s = etterId.get(gammel.id)
     assert.ok(s, `${gammel.id} mangler`)

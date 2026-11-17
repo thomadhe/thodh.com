@@ -1,0 +1,53 @@
+import { lag } from "./typer"
+
+// Dyr: arter, ville dyr, husdyr og mat fra dyr. Kilder er forskningen, artskatalogene og etatene som står ved
+// hvert spørsmål. "anslag" er tall man må resonnere seg fram til; "fakta" er oppslag og mål.
+
+export const dyr = [
+  ...lag("dyr", "anslag", [
+    ["maur", 3, "Hvor mange maur finnes det på jorda?", "maur", 2e16, "Schultheiss mfl., PNAS (2022)", { ca: true, info: "Rundt 2,5 millioner maur per menneske." }],
+    ["fugler", 2, "Hvor mange ville fugler finnes det i verden?", "fugler", 50e9, "Callaghan mfl., PNAS (2021)", { ca: true, info: "Rundt seks fugler per menneske." }],
+    ["graspurv", 2, "Hvor mange gråspurver, verdens vanligste villfugl, finnes det?", "gråspurver", 1.6e9, "Callaghan mfl., PNAS (2021)", { ca: true }],
+    ["honning", 3, "Hvor mange blomster må biene besøke for å lage et halvt kilo honning?", "blomster", 2e6, "University of Florida IFAS Extension", { ca: true }],
+    ["haiangrep", 2, "Hvor mange uprovoserte haiangrep på mennesker ble registrert i hele verden i 2024?", "angrep", 47, "International Shark Attack File", { per: "2024", info: "Fire av dem var dødelige. Over halvparten skjedde i USA." }],
+    ["isbjorn", 2, "Hvor mange isbjørner finnes det i verden?", "isbjørner", 26000, "IUCN Polar Bear Specialist Group", { per: "2016", ca: true }],
+    ["hunderaser", 2, "Hvor mange hunderaser er godkjent av FCI, verdensorganisasjonen for hundeklubber?", "raser", 364, "FCI", { ca: true, per: "2026", info: "Rundt 20 raser til står på lista over raser som bare er godkjent foreløpig." }],
+    ["nye-arter", 3, "Hvor mange nye arter av dyr, planter og sopp beskriver forskerne i et vanlig år?", "arter", 18000, "IISE, State of Observed Species", { ca: true, per: "2000–2009", info: "Rundt halvparten er insekter." }],
+    ["biller", 3, "Hvor mange billearter er beskrevet?", "arter", 390000, "Bouchard mfl. (2017); Stork mfl., PNAS (2015)", { ca: true, info: "Omtrent hver fjerde kjente dyreart er en bille." }],
+    ["kolibri", 2, "Hvor mange ganger i minuttet kan hjertet til en kolibri slå?", "slag", 1260, "Lasiewski og Lasiewski, The Auk (1967)", { ca: true, info: "Over 20 slag i sekundet, målt hos blåstrupekolibrien." }],
+    ["torsk-egg", 2, "Hvor mange egg kan en stor skreihunn gyte i løpet av en sesong?", "egg", 4e6, "Store norske leksikon", { ca: true, info: "Hun gyter dem i porsjoner over mange dager." }],
+    ["edderkopper", 3, "Hvor mange edderkopparter er beskrevet?", "arter", 53700, "World Spider Catalog", { ca: true, per: "2026", info: "Det kommer til rundt tre nye arter i døgnet." }],
+    ["fiskearter", 3, "Hvor mange fiskearter er beskrevet?", "arter", 37800, "Eschmeyer's Catalog of Fishes", { ca: true, per: "2026", info: "Over halvparten lever i ferskvann." }],
+    ["fuglearter", 2, "Hvor mange fuglearter lever i verden?", "arter", 11000, "IOC World Bird List", { ca: true, per: "2025" }],
+    ["pattedyrarter", 2, "Hvor mange pattedyrarter lever i dag?", "arter", 6800, "Mammal Diversity Database", { ca: true, per: "2026" }],
+    ["amfibiearter", 3, "Hvor mange amfibiearter er beskrevet?", "arter", 9160, "AmphibiaWeb", { ca: true, per: "2026", info: "Nesten ni av ti er frosker og padder." }],
+    ["elefanter-afrika", 2, "Hvor mange ville elefanter finnes i Afrika?", "elefanter", 415000, "IUCN, African Elephant Status Report 2016", { ca: true, per: "2015", info: "Kanskje 120 000 til lever i områder som ikke er telt." }],
+    ["tigre", 2, "Hvor mange ville tigre finnes i verden?", "tigre", 5574, "Global Tiger Forum", { ca: true, per: "2023", info: "I 2010 var det bare rundt 3200." }],
+    ["rodnebbterne", 2, "Hvor mange kilometer flyr en rødnebbterne i løpet av et år?", "km", 71000, "Egevang mfl., PNAS (2010)", { ca: true, info: "Fra Grønland til Antarktis og tilbake, den lengste trekkruten som er målt hos noe dyr." }],
+    ["slangebitt", 2, "Hvor mange mennesker dør av slangebitt i verden hvert år?", "mennesker", 110000, "WHO", { ca: true, info: "WHO anslår mellom 81 000 og 138 000 dødsfall i året." }],
+    ["elefant-mat", 1, "Hvor mange kilo mat kan en voksen elefant spise på én dag?", "kg", 150, "San Diego Zoo Wildlife Alliance", { ca: true, info: "Det er 4–6 prosent av kroppsvekten." }],
+    ["kamel-vann", 2, "Hvor mange liter vann kan en tørst dromedar drikke på ti minutter?", "liter", 100, "SeaWorld", { ca: true }],
+    ["tusenbein", 3, "Hvor mange bein har Eumillipes persephone, dyret med flest bein?", "bein", 1306, "Marek mfl., Scientific Reports (2021)", { info: "Den første tusenbeinen med over tusen bein. Den ble funnet 60 meter under bakken i Australia." }],
+    ["kamskjell-oyne", 2, "Hvor mange øyne kan et kamskjell ha?", "øyne", 200, "Palmer mfl., Science (2017)", { ca: true, info: "Øynene har et speil i stedet for en linse, som et speilteleskop." }],
+    ["blahval-hjerte", 3, "Hvor få ganger i minuttet kan hjertet til en blåhval slå under et dykk?", "slag", 2, "Goldbogen mfl., PNAS (2019)", { info: "Under et vanlig dykk slår det 4 til 8 ganger i minuttet." }],
+    ["laks-merder", 3, "Hvor mange laks stod i snitt i merdene i norske oppdrettsanlegg i 2025?", "laks", 445e6, "Havforskningsinstituttet (tall fra Fiskeridirektoratet)", { ca: true, per: "2025", info: "Rundt 80 laks per nordmann, bare i sjøen." }],
+    ["laks-tapt", 3, "Hvor mange oppdrettslaks døde eller gikk tapt i norske anlegg i 2025?", "laks", 67e6, "Fiskeridirektoratet", { ca: true, per: "2025", info: "Over 54 millioner av dem døde i merdene." }],
+    ["kylling-norge", 2, "Hvor mange kyllinger ble slaktet i Norge i 2024?", "kyllinger", 72.7e6, "Landbruksdirektoratet (via Fjørfe)", { ca: true, per: "2024", info: "Rundt 13 per innbygger." }],
+    ["kylling-verden", 3, "Hvor mange kyllinger ble slaktet i verden i 2024?", "kyllinger", 78.5e9, "FAO (via Our World in Data)", { ca: true, per: "2024", info: "Nesten ti kyllinger per menneske, hvert år." }],
+    ["storfe-verden", 2, "Hvor mange storfe fantes det i verden i 2024?", "storfe", 1.58e9, "FAO (via Our World in Data)", { ca: true, per: "2024", info: "Omtrent én ku eller okse per fem mennesker." }],
+    ["melkekyr", 2, "Hvor mange melkekyr fantes det i Norge i mars 2026?", "melkekyr", 204342, "SSB", { per: "2026", info: "Tallet har falt nesten 8 prosent siden 2017." }],
+    ["melk-ku", 2, "Hvor mange kilo melk ga en norsk melkeku i snitt i løpet av 2025?", "kg", 8371, "TINE, Ku- og Geitekontrollen", { per: "2025", info: "Rundt 23 liter hver dag, hele året." }],
+    ["ulv", 2, "Hvor mange ulver levde i Norge og Sverige til sammen vinteren 2025–2026?", "ulver", 390, "Rovdata og SLU", { ca: true, per: "2026", info: "Bare 45–47 av dem ble påvist i Norge." }],
+    ["bjorn", 2, "Hvor mange ulike brunbjørner ble påvist med DNA i Norge i 2025?", "brunbjørner", 185, "Rovdata (Miljødirektoratet)", { per: "2025", info: "Bare 80 av dem var binner." }],
+    ["hjort-skutt", 2, "Hvor mange hjort ble skutt i Norge i jaktåret 2025–2026?", "hjort", 50148, "SSB", { ca: true, per: "2025", info: "Nesten halvparten ble skutt i Vestland." }],
+    ["hjortevilt-trafikk", 2, "Hvor mange elg, hjort og rådyr ble drept av bil og tog i Norge i jaktåret 2025–2026?", "dyr", 9100, "SSB", { ca: true, per: "2025", info: "Over 7000 av dem var rådyr." }],
+    ["hunder-norge", 2, "Hvor mange hunder finnes det i norske hjem?", "hunder", 590000, "DyreID (via Tryg)", { ca: true, per: "2025", info: "Det er likevel flere katter, rundt 620 000." }],
+    ["egg-hone", 2, "Hvor mange egg legger en norsk verpehøne i løpet av et år?", "egg", 300, "SSB", { ca: true, per: "2019", info: "Norge har rundt 4,5 millioner verpehøner." }],
+    ["bikube", 2, "Hvor mange bier er det i en bikube om sommeren?", "bier", 50000, "Store norske leksikon", { ca: true, info: "Om vinteren er det bare 7000 til 15 000." }],
+  ]),
+  ...lag("dyr", "fakta", [
+    ["vandrefalk", 3, "Hvor fort er det raskeste stupet som er målt for en vandrefalk?", "km/t", 389, "National Geographic", { ca: true }],
+    ["gronlandshai", 3, "Hvor gammel kan en håkjerring (grønlandshai) bli?", "år", 400, "Nielsen mfl., Science (2016)", { ca: true }],
+    ["elefant", 2, "Hvor mange måneder er en elefant drektig?", "måneder", 22, "Britannica", { ca: true }],
+  ]),
+]

@@ -15,6 +15,11 @@ export const historie = [
     ["titanic-livbater", 2, "Hvor mange personer var det plass til i livbåtene på Titanic?", "plasser", 1178, "Den britiske granskingen av Titanic-forliset (1912)", { info: "Det var over 2 200 om bord, og rundt 706 overlevde." }],
     ["london-brann", 2, "Hvor mange hus brant ned i bybrannen i London i 1666?", "hus", 13200, "London Fire Brigade Museum og The Gazette", { info: "Bare seks dødsfall er bekreftet, men rundt 70 000 av byens 80 000 innbyggere mistet hjemmet." }],
     ["terrakotta", 2, "Hvor mange leirsoldater regner man med at Terrakottahæren i Xi'an har?", "soldater", 8000, "Smarthistory", { ca: true, info: "I tillegg rundt 130 stridsvogner og over 600 hester." }],
+    ["spanskesyken", 2, "Hvor mange mennesker døde av spanskesyken fra 1918 til 1920?", "mennesker", 50e6, "CDC", { ca: true, info: "Rundt en tredel av verdens befolkning ble smittet. Noen anslag går opp mot 100 millioner døde." }],
+    ["ww2-norge", 2, "Hvor mange nordmenn mistet livet som følge av andre verdenskrig?", "nordmenn", 10000, "Store norske leksikon", { ca: true, info: "Rundt en tredel av dem var militære." }],
+    ["ellis-island", 2, "Hvor mange innvandrere ble tatt imot på Ellis Island i New York fra 1892 til 1954?", "innvandrere", 12e6, "National Park Service", { ca: true, info: "I toppåret 1907 kom over én million gjennom stasjonen." }],
+    ["ww1-soldater", 2, "Hvor mange soldater døde i første verdenskrig?", "soldater", 8.5e6, "Store norske leksikon", { ca: true, info: "Rundt 21 millioner ble i tillegg såret." }],
+    ["befolkning-ar-1", 3, "Hvor mange mennesker levde på jorda rundt år 1?", "mennesker", 230e6, "Our World in Data (HYDE 3.3)", { ca: true, info: "Færre enn det bor i Indonesia i dag. Forskernes anslag spriker fra rundt 170 til 400 millioner." }],
   ]),
   ...lag("historie", "fakta", [
     ["elizabeth", 1, "Hvor mange år var dronning Elizabeth 2. monark?", "år", 70, "Britannica", { info: "Fra 1952 til 2022." }],
