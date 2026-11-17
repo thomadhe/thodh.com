@@ -19,13 +19,15 @@ type Tilstand = {
 const tom = (): Tilstand => ({ v: 5, gjetninger: [], resultat: { status: "pagar" } })
 
 // Lessgames-style rows: coloured bar, light text on top. Every word past rank 1000 is red and hugs the left
-// edge; from 1000 in, the colour shifts evenly on a log scale of the rank: orange (~300), yellow (~100),
-// green in the top ten.
+// edge; from 1000 in, the colour shifts on a log scale of the rank: orange (~300), yellow-green (~100),
+// green from about 30 in.
 const GRENSE = 1000
 /** How far a rank has come from 1000 (0) to the answer (1), on a log scale. */
 const naerhet = (avstand: number) => Math.max(0, 1 - Math.log10(avstand) / Math.log10(GRENSE))
 const ANKER: Fargeanker = [
   [0, 4],
+  [1 / 3, 75], // #100
+  [0.6, 120], // #16
   [1, 145],
 ]
 const farge = (avstand: number) => naerhetsfarge(fargetone(ANKER, naerhet(avstand)))
