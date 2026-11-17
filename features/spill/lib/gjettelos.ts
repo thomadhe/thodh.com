@@ -39,7 +39,7 @@ export type Kategori = KjentKategori | (string & {})
 
 export const KATEGORIER: Record<KjentKategori, { navn: string; farge: string }> = {
   norge: { navn: "Norge", farge: "#f87171" },
-  verden: { navn: "Geografi", farge: "#38bdf8" },
+  verden: { navn: "Verden", farge: "#38bdf8" },
   historie: { navn: "Historie", farge: "#d4a373" },
   sport: { navn: "Sport", farge: "#4ade80" },
   rommet: { navn: "Vitenskap og rommet", farge: "#a78bfa" },

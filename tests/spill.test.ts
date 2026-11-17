@@ -627,8 +627,8 @@ test("Gjetteløs: visning av tall og avvik", () => {
   assert.equal(avvik(1915, 1905, true), "10 år for sent")
 })
 
-test("Gjetteløs: spørsmålsbanken er velformet og bred", () => {
-  assert.ok(gjettelosSporsmal.length >= 400, `${gjettelosSporsmal.length} spørsmål`)
+test("Gjetteløs: spørsmålsbanken er velformet, bred og mest anslag", () => {
+  assert.ok(gjettelosSporsmal.length >= 450, `${gjettelosSporsmal.length} spørsmål`)
   const ider = new Set<string>()
   const tekster = new Set<string>()
   for (const s of gjettelosSporsmal) {
@@ -639,6 +639,7 @@ test("Gjetteløs: spørsmålsbanken er velformet og bred", () => {
     assert.ok(s.id.startsWith(`${s.kategori}:`), s.id)
     assert.match(s.kategori, /^[a-z0-9-]+$/, s.id)
     assert.ok(kategoriInfo(s.kategori).navn.length > 0, s.id)
+    assert.ok(s.stil === "anslag" || s.stil === "fakta", s.id)
     assert.ok([1, 2, 3].includes(s.vansk), s.id)
     assert.ok(s.tekst.endsWith("?"), s.id)
     assert.ok(s.kilde.trim().length > 0, `${s.id} mangler kilde`)
@@ -647,20 +648,57 @@ test("Gjetteløs: spørsmålsbanken er velformet og bred", () => {
     assert.ok(s.per === undefined || /\d{4}/.test(s.per), `${s.id}: per ${s.per}`)
     if (s.aarstall) assert.ok(Number.isInteger(s.fasit) && s.fasit < AARSTALL_REFERANSE, `${s.id}: årstall ${s.fasit}`)
   }
+  // Most questions are estimates to reason about, and years are few.
+  const anslag = gjettelosSporsmal.filter((s) => s.stil === "anslag").length
+  assert.ok(anslag / gjettelosSporsmal.length > 0.55, `${anslag} anslag`)
+  assert.ok(gjettelosSporsmal.filter((s) => s.aarstall).length / gjettelosSporsmal.length <= 0.05)
   // No category dominates, and nature (where the animals are) stays a small share.
   const perKategori = new Map<string, number>()
   for (const s of gjettelosSporsmal) perKategori.set(s.kategori, (perKategori.get(s.kategori) ?? 0) + 1)
   assert.ok(perKategori.size >= ANTALL, `${perKategori.size} kategorier`)
-  for (const [k, n] of perKategori) assert.ok(n / gjettelosSporsmal.length <= 0.12, `${k}: ${n}`)
-  assert.ok((perKategori.get("natur") ?? 0) / gjettelosSporsmal.length <= 0.06)
+  for (const [k, n] of perKategori) assert.ok(n / gjettelosSporsmal.length <= 0.15, `${k}: ${n}`)
+  assert.ok((perKategori.get("natur") ?? 0) / gjettelosSporsmal.length <= 0.08)
 })
 
-test("Gjetteløs: dagsplanen har fem kategorier, lett og vanskelig, og ingen gjentakelser", () => {
+// Days 0–2 (16–18 November 2026) were played before the bank was rewritten. They must stay exactly as they were.
+const GJETTELOS_SPILTE_DAGER = [
+  ["historie:elizabeth", "rommet:nullpunkt", "sport:paris-ovelser", "verden:sprak", "kultur:sonetter"],
+  ["historie:forste-verdenskrig", "norge:preikestolen", "teknologi:bitcoin-maks", "sport:monaco", "kultur:avatar"],
+  ["verden:usa-flagg", "historie:fn", "rommet:iss-hoyde", "kultur:undset-nobel", "sport:curlingstein"],
+]
+const GJETTELOS_SPILTE_SPORSMAL = [
+  {"id":"historie:elizabeth","kategori":"historie","vansk":1,"tekst":"Hvor mange år var dronning Elizabeth 2. monark?","enhet":"år","fasit":70,"aarstall":false,"ca":false,"kilde":"Britannica","info":"Fra 1952 til 2022."},
+  {"id":"rommet:nullpunkt","kategori":"rommet","vansk":2,"tekst":"Hvor mange minusgrader celsius er det absolutte nullpunktet?","enhet":"minusgrader","fasit":273.15,"aarstall":false,"ca":false,"kilde":"BIPM"},
+  {"id":"sport:paris-ovelser","kategori":"sport","vansk":3,"tekst":"Hvor mange øvelser var det i sommer-OL i Paris 2024?","enhet":"øvelser","fasit":329,"aarstall":false,"ca":false,"kilde":"IOC"},
+  {"id":"verden:sprak","kategori":"verden","vansk":3,"tekst":"Hvor mange levende språk finnes i verden?","enhet":"språk","fasit":7160,"aarstall":false,"ca":true,"per":"2024","kilde":"Ethnologue"},
+  {"id":"kultur:sonetter","kategori":"kultur","vansk":3,"tekst":"Hvor mange sonetter skrev Shakespeare?","enhet":"sonetter","fasit":154,"aarstall":false,"ca":false,"kilde":"Britannica"},
+  {"id":"historie:forste-verdenskrig","kategori":"historie","vansk":1,"tekst":"Hvilket år begynte første verdenskrig?","enhet":"årstall","fasit":1914,"aarstall":true,"ca":false,"kilde":"Britannica"},
+  {"id":"norge:preikestolen","kategori":"norge","vansk":2,"tekst":"Hvor høyt over Lysefjorden ligger Preikestolen?","enhet":"meter","fasit":604,"aarstall":false,"ca":false,"kilde":"Store norske leksikon"},
+  {"id":"teknologi:bitcoin-maks","kategori":"teknologi","vansk":2,"tekst":"Hvor mange bitcoin kan det finnes på det meste?","enhet":"bitcoin","fasit":21000000,"aarstall":false,"ca":false,"kilde":"Bitcoin-protokollen"},
+  {"id":"sport:monaco","kategori":"sport","vansk":3,"tekst":"Hvor mange runder kjøres i Formel 1-løpet i Monaco?","enhet":"runder","fasit":78,"aarstall":false,"ca":false,"kilde":"Formula 1"},
+  {"id":"kultur:avatar","kategori":"kultur","vansk":3,"tekst":"Hvor mye har «Avatar» (2009) spilt inn på kino, verdens mest innbringende film?","enhet":"dollar","fasit":2923000000,"aarstall":false,"ca":true,"per":"2025","kilde":"Box Office Mojo"},
+  {"id":"verden:usa-flagg","kategori":"verden","vansk":1,"tekst":"Hvor mange stjerner er det i USAs flagg?","enhet":"stjerner","fasit":50,"aarstall":false,"ca":false,"kilde":"U.S. Government"},
+  {"id":"historie:fn","kategori":"historie","vansk":2,"tekst":"Hvilket år ble FN grunnlagt?","enhet":"årstall","fasit":1945,"aarstall":true,"ca":false,"kilde":"FN"},
+  {"id":"rommet:iss-hoyde","kategori":"rommet","vansk":2,"tekst":"Hvor høyt over bakken går Den internasjonale romstasjonen?","enhet":"km","fasit":400,"aarstall":false,"ca":true,"kilde":"NASA"},
+  {"id":"kultur:undset-nobel","kategori":"kultur","vansk":3,"tekst":"Hvilket år fikk Sigrid Undset nobelprisen i litteratur?","enhet":"årstall","fasit":1928,"aarstall":true,"ca":false,"kilde":"Nobelprisen"},
+  {"id":"sport:curlingstein","kategori":"sport","vansk":3,"tekst":"Hvor mye kan en curlingstein veie på det meste?","enhet":"kg","fasit":19.96,"aarstall":false,"ca":false,"kilde":"World Curling"},
+]
+
+test("Gjetteløs: dagsplanen har fem kategorier, blandet rekkefølge og ingen gjentakelser", () => {
   const etterId = new Map(gjettelosSporsmal.map((s) => [s.id, s]))
   assert.ok(gjettelosPlan.length >= 80, `${gjettelosPlan.length} dager`)
+  assert.deepEqual(gjettelosPlan.slice(0, 3), GJETTELOS_SPILTE_DAGER)
+  for (const gammel of GJETTELOS_SPILTE_SPORSMAL) {
+    const s = etterId.get(gammel.id)
+    assert.ok(s, `${gammel.id} mangler`)
+    // Every field the questions had then is unchanged; "stil" came with the rewrite.
+    assert.deepEqual(Object.fromEntries(Object.keys(gammel).map((k) => [k, s[k as keyof typeof s]])), gammel, gammel.id)
+    assert.deepEqual(Object.keys(s).filter((k) => !(k in gammel)), ["stil"], gammel.id)
+  }
   const brukt = new Set<string>()
+  let sortert = 0
   for (const [i, dag] of gjettelosPlan.entries()) {
-    const hvor = `dag ${i + 1}`
+    const hvor = `dag ${i}`
     assert.equal(dag.length, ANTALL, hvor)
     const sporsmal = dag.map((id) => {
       const s = etterId.get(id)
@@ -670,10 +708,15 @@ test("Gjetteløs: dagsplanen har fem kategorier, lett og vanskelig, og ingen gje
       return s
     })
     assert.equal(new Set(sporsmal.map((s) => s.kategori)).size, ANTALL, `${hvor}: samme kategori to ganger`)
-    assert.ok(sporsmal.some((s) => s.vansk === 1), `${hvor}: ingen lette`)
-    assert.ok(sporsmal.some((s) => s.vansk === 3), `${hvor}: ingen vanskelige`)
     assert.ok(sporsmal.filter((s) => s.aarstall).length <= 2, `${hvor}: for mange årstall`)
+    if (i < 3) continue
+    assert.ok(sporsmal.filter((s) => s.vansk === 3).length <= 3, `${hvor}: for mange vanskelige`)
+    assert.ok(sporsmal.filter((s) => s.stil === "anslag").length >= 2, `${hvor}: for få anslag`)
+    const vansk = sporsmal.map((s) => s.vansk)
+    if (vansk.join() === [...vansk].sort().join()) sortert++
   }
+  // The new days are not sorted from easy to hard any more (some will be by chance).
+  assert.ok(sortert < (gjettelosPlan.length - 3) / 2, `${sortert} dager sortert lett til vanskelig`)
 })
 
 test("Gjetteløs: de tre første dagene beholder spørsmål og rekkefølge", () => {
