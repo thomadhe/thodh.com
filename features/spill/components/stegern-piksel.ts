@@ -112,6 +112,16 @@ export function tekstMedKant(b: Bilde, s: string, x: number, y: number, c: numbe
   return tekst(b, s, x, y, c, a)
 }
 
+/** A distance label on a dark pixel plate with cut corners, centred on x. */
+export function merkelapp(b: Bilde, s: string, x: number, y: number, c: number, a = 1) {
+  const w = tekstBredde(s)
+  const x0 = x - Math.floor(w / 2)
+  fyll(b, x0 - 2, y - 2, w + 4, 9, OMRISS, 0.85 * a)
+  fyll(b, x0 - 1, y - 3, w + 2, 1, OMRISS, 0.85 * a)
+  fyll(b, x0 - 1, y + 7, w + 2, 1, OMRISS, 0.85 * a)
+  tekst(b, s, x0, y, c, a)
+}
+
 // ---- runners ----
 
 export type Palett = { kropp: number; lys: number; skygge: number; mork: number }
@@ -345,7 +355,7 @@ export type Geometri = {
   topp: number
 }
 
-const BANE_AVSTAND = 6
+const BANE_AVSTAND = 11
 
 export function geometri(w: number, baner: number): Geometri {
   const h = 74 + (baner - 1) * BANE_AVSTAND
@@ -536,13 +546,13 @@ export class Kulisse {
       const av = s.blink >= 0 && (tid + s.blink) % 3 < 0.25
       if (!av) sett(b, x, s.y, s.c, s.blink >= 0 ? 0.9 : 0.55)
     }
-    // A full moon high up, almost still, with a dithered halo and a few craters.
-    const mx = w - 22 - Math.round(kam * 0.02)
-    const my = 10
+    // A full moon rising behind the mountains, almost still, with a dithered halo and a few craters.
+    const mx = Math.round(w * 0.82) - Math.round(kam * 0.02)
+    const my = 23
     for (let dy = -9; dy <= 9; dy++) {
       for (let dx = -9; dx <= 9; dx++) {
         const d = dx * dx + dy * dy
-        if (d <= 20) sett(b, mx + dx, my + dy, (dx - 1) * (dx - 1) + (dy + 1) * (dy + 1) <= 2 || (dx + 2) * (dx + 2) + (dy - 2) * (dy - 2) <= 1 ? rgb("#e9cf95") : rgb("#fdf0c4"))
+        if (d <= 20) sett(b, mx + dx, my + dy, (dx === 1 && dy === -1) || (dx === -2 && dy === 2) || (dx === 2 && dy === 1) ? rgb("#efdcaa") : rgb("#fdf0c4"))
         else if (d <= 42 && (dx + dy) % 2 === 0) sett(b, mx + dx, my + dy, rgb("#fde9b8"), 0.18)
       }
     }

@@ -3,7 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react"
 import { NIVAAER } from "../lib/stegern"
 import { FOLG, hvile, klem, lagPlan, MAL_M, poseIHopp, STOV_TID, SYN, type Hopp, type Plan, type Pose } from "./stegern-motor"
-import { FARGE, geometri, hvileBevegelse, Kulisse, PALETTER, PIKSEL, rgb, sett, tegnFigur, tegnZzz, tekstBredde, tekstMedKant, type Bilde } from "./stegern-piksel"
+import { FARGE, geometri, hvileBevegelse, Kulisse, merkelapp, PALETTER, PIKSEL, rgb, sett, tegnFigur, tegnZzz, tekstMedKant, type Bilde } from "./stegern-piksel"
 import "./stegern-bane.css"
 
 export { lagPlan, tidTilLanding, type Hopp } from "./stegern-motor"
@@ -14,7 +14,8 @@ export { lagPlan, tidTilLanding, type Hopp } from "./stegern-motor"
 // it drops to a slow idle tick (breathing, blinking, the 6–7 hands, and in the end a nap) and stops entirely
 // for reduced motion.
 
-export type Loper = { id: string; hopp: Hopp[]; farge: number }
+/** `deg` puts a small arrow over the runner, so a player finds themself among the lanes. */
+export type Loper = { id: string; hopp: Hopp[]; farge: number; deg?: boolean }
 
 type Aktivt = { a: number; b: number; h: Hopp; plan: Plan; start: number }
 type Spor = { antall: number; aktivt: Aktivt | null; merket: number }
@@ -216,12 +217,16 @@ export function Bane({
         }
         tegnFigur(bilde, x, y, pose, pal)
         if (sovn) tegnZzz(bilde, x + 4, y - 24, tid + i * 0.5)
+        else if (r.l.deg && !r.p) {
+          const opp = !redusert && Math.floor(tid * 2.5) % 2 === 0 ? 1 : 0
+          for (let k = 0; k < 3; k++) for (let dx = -2 + k; dx <= 2 - k; dx++) sett(bilde, x + dx, y - 25 + k - opp, FARGE.hvit)
+        }
         if (r.akt && !redusert) {
           const etter = r.t - r.akt.plan.landet
           if (etter >= 0 && etter < 1.6) {
             const s = metertekst(r.akt.b - r.akt.a)
             const a = etter < 1.1 ? 1 : 1 - (etter - 1.1) / 0.5
-            tekstMedKant(bilde, s, tilPx(r.akt.b) - Math.floor(tekstBredde(s) / 2), gy - 30 - Math.round(etter * 5), rgb(NIVAAER[r.akt.h.nivaa].farge), FARGE.omriss, a)
+            merkelapp(bilde, s, tilPx(r.akt.b), gy - 31 - Math.round(etter * 5), rgb(NIVAAER[r.akt.h.nivaa].farge), a)
           }
           if (redusert || (!r.p && etter >= 1.6)) {
             r.s.aktivt = null
