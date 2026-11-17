@@ -409,12 +409,12 @@ export type DuellSporsmal = { dato: string; nr: number; tekst: string }
  * past days, one prompt per day, and every pass through the days takes a different prompt from each, so a room
  * sees every prompt once before any comes back. Answers are judged by date and number, as on the daily page.
  */
-export function duellSporsmal(kode: string, runde: number, iDag = iDagOslo()): DuellSporsmal[] {
+export function duellSporsmal(kode: string, runde: number, iDag = iDagOslo(), antall = NORMALE): DuellSporsmal[] {
   const dager = duellDager(iDag)
   if (!dager.length) return []
   const salt = `stegern:duell:${kode}`
-  return Array.from({ length: NORMALE }, (_, i) => {
-    const n = runde * NORMALE + i
+  return Array.from({ length: antall }, (_, i) => {
+    const n = runde * antall + i
     const dato = iRotasjon(dager, n, salt)
     const nr = iRotasjon([0, 1, 2, 3, 4], Math.floor(n / dager.length), `${salt}:${dato}`)
     return { dato, nr, tekst: dagFor(dato).sporsmal[nr].tekst }

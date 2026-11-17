@@ -33,6 +33,10 @@ export default async function Page({ params }: PageProps<"/spill/67-stegern/duel
             Etter hvert spørsmål ser dere hverandres svar, og alle Stegernene hopper side om side. Lengste sum vinner. Spørsmålene er hentet fra tidligere
             dager, og duellen teller ikke i statistikken din.
           </p>
+          <p>
+            Verten kan også velge Startpistolen: den som har pistolen, må gi et gyldig svar som ingen har sagt, før den skjulte lunta går av. Et svar sender
+            pistolen videre, smeller den, mister du et liv, og sist på beina vinner. Hoppene dine fyller livsmåleren og kan gi deg et liv tilbake.
+          </p>
           <p>Går verten, tar den som har vært lengst i rommet over. Laster du siden på nytt, kommer du tilbake på samme plass.</p>
         </>
       }

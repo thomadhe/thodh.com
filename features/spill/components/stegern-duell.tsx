@@ -27,7 +27,21 @@ import {
 } from "../lib/stegern-duell"
 import { useDuellrom, type Romkontekst } from "./duell/bruk-duellrom"
 import { HarSvart, Lobby, Pall, Romlinje } from "./duell/duell-ui"
+import {
+  barMaks,
+  gjeldende,
+  hoppOver,
+  nesteHolder,
+  nyLunte,
+  nyPistol,
+  pass,
+  smell,
+  vurderPistolsvar,
+  type PistolSporsmal,
+} from "../lib/stegern-pistol"
 import { Bane, tidTilLanding, type Hopp, type Loper } from "./stegern-bane"
+import { AVSLAG_TEKST, ModusVelger, PistolPanel, PistolRegler, PistolSlutt } from "./stegern-pistol"
+import { Startlinje, type Pistolspiller } from "./stegern-pistol-scene"
 import { Avsloring, DelKnapp, Klokke, NivaaMerke } from "./stegern-ui"
 
 // The 6/7-stegern duel: up to six friends get the same five prompts at once and jump side by side. The room
@@ -61,7 +75,8 @@ function etterMottak(for_: Status, ny: Status, rom: Romkontekst<Status>) {
   }
 }
 
-const hendelser = { svar: taImotSvar }
+/** Prompts fetched for one game of Startpistolen; a new one comes after every bang. */
+const PISTOL_SPORSMAL = 20
 
 export function StegernDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: string; supabaseUrl: string; supabaseNokkel: string }) {
   const rom = useDuellrom<Status>({
@@ -73,10 +88,62 @@ export function StegernDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: stri
     start: startStatus,
     les: lesStatus,
     taImot,
-    hendelser,
+    hendelser: {
+      svar: taImotSvar,
+      // Startpistolen: the holder's signed answer, applied by everyone at once (the host's status confirms it).
+      pistolsvar: (payload) => {
+        const dom = lesSignert((payload as { dom?: unknown }).dom)
+        if (dom) void taImotPistolsvar(dom)
+      },
+      skriver: (payload) => {
+        const p = payload as { id?: unknown; t?: unknown }
+        if (typeof p.id === "string" && typeof p.t === "string") setSkriver({ id: p.id, t: p.t.slice(0, 80) })
+      },
+    },
     etterMottak,
   })
-  const { status, statusRef, settStatus, send, meg, erVert, vert, tilkobling, tilstedeIder, iRommet, klare, kanStarte, nyFase, faseStart } = rom
+  const { status, statusRef, settStatus, send, meg, erVert, vert, tilkobling, tilstedeIder, iRommet, klare, kanStarte, nyFase, faseStart, kringkast } = rom
+  const tilstedeRef = useRef(tilstedeIder)
+  const erVertRef = useRef(erVert)
+  useEffect(() => {
+    tilstedeRef.current = tilstedeIder
+    erVertRef.current = erVert
+  })
+
+  /** A change from the game itself: the host stamps a new version and tells everyone; others only update their own view. */
+  const endreSpill = useCallback(
+    (endring: (s: Status) => Status) => {
+      const for_ = statusRef.current
+      if (!erVertRef.current) return settStatus(endring)
+      settStatus((s) => {
+        const ny = endring(s)
+        return ny === s ? s : { ...ny, v: s.v + 1 }
+      })
+      if (statusRef.current !== for_) kringkast()
+    },
+    [settStatus, kringkast, statusRef],
+  )
+
+  // ---- Startpistolen ----
+  const [skriver, setSkriver] = useState<{ id: string; t: string } | null>(null)
+  const [rist, setRist] = useState(0)
+  const [pistolMelding, setPistolMelding] = useState<string | null>(null)
+  /** Applies a signed answer if it is a valid one by the holder: the pistol moves on. */
+  const brukPistolsvar = useCallback(
+    (dom: Signert) => {
+      const data = apne(dom)
+      endreSpill((s) => {
+        if (s.fase !== "pistol" || !s.pistol) return s
+        const v = vurderPistolsvar(data, kode, s.runde, s.pistol)
+        return v.ok ? { ...s, pistol: pass(s.pistol, { ...v.svar, dom }, serverNa(), tilstedeRef.current) } : s
+      })
+    },
+    [endreSpill, kode],
+  )
+  const taImotPistolsvar = async (dom: Signert) => {
+    const [ok] = await sjekkSignaturer([dom]).catch(() => [false])
+    if (ok) brukPistolsvar(dom)
+  }
 
   const [tekst, setTekst] = useState("")
   const [opptatt, setOpptatt] = useState(false)
@@ -130,6 +197,51 @@ export function StegernDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: stri
   const nesteSporsmal = useCallback(() => {
     nyFase((s) => (s.nr < NORMALE - 1 ? { ...s, fase: "sporsmal", nr: s.nr + 1, frister: [...s.frister.slice(0, s.nr + 1), serverNa() + SVAR_MS] } : { ...s, fase: "slutt" }))
   }, [nyFase])
+
+  // Startpistolen's clock, on the host: the bang, a holder who left, the end.
+  const borteSiden = useRef<{ id: string; t: number } | null>(null)
+  useEffect(() => {
+    if (!erVert || tilkobling !== "klar") return
+    const id = window.setInterval(() => {
+      const s = statusRef.current
+      const p = s.pistol
+      if (s.fase !== "pistol" || !p) return
+      const na = serverNa()
+      if (p.vinner) {
+        if (na - (p.smell?.ts ?? 0) > 2200) endreSpill((x) => ({ ...x, fase: "slutt" }))
+      } else if (na >= p.lunte) {
+        endreSpill((x) => (x.pistol && !x.pistol.vinner ? { ...x, pistol: smell(x.pistol, serverNa(), tilstedeRef.current, Math.random) } : x))
+      } else if (!tilstedeRef.current.has(p.holder)) {
+        // A holder who left the room: the pistol moves on after a moment, with no heart lost.
+        if (borteSiden.current?.id !== p.holder) borteSiden.current = { id: p.holder, t: na }
+        else if (na - borteSiden.current.t > 1500) endreSpill((x) => (x.pistol ? { ...x, pistol: hoppOver(x.pistol, serverNa(), tilstedeRef.current) } : x))
+      } else borteSiden.current = null
+    }, 100)
+    return () => window.clearInterval(id)
+  }, [erVert, tilkobling, statusRef, endreSpill])
+
+  // A new host mid-game lights a fresh fuse, so nobody loses a heart to the handover.
+  const varVert = useRef(false)
+  useEffect(() => {
+    if (tilkobling !== "klar") return
+    const ble = erVert && !varVert.current
+    varVert.current = erVert
+    if (ble && statusRef.current.fase === "pistol" && statusRef.current.pistol && !statusRef.current.pistol.vinner && statusRef.current.v > 0) {
+      endreSpill((x) => (x.pistol ? { ...x, pistol: nyLunte(x.pistol, serverNa(), Math.random) } : x))
+    }
+  }, [erVert, tilkobling, statusRef, endreSpill])
+
+  // Sounds: a steady tick while the pistol is out (the same pace whatever is left), and the bang.
+  const pistolPa = status.fase === "pistol" && !!status.pistol && !status.pistol.vinner
+  useEffect(() => {
+    if (!pistolPa) return
+    const id = window.setInterval(() => lyder.tikk(0.35), 900)
+    return () => window.clearInterval(id)
+  }, [pistolPa])
+  const smellTs = status.pistol?.smell?.ts ?? null
+  useEffect(() => {
+    if (smellTs !== null && serverNa() - smellTs < 1500) lyder.feil()
+  }, [smellTs])
 
   useEffect(() => {
     if (!erVert || tilkobling !== "klar") return
@@ -206,32 +318,80 @@ export function StegernDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: stri
     return () => window.clearTimeout(id)
   }, [visningNokkel, meg, statusRef])
 
+  // The holder answers: judged and signed by the server, then passed to everyone at once.
+  const minTur = status.fase === "pistol" && status.pistol?.holder === meg && !status.pistol?.vinner
+  const pistolSvar = async (verdi: string) => {
+    const s = statusRef.current
+    const p = s.pistol
+    const t = verdi.trim().slice(0, 80)
+    if (!p || !meg || p.holder !== meg || opptatt || !t) return
+    const q = gjeldende(p)
+    setOpptatt(true)
+    setPistolMelding(null)
+    try {
+      const v = await duellPost<DomSvar>(API, { type: "duell-svar", kode, runde: s.runde, i: p.sp, dato: q.dato, nr: q.nr, id: meg, svar: t })
+      const na = statusRef.current
+      const vurd = na.pistol ? vurderPistolsvar(apne(v.dom), kode, na.runde, na.pistol) : null
+      if (vurd?.ok) {
+        send("pistolsvar", { runde: s.runde, dom: v.dom })
+        brukPistolsvar(v.dom)
+        setTekst("")
+        send("skriver", { id: meg, t: "" })
+        lyder.riktig()
+      } else {
+        setRist((n) => n + 1)
+        setPistolMelding(AVSLAG_TEKST[vurd?.grunn ?? "ferdig"])
+        lyder.feil()
+      }
+    } catch (e) {
+      setPistolMelding((e as Error).message)
+    } finally {
+      setOpptatt(false)
+    }
+  }
+  // What the holder types is shown to the others as it is typed.
+  useEffect(() => {
+    if (!minTur || !meg) return
+    const id = window.setTimeout(() => send("skriver", { id: meg, t: tekst }), 90)
+    return () => window.clearTimeout(id)
+  }, [tekst, minTur, meg, send])
+  useEffect(() => {
+    if (minTur) felt.current?.focus({ preventScroll: true })
+  }, [minTur])
+
   // ---- host actions: the next round's prompts are fetched while the lobby fills up ----
   const [starter, setStarter] = useState(false)
-  const forhand = useRef<{ runde: number; sporsmal: Promise<DuellSporsmal[]> } | null>(null)
+  const forhand = useRef<{ nokkel: string; sporsmal: Promise<DuellSporsmal[]> } | null>(null)
   const hentSporsmal = useCallback(
-    (runde: number) => {
-      if (forhand.current?.runde !== runde) {
-        const sporsmal = duellPost<{ sporsmal: DuellSporsmal[] }>(API, { type: "duell", kode, runde }).then((r) => r.sporsmal)
+    (runde: number, antall: number) => {
+      const nokkel = `${runde}:${antall}`
+      if (forhand.current?.nokkel !== nokkel) {
+        const sporsmal = duellPost<{ sporsmal: DuellSporsmal[] }>(API, { type: "duell", kode, runde, antall }).then((r) => r.sporsmal)
         sporsmal.catch(() => (forhand.current = null))
-        forhand.current = { runde, sporsmal }
+        forhand.current = { nokkel, sporsmal }
       }
       return forhand.current.sporsmal
     },
     [kode],
   )
+  const antallSporsmal = status.modus === "pistol" ? PISTOL_SPORSMAL : NORMALE
   useEffect(() => {
-    if (erVert && tilkobling === "klar" && status.fase === "lobby") void hentSporsmal(status.runde).catch(() => {})
-  }, [erVert, tilkobling, status.fase, status.runde, hentSporsmal])
+    if (erVert && tilkobling === "klar" && status.fase === "lobby") void hentSporsmal(status.runde, antallSporsmal).catch(() => {})
+  }, [erVert, tilkobling, status.fase, status.runde, antallSporsmal, hentSporsmal])
 
   const start = async () => {
     if (!kanStarte || starter) return
     setStarter(true)
     setMelding(null)
     try {
-      const sporsmal = await hentSporsmal(statusRef.current.runde)
+      const pistol = statusRef.current.modus === "pistol"
+      const sporsmal = await hentSporsmal(statusRef.current.runde, pistol ? PISTOL_SPORSMAL : NORMALE)
       lyder.velg()
-      nyFase((s) => ({ ...s, fase: "sporsmal", nr: 0, sporsmal, deltakere: velgDeltakere(klare), svar: {}, frister: [serverNa() + SVAR_MS] }))
+      const deltakere = velgDeltakere(klare)
+      if (pistol) {
+        const liste: PistolSporsmal[] = sporsmal.map(({ dato, nr, tekst }) => ({ dato, nr, tekst }))
+        nyFase((s) => ({ ...s, fase: "pistol", nr: 0, sporsmal: [], deltakere, svar: {}, frister: [], pistol: nyPistol(deltakere, s.innst, liste, serverNa(), Math.random) }))
+      } else nyFase((s) => ({ ...s, fase: "sporsmal", nr: 0, sporsmal, deltakere, svar: {}, frister: [serverNa() + SVAR_MS], pistol: null }))
     } catch (e) {
       setMelding((e as Error).message)
     } finally {
@@ -239,9 +399,11 @@ export function StegernDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: stri
     }
   }
 
+  // A new round keeps the mode and the settings.
   const spillIgjen = () => {
     lyder.velg()
-    rom.spillIgjen()
+    settStatus((s) => ({ ...startStatus(s.runde + 1), modus: s.modus, innst: s.innst, v: 1 }))
+    kringkast()
   }
 
   // ---- what the course shows ----
@@ -269,6 +431,21 @@ export function StegernDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: stri
     <div className="flex flex-col gap-4">
       <Romlinje kode={kode} lenke={lenke} kompakt={status.fase !== "lobby"} delTekst={`Bli med i duellen min på 6/7-stegern! Kode ${kode}`} />
 
+      {status.modus === "pistol" && status.pistol && (status.fase === "pistol" || status.fase === "slutt") ? (
+        <div className="px-panel overflow-hidden">
+          <Startlinje
+            spillere={status.pistol.spillere.map((s): Pistolspiller => {
+              const d = status.deltakere.find((x) => x.id === s.id)
+              return { id: s.id, figur: d?.figur ?? rom.figur, farge: d?.farge ?? 0, liv: s.liv, bar: s.bar / barMaks(status.pistol!.innst), ute: s.liv === 0, deg: s.id === meg }
+            })}
+            pistol={status.pistol}
+            neste={nesteHolder(status.pistol, status.pistol.holder, tilstedeIder)}
+            etikett="Startstreken med alle spillerne"
+          >
+            <p className="px-etikett pointer-events-none absolute top-2 right-2 bg-[#050817]/70 px-1.5 py-1">Startpistolen</p>
+          </Startlinje>
+        </div>
+      ) : (
       <div className="px-panel overflow-hidden">
         <Bane lopere={lopere.length ? lopere : [{ id: "tom", farge: 0, hopp: [], figur: rom.figur }]} mal={false} oversikt={status.fase === "slutt"} vekker={`${status.fase}|${status.nr}|${tekst}`} etikett="Banen med alle spillerne">
           <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between gap-2 p-2">
@@ -293,6 +470,7 @@ export function StegernDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: stri
           </div>
         </Bane>
       </div>
+      )}
 
       {tilkobling === "feil" ? (
         <section className="px-panel px-panel-rosa p-4">
@@ -320,13 +498,59 @@ export function StegernDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: stri
           starter={starter}
           start={start}
           melding={melding}
+          innstillinger={<ModusVelger modus={status.modus} innst={status.innst} erVert={erVert} endre={(modus, innst) => nyFase((s) => ({ ...s, modus, innst }))} />}
           info={
-            <p>
-              Fem spørsmål, {SEKUNDER} sekunder hver. Sjeldne svar gir lange hopp, og lengste sum vinner. Spørsmålene er fra tidligere dager, og duellen teller
-              ikke i statistikken din.
-            </p>
+            status.modus === "pistol" ? (
+              <PistolRegler innst={status.innst} />
+            ) : (
+              <p>
+                Fem spørsmål, {SEKUNDER} sekunder hver. Sjeldne svar gir lange hopp, og lengste sum vinner. Spørsmålene er fra tidligere dager, og duellen teller
+                ikke i statistikken din.
+              </p>
+            )
           }
         />
+      ) : status.fase === "pistol" && status.pistol ? (
+        <PistolPanel
+          pistol={status.pistol}
+          deltakere={status.deltakere}
+          meg={meg}
+          tilstede={tilstedeIder}
+          skriver={skriver?.id === status.pistol.holder ? skriver.t : ""}
+          melding={minTur ? pistolMelding : null}
+          skjema={
+            <form
+              key={rist}
+              className={`flex gap-2 ${rist ? "px-rist" : ""}`}
+              onSubmit={(e) => {
+                e.preventDefault()
+                void pistolSvar(tekst)
+              }}
+            >
+              <input
+                ref={felt}
+                value={tekst}
+                onChange={(e) => {
+                  setTekst(e.target.value)
+                  setPistolMelding(null)
+                }}
+                maxLength={80}
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck={false}
+                enterKeyHint="go"
+                placeholder="Din tur!"
+                aria-label="Svar"
+                className="px-felt h-[50px] min-w-0 flex-1 px-3"
+              />
+              <button type="submit" disabled={opptatt} className="px-knapp h-[50px]">
+                Svar
+              </button>
+            </form>
+          }
+        />
+      ) : status.fase === "slutt" && status.modus === "pistol" && status.pistol ? (
+        <PistolSlutt pistol={status.pistol} deltakere={status.deltakere} meg={meg} erVert={erVert} vertNavn={vert?.navn || "Verten"} spillIgjen={spillIgjen} />
       ) : status.fase === "sporsmal" ? (
         <section key={`${status.runde}-${status.nr}`} className="px-panel px-hopp-inn p-4">
           <div className="flex items-center justify-between gap-3">

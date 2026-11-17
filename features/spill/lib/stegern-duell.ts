@@ -11,6 +11,7 @@
 import { apne, lesSignert, type Signert } from "./duell/signatur"
 import { erHeltall, erObjekt, erTekst, iTide, lesDeltakere, type Deltaker } from "./duell/rom"
 import { hoppDm, NORMALE, SEKUNDER, type Nivaa } from "./stegern"
+import { lesPistol, rensInnstillinger, STANDARD_INNSTILLINGER, type Pistol, type PistolInnstillinger } from "./stegern-pistol"
 
 export {
   erGyldigKode,
@@ -40,7 +41,9 @@ export const SVAR_MS = SEKUNDER * 1000
 /** One answer once its signed verdict has been checked. `ts` is when the server judged it. */
 export type DuellSvar = { t: string; n: Nivaa; treff: string | null; ts: number }
 export type DuellSporsmal = { dato: string; nr: number; tekst: string }
-export type Fase = "lobby" | "sporsmal" | "visning" | "slutt"
+export type Fase = "lobby" | "sporsmal" | "visning" | "pistol" | "slutt"
+/** "runder": five prompts for everyone at once. "pistol": Startpistolen, the hot-potato mode (lib/stegern-pistol.ts). */
+export type Modus = "runder" | "pistol"
 
 /** Answers by player id and question index (0–4). */
 export type SvarKart<T> = Record<string, Partial<Record<number, T>>>
@@ -58,9 +61,26 @@ export type Status = {
   frister: number[]
   /** The signed verdicts, as the players sent them. Only `godkjenn` turns them into answers that count. */
   svar: SvarKart<Signert>
+  /** The game mode and Startpistolen's settings, chosen by the host in the lobby. */
+  modus: Modus
+  innst: PistolInnstillinger
+  /** Startpistolen's state while it is played and on its podium. */
+  pistol: Pistol | null
 }
 
-export const startStatus = (runde = 0): Status => ({ runde, v: 0, fase: "lobby", nr: 0, sporsmal: [], deltakere: [], frister: [], svar: {} })
+export const startStatus = (runde = 0): Status => ({
+  runde,
+  v: 0,
+  fase: "lobby",
+  nr: 0,
+  sporsmal: [],
+  deltakere: [],
+  frister: [],
+  svar: {},
+  modus: "runder",
+  innst: STANDARD_INNSTILLINGER,
+  pistol: null,
+})
 
 /** Every answer from both maps. A player's first verdict for a question is the one that stays. */
 export function slaSammenSvar<T>(a: SvarKart<T>, b: SvarKart<T>): SvarKart<T> {
@@ -165,17 +185,22 @@ export function lesStatus(x: unknown): Status | null {
   if (!erObjekt(x)) return null
   const { runde, v, fase, nr, sporsmal, frister } = x
   if (!erHeltall(runde, 0, 999) || !erHeltall(v, 0, 1e6) || !erHeltall(nr, 0, NORMALE - 1)) return null
-  if (fase !== "lobby" && fase !== "sporsmal" && fase !== "visning" && fase !== "slutt") return null
+  if (fase !== "lobby" && fase !== "sporsmal" && fase !== "visning" && fase !== "pistol" && fase !== "slutt") return null
+  const modus: Modus = x.modus === "pistol" ? "pistol" : "runder"
+  const innst = rensInnstillinger(erObjekt(x.innst) ? (x.innst as Partial<PistolInnstillinger>) : {})
   if (!Array.isArray(sporsmal) || sporsmal.length > NORMALE || !Array.isArray(frister) || frister.length > NORMALE) return null
   const sp: DuellSporsmal[] = []
   for (const s of sporsmal) {
     if (!erObjekt(s) || !erTekst(s.dato, 10) || !erHeltall(s.nr, 0, NORMALE - 1) || !erTekst(s.tekst, 200)) return null
     sp.push({ dato: s.dato, nr: s.nr, tekst: s.tekst })
   }
-  if (fase !== "lobby" && sp.length !== NORMALE) return null
+  if ((fase === "sporsmal" || fase === "visning" || (fase === "slutt" && modus === "runder")) && sp.length !== NORMALE) return null
   if (!frister.every((f) => erHeltall(f, 0, 1e14))) return null
   const dl = lesDeltakere(x.deltakere)
   const sv = dl && lesSvarKart(x.svar, dl, NORMALE)
   if (!dl || !sv) return null
-  return { runde, v, fase, nr, sporsmal: sp, deltakere: dl, frister: frister as number[], svar: sv }
+  const pistol = x.pistol == null ? null : lesPistol(x.pistol, dl)
+  if (x.pistol != null && !pistol) return null
+  if ((fase === "pistol" || (fase === "slutt" && modus === "pistol")) && !pistol) return null
+  return { runde, v, fase, nr, sporsmal: sp, deltakere: dl, frister: frister as number[], svar: sv, modus, innst, pistol }
 }

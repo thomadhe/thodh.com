@@ -22,6 +22,10 @@ export type Romkontekst<S> = {
   status: () => S
   settStatus: (endring: (s: S) => S) => void
   send: (hendelse: string, payload: Record<string, unknown>) => void
+  /** Sends this client's status to the room. */
+  kringkast: () => void
+  /** Whether this client is host right now. */
+  erVert: () => boolean
 }
 
 export type Romvalg<S extends GrunnStatus> = {
@@ -134,7 +138,11 @@ export function useDuellrom<S extends GrunnStatus>(valg: Romvalg<S>) {
 
   const kringkast = useCallback(() => send("status", statusRef.current as unknown as Record<string, unknown>), [send])
 
-  const kontekst = useMemo<Romkontekst<S>>(() => ({ meg, status: () => statusRef.current, settStatus, send }), [meg, settStatus, send])
+  const erVertRef = useRef(false)
+  const kontekst = useMemo<Romkontekst<S>>(
+    () => ({ meg, status: () => statusRef.current, settStatus, send, kringkast, erVert: () => erVertRef.current }),
+    [meg, settStatus, send, kringkast],
+  )
 
   /** A status from someone else in the room. */
   const motta = useCallback(
@@ -208,6 +216,9 @@ export function useDuellrom<S extends GrunnStatus>(valg: Romvalg<S>) {
 
   const vert = vertAv(tilstede)
   const erVert = !!meg && vert?.id === meg
+  useEffect(() => {
+    erVertRef.current = erVert
+  })
   const tilstedeIder = useMemo(() => new Set(tilstede.map((t) => t.id)), [tilstede])
   const iRommet = useMemo(() => iRekkefolge(tilstede), [tilstede])
   const klare = iRommet.filter((t) => t.id === vert?.id || (t.klar && t.runde === status.runde))

@@ -90,6 +90,28 @@ import {
   type Status,
 } from "../features/spill/lib/stegern-duell"
 import { blaFigur, lesFigur, STANDARD_FIGUR, tilfeldigFigur } from "../features/spill/lib/duell/figur"
+import {
+  barMaks,
+  fyllBar,
+  gjeldende,
+  hoppOver,
+  lunteEtterPass,
+  MAKS_LIV,
+  MIN_LUNTE_MS,
+  nesteHolder,
+  nyPistol,
+  pass,
+  pistolPlassering,
+  rensInnstillinger,
+  smell,
+  SMELL_PAUSE_MS,
+  STANDARD_INNSTILLINGER,
+  SVAR_PER_SPORSMAL,
+  trekkLunte,
+  vurderPistolsvar,
+  type Pistol,
+  type PistolInnstillinger,
+} from "../features/spill/lib/stegern-pistol"
 import { iTide, plasser, SLINGRING_MS } from "../features/spill/lib/duell/rom"
 import { apne } from "../features/spill/lib/duell/signatur"
 import { erSignert, offentligNokkel, signer } from "../features/spill/lib/server/duell-signatur"
@@ -1119,4 +1141,153 @@ test("Gjetteløs duell: status flettes og leses forsiktig, og duellen rører ikk
   assert.equal(lesGjStatus(null), null)
   const kilde = readFileSync("features/spill/components/gjettelos-duell.tsx", "utf8")
   assert.ok(!/useDagligTilstand|useResultater|lagreResultat/.test(kilde), "duellen bruker ikke dagens lagring")
+})
+
+// 6/7-stegern: Startpistolen
+
+const pistolDeltakere = ["a", "b", "c", "d"].map((id, i) => ({ id, navn: id.toUpperCase(), farge: i, figur: STANDARD_FIGUR }))
+const alleInne = new Set(["a", "b", "c", "d"])
+const pistolSporsmal = duellSporsmal("BCDF", 0, "2026-11-17", 20).map(({ dato, nr, tekst }) => ({ dato, nr, tekst }))
+const startPistol = (innst: Partial<PistolInnstillinger> = {}): Pistol => ({
+  ...nyPistol(pistolDeltakere, rensInnstillinger(innst), pistolSporsmal, 100_000, () => 0),
+  holder: "a",
+})
+/** A signed answer by the holder to the current prompt, judged at `na`. */
+const pistolDom = (p: Pistol, svar: string, na: number, id = p.holder) => {
+  const q = gjeldende(p)
+  return stegernDuellDom({ kode: "BCDF", runde: 0, i: p.sp, dato: q.dato, nr: q.nr, id, svar }, na).dom
+}
+
+test("Startpistolen: innstillinger holdes innenfor grensene", () => {
+  assert.deepEqual(rensInnstillinger({}), STANDARD_INNSTILLINGER)
+  assert.equal(STANDARD_INNSTILLINGER.livMeter, 30)
+  assert.equal(rensInnstillinger({ liv: 9 }).liv, MAKS_LIV)
+  assert.equal(rensInnstillinger({ liv: 0 }).liv, 1)
+  const smal = rensInnstillinger({ lunteMin: 30, lunteMaks: 10 })
+  assert.ok(smal.lunteMaks > smal.lunteMin, "lengste lunte er alltid lengre enn korteste")
+  assert.equal(rensInnstillinger({ livMeter: 1 }).livMeter, 10)
+  const p = startPistol({ lunteMin: 10, lunteMaks: 30 })
+  assert.equal(p.lunte, 100_000 + SMELL_PAUSE_MS + 10_000)
+  assert.equal(trekkLunte(p.innst, () => 0.5), 20_000)
+  assert.ok(p.spillere.every((s) => s.liv === 2 && s.bar === 0))
+})
+
+test("Startpistolen: lunta brenner videre, men settes til 8 s når det er mindre igjen", () => {
+  assert.equal(lunteEtterPass(50_000, 10_000), 50_000, "mye igjen: lunta brenner videre")
+  assert.equal(lunteEtterPass(15_000, 10_000), 10_000 + MIN_LUNTE_MS, "5 s igjen blir 8 s")
+  assert.equal(MIN_LUNTE_MS, 8000)
+  const p = { ...startPistol(), lunte: 103_000 }
+  const svar = { id: "a", tr: "Pizza", n: 2 as const, dom: { j: "{}", s: "x" } }
+  const etter = pass(p, svar, 100_000, alleInne)
+  assert.equal(etter.lunte, 108_000)
+  assert.equal(etter.holder, "b")
+  assert.equal(etter.tur, 100_000)
+})
+
+test("Startpistolen: livsmåleren fylles med hopplengden, flyter over og stopper ved tre liv", () => {
+  const maks = 300
+  assert.equal(hoppDm(1), 30)
+  assert.equal(hoppDm(5), 90)
+  const s = { id: "a", liv: 2, bar: 0 }
+  let r = fyllBar(s, hoppDm(5), maks)
+  assert.deepEqual(r, { spiller: { id: "a", liv: 2, bar: 90 }, nyttLiv: false })
+  r = fyllBar({ ...s, bar: 270 }, hoppDm(4), maks)
+  assert.deepEqual(r, { spiller: { id: "a", liv: 3, bar: 45 }, nyttLiv: true }, "75 dm: 30 fyller måleren, 45 går videre")
+  r = fyllBar({ ...s, liv: 3, bar: 270 }, hoppDm(5), maks)
+  assert.deepEqual(r, { spiller: { id: "a", liv: 3, bar: 300 }, nyttLiv: false }, "ved tre liv står måleren full")
+  r = fyllBar({ ...s, liv: 1, bar: 0 }, 650, maks)
+  assert.deepEqual(r, { spiller: { id: "a", liv: 3, bar: 50 }, nyttLiv: true })
+  // Through a pass: the heart and the "+1" flash.
+  const p = { ...startPistol(), spillere: [{ id: "a", liv: 2, bar: 280 }, ...startPistol().spillere.slice(1)] }
+  const etter = pass(p, { id: "a", tr: "Ossobuco", n: 3, dom: { j: "{}", s: "x" } }, 100_500, alleInne)
+  assert.deepEqual(etter.spillere[0], { id: "a", liv: 3, bar: 40 })
+  assert.deepEqual(etter.pluss, { id: "a", ts: 100_500 })
+  assert.equal(barMaks(rensInnstillinger({ livMeter: 45 })), 450)
+})
+
+test("Startpistolen: turen hopper over dem som er ute eller borte", () => {
+  const p = startPistol()
+  const ute = { ...p, spillere: p.spillere.map((s) => (s.id === "b" ? { ...s, liv: 0 } : s)) }
+  assert.equal(nesteHolder(ute, "a", alleInne), "c")
+  assert.equal(nesteHolder(ute, "a", new Set(["a", "b", "d"])), "d", "c er borte")
+  assert.equal(nesteHolder(ute, "d", alleInne), "a", "rundt bordet")
+  assert.equal(nesteHolder(ute, "a", new Set(["a"])), "a", "ingen andre kan ta den")
+  const borte = hoppOver({ ...ute, holder: "c", lunte: 101_000 }, 100_000, new Set(["a", "d"]))
+  assert.equal(borte.holder, "d")
+  assert.equal(borte.lunte, 108_000)
+  assert.ok(borte.spillere.every((s, i) => s.liv === ute.spillere[i].liv), "ingen mister liv når noen går")
+})
+
+test("Startpistolen: smellet tar et liv, ny kategori og lunte, og sist på beina vinner", () => {
+  let p: Pistol = { ...startPistol({ liv: 1 }), holder: "b" }
+  const tall = () => 0.5
+  p = smell(p, 200_000, alleInne, tall)
+  assert.deepEqual(p.ute, ["b"])
+  assert.equal(p.holder, "c")
+  assert.equal(p.sp, 1, "ny kategori etter smellet")
+  assert.deepEqual(p.smell, { id: "b", ts: 200_000, ute: true })
+  assert.equal(p.lunte, 200_000 + SMELL_PAUSE_MS + trekkLunte(p.innst, tall))
+  p = smell(p, 220_000, alleInne, tall)
+  assert.deepEqual(p.ute, ["b", "c"])
+  assert.equal(p.holder, "d")
+  assert.equal(p.vinner, null)
+  p = smell({ ...p, holder: "a" }, 240_000, alleInne, tall)
+  assert.deepEqual(p.ute, ["b", "c", "a"])
+  assert.equal(p.vinner, "d")
+  assert.deepEqual(pistolPlassering(p), [
+    { id: "d", plass: 1 },
+    { id: "a", plass: 2 },
+    { id: "c", plass: 3 },
+    { id: "b", plass: 4 },
+  ])
+  // With two hearts, a bang costs one and the player stays in.
+  const to = smell({ ...startPistol({ liv: 2 }), holder: "a" }, 300_000, alleInne, tall)
+  assert.equal(to.spillere[0].liv, 1)
+  assert.deepEqual(to.ute, [])
+  assert.equal(to.holder, "b")
+})
+
+test("Startpistolen: bare holderens signerte, gyldige og nye svar sender pistolen videre", () => {
+  const p = { ...startPistol(), tur: 100_000, lunte: 120_000 }
+  assert.equal(gjeldende(p).tekst, pistolSporsmal[0].tekst)
+  const q = gjeldende(p)
+  // Find an accepted answer to the first prompt, and a wrong one.
+  const kandidater = ["pizza", "Kenya", "Alfa", "maur", "Mongolia", "Norge", "rød", "hund", "eple", "Oslo", "fotball", "gitar"]
+  const gyldig = kandidater.find((t) => vurderSvar(q.dato, q.nr, t).nivaa > 0)
+  assert.ok(gyldig, q.tekst)
+  const ok = vurderPistolsvar(apne(pistolDom(p, gyldig, 105_000)), "BCDF", 0, p)
+  assert.ok(ok.ok)
+  assert.equal(vurderPistolsvar(apne(pistolDom(p, "qqqzzz", 105_000)), "BCDF", 0, p).ok, false)
+  assert.deepEqual(vurderPistolsvar(apne(pistolDom(p, "qqqzzz", 105_000)), "BCDF", 0, p), { ok: false, grunn: "bom" })
+  assert.deepEqual(vurderPistolsvar(apne(pistolDom(p, gyldig, 105_000, "b")), "BCDF", 0, p), { ok: false, grunn: "feil-holder" })
+  assert.deepEqual(vurderPistolsvar(apne(pistolDom(p, gyldig, 125_000)), "BCDF", 0, p), { ok: false, grunn: "for-sent" })
+  assert.deepEqual(vurderPistolsvar(apne(pistolDom(p, gyldig, 90_000)), "BCDF", 0, p), { ok: false, grunn: "for-sent" }, "dømt før turen")
+  assert.deepEqual(vurderPistolsvar(apne(pistolDom(p, gyldig, 105_000)), "ZXWV", 0, p), { ok: false, grunn: "ikke-signert" })
+  assert.deepEqual(vurderPistolsvar(apne(pistolDom({ ...p, sp: 1 }, gyldig, 105_000)), "BCDF", 0, p), { ok: false, grunn: "feil-sporsmal" })
+  if (!ok.ok) return
+  // Said once, the same answer (in any of its forms) is taken.
+  const etter = pass(p, { ...ok.svar, dom: pistolDom(p, gyldig, 105_000) }, 105_000, alleInne)
+  const igjen = { ...etter, holder: "a", tur: 105_000 }
+  assert.deepEqual(vurderPistolsvar(apne(pistolDom(igjen, gyldig.toUpperCase(), 106_000)), "BCDF", 0, igjen), { ok: false, grunn: "allerede-sagt" })
+  // After SVAR_PER_SPORSMAL answers the prompt changes.
+  let full = p
+  for (let k = 0; k < SVAR_PER_SPORSMAL; k++) full = pass({ ...full, holder: "a" }, { id: "a", tr: `svar${k}`, n: 1, dom: { j: "{}", s: "x" } }, 101_000 + k, alleInne)
+  assert.equal(full.sp, 1)
+  assert.deepEqual(full.svar, [])
+})
+
+test("Startpistolen: tilstanden leses forsiktig fra nettet", () => {
+  const p = startPistol()
+  const s: Status = { ...startStatus(), fase: "pistol", modus: "pistol", deltakere: pistolDeltakere, pistol: p }
+  const lest = lesStatus(JSON.parse(JSON.stringify(s)))
+  assert.ok(lest?.pistol)
+  assert.equal(lest.pistol.holder, "a")
+  assert.equal(lest.modus, "pistol")
+  // After the winner, the fuse is Infinity, which JSON sends as null.
+  const ferdig = lesStatus(JSON.parse(JSON.stringify({ ...s, fase: "slutt", pistol: { ...p, lunte: Infinity, vinner: "a" } })))
+  assert.equal(ferdig?.pistol?.lunte, Infinity)
+  assert.equal(lesStatus({ ...s, pistol: { ...p, holder: "zz" } }), null, "en holder som ikke er med")
+  assert.equal(lesStatus({ ...s, pistol: { ...p, spillere: [{ id: "a", liv: 9, bar: 0 }] } }), null)
+  assert.equal(lesStatus({ ...s, pistol: null }), null, "pistolfasen trenger en pistol")
+  assert.equal(lesStatus({ ...s, fase: "lobby", pistol: null })?.modus, "pistol")
 })

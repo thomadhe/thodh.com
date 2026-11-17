@@ -24,13 +24,15 @@ const foresporsel = z.discriminatedUnion("type", [
   // `kvittering` is the receipt `svar` gave for the earlier answer, so the player cannot claim another one.
   z.object({ type: z.literal("gjenta"), dato: z.string(), tidligere: tekst, kvittering: signatur, svar: tekst }),
   // The prompts for one round of a duel, drawn from earlier days only (see duellSporsmal).
-  z.object({ type: z.literal("duell"), kode: z.string().refine(erGyldigKode), runde: z.number().int().min(0).max(999) }),
+  // Startpistolen asks for more (`antall`), since a prompt changes after every bang.
+  z.object({ type: z.literal("duell"), kode: z.string().refine(erGyldigKode), runde: z.number().int().min(0).max(999), antall: z.number().int().min(1).max(30).optional() }),
   // One player's answer in a duel: judged here and signed, with the time, so the others can trust it (lib/duell/signatur.ts).
   z.object({
     type: z.literal("duell-svar"),
     kode: z.string().refine(erGyldigKode),
     runde: z.number().int().min(0).max(999),
-    i: z.number().int().min(0).max(4),
+    // The question in the round; in Startpistolen the prompt's running number, which keeps growing.
+    i: z.number().int().min(0).max(100_000),
     dato: z.string(),
     nr: z.number().int().min(0).max(4),
     id: z.string().min(1).max(40),
@@ -45,7 +47,7 @@ export async function POST(request: Request) {
   if (!tolket.success) return Response.json({ melding: "Ugyldig forespørsel." }, { status: 400 })
   const data = tolket.data
   if (data.type === "duell") {
-    const sporsmal = duellSporsmal(data.kode, data.runde)
+    const sporsmal = duellSporsmal(data.kode, data.runde, undefined, data.antall)
     if (!sporsmal.length) return Response.json({ melding: "Duellen trenger minst én tidligere dag å hente spørsmål fra." }, { status: 409 })
     return Response.json({ sporsmal, na: Date.now() })
   }

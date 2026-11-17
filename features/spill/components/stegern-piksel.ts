@@ -452,6 +452,50 @@ export function tegnFigur(b: Bilde, x: number, y: number, p: Pose, pal: Palett, 
   }
 }
 
+/** The starting pistol on its own (flying between players), with an outline. Its grip is at x, y. */
+export function tegnPistolFritt(b: Bilde, x: number, y: number, speil = false) {
+  const punkter: [number, number, number][] = []
+  for (let k = 0; k <= 4; k++) punkter.push([k, -1, PISTOL], [k, -2, k === 0 ? PISTOL_MORK : PISTOL])
+  punkter.push([5, -1, PISTOL_TUPP], [5, -2, PISTOL_TUPP], [0, 0, PISTOL_MORK], [1, 0, PISTOL], [2, 0, PISTOL_MORK], [0, 1, PISTOL_MORK], [1, 1, PISTOL_MORK])
+  const px = (dx: number) => (speil ? x - dx : x + dx)
+  const fylt = new Set(punkter.map(([dx, dy]) => `${dx},${dy}`))
+  for (const [dx, dy] of punkter) {
+    for (const [ox, oy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) if (!fylt.has(`${dx + ox},${dy + oy}`)) sett(b, px(dx + ox), y + dy + oy, OMRISS)
+  }
+  for (const [dx, dy, c] of punkter) sett(b, px(dx), y + dy, c)
+}
+
+/** Text at `skala` times the pixel font, with a dark outline: "PANG!". Centred on x. */
+export function stortTekst(b: Bilde, s: string, x: number, y: number, c: number, skala = 2) {
+  const w = tekstBredde(s) * skala
+  const x0 = Math.round(x - w / 2)
+  let cx = 0
+  const prikk = (gx: number, gy: number, farge: number, utvid: number) => {
+    for (let yy = -utvid; yy < skala + utvid; yy++) for (let xx = -utvid; xx < skala + utvid; xx++) sett(b, x0 + gx * skala + xx, y + gy * skala + yy, farge)
+  }
+  for (const pass of [0, 1]) {
+    cx = 0
+    for (const t of s) {
+      const g = GLYFER[t]
+      if (!g) continue
+      const opp = g.length - 5
+      g.forEach((rad, r) => {
+        for (let k = 0; k < rad.length; k++) if (rad[k] === "1") prikk(cx + k, r - opp, pass ? c : OMRISS, pass ? 0 : 1)
+      })
+      cx += g[0].length + 1
+    }
+  }
+}
+
+const HJERTE = ["01010", "11111", "11111", "01110", "00100"]
+
+/** A heart, 5×5 with the top-left at x, y: red when full, a dark shell when empty. */
+export function tegnHjerte(b: Bilde, x: number, y: number, fylt: boolean, a = 1) {
+  HJERTE.forEach((rad, r) => {
+    for (let k = 0; k < 5; k++) if (rad[k] === "1") sett(b, x + k, y + r, fylt ? (r === 1 && k === 1 ? rgb("#fecdd3") : rgb("#f43f5e")) : rgb("#2a1f45"), a)
+  })
+}
+
 /** The palette for a figure's body colour. */
 export const palettFor = (figur: Figur | undefined, reserve = 0) => PALETTER[(figur?.kropp ?? reserve) % PALETTER.length]
 

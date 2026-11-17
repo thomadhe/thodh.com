@@ -257,6 +257,22 @@
   .px-svev {
     animation: px-svev 2.4s steps(2) infinite;
   }
+
+  .px-rist {
+    animation: px-rist 360ms steps(6);
+  }
+}
+
+/* A wrong answer in Startpistolen: the field shakes. */
+@keyframes px-rist {
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
 }
 
 @keyframes px-blink {
