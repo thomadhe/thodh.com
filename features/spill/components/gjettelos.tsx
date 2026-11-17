@@ -145,7 +145,7 @@ function Kategorirad({ sporsmal, svar, aktiv, total }: { sporsmal: SporsmalVisni
 }
 
 /** Category, the running score and the question number along the top of the card. */
-function Topplinje({ s, nr, total, repris }: { s: SporsmalVisning; nr: number; total: number; repris: boolean }) {
+function Topplinje({ s, nr, repris }: { s: SporsmalVisning; nr: number; repris: boolean }) {
   const k = kategoriInfo(s.kategori)
   return (
     <div className="flex items-center gap-3 text-[13px] text-neutral-500">
@@ -153,12 +153,9 @@ function Topplinje({ s, nr, total, repris }: { s: SporsmalVisning; nr: number; t
         <KategoriIkon kategori={s.kategori} className="h-4 w-4 shrink-0 text-neutral-700" />
         <span className="truncate">{k.navn}</span>
       </span>
-      <span className="shrink-0 tabular-nums">
-        Poeng <span className="font-semibold text-neutral-800">{formaterPoeng(total)}</span>
-      </span>
-      <span className="w-14 shrink-0 text-right font-semibold tabular-nums text-neutral-800">
+      <span className="shrink-0 text-right font-semibold tabular-nums text-neutral-800">
+        {repris ? <span className="font-normal text-neutral-400">repris · </span> : null}
         {nr + 1}/{ANTALL}
-        {repris ? <span className="sr-only"> (repris)</span> : null}
       </span>
     </div>
   )
@@ -471,15 +468,14 @@ export function Gjettelos({ dato, sporsmal, repris = false }: { dato: string; sp
           <section
             key={`${aktivNr}-svar`}
             className={`${FLATE} mel-inn relative overflow-hidden p-5 sm:p-6`}
-            style={{ backgroundImage: ferdigVist ? `radial-gradient(120% 70% at 0% 0%, ${trinn!.farge}2e, transparent 70%)` : undefined }}
+            style={{ backgroundImage: ferdigVist ? `radial-gradient(130% 85% at 0% 0%, ${trinn!.farge}45, transparent 72%)` : undefined }}
           >
-            <Topplinje s={s} nr={aktivNr} total={lopende} repris={repris} />
+            <Topplinje s={s} nr={aktivNr} repris={repris} />
 
             <div className="mt-5 flex items-end justify-between gap-4">
               <div>
-                <p className="text-[13px] text-neutral-500">Dine poeng</p>
                 <p
-                  className={`mt-1 text-[clamp(3.5rem,17vw,4.75rem)] leading-[0.9] font-bold tracking-[-0.04em] tabular-nums transition duration-300 ${ferdigVist ? "mel-pop opacity-100" : "opacity-0"}`}
+                  className={`text-[clamp(3.5rem,17vw,4.75rem)] leading-[0.9] font-bold tracking-[-0.04em] tabular-nums transition duration-300 ${ferdigVist ? "mel-pop opacity-100" : "opacity-0"}`}
                   style={{ color: trinn!.farge }}
                 >
                   {formaterPoeng(vist.f.poeng)}
@@ -487,15 +483,11 @@ export function Gjettelos({ dato, sporsmal, repris = false }: { dato: string; sp
               </div>
               <div className={`pb-1 text-right transition-opacity duration-300 ${ferdigVist ? "opacity-100" : "opacity-0"}`}>
                 <p className="text-[17px] leading-tight font-semibold text-neutral-950">{avvik(vist.g, vist.f.fasit, s.aarstall)}</p>
-                <p className="mt-1 text-[13px] text-neutral-500">{trinn!.ord}</p>
               </div>
             </div>
 
             <div className="mt-6">
-              <p className="text-[13px] font-semibold text-neutral-800">
-                {nummer(aktivNr)} Spørsmål{repris ? <span className="font-normal text-neutral-400"> · repris</span> : null}
-              </p>
-              <h2 className="mt-1 text-[1.05rem] leading-snug font-medium text-neutral-800">{s.tekst}</h2>
+              <h2 className="text-[1.05rem] leading-snug font-medium text-neutral-800">{s.tekst}</h2>
             </div>
 
             <div className="mt-5 grid grid-cols-2 gap-4 border-t border-white/[0.07] pt-4">
@@ -532,11 +524,8 @@ export function Gjettelos({ dato, sporsmal, repris = false }: { dato: string; sp
           }}
         >
           <section key={`${aktivNr}-sporsmal`} className={`${FLATE} mel-inn p-5 sm:p-6`}>
-            <Topplinje s={s} nr={aktivNr} total={total} repris={repris} />
-            <p className="mt-6 text-[13px] font-semibold text-neutral-800">
-              {nummer(aktivNr)} Spørsmål{repris ? <span className="font-normal text-neutral-400"> · repris</span> : null}
-            </p>
-            <h2 className="mt-1.5 text-[clamp(1.4rem,6vw,1.75rem)] leading-[1.2] font-semibold tracking-[-0.015em] text-neutral-950">{s.tekst}</h2>
+            <Topplinje s={s} nr={aktivNr} repris={repris} />
+            <h2 className="mt-6 text-[clamp(1.4rem,6vw,1.75rem)] leading-[1.2] font-semibold tracking-[-0.015em] text-neutral-950">{s.tekst}</h2>
 
             <label className="mt-6 flex h-16 items-center gap-3 rounded-2xl border border-white/10 bg-[rgb(0_0_0/0.24)] px-4 transition focus-within:border-white/35 focus-within:bg-[rgb(0_0_0/0.34)]">
               <input
@@ -563,8 +552,6 @@ export function Gjettelos({ dato, sporsmal, repris = false }: { dato: string; sp
                 <span className="text-neutral-500">
                   = {annenForm} {enhetTekst(s)}
                 </span>
-              ) : t.svar.length === 0 && !tekst ? (
-                <span className="text-neutral-400">Blink gir 100 poeng, dobbelt eller halvparten 50, og 100× bom 0.</span>
               ) : null}
             </p>
           </section>
@@ -593,7 +580,7 @@ function Oppsummering({ dato, sporsmal, svar }: { dato: string; sporsmal: Sporsm
     <div className={`${skrift.className} mel-inn flex flex-col gap-3`}>
       <section
         className={`${FLATE} px-5 pt-5 pb-6 text-center`}
-        style={{ backgroundImage: `radial-gradient(110% 80% at 50% 0%, ${snitt.farge}26, transparent 70%)` }}
+        style={{ backgroundImage: `radial-gradient(120% 90% at 50% 0%, ${snitt.farge}40, transparent 72%)` }}
       >
         <p className="text-[13px] font-medium text-neutral-500">Dagens resultat · {formaterDato(dato, "kort")}</p>
         <p className="mt-3 leading-none">
