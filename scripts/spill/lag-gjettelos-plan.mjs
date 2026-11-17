@@ -1,11 +1,13 @@
 // Builds the Gjetteløs day plan (features/spill/data/gjettelos/plan.ts) from the question bank.
 //
-//   node scripts/spill/lag-gjettelos-plan.mjs
+//   node scripts/spill/lag-gjettelos-plan.mjs            keep every day in the plan, add new days at the end
+//   node scripts/spill/lag-gjettelos-plan.mjs --fra 3    keep days 0–2 only and build the rest again
 //
-// Days already in the plan are kept as they are, so played days never change. New days are added at the end
-// from questions not used yet: five different categories a day, at least one easy (1) and one hard (3)
-// question, at most two year questions, easiest first. The choice is seeded by the day number, so running
-// the script twice gives the same plan. Add questions to the bank first, then run this.
+// Played days must never change, so only use --fra with the number of days that have been played (or will be
+// before the new plan is deployed). New days take questions not used yet: five different categories a day, in
+// a mixed order, with at least two estimates ("anslag"), at most two year questions and at most three hard (3) ones. The categories with most
+// questions left go first, so no category runs dry long before the others. The choice is seeded by the day
+// number, so running the script twice gives the same plan.
 
 import { build } from "esbuild"
 import { mkdtemp, rm, writeFile } from "node:fs/promises"
@@ -15,6 +17,15 @@ import path from "node:path"
 import { pathToFileURL } from "node:url"
 
 const PLAN = "features/spill/data/gjettelos/plan.ts"
+const ANTALL = 5
+const MAKS_AARSTALL = 2
+const MAKS_VANSKELIGE = 3
+const MIN_ANSLAG = 2
+
+const fraArg = process.argv.indexOf("--fra")
+const fra = fraArg === -1 ? null : Number(process.argv[fraArg + 1])
+if (fra !== null && !(Number.isInteger(fra) && fra >= 0)) throw new Error("--fra trenger et dagnummer (0 eller mer)")
+
 const mappe = await mkdtemp(path.join(tmpdir(), "gjettelos-plan-"))
 
 async function last(fil, navn) {
@@ -25,8 +36,11 @@ async function last(fil, navn) {
 
 try {
   const { gjettelosSporsmal: bank } = await last("features/spill/data/gjettelos/index.ts", "bank")
-  const plan = existsSync(PLAN) ? (await last(PLAN, "plan")).gjettelosPlan.map((d) => [...d]) : []
+  const gammel = existsSync(PLAN) ? (await last(PLAN, "plan")).gjettelosPlan.map((d) => [...d]) : []
+  if (fra !== null && fra > gammel.length) throw new Error(`Planen har bare ${gammel.length} dager`)
+  const plan = fra === null ? gammel : gammel.slice(0, fra)
   const etterId = new Map(bank.map((s) => [s.id, s]))
+  for (const id of plan.flat()) if (!etterId.has(id)) throw new Error(`Spørsmålet ${id} i en spilt dag finnes ikke lenger i banken`)
   const brukt = new Set(plan.flat())
 
   // mulberry32, as in features/spill/lib/dag.ts.
@@ -54,47 +68,31 @@ try {
   for (let d = plan.length; ; d++) {
     const r = tilfeldig(`gjettelos:plan:${d}`)
     const per = ledige()
+    if (per.size < ANTALL) break
     const forrige = new Set((plan[d - 1] ?? []).map((id) => etterId.get(id).kategori))
     let dag = null
     for (let forsok = 0; forsok < 400 && !dag; forsok++) {
-      // Categories with the most questions left go first, so none runs dry long before the others. Yesterday's
-      // categories get a small handicap so the days vary.
+      // The fullest categories win, with some noise so the days vary. Yesterday's categories get a small handicap.
       const kategorier = [...per.keys()]
-        .map((k) => ({ k, vekt: per.get(k).length - (forrige.has(k) ? 4 : 0) + r() * (3 + forsok / 10) }))
+        .map((k) => ({ k, vekt: per.get(k).length - (forrige.has(k) ? 2 : 0) + r() * (4 + forsok / 10) }))
         .sort((a, b) => b.vekt - a.vekt)
-        .slice(0, 5)
+        .slice(0, ANTALL)
         .map((x) => x.k)
-      if (kategorier.length < 5) break
-      // The easy and hard slots go to the categories with most of them left.
-      const antall = (k, v) => per.get(k).filter((s) => s.vansk === v).length
-      const lett = [...kategorier].sort((a, b) => antall(b, 1) - antall(a, 1) + r() - 0.5)[0]
-      const tung = [...kategorier].filter((k) => k !== lett).sort((a, b) => antall(b, 3) - antall(a, 3) + r() - 0.5)[0]
-      if (!antall(lett, 1) || !antall(tung, 3)) continue
-      // Categories that are mostly years (history, culture) get the two year slots first; each one takes a year
-      // about as often as its remaining questions are years, so it does not run out of the other kind.
-      const aarAndel = (k) => per.get(k).filter((s) => s.aarstall).length / per.get(k).length
-      let aar = 0
-      const valgt = []
-      for (const k of [...kategorier].sort((a, b) => aarAndel(b) - aarAndel(a))) {
-        const vansk = k === lett ? 1 : k === tung ? 3 : null
-        // The other three slots lean towards medium and skip easy questions while there are others, so the easy
-        // ones last and a day is rarely all hard.
-        const onsket = vansk ?? (r() < 0.65 ? 2 : 3)
-        const egnet = per.get(k).filter((s) => s.vansk === onsket)
-        const reserve = per.get(k).filter((s) => s.vansk !== 1)
-        const passer = egnet.length ? egnet : vansk === null && reserve.length ? reserve : per.get(k)
-        const vilAar = aar < 2 && r() < aarAndel(k)
-        const kandidater = passer.filter((s) => s.aarstall === vilAar).length ? passer.filter((s) => s.aarstall === vilAar) : passer
-        const lovlige = kandidater.filter((s) => aar < 2 || !s.aarstall)
-        if (!lovlige.length) break
-        const s = lovlige[Math.floor(r() * lovlige.length)]
-        if (s.aarstall) aar++
-        valgt.push(s)
-      }
-      if (valgt.length === 5) dag = valgt
+      const valgt = kategorier.map((k) => {
+        const kandidater = per.get(k)
+        return kandidater[Math.floor(r() * kandidater.length)]
+      })
+      const aar = valgt.filter((s) => s.aarstall).length
+      const tunge = valgt.filter((s) => s.vansk === 3).length
+      const anslag = valgt.filter((s) => s.stil === "anslag").length
+      if (aar <= MAKS_AARSTALL && tunge <= MAKS_VANSKELIGE && anslag >= MIN_ANSLAG) dag = valgt
     }
     if (!dag) break
-    dag.sort((a, b) => a.vansk - b.vansk || r() - 0.5)
+    // Mixed order: shuffle (Fisher–Yates) with the same seed.
+    for (let i = dag.length - 1; i > 0; i--) {
+      const j = Math.floor(r() * (i + 1))
+      ;[dag[i], dag[j]] = [dag[j], dag[i]]
+    }
     plan.push(dag.map((s) => s.id))
     for (const s of dag) brukt.add(s.id)
   }
@@ -103,8 +101,9 @@ try {
   await writeFile(
     PLAN,
     [
-      "// Generated by scripts/spill/lag-gjettelos-plan.mjs. Day 1 is GJETTELOS_START; each day lists its five questions,",
-      "// easiest first. Played days must never change: add questions to the bank and run the script, which only appends.",
+      "// Generated by scripts/spill/lag-gjettelos-plan.mjs. Day 1 is GJETTELOS_START; each day lists its five questions in",
+      "// the order they are asked. Played days must never change: add questions to the bank and run the script, which only",
+      "// appends.",
       "",
       "export const gjettelosPlan: readonly (readonly string[])[] = [",
       ...linjer,
@@ -116,9 +115,8 @@ try {
   const rest = {}
   for (const s of bank) {
     if (brukt.has(s.id)) continue
-    const r = (rest[s.kategori] ??= { lett: 0, middels: 0, vanskelig: 0, aarstall: 0 })
-    r[["lett", "middels", "vanskelig"][s.vansk - 1]]++
-    if (s.aarstall) r.aarstall++
+    const r = (rest[s.kategori] ??= { anslag: 0, fakta: 0 })
+    r[s.stil]++
   }
   console.table(rest)
 } finally {
