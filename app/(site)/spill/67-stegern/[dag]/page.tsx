@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
 import { Stegern } from "@/features/spill/components/stegern"
+import { stegernSkrift } from "@/features/spill/components/stegern-skrift"
 import { forhandsbygdeDager } from "@/features/spill/lib/ruting"
 import { dagForSide } from "@/features/spill/lib/server/side"
 import { dagensSporsmal, erRepris } from "@/features/spill/lib/server/stegern"
@@ -24,6 +25,7 @@ export default async function Page({ params }: PageProps<"/spill/67-stegern/[dag
       spillId="67-stegern"
       dato={dato}
       iDag={iDag}
+      klasse={`stegern-side ${stegernSkrift}`}
       regler={
         <>
           <p>

@@ -50,6 +50,9 @@ import {
   byggOppgave,
   dagensSporsmal,
   dagFor,
+  DUELL_SPERRE_DAGER,
+  duellDager,
+  duellSporsmal,
   erGjentatt,
   erRepris,
   finaleBillett,
@@ -64,6 +67,25 @@ import {
   tallIOrd,
   vurderSvar,
 } from "../features/spill/lib/server/stegern-logikk"
+import {
+  alleHarSvart,
+  duellSum,
+  erGyldigKode,
+  erNyere,
+  KODE_LENGDE,
+  lagKode,
+  lesStatus,
+  lesSvar,
+  lesTilstede,
+  MAKS_SPILLERE,
+  normaliserKode,
+  rangering,
+  rensNavn,
+  startStatus,
+  taImot,
+  velgDeltakere,
+  vertAv,
+} from "../features/spill/lib/stegern-duell"
 
 const dager = Array.from({ length: 120 }, (_, i) => leggTilDager(START_DATO, i))
 
@@ -770,4 +792,134 @@ test("Gjetteløs: dagens spørsmål, repris og skjult fasit", () => {
   assert.equal(svar.kilde, forste.kilde)
   assert.equal(svar.poeng, poengFor(forste.fasit * 2, forste.fasit, forste.aarstall))
   assert.equal(vurderGjett(GJETTELOS_START, 0, forste.fasit).poeng, 100)
+})
+
+// 6/7-stegern: duel
+
+test("6/7-stegern duell: romkoder", () => {
+  let n = 0
+  const tall = () => n++ * 7
+  const kode = lagKode(tall)
+  assert.equal(kode.length, KODE_LENGDE)
+  assert.ok(erGyldigKode(kode), kode)
+  for (let i = 0; i < 200; i++) assert.ok(erGyldigKode(lagKode()))
+  assert.equal(erGyldigKode("BCDF"), true)
+  // Vowels, digits and the wrong length are never codes; lower case is fixed by normaliserKode first.
+  for (const feil of ["ABCD", "BCD", "BCDFG", "BC1F", "bcdf", "", "BCÆF"]) assert.equal(erGyldigKode(feil), false, feil)
+  assert.equal(normaliserKode(" bcdf "), "BCDF")
+  assert.equal(rensNavn("  Kari \n  Nordmann med et langt navn "), "Kari Nordmann")
+  assert.equal(rensNavn("Ærlige Åse Ø"), "Ærlige Åse Ø")
+})
+
+test("6/7-stegern duell: verten er den som har vært lengst i rommet", () => {
+  const a = { id: "a", inn: 300 }
+  const b = { id: "b", inn: 100 }
+  const c = { id: "c", inn: 100 }
+  assert.equal(vertAv([a, b, c])?.id, "b")
+  assert.equal(vertAv([a, c])?.id, "c")
+  assert.equal(vertAv([a])?.id, "a")
+  assert.equal(vertAv([]), null)
+  // When the host leaves, the next in line takes over, and every client agrees on who that is.
+  assert.equal(vertAv([c, a])?.id, vertAv([a, c])?.id)
+  const tilstede = [
+    { id: "x", navn: "", inn: 5, klar: true, runde: 0 },
+    ...Array.from({ length: 7 }, (_, i) => ({ id: `s${i}`, navn: `S${i}`, inn: 10 + i, klar: true, runde: 0 })),
+  ]
+  const deltakere = velgDeltakere(tilstede)
+  assert.equal(deltakere.length, MAKS_SPILLERE)
+  assert.deepEqual(deltakere.map((d) => d.farge), [0, 1, 2, 3, 4, 5])
+  assert.equal(deltakere[0].navn, "Spiller 1")
+  assert.ok(!deltakere.some((d) => d.id === "s6"), "den sjuende venter til neste runde")
+})
+
+test("6/7-stegern duell: spørsmål bare fra tidligere dager", () => {
+  const iDag = "2026-11-17"
+  const tidligere = duellDager(iDag)
+  assert.equal(tidligere.length, 15)
+  assert.ok(tidligere.every((d) => d >= STEGERN_START && d < iDag))
+  const runder = Array.from({ length: 15 }, (_, r) => duellSporsmal("BCDF", r, iDag))
+  for (const runde of runder) {
+    assert.equal(runde.length, NORMALE)
+    // One prompt per day in a round, and the text is the one the daily page would judge.
+    assert.equal(new Set(runde.map((s) => s.dato)).size, NORMALE)
+    for (const s of runde) {
+      assert.ok(s.dato < iDag && s.dato >= STEGERN_START, s.dato)
+      assert.equal(s.tekst, dagFor(s.dato).sporsmal[s.nr].tekst)
+      assert.ok(kanSpillesStegern(s.dato, iDag))
+    }
+  }
+  // The same room and round always get the same prompts; a room sees every prompt once before any repeats.
+  assert.deepEqual(duellSporsmal("BCDF", 3, iDag), runder[3])
+  const alle = runder.flat().map((s) => `${s.dato}:${s.nr}`)
+  assert.equal(new Set(alle).size, 75)
+  assert.notDeepEqual(duellSporsmal("ZXWV", 0, iDag), runder[0])
+  // Never today's or a future day's prompts, also after the bank has started over.
+  for (const dag of [STEGERN_START, leggTilDager(STEGERN_START, 1), leggTilDager(STEGERN_START, 3)]) {
+    assert.ok(duellSporsmal("BCDF", 0, dag).every((s) => s.dato < dag), dag)
+  }
+  assert.deepEqual(duellSporsmal("BCDF", 0, STEGERN_START), [])
+  // The first day after the start gives the one past day's five prompts.
+  assert.deepEqual(duellSporsmal("BCDF", 0, leggTilDager(STEGERN_START, 1)).map((s) => s.nr).sort(), [0, 1, 2, 3, 4])
+  const etterRunde = leggTilDager(STEGERN_START, stegernDager.length + 5)
+  const sperret = new Set(Array.from({ length: DUELL_SPERRE_DAGER + 1 }, (_, k) => dagFor(leggTilDager(etterRunde, k))))
+  const brukt = duellDager(etterRunde)
+  assert.ok(brukt.every((d) => d < etterRunde && !sperret.has(dagFor(d))))
+  assert.equal(new Set(brukt.map(dagFor)).size, brukt.length)
+  assert.equal(brukt.length, stegernDager.length - DUELL_SPERRE_DAGER - 1)
+})
+
+test("6/7-stegern duell: status flettes, og pallen rangerer på lengste sum", () => {
+  const svar = (n: 0 | 1 | 2 | 3 | 4 | 5) => ({ t: "x", n, treff: null })
+  const deltakere = [
+    { id: "a", navn: "A", farge: 0 },
+    { id: "b", navn: "B", farge: 1 },
+    { id: "c", navn: "C", farge: 2 },
+    { id: "d", navn: "D", farge: 3 },
+  ]
+  const alle = {
+    a: { 0: svar(3), 1: svar(3), 2: svar(3), 3: svar(3), 4: svar(3) },
+    b: { 0: svar(5), 1: svar(1), 2: svar(3), 3: svar(4), 4: svar(2) },
+    c: { 0: svar(4), 1: svar(4), 2: svar(4), 3: svar(4), 4: svar(4) },
+    // d never answered: five misses.
+  }
+  assert.equal(duellSum(alle.a), 5 * hoppDm(3))
+  assert.equal(duellSum(undefined), 5 * hoppDm(0))
+  assert.equal(duellSum(alle.c, 2), 2 * hoppDm(4))
+  const r = rangering(deltakere, alle)
+  // a and b tie on the sum: b's longer single jump puts b first, but they share second place.
+  assert.equal(duellSum(alle.a), duellSum(alle.b))
+  assert.deepEqual(r.map((p) => [p.id, p.plass]), [["c", 1], ["b", 2], ["a", 2], ["d", 4]])
+  assert.equal(r[0].dm, 5 * hoppDm(4))
+  assert.equal(r[3].dm, 5 * hoppDm(0))
+
+  const lokal = { ...startStatus(), v: 3, fase: "sporsmal" as const, deltakere: deltakere.slice(0, 2), svar: { a: { 0: svar(1) } } }
+  const ny = { ...lokal, v: 4, svar: { b: { 0: svar(3) } } }
+  const flettet = taImot(lokal, ny)
+  assert.equal(flettet.v, 4)
+  assert.deepEqual(Object.keys(flettet.svar).sort(), ["a", "b"])
+  // An older message only adds answers.
+  const gammel = taImot(ny, { ...lokal, v: 2 })
+  assert.equal(gammel.v, 4)
+  assert.ok(gammel.svar.a?.[0] && gammel.svar.b?.[0])
+  // A new round starts clean.
+  assert.deepEqual(taImot(ny, { ...startStatus(1) }).svar, {})
+  assert.equal(erNyere({ runde: 1, v: 0 }, { runde: 0, v: 99 }), true)
+  assert.equal(alleHarSvart(flettet, new Set(["a", "b"])), true)
+  assert.equal(alleHarSvart(lokal, new Set(["a", "b"])), false)
+  // Someone who left does not hold up the others.
+  assert.equal(alleHarSvart(lokal, new Set(["a"])), true)
+})
+
+test("6/7-stegern duell: meldinger fra andre leses forsiktig", () => {
+  const gyldig = { ...startStatus(), fase: "lobby", deltakere: [{ id: "a", navn: "A", farge: 0 }], svar: { a: { 0: { t: "eple", n: 2, treff: "Eple" }, 1: { t: 1 } } } }
+  const lest = lesStatus(gyldig)
+  assert.ok(lest)
+  assert.deepEqual(Object.keys(lest.svar.a ?? {}), ["0"])
+  assert.equal(lesStatus({ ...gyldig, fase: "juks" }), null)
+  assert.equal(lesStatus({ ...gyldig, fase: "sporsmal" }), null, "en runde trenger fem spørsmål")
+  assert.equal(lesStatus({ ...gyldig, deltakere: [{ id: "a", navn: "A", farge: 9 }] }), null)
+  assert.equal(lesStatus(null), null)
+  assert.equal(lesSvar({ t: "x", n: 7, treff: null }), null)
+  assert.deepEqual(lesTilstede({ id: "a", navn: "Åse", inn: 1, klar: false, runde: 0 }), { id: "a", navn: "Åse", inn: 1, klar: false, runde: 0 })
+  assert.equal(lesTilstede({ id: "", navn: "Åse", inn: 1, klar: false, runde: 0 }), null)
 })

@@ -1,5 +1,7 @@
 import { z } from "zod"
+import { erGyldigKode } from "@/features/spill/lib/stegern-duell"
 import {
+  duellSporsmal,
   erGjentatt,
   finaleBillett,
   finaleTekst,
@@ -19,14 +21,22 @@ const foresporsel = z.discriminatedUnion("type", [
   z.object({ type: z.literal("sjette"), dato: z.string() }),
   // `kvittering` is the receipt `svar` gave for the earlier answer, so the player cannot claim another one.
   z.object({ type: z.literal("gjenta"), dato: z.string(), tidligere: tekst, kvittering: signatur, svar: tekst }),
+  // The prompts for one round of a duel, drawn from earlier days only (see duellSporsmal).
+  z.object({ type: z.literal("duell"), kode: z.string().refine(erGyldigKode), runde: z.number().int().min(0).max(999) }),
 ])
 
 // Answers are judged here so the page never carries the lists. Question 6 names its earlier question only
 // when it comes up, and the final's prompt is only told once it is unlocked.
 export async function POST(request: Request) {
   const tolket = foresporsel.safeParse(await request.json().catch(() => null))
-  if (!tolket.success || !kanSpillesStegern(tolket.data.dato)) return Response.json({ melding: "Ugyldig forespørsel." }, { status: 400 })
+  if (!tolket.success) return Response.json({ melding: "Ugyldig forespørsel." }, { status: 400 })
   const data = tolket.data
+  if (data.type === "duell") {
+    const sporsmal = duellSporsmal(data.kode, data.runde)
+    if (!sporsmal.length) return Response.json({ melding: "Duellen trenger minst én tidligere dag å hente spørsmål fra." }, { status: 409 })
+    return Response.json({ sporsmal })
+  }
+  if (!kanSpillesStegern(data.dato)) return Response.json({ melding: "Ugyldig forespørsel." }, { status: 400 })
   if (data.type === "svar") {
     if (data.nr === 6) {
       if (!harFinaleBillett(data.dato, data.billett)) return Response.json({ melding: "Finalen er ikke låst opp." }, { status: 403 })

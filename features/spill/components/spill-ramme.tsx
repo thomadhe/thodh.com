@@ -34,6 +34,7 @@ export function SpillRamme({
   children,
   regler,
   bred = false,
+  klasse = "",
 }: {
   spillId: SpillId | QuizId
   dato?: string
@@ -44,6 +45,8 @@ export function SpillRamme({
   regler?: ReactNode
   /** Wider column for map games. */
   bred?: boolean
+  /** Extra classes on the page root, for a game with its own look. */
+  klasse?: string
 }) {
   const info = finnSpill(spillId)
   const forste = info.start ?? START_DATO
@@ -62,7 +65,7 @@ export function SpillRamme({
   }, [erIDag, dato, router])
 
   return (
-    <div className={`spill-mork ${visningsskrift.variable} min-h-dvh`}>
+    <div className={`spill-mork ${visningsskrift.variable} min-h-dvh ${klasse}`}>
       <div className={`mx-auto flex min-h-dvh w-full flex-col px-4 sm:px-6 ${bred ? "max-w-5xl" : "max-w-lg"}`}>
         <header className="flex items-center gap-2 pt-4">
           <Link href="/" className={ikonKnapp} aria-label="Til skrivebordet">

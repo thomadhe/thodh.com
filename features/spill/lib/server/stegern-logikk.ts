@@ -4,7 +4,7 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto"
 import { stegernDager } from "../../data/stegern"
 import type { StegernDag, StegernSporsmal } from "../../data/stegern/typer"
-import { dagNummer, erGyldigDato, iDagOslo, tilfeldig } from "../dag"
+import { dagNummer, erGyldigDato, iDagOslo, iRotasjon, leggTilDager, tilfeldig } from "../dag"
 import { land, omrader, type Kontinent } from "../geografi"
 import { NORMALE, STEGERN_START, type Nivaa, type Vurdering } from "../stegern"
 
@@ -378,4 +378,44 @@ export function erGjentatt(dato: string, tidligere: string, svar: string) {
 
 export function finaleTekst(dato: string) {
   return dagFor(dato).finale.tekst
+}
+
+/** Days ahead whose prompts a duel never uses, so it cannot spoil them once the bank starts over. */
+export const DUELL_SPERRE_DAGER = 14
+
+/**
+ * The days a duel may take prompts from: only days before today, one per day in the bank, and never a bank day
+ * that comes up again today or within DUELL_SPERRE_DAGER days.
+ */
+export function duellDager(iDag = iDagOslo()) {
+  const sperret = new Set(Array.from({ length: DUELL_SPERRE_DAGER + 1 }, (_, k) => dagFor(leggTilDager(iDag, k))))
+  const sett = new Set<StegernDag>()
+  const ut: string[] = []
+  // Newest first, so a bank day that repeats is used from its latest date.
+  for (let d = leggTilDager(iDag, -1); d >= STEGERN_START; d = leggTilDager(d, -1)) {
+    const dag = dagFor(d)
+    if (sperret.has(dag) || sett.has(dag)) continue
+    sett.add(dag)
+    ut.push(d)
+  }
+  return ut.reverse()
+}
+
+export type DuellSporsmal = { dato: string; nr: number; tekst: string }
+
+/**
+ * The five prompts for round `runde` of the duel in room `kode`. Each round walks on through a shuffle of the
+ * past days, one prompt per day, and every pass through the days takes a different prompt from each, so a room
+ * sees every prompt once before any comes back. Answers are judged by date and number, as on the daily page.
+ */
+export function duellSporsmal(kode: string, runde: number, iDag = iDagOslo()): DuellSporsmal[] {
+  const dager = duellDager(iDag)
+  if (!dager.length) return []
+  const salt = `stegern:duell:${kode}`
+  return Array.from({ length: NORMALE }, (_, i) => {
+    const n = runde * NORMALE + i
+    const dato = iRotasjon(dager, n, salt)
+    const nr = iRotasjon([0, 1, 2, 3, 4], Math.floor(n / dager.length), `${salt}:${dato}`)
+    return { dato, nr, tekst: dagFor(dato).sporsmal[nr].tekst }
+  })
 }

@@ -7,8 +7,8 @@ import { formaterDato, iDagOslo, leggTilDager } from "../lib/dag"
 import { useDagligTilstand, useResultater, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
 import { GJENTA_DM, hoppDm, MAKS_DM, meter, NIVAAER, NORMALE, SEKUNDER, STEGERN_START, type Nivaa, type Vurdering } from "../lib/stegern"
-import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 import { Bane, tidTilLanding, type Hopp } from "./stegern-bane"
+import { Avsloring, DelKnapp, DuellInngang, Klokke, NivaaMerke } from "./stegern-ui"
 
 // 6/7-stegern: seven open prompts ("Nevn en frukt"). The server rates each answer from common to rare, and
 // Stegern jumps that far. Question 6 asks what you answered on one of the first five; get it right and the
@@ -78,17 +78,7 @@ function ferdigResultat(t: Tilstand): Tilstand {
   return { ...t, apen: false, frist: 0, resultat: { status: t.sjette?.ok ? "vunnet" : "ferdig", etikett: meter(dm), poeng: dm / 10 } }
 }
 
-/** A tier as a small coloured pill. */
-function Merke({ n, finale = false }: { n: Nivaa; finale?: boolean }) {
-  return (
-    <span className="inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-[11px] font-bold text-[#0b1016]" style={{ background: NIVAAER[n].farge }}>
-      {NIVAAER[n].navn}
-      <span className="ml-1 font-mono font-semibold opacity-75">+{meter(hoppDm(n, finale)).replace(" m", "")}</span>
-    </span>
-  )
-}
-
-/** Seven dots for the day's questions: tier colours for the answered ones, a lock on the final. */
+/** Seven chips for the day's questions: tier colours for the answered ones, a lock on the final. */
 function Fremdrift({ t }: { t: Tilstand }) {
   const prikker = Array.from({ length: 7 }, (_, i) => {
     const s = i < NORMALE ? t.svar[i] : i === 6 ? t.finaleSvar : null
@@ -96,13 +86,14 @@ function Fremdrift({ t }: { t: Tilstand }) {
     return { i, farge, aktiv: t.startet && t.nr === i && t.resultat.status === "pagar" }
   })
   return (
-    <ol className="flex min-w-0 items-center gap-1 sm:gap-1.5" aria-label="Spørsmål">
+    <ol className="flex min-w-0 items-center gap-1" aria-label="Spørsmål">
       {prikker.map(({ i, farge, aktiv }) => (
         <li
           key={i}
-          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-mono text-[10px] font-bold transition ${farge ? "text-[#0b1016]" : "bg-neutral-100 text-neutral-500"} ${aktiv ? "ring-2 ring-neutral-950 ring-offset-2 ring-offset-[var(--spill-flate)]" : ""}`}
+          className={`px-brikke ${farge ? "text-[#0b1020]" : aktiv ? "bg-white text-[#0b1020]" : "bg-[#121a45]/90 text-[#6b7bb0]"} ${aktiv && !farge ? "px-blink" : ""}`}
           style={farge ? { background: farge } : undefined}
           aria-label={`Spørsmål ${i + 1}`}
+          aria-current={aktiv ? "step" : undefined}
         >
           {i === 6 && !t.finale ? <Lock className={`h-3 w-3 ${t.sjette ? "" : "opacity-60"}`} /> : i === 5 ? "↺" : i + 1}
         </li>
@@ -111,25 +102,7 @@ function Fremdrift({ t }: { t: Tilstand }) {
   )
 }
 
-function Avsloring({ s, finale = false }: { s: Svar; finale?: boolean }) {
-  return (
-    <div className="space-y-1 font-mono text-[11px] leading-5 text-neutral-500">
-      {s.v.length ? (
-        <p>
-          <span className="text-neutral-400">Vanligst:</span> <span className="text-neutral-800">{s.v.join(", ")}</span>
-        </p>
-      ) : null}
-      {s.s.length ? (
-        <p>
-          <span className="text-neutral-400">Sjeldnest:</span> <span className="text-neutral-800">{s.s.join(", ")}</span>
-        </p>
-      ) : null}
-      <p className="text-neutral-400">
-        {s.a} godkjente svar{finale ? " · finalen teller 1,7×" : ""}
-      </p>
-    </div>
-  )
-}
+const avsloring = (s: Svar, finale = false) => <Avsloring vanligste={s.v} sjeldneste={s.s} antall={s.a} finale={finale} />
 
 function streak(resultater: Record<string, Resultat>, iDag: string) {
   let n = 0
@@ -157,9 +130,9 @@ function Statistikk() {
   return (
     <dl className="grid grid-cols-5 gap-1 text-center">
       {tall.map((t) => (
-        <div key={t.navn} className="min-w-0">
-          <dd className="truncate text-sm font-semibold tabular-nums text-neutral-950">{t.verdi}</dd>
-          <dt className="font-mono text-[10px] uppercase tracking-wider text-neutral-400">{t.navn}</dt>
+        <div key={t.navn} className="flex min-w-0 flex-col-reverse gap-0.5">
+          <dt className="px-etikett text-[9px] text-[#6b7bb0]">{t.navn}</dt>
+          <dd className="px-skrift truncate text-[15px] font-semibold tabular-nums text-white">{t.verdi.replace(" m", "")}</dd>
         </div>
       ))}
     </dl>
@@ -318,7 +291,7 @@ export function Stegern({ dato, sporsmal, repris = false }: { dato: string; spor
     return () => window.removeEventListener("keydown", ved)
   })
 
-  if (!lastet) return <div key="laster" className="h-96 animate-pulse rounded-3xl bg-white/5" />
+  if (!lastet) return <div key="laster" className="px-panel h-[260px] animate-pulse" />
 
   const hopp = hoppene(t)
   const total = sumDm(t)
@@ -343,72 +316,83 @@ export function Stegern({ dato, sporsmal, repris = false }: { dato: string; spor
   ].join("\n")
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       <p role="status" aria-live="polite" className="sr-only">
         {kunngjoring}
       </p>
-      <Kort className="overflow-hidden">
-        <div className="flex items-center justify-between gap-2 px-4 pt-3 sm:gap-3">
-          <Fremdrift t={t} />
-          <p className="shrink-0 font-mono text-sm font-semibold tabular-nums text-neutral-950">{meter(total)}</p>
-        </div>
-        <div className="mt-2">
-          <Bane hopp={hopp} oversikt={sammendrag} />
-        </div>
-      </Kort>
+      <div className="px-panel overflow-hidden">
+        <Bane lopere={[{ id: "stegern", hopp, farge: 0 }]} oversikt={sammendrag} vekker={`${tekst}|${t.nr}|${t.apen}`} etikett={`Stegern har hoppet ${meter(total)}`}>
+          {t.startet ? (
+            <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between gap-2 p-2">
+              <Fremdrift t={t} />
+              <p className="px-neon px-neon-liten shrink-0 text-[22px] leading-none tabular-nums">
+                {meter(total).replace(" m", "")}
+                <span className="text-[14px]"> M</span>
+              </p>
+            </div>
+          ) : (
+            <div className="pointer-events-none absolute inset-x-0 top-4 text-center">
+              <p className="px-neon text-[32px] leading-none sm:text-[40px]">6/7-STEGERN</p>
+              <p className="px-etikett mt-2.5 text-[#ffd0f4]">
+                {formaterDato(dato)}
+                {repris ? " · repris" : ""}
+              </p>
+            </div>
+          )}
+        </Bane>
+      </div>
 
       {!t.startet ? (
-        <Kort className="mel-inn space-y-4 p-5">
-          <div>
-            {repris ? (
-              <p className="mb-2 inline-flex rounded-full bg-neutral-100 px-2.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-widest text-neutral-500">
-                Repris · spørsmålene har vært brukt før
+        <>
+          <section className="px-panel px-hopp-inn space-y-4 p-4">
+            <div>
+              {repris ? <p className="px-merke mb-2 bg-[#263370] text-[#c7d2fe]">Repris · spørsmålene har vært brukt før</p> : null}
+              <h2 className="px-skrift text-[26px] leading-tight font-bold text-white">Sjeldne svar, lange hopp.</h2>
+              <p className="mt-1.5 text-sm leading-6 text-[#b9c3ea]">
+                Fem spørsmål der alt som passer er riktig. Svarer du det alle sier, tar Stegern et kort steg. Finner du noe få tenker på, flyr han.
               </p>
-            ) : null}
-            <p className="font-[family-name:var(--font-visning)] text-2xl font-extrabold tracking-[-0.03em] text-neutral-950">Sjeldne svar, lange hopp.</p>
-            <p className="mt-1 text-sm leading-6 text-neutral-600">
-              Fem spørsmål der alt som passer er riktig. Svarer du det alle sier, tar Stegern et kort steg. Finner du noe få tenker på, flyr han.
-            </p>
-          </div>
-          <ul className="space-y-1.5 text-sm leading-6 text-neutral-600">
-            <li>
-              <span className="font-semibold text-neutral-900">Spørsmål 6</span> spør hva du svarte på ett av de fem første. Husker du det, låses finalen opp.
-            </li>
-            <li>
-              <span className="font-semibold text-neutral-900">Finalen</span> teller 1,7 ganger. En perfekt dag er nøyaktig {meter(MAKS_DM)}.
-            </li>
-          </ul>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <button
-              type="button"
-              onClick={() => oppdater((x) => ({ ...x, klokke: !x.klokke }))}
-              aria-pressed={t.klokke}
-              className="inline-flex items-center gap-2 rounded-full border border-black/10 px-3.5 py-2 font-mono text-[11px] uppercase tracking-widest text-neutral-700 transition hover:border-black/25"
-            >
-              {t.klokke ? <Timer className="h-4 w-4" /> : <TimerOff className="h-4 w-4" />}
-              {t.klokke ? `${SEKUNDER} s per spørsmål` : "Uten klokke"}
-            </button>
-            <Knapp onClick={start}>Start</Knapp>
-          </div>
-        </Kort>
+            </div>
+            <ul className="space-y-2 text-sm leading-6 text-[#b9c3ea]">
+              <li className="flex gap-2.5">
+                <span className="px-brikke mt-0.5 h-5 w-5 bg-[#facc15] text-[10px] text-[#0b1020]">↺</span>
+                <span>
+                  <span className="font-semibold text-white">Spørsmål 6</span> spør hva du svarte på ett av de fem første. Husker du det, låses finalen opp.
+                </span>
+              </li>
+              <li className="flex gap-2.5">
+                <span className="px-brikke mt-0.5 h-5 w-5 bg-[#e879f9] text-[10px] text-[#0b1020]">7</span>
+                <span>
+                  <span className="font-semibold text-white">Finalen</span> teller 1,7 ganger. En perfekt dag er nøyaktig {meter(MAKS_DM)}.
+                </span>
+              </li>
+            </ul>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <button type="button" onClick={() => oppdater((x) => ({ ...x, klokke: !x.klokke }))} aria-pressed={t.klokke} title={t.klokke ? `${SEKUNDER} sekunder per spørsmål` : "Ingen tidsfrist"} className="px-knapp px-knapp-mork px-knapp-liten">
+                {t.klokke ? <Timer className="h-4 w-4" /> : <TimerOff className="h-4 w-4" />}
+                {t.klokke ? `Klokke ${SEKUNDER} s` : "Uten klokke"}
+              </button>
+              <button type="button" className="px-knapp min-w-[132px]" onClick={start}>
+                Start ▶
+              </button>
+            </div>
+          </section>
+          <DuellInngang />
+        </>
       ) : sammendrag ? (
         <Oppsummering t={t} sporsmal={sporsmal} total={total} delTekst={delTekst} />
       ) : (
-        <Kort key={`${t.nr}-${t.apen}`} className="mel-inn p-4">
-          <div className="flex items-baseline justify-between gap-3">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-neutral-400">
+        <section key={`${t.nr}-${t.apen}`} className={`px-panel px-hopp-inn p-4 ${t.nr === 6 ? "px-panel-rosa" : ""}`}>
+          <div className="flex items-center justify-between gap-3">
+            <p className="px-etikett">
               {t.nr === 5 ? "Spørsmål 6 · husker du?" : t.nr === 6 ? "Finale · 1,7×" : `Spørsmål ${t.nr + 1} av 5`}
-              {repris ? " · Repris" : ""}
+              {repris ? " · repris" : ""}
             </p>
-            {igjen !== null ? <p className={`font-mono text-sm font-semibold tabular-nums ${igjen <= 5 ? "text-rose-500" : "text-neutral-500"}`}>{igjen} s</p> : null}
+            {igjen !== null ? <p className={`px-skrift text-[22px] leading-none font-bold tabular-nums ${igjen <= 5 ? "text-[#ff4fd8]" : "text-white"}`}>{igjen}</p> : null}
           </div>
-          <p className="mt-1 font-[family-name:var(--font-visning)] text-[1.45rem] leading-tight font-extrabold tracking-[-0.03em] text-neutral-950">{sporsmalTekst}</p>
+          <p className="px-skrift mt-2 text-[26px] leading-[1.15] font-semibold text-white">{sporsmalTekst}</p>
           {t.apen && t.frist ? (
-            <div className="mt-3 h-1 overflow-hidden rounded-full bg-neutral-100">
-              <div
-                className={`h-full rounded-full transition-[width] duration-300 ease-linear ${igjen !== null && igjen <= 5 ? "bg-rose-500" : "bg-lime-400"}`}
-                style={{ width: `${Math.max(0, Math.min(1, (t.frist - na) / (SEKUNDER * 1000))) * 100}%` }}
-              />
+            <div className="mt-3">
+              <Klokke igjenMs={t.frist - na} />
             </div>
           ) : null}
 
@@ -431,59 +415,91 @@ export function Stegern({ dato, sporsmal, repris = false }: { dato: string; spor
                 enterKeyHint="go"
                 placeholder={t.nr === 5 ? "Samme svar som da" : "Skriv et svar"}
                 aria-label="Svar"
-                className="h-11 min-w-0 flex-1 rounded-full border border-black/10 bg-neutral-50 px-4 text-base text-neutral-950 outline-none placeholder:text-neutral-400 focus:border-lime-400"
+                className="px-felt h-[50px] min-w-0 flex-1 px-3"
               />
-              <Knapp type="submit" disabled={opptatt} className="bg-lime-400 text-[#0b1016] hover:bg-lime-300">
+              <button type="submit" disabled={opptatt} className="px-knapp h-[50px]">
                 Hopp!
-              </Knapp>
+              </button>
             </form>
           ) : null}
-          {t.apen && t.nr === 5 ? <p className="mt-2 font-mono text-[11px] text-neutral-500">Svarte du ingenting da, hopper du med tomt felt nå.</p> : null}
-          {melding ? <p className="mt-2 font-mono text-[11px] text-rose-500">{melding}</p> : null}
+          {t.apen && t.nr === 5 ? <p className="mt-2 text-[13px] text-[#8b9bd0]">Svarte du ingenting da, hopper du med tomt felt nå.</p> : null}
+          {melding ? <p className="px-etikett mt-2 text-[#fb7185]">{melding}</p> : null}
 
           {!t.apen && t.nr === 5 && t.sjette ? (
             <div className="mt-3 space-y-3">
               <div className="flex items-center gap-2">
-                {t.sjette.ok ? <LockOpen className="h-5 w-5 text-lime-400" /> : <Lock className="h-5 w-5 text-rose-500" />}
-                <p className="text-sm text-neutral-800">
-                  {t.sjette.ok ? "Riktig husket! Finalen er låst opp." : "Det var ikke det du svarte. Løpet er over."}
-                </p>
+                <span className="px-brikke" style={{ background: NIVAAER[t.sjette.ok ? 5 : 0].farge }}>
+                  {t.sjette.ok ? <LockOpen className="h-3.5 w-3.5 text-[#0b1020]" /> : <Lock className="h-3.5 w-3.5 text-[#0b1020]" />}
+                </span>
+                <p className="px-skrift text-[17px] text-white">{t.sjette.ok ? "Riktig husket! Finalen er låst opp." : "Det var ikke det du svarte. Løpet er over."}</p>
               </div>
-              <p className="font-mono text-[11px] text-neutral-500">
+              <p className="text-[13px] text-[#8b9bd0]">
                 Da: «{t.svar[t.sjetteNr - 1]?.t || "ingenting"}» · nå: «{t.sjette.t || "ingenting"}»
               </p>
               <div ref={handling} className="flex justify-end">
-                {t.sjette.ok ? <Knapp onClick={neste}>Til finalen</Knapp> : <Knapp onClick={() => setOppsummering(true)}>Se resultatet</Knapp>}
+                {t.sjette.ok ? (
+                  <button type="button" className="px-knapp px-knapp-rosa" onClick={neste}>
+                    Til finalen ▶
+                  </button>
+                ) : (
+                  <button type="button" className="px-knapp" onClick={() => setOppsummering(true)}>
+                    Se resultatet
+                  </button>
+                )}
               </div>
             </div>
           ) : !t.apen && sisteSvar ? (
             <div className="mt-3 space-y-3">
               <div className="flex flex-wrap items-center gap-2">
-                <Merke n={sisteSvar.n} finale={t.nr === 6} />
-                <p className="min-w-0 text-sm text-neutral-800">
+                <NivaaMerke n={sisteSvar.n} finale={t.nr === 6} />
+                <p className="px-skrift min-w-0 text-[17px] text-white">
                   {sisteSvar.treff ? (
                     <>
-                      <span className="font-semibold">{sisteSvar.treff}</span>
-                      {sisteSvar.treff.toLowerCase() !== sisteSvar.t.toLowerCase() ? <span className="text-neutral-500"> (du skrev «{sisteSvar.t}»)</span> : null}
+                      {sisteSvar.treff}
+                      {sisteSvar.treff.toLowerCase() !== sisteSvar.t.toLowerCase() ? <span className="text-[#8b9bd0]"> (du skrev «{sisteSvar.t}»)</span> : null}
                     </>
                   ) : sisteSvar.t ? (
-                    <>
-                      «{sisteSvar.t}» er ikke på lista.
-                    </>
+                    <>«{sisteSvar.t}» er ikke på lista.</>
                   ) : (
                     "Ikke noe svar."
                   )}
                 </p>
               </div>
-              <Avsloring s={sisteSvar} finale={t.nr === 6} />
+              {avsloring(sisteSvar, t.nr === 6)}
               <div ref={handling} className="flex justify-end">
-                {ferdig ? <Knapp onClick={() => setOppsummering(true)}>Se resultatet</Knapp> : <Knapp onClick={neste} disabled={opptatt}>{t.nr === 4 ? "Spørsmål 6" : "Neste"}</Knapp>}
+                {ferdig ? (
+                  <button type="button" className="px-knapp" onClick={() => setOppsummering(true)}>
+                    Se resultatet
+                  </button>
+                ) : (
+                  <button type="button" className="px-knapp" onClick={neste} disabled={opptatt}>
+                    {t.nr === 4 ? "Spørsmål 6 ▶" : "Neste ▶"}
+                  </button>
+                )}
               </div>
             </div>
           ) : null}
-        </Kort>
+        </section>
       )}
     </div>
+  )
+}
+
+function Rad({ nr, tekst, s, finale }: { nr: number; tekst: string; s: Svar; finale: boolean }) {
+  return (
+    <li className="px-panel px-panel-dempet px-3.5 py-3">
+      <div className="flex items-start gap-3">
+        <span className="px-brikke mt-0.5 h-5 w-5 text-[10px] text-[#0b1020]" style={{ background: NIVAAER[s.n].farge }}>
+          {nr}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium text-white">{tekst}</p>
+          <p className="px-skrift mt-0.5 truncate text-[16px] text-[#c7d2fe]">{s.treff ?? (s.t ? `«${s.t}»` : "Ikke noe svar")}</p>
+        </div>
+        <NivaaMerke n={s.n} finale={finale} />
+      </div>
+      <div className="mt-2 pl-8">{avsloring(s, finale)}</div>
+    </li>
   )
 }
 
@@ -492,68 +508,45 @@ function Oppsummering({ t, sporsmal, total, delTekst }: { t: Tilstand; sporsmal:
   if (t.finaleSvar) rader.push({ nr: 7, tekst: t.finale, s: t.finaleSvar, finale: true })
   const perfekt = total >= MAKS_DM
   return (
-    <div className="mel-inn flex flex-col gap-3">
-      <Kort className="flex items-center gap-3 px-4 py-3">
-        <div className="min-w-0 flex-1">
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-neutral-400">{perfekt ? "Six seven!" : t.sjette?.ok ? "Alle sju hopp" : "Seks hopp"}</p>
-          <p className="text-3xl font-semibold tabular-nums text-neutral-950">
-            {meter(total)}
-            <span className="text-lg text-neutral-400"> / {meter(MAKS_DM)}</span>
-          </p>
+    <div className="px-hopp-inn flex flex-col gap-4">
+      <section className="px-panel px-panel-rosa p-4">
+        <div className="flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <p className="px-etikett text-[#ffb3ee]">{perfekt ? "Six seven!" : t.sjette?.ok ? "Alle sju hopp" : "Seks hopp"}</p>
+            <p className="mt-1.5 whitespace-nowrap">
+              <span className="px-neon text-[40px] leading-none tabular-nums">{meter(total).replace(" m", "")}</span>
+              <span className="px-skrift text-[20px] text-[#8b9bd0]"> / {meter(MAKS_DM).replace(" m", "")} M</span>
+            </p>
+          </div>
+          <DelKnapp tekst={delTekst}>Del</DelKnapp>
         </div>
-        <DelKnapp tekst={delTekst} />
-      </Kort>
-      <Kort className="px-4 py-3">
-        <Statistikk />
-      </Kort>
-      <ul className="flex flex-col gap-1.5">
+        <div className="mt-4 border-t-[3px] border-dotted border-[#263370] pt-3">
+          <Statistikk />
+        </div>
+      </section>
+      <ul className="flex flex-col gap-2">
         {rader.slice(0, NORMALE).map((r) => (
-          <li key={r.nr} className="rounded-2xl border border-black/5 bg-[var(--spill-flate)] px-4 py-3">
-            <div className="flex items-start gap-3">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full font-mono text-[10px] font-bold text-[#0b1016]" style={{ background: NIVAAER[r.s.n].farge }}>
-                {r.nr}
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-neutral-900">{r.tekst}</p>
-                <p className="mt-0.5 truncate text-sm text-neutral-500">{r.s.treff ?? (r.s.t ? `«${r.s.t}»` : "Ikke noe svar")}</p>
-              </div>
-              <Merke n={r.s.n} finale={r.finale} />
-            </div>
-            <div className="mt-2 pl-8">
-              <Avsloring s={r.s} finale={r.finale} />
-            </div>
-          </li>
+          <Rad key={r.nr} {...r} />
         ))}
         {t.sjette ? (
-          <li className="flex items-center gap-3 rounded-2xl border border-black/5 bg-[var(--spill-flate)] px-4 py-3">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[#0b1016]" style={{ background: NIVAAER[t.sjette.ok ? 5 : 0].farge }}>
+          <li className="px-panel px-panel-dempet flex items-center gap-3 px-3.5 py-3">
+            <span className="px-brikke h-5 w-5 text-[#0b1020]" style={{ background: NIVAAER[t.sjette.ok ? 5 : 0].farge }}>
               {t.sjette.ok ? <LockOpen className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
             </span>
-            <p className="min-w-0 flex-1 text-sm text-neutral-900">
+            <p className="min-w-0 flex-1 text-sm text-white">
               Spørsmål 6: hva svarte du på {t.sjetteNr}?
-              <span className="block truncate text-neutral-500">«{t.sjette.t || "ingenting"}» {t.sjette.ok ? "– husket!" : `– du svarte «${t.svar[t.sjetteNr - 1]?.t || "ingenting"}»`}</span>
+              <span className="px-skrift block truncate text-[16px] text-[#c7d2fe]">
+                «{t.sjette.t || "ingenting"}» {t.sjette.ok ? "– husket!" : `– du svarte «${t.svar[t.sjetteNr - 1]?.t || "ingenting"}»`}
+              </span>
             </p>
-            <span className="font-mono text-sm font-semibold tabular-nums text-neutral-950">+{meter(t.sjette.ok ? GJENTA_DM : hoppDm(0)).replace(" m", "")}</span>
+            <span className="px-skrift text-[16px] font-semibold tabular-nums text-white">+{meter(t.sjette.ok ? GJENTA_DM : hoppDm(0)).replace(" m", "")}</span>
           </li>
         ) : null}
         {rader.slice(NORMALE).map((r) => (
-          <li key={r.nr} className="rounded-2xl border border-black/5 bg-[var(--spill-flate)] px-4 py-3">
-            <div className="flex items-start gap-3">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full font-mono text-[10px] font-bold text-[#0b1016]" style={{ background: NIVAAER[r.s.n].farge }}>
-                {r.nr}
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-neutral-900">{r.tekst}</p>
-                <p className="mt-0.5 truncate text-sm text-neutral-500">{r.s.treff ?? (r.s.t ? `«${r.s.t}»` : "Ikke noe svar")}</p>
-              </div>
-              <Merke n={r.s.n} finale={r.finale} />
-            </div>
-            <div className="mt-2 pl-8">
-              <Avsloring s={r.s} finale={r.finale} />
-            </div>
-          </li>
+          <Rad key={r.nr} {...r} />
         ))}
       </ul>
+      <DuellInngang />
     </div>
   )
 }
