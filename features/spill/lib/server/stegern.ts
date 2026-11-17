@@ -4,6 +4,7 @@ import "server-only"
 export {
   dagensSporsmal,
   duellSporsmal,
+  erDuellSporsmal,
   erGjentatt,
   erRepris,
   finaleBillett,
@@ -13,5 +14,6 @@ export {
   kanSpillesStegern,
   kvittering,
   sjetteNr,
+  stegernDuellDom,
   vurderSvar,
 } from "./stegern-logikk"

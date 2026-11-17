@@ -7,6 +7,7 @@ import type { StegernDag, StegernSporsmal } from "../../data/stegern/typer"
 import { dagNummer, erGyldigDato, iDagOslo, iRotasjon, leggTilDager, tilfeldig } from "../dag"
 import { land, omrader, type Kontinent } from "../geografi"
 import { NORMALE, STEGERN_START, type Nivaa, type Vurdering } from "../stegern"
+import { signer as signerDom } from "./duell-signatur"
 
 /** The words of a text in lowercase letters and digits, with the leading article dropped ("en banan" → ["banan"]). */
 function ord(s: string) {
@@ -418,4 +419,19 @@ export function duellSporsmal(kode: string, runde: number, iDag = iDagOslo()): D
     const nr = iRotasjon([0, 1, 2, 3, 4], Math.floor(n / dager.length), `${salt}:${dato}`)
     return { dato, nr, tekst: dagFor(dato).sporsmal[nr].tekst }
   })
+}
+
+/** Whether a duel may use prompt `nr` of `dato` now. Yesterday's list counts too, for a round that began before midnight. */
+export function erDuellSporsmal(dato: string, nr: number, iDag = iDagOslo()) {
+  return Number.isInteger(nr) && nr >= 0 && nr < NORMALE && (duellDager(iDag).includes(dato) || duellDager(leggTilDager(iDag, -1)).includes(dato))
+}
+
+/**
+ * The signed verdict for a duel answer: what the player wrote, its tier, who wrote it, for which question of which
+ * round in which room, and when the server judged it. Other players trust only this, never a tier a client claims.
+ */
+export function stegernDuellDom(p: { kode: string; runde: number; i: number; dato: string; nr: number; id: string; svar: string }, na = Date.now()) {
+  const v = vurderSvar(p.dato, p.nr, p.svar)
+  const dom = signerDom({ s: "stegern", k: p.kode, r: p.runde, i: p.i, d: p.dato, nr: p.nr, id: p.id, t: p.svar, n: v.nivaa, tr: v.treff, ts: na })
+  return { dom, vurdering: v }
 }

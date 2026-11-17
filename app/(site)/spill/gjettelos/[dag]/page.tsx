@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { Gjettelos } from "@/features/spill/components/gjettelos"
+import { GjettelosDuellInngang } from "@/features/spill/components/gjettelos-duell-inngang"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
 import { AARSTALL_REFERANSE, formaterPoeng, NULL_VED, poengFor } from "@/features/spill/lib/gjettelos"
 import { forhandsbygdeDager } from "@/features/spill/lib/ruting"
@@ -65,6 +66,7 @@ export default async function Page({ params }: PageProps<"/spill/gjettelos/[dag]
       }
     >
       <Gjettelos key={dato} dato={dato} sporsmal={dagensSporsmal(dato)} repris={erRepris(dato)} />
+      <GjettelosDuellInngang />
     </SpillRamme>
   )
 }

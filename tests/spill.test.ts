@@ -72,20 +72,49 @@ import {
   duellSum,
   erGyldigKode,
   erNyere,
+  godkjennDom,
+  godkjenteSvar,
   KODE_LENGDE,
   lagKode,
   lesStatus,
-  lesSvar,
   lesTilstede,
   MAKS_SPILLERE,
   normaliserKode,
   rangering,
   rensNavn,
   startStatus,
+  SVAR_MS,
   taImot,
   velgDeltakere,
   vertAv,
+  type Status,
 } from "../features/spill/lib/stegern-duell"
+import { blaFigur, lesFigur, STANDARD_FIGUR, tilfeldigFigur } from "../features/spill/lib/duell/figur"
+import { iTide, plasser, SLINGRING_MS } from "../features/spill/lib/duell/rom"
+import { apne } from "../features/spill/lib/duell/signatur"
+import { erSignert, offentligNokkel, signer } from "../features/spill/lib/server/duell-signatur"
+import { erDuellSporsmal, stegernDuellDom } from "../features/spill/lib/server/stegern-logikk"
+import {
+  erGjettelosDuellSporsmal,
+  GJ_DUELL_SPERRE_DAGER,
+  gjettelosDuellFasit,
+  gjettelosDuellPulje,
+  gjettelosDuellSporsmal,
+  gjettelosDuellStempel,
+} from "../features/spill/lib/server/gjettelos-logikk"
+import {
+  gjAlleHarSvart,
+  gjGodkjente,
+  godkjennFasit,
+  godkjennGjett,
+  GJ_SVAR_MS,
+  gjPoeng,
+  gjRangering,
+  gjStart,
+  gjTaImot,
+  lesGjStatus,
+  type GjStatus,
+} from "../features/spill/lib/gjettelos-duell"
 
 const dager = Array.from({ length: 120 }, (_, i) => leggTilDager(START_DATO, i))
 
@@ -822,13 +851,14 @@ test("6/7-stegern duell: verten er den som har vært lengst i rommet", () => {
   // When the host leaves, the next in line takes over, and every client agrees on who that is.
   assert.equal(vertAv([c, a])?.id, vertAv([a, c])?.id)
   const tilstede = [
-    { id: "x", navn: "", inn: 5, klar: true, runde: 0 },
-    ...Array.from({ length: 7 }, (_, i) => ({ id: `s${i}`, navn: `S${i}`, inn: 10 + i, klar: true, runde: 0 })),
+    { id: "x", navn: "", inn: 5, klar: true, runde: 0, figur: { kropp: 3, hode: 2, oyne: 1, ekstra: 0 } },
+    ...Array.from({ length: 7 }, (_, i) => ({ id: `s${i}`, navn: `S${i}`, inn: 10 + i, klar: true, runde: 0, figur: STANDARD_FIGUR })),
   ]
   const deltakere = velgDeltakere(tilstede)
   assert.equal(deltakere.length, MAKS_SPILLERE)
   assert.deepEqual(deltakere.map((d) => d.farge), [0, 1, 2, 3, 4, 5])
   assert.equal(deltakere[0].navn, "Spiller 1")
+  assert.deepEqual(deltakere[0].figur, { kropp: 3, hode: 2, oyne: 1, ekstra: 0 }, "figuren følger med inn i runden")
   assert.ok(!deltakere.some((d) => d.id === "s6"), "den sjuende venter til neste runde")
 })
 
@@ -868,14 +898,88 @@ test("6/7-stegern duell: spørsmål bare fra tidligere dager", () => {
   assert.equal(brukt.length, stegernDager.length - DUELL_SPERRE_DAGER - 1)
 })
 
-test("6/7-stegern duell: status flettes, og pallen rangerer på lengste sum", () => {
-  const svar = (n: 0 | 1 | 2 | 3 | 4 | 5) => ({ t: "x", n, treff: null })
+const tilBytes = (b64: string) => Uint8Array.from(Buffer.from(b64, "base64url"))
+
+test("Duell: figurer leses forsiktig, blas rundt og lagres som tall", () => {
+  assert.deepEqual(lesFigur({ kropp: 7, hode: 5, oyne: 3, ekstra: 3 }), { kropp: 7, hode: 5, oyne: 3, ekstra: 3 })
+  for (const feil of [null, {}, { kropp: 8, hode: 0, oyne: 0, ekstra: 0 }, { kropp: 0, hode: -1, oyne: 0, ekstra: 0 }, { kropp: 0.5, hode: 0, oyne: 0, ekstra: 0 }]) {
+    assert.equal(lesFigur(feil), null, JSON.stringify(feil))
+  }
+  assert.equal(blaFigur(STANDARD_FIGUR, "kropp", -1).kropp, 7)
+  assert.equal(blaFigur({ ...STANDARD_FIGUR, hode: 5 }, "hode", 1).hode, 0)
+  let n = 0
+  for (let k = 0; k < 50; k++) assert.ok(lesFigur(tilfeldigFigur(() => (n = (n + 0.137) % 1))))
+  assert.ok(lesFigur(tilfeldigFigur(() => 0.9999999)))
+  // A client from before figures plays as the classic Stegern.
+  assert.deepEqual(lesTilstede({ id: "a", navn: "Åse", inn: 1, klar: false, runde: 0 })?.figur, STANDARD_FIGUR)
+  assert.deepEqual(lesTilstede({ id: "a", navn: "Åse", inn: 1, klar: false, runde: 0, figur: { kropp: 2, hode: 3, oyne: 0, ekstra: 1 } })?.figur, { kropp: 2, hode: 3, oyne: 0, ekstra: 1 })
+})
+
+test("Duell: dommer signeres med Ed25519 og kan sjekkes i nettleseren med den offentlige nøkkelen", async () => {
+  const dom = signer({ s: "stegern", k: "BCDF", n: 5 })
+  assert.equal(erSignert(dom), true)
+  // The browser's check: WebCrypto with the raw public key.
+  const nokkel = await crypto.subtle.importKey("raw", tilBytes(offentligNokkel()), { name: "Ed25519" }, false, ["verify"])
+  assert.equal(await crypto.subtle.verify("Ed25519", nokkel, tilBytes(dom.s), new TextEncoder().encode(dom.j)), true)
+  // A tier changed by hand, or a signature moved to another verdict, fails.
+  const juks = { ...dom, j: dom.j.replace('"n":5', '"n":4') }
+  assert.equal(erSignert(juks), false)
+  assert.equal(await crypto.subtle.verify("Ed25519", nokkel, tilBytes(juks.s), new TextEncoder().encode(juks.j)), false)
+  assert.equal(erSignert({ j: dom.j, s: "AAAA" }), false)
+})
+
+test("Duell: et svar teller bare innenfor spørsmålets tidsvindu, i servertid", () => {
+  const frist = 1_000_000
+  assert.equal(iTide(frist, frist, SVAR_MS), true)
+  assert.equal(iTide(frist + SLINGRING_MS, frist, SVAR_MS), true, "litt slingring for klokker og nett")
+  assert.equal(iTide(frist + SLINGRING_MS + 1, frist, SVAR_MS), false, "for sent")
+  assert.equal(iTide(frist - SVAR_MS - SLINGRING_MS - 1, frist, SVAR_MS), false, "fra før spørsmålet åpnet")
+  assert.equal(iTide(frist - SVAR_MS / 2, frist, SVAR_MS), true)
+  assert.equal(iTide(frist, 0, SVAR_MS), false, "et spørsmål som ikke har åpnet")
+  assert.equal(iTide(frist, undefined, SVAR_MS), false)
+  assert.deepEqual(plasser([9, 7, 7, 3], (x) => x), [1, 2, 2, 4])
+})
+
+test("6/7-stegern duell: bare serverens signerte dom teller, for riktig rom, spørsmål, spiller og tid", () => {
+  const iDag = "2026-11-17"
+  const sporsmal = duellSporsmal("BCDF", 0, iDag)
   const deltakere = [
-    { id: "a", navn: "A", farge: 0 },
-    { id: "b", navn: "B", farge: 1 },
-    { id: "c", navn: "C", farge: 2 },
-    { id: "d", navn: "D", farge: 3 },
+    { id: "a", navn: "A", farge: 0, figur: STANDARD_FIGUR },
+    { id: "b", navn: "B", farge: 1, figur: STANDARD_FIGUR },
   ]
+  const apnet = 5_000_000
+  const s: Status = { ...startStatus(), fase: "sporsmal", nr: 0, sporsmal, deltakere, frister: [apnet + SVAR_MS], svar: {} }
+  const q = sporsmal[0]
+  assert.ok(erDuellSporsmal(q.dato, q.nr, iDag))
+  assert.equal(erDuellSporsmal(iDag, 0, iDag), false, "aldri dagens spørsmål")
+  const svar = (id: string, tekst: string, na: number, i = 0) =>
+    stegernDuellDom({ kode: "BCDF", runde: 0, i, dato: sporsmal[i].dato, nr: sporsmal[i].nr, id, svar: tekst }, na).dom
+  const aDom = svar("a", "x", apnet + 4000)
+  const data = apne(aDom)
+  assert.ok(data)
+  assert.equal(data.id, "a")
+  assert.deepEqual(godkjennDom(data, "BCDF", s, "a", 0), { t: "x", n: data.n, treff: data.tr, ts: apnet + 4000 })
+  // Someone else's verdict, another room or round, too late or from before the question: none of them count.
+  assert.equal(godkjennDom(data, "BCDF", s, "b", 0), null)
+  assert.equal(godkjennDom(data, "ZXWV", s, "a", 0), null)
+  assert.equal(godkjennDom(data, "BCDF", { ...s, runde: 1 }, "a", 0), null)
+  assert.equal(godkjennDom(apne(svar("a", "x", apnet + SVAR_MS + SLINGRING_MS + 50)), "BCDF", s, "a", 0), null)
+  assert.equal(godkjennDom(apne(svar("a", "x", apnet - 10_000)), "BCDF", s, "a", 0), null)
+  // A cheater's own "Unikum": a verdict they wrote without the server, or one whose tier was changed.
+  const falsk = { j: JSON.stringify({ ...data, id: "b", n: 5, tr: "Unikum" }), s: aDom.s }
+  const endret = { j: aDom.j.replace(/"n":\d/, '"n":5'), s: aDom.s }
+  const status: Status = { ...s, svar: { a: { 0: aDom }, b: { 0: falsk } } }
+  const godkjent = godkjenteSvar("BCDF", status, erSignert)
+  assert.ok(godkjent.a[0])
+  assert.equal(godkjent.b[0], undefined)
+  if (aDom.j !== endret.j) assert.equal(godkjenteSvar("BCDF", { ...s, svar: { a: { 0: endret } } }, erSignert).a[0], undefined)
+  assert.equal(alleHarSvart(status, godkjent, new Set(["a", "b"])), false, "den falske dommen gjør ikke at alle har svart")
+  assert.equal(alleHarSvart(status, godkjent, new Set(["a"])), true)
+})
+
+test("6/7-stegern duell: status flettes, og pallen rangerer på lengste sum", () => {
+  const svar = (n: 0 | 1 | 2 | 3 | 4 | 5) => ({ n })
+  const deltakere = ["a", "b", "c", "d"].map((id, i) => ({ id, navn: id.toUpperCase(), farge: i, figur: STANDARD_FIGUR }))
   const alle = {
     a: { 0: svar(3), 1: svar(3), 2: svar(3), 3: svar(3), 4: svar(3) },
     b: { 0: svar(5), 1: svar(1), 2: svar(3), 3: svar(4), 4: svar(2) },
@@ -892,8 +996,9 @@ test("6/7-stegern duell: status flettes, og pallen rangerer på lengste sum", ()
   assert.equal(r[0].dm, 5 * hoppDm(4))
   assert.equal(r[3].dm, 5 * hoppDm(0))
 
-  const lokal = { ...startStatus(), v: 3, fase: "sporsmal" as const, deltakere: deltakere.slice(0, 2), svar: { a: { 0: svar(1) } } }
-  const ny = { ...lokal, v: 4, svar: { b: { 0: svar(3) } } }
+  const dom = (s: string) => ({ j: "{}", s })
+  const lokal: Status = { ...startStatus(), v: 3, fase: "sporsmal", deltakere: deltakere.slice(0, 2), svar: { a: { 0: dom("a0") } } }
+  const ny: Status = { ...lokal, v: 4, svar: { b: { 0: dom("b0") } } }
   const flettet = taImot(lokal, ny)
   assert.equal(flettet.v, 4)
   assert.deepEqual(Object.keys(flettet.svar).sort(), ["a", "b"])
@@ -904,22 +1009,114 @@ test("6/7-stegern duell: status flettes, og pallen rangerer på lengste sum", ()
   // A new round starts clean.
   assert.deepEqual(taImot(ny, { ...startStatus(1) }).svar, {})
   assert.equal(erNyere({ runde: 1, v: 0 }, { runde: 0, v: 99 }), true)
-  assert.equal(alleHarSvart(flettet, new Set(["a", "b"])), true)
-  assert.equal(alleHarSvart(lokal, new Set(["a", "b"])), false)
-  // Someone who left does not hold up the others.
-  assert.equal(alleHarSvart(lokal, new Set(["a"])), true)
 })
 
 test("6/7-stegern duell: meldinger fra andre leses forsiktig", () => {
-  const gyldig = { ...startStatus(), fase: "lobby", deltakere: [{ id: "a", navn: "A", farge: 0 }], svar: { a: { 0: { t: "eple", n: 2, treff: "Eple" }, 1: { t: 1 } } } }
+  const dom = { j: '{"s":"stegern"}', s: "abc" }
+  const gyldig = { ...startStatus(), fase: "lobby", deltakere: [{ id: "a", navn: "A", farge: 0 }], svar: { a: { 0: dom, 1: { t: 1 } } } }
   const lest = lesStatus(gyldig)
   assert.ok(lest)
   assert.deepEqual(Object.keys(lest.svar.a ?? {}), ["0"])
+  assert.deepEqual(lest.deltakere[0].figur, STANDARD_FIGUR)
   assert.equal(lesStatus({ ...gyldig, fase: "juks" }), null)
   assert.equal(lesStatus({ ...gyldig, fase: "sporsmal" }), null, "en runde trenger fem spørsmål")
   assert.equal(lesStatus({ ...gyldig, deltakere: [{ id: "a", navn: "A", farge: 9 }] }), null)
+  assert.equal(lesStatus({ ...gyldig, frister: [-1] }), null)
   assert.equal(lesStatus(null), null)
-  assert.equal(lesSvar({ t: "x", n: 7, treff: null }), null)
-  assert.deepEqual(lesTilstede({ id: "a", navn: "Åse", inn: 1, klar: false, runde: 0 }), { id: "a", navn: "Åse", inn: 1, klar: false, runde: 0 })
+  assert.deepEqual(lesTilstede({ id: "a", navn: "Åse", inn: 1, klar: false, runde: 0 }), { id: "a", navn: "Åse", inn: 1, klar: false, runde: 0, figur: STANDARD_FIGUR })
   assert.equal(lesTilstede({ id: "", navn: "Åse", inn: 1, klar: false, runde: 0 }), null)
+})
+
+// Gjetteløs: duel
+
+test("Gjetteløs duell: spørsmål bare fra tidligere dager, aldri dagens eller de neste to ukenes", () => {
+  const datoer = ["2026-11-17", "2026-11-20", "2026-12-24", leggTilDager(GJETTELOS_START, gjettelosPlan.length + 3), leggTilDager(GJETTELOS_START, 2 * gjettelosPlan.length - 5)]
+  for (const iDag of datoer) {
+    const pulje = gjettelosDuellPulje(iDag)
+    const sperret = new Set(Array.from({ length: GJ_DUELL_SPERRE_DAGER + 1 }, (_, k) => gjettelosFor(leggTilDager(iDag, k)).map((s) => s.id)).flat())
+    assert.ok(pulje.length > 0, iDag)
+    const ider = pulje.map((p) => gjettelosFor(p.dato)[p.nr].id)
+    assert.equal(new Set(ider).size, ider.length, `${iDag}: hvert spørsmål én gang`)
+    for (const p of pulje) {
+      assert.ok(p.dato < iDag && p.dato >= GJETTELOS_START, `${iDag}: ${p.dato}`)
+      assert.ok(!sperret.has(gjettelosFor(p.dato)[p.nr].id), `${iDag}: ${p.dato} #${p.nr} kommer snart igjen`)
+    }
+    const runde = gjettelosDuellSporsmal("BCDF", 0, iDag)
+    assert.equal(runde.length, Math.min(ANTALL, pulje.length))
+    assert.equal(new Set(runde.map((q) => `${q.dato}:${q.nr}`)).size, runde.length, "aldri samme spørsmål to ganger i en runde")
+    for (const q of runde) {
+      assert.ok(erGjettelosDuellSporsmal(q.dato, q.nr, iDag))
+      // The page never gets the answer before a guess.
+      assert.deepEqual(Object.keys(q).sort(), ["aarstall", "dato", "enhet", "kategori", "nr", "tekst"])
+    }
+  }
+  assert.deepEqual(gjettelosDuellPulje(GJETTELOS_START), [], "første dag har ingen tidligere dager")
+  assert.deepEqual(gjettelosDuellSporsmal("BCDF", 0, GJETTELOS_START), [])
+  assert.equal(erGjettelosDuellSporsmal("2026-11-17", 0, "2026-11-17"), false, "aldri dagens")
+  // Today (17 November) only the first day has been played.
+  assert.deepEqual(gjettelosDuellPulje("2026-11-17").map((p) => p.dato), Array(5).fill(GJETTELOS_START))
+  // A room sees (nearly) every question once before any comes back, and a round is the same for everyone.
+  const iDag = "2026-12-24"
+  const runder = Math.floor(gjettelosDuellPulje(iDag).length / ANTALL)
+  const sett = new Set(Array.from({ length: runder }, (_, r) => gjettelosDuellSporsmal("BCDF", r, iDag).map((q) => `${q.dato}:${q.nr}`)).flat())
+  assert.ok(sett.size >= (runder - 1) * ANTALL, `${sett.size} av ${runder * ANTALL}`)
+  assert.deepEqual(gjettelosDuellSporsmal("BCDF", 2, iDag), gjettelosDuellSporsmal("BCDF", 2, iDag))
+})
+
+test("Gjetteløs duell: stempel og fasit signeres, og poengene regnes som i dagens spill", () => {
+  const iDag = "2026-12-24"
+  const sporsmal = gjettelosDuellSporsmal("BCDF", 0, iDag)
+  const deltakere = ["a", "b", "c"].map((id, i) => ({ id, navn: id.toUpperCase(), farge: i, figur: STANDARD_FIGUR }))
+  const apnet = 9_000_000
+  const s: GjStatus = { ...gjStart(), fase: "sporsmal", sporsmal, deltakere, frister: [apnet + GJ_SVAR_MS] }
+  const q = sporsmal[0]
+  const ref = { kode: "BCDF", runde: 0, i: 0, dato: q.dato, nr: q.nr }
+  const fasit = gjettelosFor(q.dato)[q.nr].fasit
+  const aGjett = gjettelosDuellStempel({ ...ref, id: "a", gjett: fasit * 2 }, apnet + 1000)
+  const bGjett = gjettelosDuellStempel({ ...ref, id: "b", gjett: fasit }, apnet + 2000)
+  // The stamp tells nothing about the answer.
+  assert.deepEqual(Object.keys(apne(aGjett)!).sort(), ["d", "g", "i", "id", "k", "nr", "r", "s", "ts"])
+  const sent = gjettelosDuellStempel({ ...ref, id: "c", gjett: fasit }, apnet + GJ_SVAR_MS + SLINGRING_MS + 1)
+  assert.equal(godkjennGjett(apne(sent), "BCDF", s, "c", 0), null, "for sent")
+  assert.equal(godkjennGjett(apne(aGjett), "BCDF", s, "b", 0), null, "en annens stempel")
+  const f = gjettelosDuellFasit(ref)
+  const fa = godkjennFasit(apne(f), "BCDF", s, 0)
+  assert.ok(fa)
+  assert.equal(fa.fasit, fasit)
+  assert.equal(godkjennFasit(apne(f), "BCDF", s, 1), null)
+  assert.equal(godkjennFasit(apne(aGjett), "BCDF", s, 0), null, "et stempel er ikke en fasit")
+  // A forged answer (made to suit a guess) has no valid signature.
+  const falskFasit = { j: f.j.replace(/"f":[^,]+/, `"f":${fasit * 2}`), s: f.s }
+  const status: GjStatus = { ...s, fase: "visning", svar: { a: { 0: aGjett }, b: { 0: bGjett }, c: { 0: sent } }, fasiter: { 0: falskFasit } }
+  assert.equal(gjGodkjente("BCDF", status, erSignert).fasiter[0], undefined)
+  const { gjett, fasiter } = gjGodkjente("BCDF", { ...status, fasiter: { 0: f } }, erSignert)
+  assert.equal(gjett.c[0], undefined)
+  assert.equal(gjPoeng(gjett.a[0], fasiter[0]), poengFor(fasit * 2, fasit, q.aarstall))
+  assert.equal(gjPoeng(gjett.b[0], fasiter[0]), 100)
+  assert.equal(gjPoeng(gjett.c[0], fasiter[0]), 0, "ikke noe svar i tide gir null")
+  assert.equal(gjPoeng(gjett.a[0], undefined), null, "ingen poeng før fasit")
+  const r = gjRangering(deltakere, gjett, fasiter, 1)
+  assert.deepEqual(r.map((p) => [p.id, p.plass]), [["b", 1], ["a", 2], ["c", 3]])
+  assert.equal(r[0].poeng, 100)
+  assert.equal(gjAlleHarSvart(s, gjett, new Set(["a", "b", "c"])), false)
+  assert.equal(gjAlleHarSvart(s, gjett, new Set(["a", "b"])), true)
+  // Equal sums share a place.
+  const likt = gjRangering(deltakere, { a: { 0: { g: fasit, ts: 0 } }, b: { 0: { g: fasit, ts: 0 } } }, fasiter, 1)
+  assert.deepEqual(likt.map((p) => p.plass), [1, 1, 3])
+})
+
+test("Gjetteløs duell: status flettes og leses forsiktig, og duellen rører ikke dagens lagring", () => {
+  const dom = { j: "{}", s: "x" }
+  const deltakere = [{ id: "a", navn: "A", farge: 0, figur: STANDARD_FIGUR }]
+  const lokal: GjStatus = { ...gjStart(), v: 2, deltakere, svar: { a: { 0: dom } } }
+  const ny: GjStatus = { ...lokal, v: 3, svar: {}, fasiter: { 0: dom } }
+  const flettet = gjTaImot(lokal, ny)
+  assert.equal(flettet.v, 3)
+  assert.ok(flettet.svar.a?.[0] && flettet.fasiter[0])
+  assert.ok(lesGjStatus(flettet))
+  assert.equal(lesGjStatus({ ...flettet, fase: "sporsmal" }), null, "en runde trenger spørsmål")
+  assert.equal(lesGjStatus({ ...flettet, fasiter: { 0: { j: 1 } } })?.fasiter[0], undefined)
+  assert.equal(lesGjStatus(null), null)
+  const kilde = readFileSync("features/spill/components/gjettelos-duell.tsx", "utf8")
+  assert.ok(!/useDagligTilstand|useResultater|lagreResultat/.test(kilde), "duellen bruker ikke dagens lagring")
 })

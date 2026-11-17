@@ -1,81 +1,51 @@
-// 6/7-stegern duel: rooms of 2–6 friends answering the same five prompts at the same time. The rules that every
-// client must agree on live here, free of React and the network, so they can be tested: room codes, who is
-// host, how the shared game state is merged, and the final standings.
+// 6/7-stegern duel: rooms of 2–6 friends answering the same five prompts at the same time. The room itself (codes,
+// host, presence) is shared with the other duels in lib/duell/rom.ts; what is 6/7-stegern's own lives here, free of
+// React and the network, so it can be tested: the shared game state, how it is merged, which answers count, and the
+// final standings.
+//
+// Answers are never taken on a client's word. A player's answer goes to the server, which judges it and signs the
+// verdict with the time (lib/server/duell-signatur.ts); the player passes that signed verdict to the room, and every
+// client checks the signature, that it is for this room, round, question and player, and that the server judged it
+// before the question's deadline. Scores are computed only from verdicts that pass.
 
-import { hoppDm, NORMALE, type Nivaa } from "./stegern"
+import { apne, lesSignert, type Signert } from "./duell/signatur"
+import { erHeltall, erObjekt, erTekst, iTide, lesDeltakere, type Deltaker } from "./duell/rom"
+import { hoppDm, NORMALE, SEKUNDER, type Nivaa } from "./stegern"
 
-/** Consonants only, so a code never spells a word, and nothing that looks like a digit (no I or O). */
-export const KODE_TEGN = "BCDFGHJKLMNPQRSTVWXZ"
-export const KODE_LENGDE = 4
-export const MIN_SPILLERE = 2
-export const MAKS_SPILLERE = 6
-export const NAVN_MAKS = 14
+export {
+  erGyldigKode,
+  erNyere,
+  iRekkefolge,
+  KODE_LENGDE,
+  KODE_TEGN,
+  lagKode,
+  lesTilstede,
+  MAKS_SPILLERE,
+  MIN_SPILLERE,
+  NAVN_MAKS,
+  normaliserKode,
+  rensNavn,
+  SLINGRING_MS,
+  velgDeltakere,
+  vertAv,
+  type Deltaker,
+  type Tilstede,
+} from "./duell/rom"
+import { erNyere } from "./duell/rom"
 
 /** Seconds the answers stay on screen before the host's client moves on by itself. */
 export const VISNING_SEKUNDER = 12
-/** Slack after the clock runs out for the last answers to come back from the server. */
-export const SLINGRING_MS = 2500
+export const SVAR_MS = SEKUNDER * 1000
 
-/** A random room code. `tall` gives random integers 0–2^32; crypto by default. */
-export function lagKode(tall: () => number = () => crypto.getRandomValues(new Uint32Array(1))[0]) {
-  return Array.from({ length: KODE_LENGDE }, () => KODE_TEGN[tall() % KODE_TEGN.length]).join("")
-}
-
-export function normaliserKode(s: string) {
-  return s.trim().toUpperCase()
-}
-
-export function erGyldigKode(s: unknown): s is string {
-  return typeof s === "string" && s.length === KODE_LENGDE && [...s].every((c) => KODE_TEGN.includes(c))
-}
-
-/** A display name: single spaces, no control characters, at most NAVN_MAKS characters. */
-export function rensNavn(s: string) {
-  return s
-    .replace(/[\u0000-\u001f\u007f]/g, "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, NAVN_MAKS)
-    .trim()
-}
-
-/** The six runner colours, in the order players get them. */
-export const DUELL_FARGER = [
-  { navn: "Lime", farge: "#a3e635" },
-  { navn: "Cyan", farge: "#22d3ee" },
-  { navn: "Rosa", farge: "#f472b6" },
-  { navn: "Gul", farge: "#facc15" },
-  { navn: "Lilla", farge: "#a78bfa" },
-  { navn: "Oransje", farge: "#fb923c" },
-] as const
-
-/** What each client tells the room about itself through Realtime presence. */
-export type Tilstede = {
-  id: string
-  navn: string
-  /** When the player first came into the room (epoch ms). Kept across reloads; the earliest is host. */
-  inn: number
-  klar: boolean
-  /** The round the ready flag is for, so a new round starts with everyone unready. */
-  runde: number
-}
-
-/** Players in the order they came in: the first is host, and the order gives colours and seats. */
-export function iRekkefolge<T extends Pick<Tilstede, "id" | "inn">>(spillere: T[]) {
-  return [...spillere].sort((a, b) => a.inn - b.inn || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
-}
-
-/** The host: whoever has been in the room longest. Everyone computes the same, so no vote is needed. */
-export function vertAv<T extends Pick<Tilstede, "id" | "inn">>(spillere: T[]): T | null {
-  return iRekkefolge(spillere)[0] ?? null
-}
-
-export type DuellSvar = { t: string; n: Nivaa; treff: string | null }
+/** One answer once its signed verdict has been checked. `ts` is when the server judged it. */
+export type DuellSvar = { t: string; n: Nivaa; treff: string | null; ts: number }
 export type DuellSporsmal = { dato: string; nr: number; tekst: string }
-export type Deltaker = { id: string; navn: string; farge: number }
 export type Fase = "lobby" | "sporsmal" | "visning" | "slutt"
 
-/** The shared game, sent by the host. Answers are keyed by player id and question index (0–4). */
+/** Answers by player id and question index (0–4). */
+export type SvarKart<T> = Record<string, Partial<Record<number, T>>>
+
+/** The shared game, sent by the host. */
 export type Status = {
   runde: number
   /** Counts up with every change the host makes, so an older message never overwrites a newer one. */
@@ -84,20 +54,17 @@ export type Status = {
   nr: number
   sporsmal: DuellSporsmal[]
   deltakere: Deltaker[]
-  /** Milliseconds left on the open question when the message was sent; each client starts its own clock from it. */
-  igjenMs: number
-  svar: Record<string, Partial<Record<number, DuellSvar>>>
+  /** Each question's deadline in server time (epoch ms) once it has opened; 0 before. */
+  frister: number[]
+  /** The signed verdicts, as the players sent them. Only `godkjenn` turns them into answers that count. */
+  svar: SvarKart<Signert>
 }
 
-export const startStatus = (runde = 0): Status => ({ runde, v: 0, fase: "lobby", nr: 0, sporsmal: [], deltakere: [], igjenMs: 0, svar: {} })
+export const startStatus = (runde = 0): Status => ({ runde, v: 0, fase: "lobby", nr: 0, sporsmal: [], deltakere: [], frister: [], svar: {} })
 
-export function erNyere(a: Pick<Status, "runde" | "v">, b: Pick<Status, "runde" | "v">) {
-  return a.runde > b.runde || (a.runde === b.runde && a.v > b.v)
-}
-
-/** Every answer from both maps. Answers never change once given, so the union is always right. */
-export function slaSammenSvar(a: Status["svar"], b: Status["svar"]): Status["svar"] {
-  const ut: Status["svar"] = {}
+/** Every answer from both maps. A player's first verdict for a question is the one that stays. */
+export function slaSammenSvar<T>(a: SvarKart<T>, b: SvarKart<T>): SvarKart<T> {
+  const ut: SvarKart<T> = {}
   for (const kilde of [a, b]) {
     for (const [id, svar] of Object.entries(kilde)) {
       ut[id] = { ...svar, ...ut[id] }
@@ -112,17 +79,49 @@ export function taImot(lokal: Status, ny: Status): Status {
   return { ...ny, svar: ny.runde === lokal.runde ? slaSammenSvar(ny.svar, lokal.svar) : ny.svar }
 }
 
-/** Whether every player still in the room has answered question nr. */
-export function alleHarSvart(s: Status, tilstede: ReadonlySet<string>) {
+/**
+ * The answer a signed verdict stands for, or null when it does not count: it must be the server's 6/7-stegern
+ * verdict for this room, round, question and player, and judged inside the question's window. The signature itself
+ * is checked before (lib/duell/signatur.ts); `data` is the signed JSON.
+ */
+export function godkjennDom(data: Record<string, unknown> | null, kode: string, s: Pick<Status, "runde" | "sporsmal" | "frister">, id: string, i: number): DuellSvar | null {
+  if (!data) return null
+  const q = s.sporsmal[i]
+  if (!q || data.s !== "stegern" || data.k !== kode || data.r !== s.runde || data.i !== i || data.id !== id || data.d !== q.dato || data.nr !== q.nr) return null
+  if (!erTekst(data.t, 80) || !erHeltall(data.n, 0, 5) || !(data.tr === null || erTekst(data.tr, 120)) || typeof data.ts !== "number") return null
+  if (!iTide(data.ts, s.frister[i], SVAR_MS)) return null
+  return { t: data.t, n: data.n as Nivaa, treff: data.tr, ts: data.ts }
+}
+
+/**
+ * The answers that count: those whose signature checked out (`ok` says, by signature) and that `godkjennDom`
+ * accepts. Players not in the round are left out.
+ */
+export function godkjenteSvar(kode: string, s: Status, ok: (x: Signert) => boolean): SvarKart<DuellSvar> {
+  const ut: SvarKart<DuellSvar> = {}
+  for (const d of s.deltakere) {
+    const rad: Partial<Record<number, DuellSvar>> = {}
+    for (const [i, x] of Object.entries(s.svar[d.id] ?? {})) {
+      if (!x || !ok(x)) continue
+      const svar = godkjennDom(apne(x), kode, s, d.id, Number(i))
+      if (svar) rad[Number(i)] = svar
+    }
+    ut[d.id] = rad
+  }
+  return ut
+}
+
+/** Whether every player still in the room has an answer that counts for question nr. */
+export function alleHarSvart(s: Pick<Status, "deltakere" | "nr">, svar: SvarKart<unknown>, tilstede: ReadonlySet<string>) {
   const aktive = s.deltakere.filter((d) => tilstede.has(d.id))
-  return aktive.length > 0 && aktive.every((d) => s.svar[d.id]?.[s.nr])
+  return aktive.length > 0 && aktive.every((d) => svar[d.id]?.[s.nr])
 }
 
 /** The jump for one answer in decimetres. No answer in time is a miss, like an empty field. */
-export const duellDm = (svar: DuellSvar | undefined) => hoppDm(svar?.n ?? 0)
+export const duellDm = (svar: Pick<DuellSvar, "n"> | undefined) => hoppDm(svar?.n ?? 0)
 
 /** A player's total over the first `antall` questions. */
-export function duellSum(svar: Partial<Record<number, DuellSvar>> | undefined, antall = NORMALE) {
+export function duellSum(svar: Partial<Record<number, Pick<DuellSvar, "n">>> | undefined, antall = NORMALE) {
   let dm = 0
   for (let i = 0; i < antall; i++) dm += duellDm(svar?.[i])
   return dm
@@ -134,7 +133,7 @@ export type Plassering = Deltaker & { dm: number; beste: number; plass: number }
  * Standings after `antall` questions: longest total first. A tie is broken by the longest single jump for the
  * order, but tied totals share a place.
  */
-export function rangering(deltakere: Deltaker[], svar: Status["svar"], antall = NORMALE): Plassering[] {
+export function rangering(deltakere: Deltaker[], svar: SvarKart<Pick<DuellSvar, "n">>, antall = NORMALE): Plassering[] {
   const rader = deltakere.map((d, i) => {
     const dm = duellSum(svar[d.id], antall)
     const beste = Math.max(0, ...Array.from({ length: antall }, (_, j) => duellDm(svar[d.id]?.[j])))
@@ -146,57 +145,37 @@ export function rangering(deltakere: Deltaker[], svar: Status["svar"], antall = 
 
 // ---- reading messages from other clients: friends may cheat, but a malformed message must not break the page ----
 
-const erObjekt = (x: unknown): x is Record<string, unknown> => typeof x === "object" && x !== null && !Array.isArray(x)
-const erHeltall = (x: unknown, min: number, maks: number): x is number => typeof x === "number" && Number.isInteger(x) && x >= min && x <= maks
-const erTekst = (x: unknown, maks: number): x is string => typeof x === "string" && x.length <= maks
-
-export function lesSvar(x: unknown): DuellSvar | null {
-  if (!erObjekt(x) || !erTekst(x.t, 80) || !erHeltall(x.n, 0, 5) || !(x.treff === null || erTekst(x.treff, 120))) return null
-  return { t: x.t, n: x.n as Nivaa, treff: x.treff }
+export function lesSvarKart(x: unknown, deltakere: Deltaker[], antall: number): SvarKart<Signert> | null {
+  if (!erObjekt(x)) return null
+  const sv: SvarKart<Signert> = {}
+  for (const d of deltakere) {
+    const egne = x[d.id]
+    if (!erObjekt(egne)) continue
+    const rad: Partial<Record<number, Signert>> = {}
+    for (let i = 0; i < antall; i++) {
+      const s = lesSignert(egne[i])
+      if (s) rad[i] = s
+    }
+    sv[d.id] = rad
+  }
+  return sv
 }
 
 export function lesStatus(x: unknown): Status | null {
   if (!erObjekt(x)) return null
-  const { runde, v, fase, nr, sporsmal, deltakere, igjenMs, svar } = x
-  if (!erHeltall(runde, 0, 999) || !erHeltall(v, 0, 1e6) || !erHeltall(nr, 0, NORMALE - 1) || !erHeltall(igjenMs, 0, 120_000)) return null
+  const { runde, v, fase, nr, sporsmal, frister } = x
+  if (!erHeltall(runde, 0, 999) || !erHeltall(v, 0, 1e6) || !erHeltall(nr, 0, NORMALE - 1)) return null
   if (fase !== "lobby" && fase !== "sporsmal" && fase !== "visning" && fase !== "slutt") return null
-  if (!Array.isArray(sporsmal) || sporsmal.length > NORMALE || !Array.isArray(deltakere) || deltakere.length > MAKS_SPILLERE || !erObjekt(svar)) return null
+  if (!Array.isArray(sporsmal) || sporsmal.length > NORMALE || !Array.isArray(frister) || frister.length > NORMALE) return null
   const sp: DuellSporsmal[] = []
   for (const s of sporsmal) {
     if (!erObjekt(s) || !erTekst(s.dato, 10) || !erHeltall(s.nr, 0, NORMALE - 1) || !erTekst(s.tekst, 200)) return null
     sp.push({ dato: s.dato, nr: s.nr, tekst: s.tekst })
   }
   if (fase !== "lobby" && sp.length !== NORMALE) return null
-  const dl: Deltaker[] = []
-  for (const d of deltakere) {
-    if (!erObjekt(d) || !erTekst(d.id, 40) || !erTekst(d.navn, NAVN_MAKS) || !erHeltall(d.farge, 0, DUELL_FARGER.length - 1)) return null
-    dl.push({ id: d.id, navn: d.navn, farge: d.farge })
-  }
-  const sv: Status["svar"] = {}
-  for (const d of dl) {
-    const egne = svar[d.id]
-    if (!erObjekt(egne)) continue
-    const rad: Partial<Record<number, DuellSvar>> = {}
-    for (let i = 0; i < NORMALE; i++) {
-      const s = lesSvar(egne[i])
-      if (s) rad[i] = s
-    }
-    sv[d.id] = rad
-  }
-  return { runde, v, fase, nr, sporsmal: sp, deltakere: dl, igjenMs, svar: sv }
-}
-
-export function lesTilstede(x: unknown): Tilstede | null {
-  if (!erObjekt(x) || !erTekst(x.id, 40) || !x.id || !erTekst(x.navn, NAVN_MAKS) || typeof x.inn !== "number" || typeof x.klar !== "boolean" || !erHeltall(x.runde, 0, 999)) return null
-  return { id: x.id, navn: x.navn, inn: x.inn, klar: x.klar, runde: x.runde }
-}
-
-/**
- * Who plays a round: the first MAKS_SPILLERE in the room, in the order they came, each with a colour. Colours
- * follow the seat, so they match what the lobby showed.
- */
-export function velgDeltakere(tilstede: Tilstede[]): Deltaker[] {
-  return iRekkefolge(tilstede)
-    .slice(0, MAKS_SPILLERE)
-    .map((t, i) => ({ id: t.id, navn: t.navn || `Spiller ${i + 1}`, farge: i }))
+  if (!frister.every((f) => erHeltall(f, 0, 1e14))) return null
+  const dl = lesDeltakere(x.deltakere)
+  const sv = dl && lesSvarKart(x.svar, dl, NORMALE)
+  if (!dl || !sv) return null
+  return { runde, v, fase, nr, sporsmal: sp, deltakere: dl, frister: frister as number[], svar: sv }
 }

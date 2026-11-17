@@ -3,6 +3,7 @@
 // himself, built from the motion engine's poses with a one-pixel outline. Our own world, our own palette.
 
 import { tilfeldig } from "../lib/dag"
+import { STANDARD_FIGUR, type Figur } from "../lib/duell/figur"
 import type { Pose } from "./stegern-motor"
 
 /** CSS pixels per art pixel. */
@@ -83,6 +84,16 @@ const GLYFER: Record<string, string[]> = {
   ".": ["0", "0", "0", "0", "1"],
   "/": ["001", "001", "010", "100", "100"],
   "!": ["1", "1", "1", "0", "1"],
+  "?": ["111", "001", "010", "000", "010"],
+  "%": ["101", "001", "010", "100", "101"],
+  "×": ["000", "101", "010", "101", "000"],
+  ":": ["0", "1", "0", "1", "0"],
+  Q: ["010", "101", "101", "110", "011"],
+  X: ["101", "101", "010", "101", "101"],
+  Æ: ["0111", "1010", "1111", "1010", "1011"],
+  Ø: ["011", "111", "101", "111", "110"],
+  // Six rows: the ring sits one row above the line.
+  Å: ["010", "000", "010", "101", "111", "101"],
   " ": ["0", "0", "0", "0", "0"],
 }
 
@@ -98,8 +109,9 @@ export function tekst(b: Bilde, s: string, x: number, y: number, c: number, a = 
   for (const t of s) {
     const g = GLYFER[t]
     if (!g) continue
+    const opp = g.length - 5
     g.forEach((rad, r) => {
-      for (let k = 0; k < rad.length; k++) if (rad[k] === "1") sett(b, cx + k, y + r, c, a)
+      for (let k = 0; k < rad.length; k++) if (rad[k] === "1") sett(b, cx + k, y + r - opp, c, a)
     })
     cx += g[0].length + 1
   }
@@ -128,7 +140,7 @@ export type Palett = { kropp: number; lys: number; skygge: number; mork: number 
 
 const palett = (kropp: string, lys: string, skygge: string, mork: string): Palett => ({ kropp: rgb(kropp), lys: rgb(lys), skygge: rgb(skygge), mork: rgb(mork) })
 
-/** In the order of DUELL_FARGER: lime Stegern first, then his rivals. */
+/** In the order of KROPPER (lib/duell/figur.ts): lime Stegern first, then the other body colours. */
 export const PALETTER: Palett[] = [
   palett("#a3e635", "#d9f99d", "#65a30d", "#2f4a0c"),
   palett("#22d3ee", "#a5f3fc", "#0891b2", "#134e5e"),
@@ -136,7 +148,17 @@ export const PALETTER: Palett[] = [
   palett("#facc15", "#fef08a", "#ca8a04", "#6b3f0a"),
   palett("#a78bfa", "#ddd6fe", "#7c3aed", "#3b1a7a"),
   palett("#fb923c", "#fed7aa", "#ea580c", "#6e2a0b"),
+  palett("#f87171", "#fecaca", "#dc2626", "#6b1414"),
+  palett("#e2e8f0", "#ffffff", "#94a3b8", "#334155"),
 ]
+
+/** Extras a figure can hold or do while it is drawn. */
+export type Ting = {
+  /** Holds 6/7-stegern's cartoon starting pistol in the front hand. */
+  pistol?: boolean
+  /** Faces left instead of right. */
+  speil?: boolean
+}
 
 const OMRISS = rgb("#070a17")
 const HVIT = rgb("#f8fafc")
@@ -144,6 +166,24 @@ const SKO_SALE = rgb("#f97316")
 const PANNEBAND = rgb("#ef4444")
 const PANNEBAND_MORK = rgb("#b91c1c")
 const PUPILL = rgb("#0b1020")
+const CAPS = rgb("#2563eb")
+const CAPS_MORK = rgb("#1e3a8a")
+const LUE = rgb("#14b8a6")
+const LUE_LYS = rgb("#99f6e4")
+const GULL = rgb("#facc15")
+const GULL_MORK = rgb("#a16207")
+const RUBIN = rgb("#e11d48")
+const PROPELL_A = rgb("#ef4444")
+const PROPELL_B = rgb("#38bdf8")
+const BRILLE = rgb("#0b1020")
+const BRILLE_GLANS = rgb("#7dd3fc")
+const BART = rgb("#3f2a14")
+const SLOYFE = rgb("#e11d48")
+const SLOYFE_MORK = rgb("#9f1239")
+const BAND = rgb("#2563eb")
+const PISTOL = rgb("#fde047")
+const PISTOL_MORK = rgb("#a16207")
+const PISTOL_TUPP = rgb("#ef4444")
 
 // The figure is drawn upright into a small canvas of its own, turned and squashed into a second one by sampling
 // back (nearest neighbour, so it stays crisp at any angle), and then copied out with an outline.
@@ -173,7 +213,121 @@ function linje(x0: number, y0: number, x1: number, y1: number, c: number, tykk =
 const KROPP_TOPP = -18
 const KROPP_RADER = [2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 2]
 
-function tegnLokal(p: Pose, pal: Palett) {
+/** What sits on the head, drawn over the top of the bean (which spans y -18 to -6). */
+function tegnHode(hode: number) {
+  if (hode === 0) {
+    // Red sweatband with its knot flying out behind.
+    for (let x = -4; x <= 4; x++) lp(x, -15, PANNEBAND)
+    lp(-5, -15, PANNEBAND)
+    lp(-6, -14, PANNEBAND_MORK)
+    lp(-5, -14, PANNEBAND_MORK)
+  } else if (hode === 1) {
+    // A cap with the peak forward.
+    for (let x = -2; x <= 2; x++) lp(x, -20, CAPS)
+    for (let x = -3; x <= 3; x++) lp(x, -19, CAPS)
+    for (let x = -4; x <= 4; x++) lp(x, -18, CAPS)
+    for (let x = -4; x <= 4; x++) lp(x, -17, CAPS_MORK)
+    for (let x = 5; x <= 7; x++) lp(x, -17, CAPS_MORK)
+    lp(-1, -19, rgb("#93c5fd"))
+  } else if (hode === 2) {
+    // A beanie with a folded edge and a bobble.
+    for (const [x, y] of [[-1, -22], [0, -22], [-1, -21], [0, -21]]) lp(x, y, HVIT)
+    for (let x = -3; x <= 2; x++) lp(x, -20, LUE)
+    for (let x = -4; x <= 4; x++) lp(x, -19, LUE)
+    for (let x = -4; x <= 4; x++) lp(x, -18, LUE)
+    for (let x = -5; x <= 5; x++) lp(x, -17, LUE_LYS)
+    for (let x = -5; x <= 5; x++) lp(x, -16, LUE_LYS)
+  } else if (hode === 3) {
+    // A golden crown with a ruby.
+    for (const x of [-3, 0, 3]) lp(x, -21, GULL)
+    for (let x = -3; x <= 3; x++) lp(x, -20, x % 3 === 0 ? GULL : GULL_MORK)
+    for (let x = -3; x <= 3; x++) lp(x, -19, GULL)
+    for (let x = -3; x <= 3; x++) lp(x, -18, GULL_MORK)
+    lp(0, -19, RUBIN)
+  } else if (hode === 4) {
+    // A propeller cap whose blades turn.
+    const snur = Math.floor(performance.now() / 90) % 2 === 0
+    for (let x = -3; x <= 3; x++) lp(x, -19, x < 0 ? PROPELL_A : PROPELL_B)
+    for (let x = -4; x <= 4; x++) lp(x, -18, x < 0 ? PROPELL_A : PROPELL_B)
+    for (let x = -4; x <= 4; x++) lp(x, -17, GULL)
+    lp(0, -20, GULL_MORK)
+    lp(0, -21, GULL_MORK)
+    const bred = snur ? 4 : 1
+    for (let x = -bred; x <= bred; x++) lp(x, -22, x < 0 ? PROPELL_A : x > 0 ? PROPELL_B : GULL_MORK)
+  }
+}
+
+/** The eyes: open, shut or wide; the pupils look where the pose looks. Some figures wear shades or squint. */
+function tegnOyne(p: Pose, pal: Palett, oyne: number) {
+  if (oyne === 1) {
+    for (let x = -3; x <= 3; x++) lp(x, -13, BRILLE)
+    for (let x = -3; x <= 3; x++) if (x !== 0) lp(x, -12, BRILLE)
+    lp(-2, -13, BRILLE_GLANS)
+    lp(2, -13, BRILLE_GLANS)
+    return
+  }
+  if (oyne === 3 && p.apne >= 0.45 && p.stor <= 1.12) {
+    // Two happy arcs, ^ ^.
+    for (const ex of [-3, 1]) {
+      lp(ex, -12, pal.mork)
+      lp(ex + 1, -13, pal.mork)
+      lp(ex + 2, -12, pal.mork)
+    }
+    return
+  }
+  const stor = p.stor > 1.12
+  for (const ex of [-2, 1]) {
+    if (p.apne < 0.45) {
+      lp(ex, -12, pal.mork)
+      lp(ex + 1, -12, pal.mork)
+      continue
+    }
+    const topp = stor ? -14 : -13
+    for (let y = topp; y <= -11; y++) {
+      lp(ex, y, HVIT)
+      lp(ex + 1, y, HVIT)
+    }
+    const px = p.blikk.x >= 0.02 ? ex + 1 : ex
+    const py = p.blikk.y > 0.015 ? -12 : p.blikk.y < -0.015 ? topp : -12
+    lp(px, py, PUPILL)
+    if (!stor) lp(px, py + 1 > -11 ? py - 1 : py + 1, PUPILL)
+  }
+  if (oyne === 2) {
+    // Determined brows, slanting in.
+    for (const [x, y] of [[-3, -15], [-2, -15], [-1, -14], [3, -15], [2, -15], [1, -14]]) lp(x, y, pal.mork)
+  }
+}
+
+function tegnEkstra(ekstra: number) {
+  if (ekstra === 1) {
+    for (let x = -2; x <= 3; x++) lp(x, -10, BART)
+    lp(-3, -9, BART)
+    lp(4, -9, BART)
+  } else if (ekstra === 2) {
+    for (const [x, y] of [[-3, -8], [-2, -8], [-3, -7], [-2, -7], [-1, -7], [2, -8], [3, -8], [1, -7], [2, -7], [3, -7]]) lp(x, y, SLOYFE)
+    lp(0, -8, SLOYFE_MORK)
+    lp(0, -7, SLOYFE_MORK)
+  } else if (ekstra === 3) {
+    for (const [x, y] of [[-2, -9], [-1, -8], [2, -9], [1, -8]]) lp(x, y, BAND)
+    for (const [x, y] of [[0, -8], [-1, -7], [0, -7], [1, -7], [0, -6]]) lp(x, y, GULL)
+    lp(0, -7, GULL_MORK)
+  }
+}
+
+/** The cartoon starting pistol, bright yellow with a red tip, pointing forward from the hand at x, y. */
+function tegnPistol(x: number, y: number) {
+  for (let k = 0; k <= 4; k++) lp(x + k, y - 1, PISTOL)
+  for (let k = 0; k <= 4; k++) lp(x + k, y - 2, k === 0 ? PISTOL_MORK : PISTOL)
+  lp(x + 5, y - 1, PISTOL_TUPP)
+  lp(x + 5, y - 2, PISTOL_TUPP)
+  lp(x, y, PISTOL_MORK)
+  lp(x + 1, y, PISTOL)
+  lp(x + 2, y, PISTOL_MORK)
+  lp(x, y + 1, PISTOL_MORK)
+  lp(x + 1, y + 1, PISTOL_MORK)
+}
+
+function tegnLokal(p: Pose, pal: Palett, figur: Figur, ting: Ting) {
   lokal.fill(0)
   // Arms behind the body; the hands come in front of it further down.
   const hender: [number, number][] = []
@@ -223,31 +377,15 @@ function tegnLokal(p: Pose, pal: Palett) {
       lp(x, y, c)
     }
   })
-  // Red sweatband with its knot flying out behind.
-  for (let x = -4; x <= 4; x++) lp(x, -15, PANNEBAND)
-  lp(-5, -15, PANNEBAND)
-  lp(-6, -14, PANNEBAND_MORK)
-  lp(-5, -14, PANNEBAND_MORK)
-  // Eyes: open, shut or wide; the pupils look where the pose looks.
-  const stor = p.stor > 1.12
-  for (const ex of [-2, 1]) {
-    if (p.apne < 0.45) {
-      lp(ex, -12, pal.mork)
-      lp(ex + 1, -12, pal.mork)
-      continue
-    }
-    const topp = stor ? -14 : -13
-    for (let y = topp; y <= -11; y++) {
-      lp(ex, y, HVIT)
-      lp(ex + 1, y, HVIT)
-    }
-    const px = p.blikk.x >= 0.02 ? ex + 1 : ex
-    const py = p.blikk.y > 0.015 ? -12 : p.blikk.y < -0.015 ? topp : -12
-    lp(px, py, PUPILL)
-    if (!stor) lp(px, py + 1 > -11 ? py - 1 : py + 1, PUPILL)
-  }
-  // Mouth: a smile, or an "O" in the air.
-  if (p.munn >= 0.5) {
+  tegnHode(figur.hode)
+  tegnOyne(p, pal, figur.oyne)
+  // Mouth: a smile, a frown, or an "O" in the air.
+  if (p.munn < -0.5) {
+    lp(-1, -9, pal.mork)
+    lp(0, -10, pal.mork)
+    lp(1, -10, pal.mork)
+    lp(2, -9, pal.mork)
+  } else if (p.munn >= 0.5) {
     lp(0, -10, pal.mork)
     lp(1, -10, pal.mork)
     lp(0, -9, pal.mork)
@@ -258,14 +396,16 @@ function tegnLokal(p: Pose, pal: Palett) {
     lp(1, -9, pal.mork)
     lp(2, -10, pal.mork)
   }
-  for (const [hx, hy] of hender) {
+  tegnEkstra(figur.ekstra)
+  hender.forEach(([hx, hy], i) => {
     const x = Math.floor(hx)
     const y = Math.floor(hy)
+    if (i === 1 && ting.pistol) tegnPistol(x + 1, y)
     lp(x, y, pal.kropp)
     lp(x + 1, y, pal.kropp)
     lp(x, y + 1, pal.skygge)
     lp(x + 1, y + 1, pal.kropp)
-  }
+  })
 }
 
 function snu(p: Pose) {
@@ -291,25 +431,29 @@ function snu(p: Pose) {
   }
 }
 
-/** Stegern (or a rival) in pose p with his feet at pixel x, y. */
-export function tegnFigur(b: Bilde, x: number, y: number, p: Pose, pal: Palett) {
-  tegnLokal(p, pal)
+/** Stegern (or a rival, as their figure) in pose p with the feet at pixel x, y. */
+export function tegnFigur(b: Bilde, x: number, y: number, p: Pose, pal: Palett, figur: Figur = STANDARD_FIGUR, ting: Ting = {}) {
+  tegnLokal(p, pal, figur, ting)
   snu(p)
-  const x0 = x - OX
   const y0 = y - OY
+  // Facing left mirrors the columns around the feet.
+  const kol = ting.speil ? (rx: number) => x + OX - 1 - rx : (rx: number) => x - OX + rx
   for (let ry = 0; ry < L; ry++) {
     for (let rx = 0; rx < L; rx++) {
       const c = snudd[ry * L + rx]
       if (c) {
-        sett(b, x0 + rx, y0 + ry, c)
+        sett(b, kol(rx), y0 + ry, c)
         continue
       }
       const nabo =
         (rx > 0 && snudd[ry * L + rx - 1]) || (rx < L - 1 && snudd[ry * L + rx + 1]) || (ry > 0 && snudd[(ry - 1) * L + rx]) || (ry < L - 1 && snudd[(ry + 1) * L + rx])
-      if (nabo) sett(b, x0 + rx, y0 + ry, OMRISS)
+      if (nabo) sett(b, kol(rx), y0 + ry, OMRISS)
     }
   }
 }
+
+/** The palette for a figure's body colour. */
+export const palettFor = (figur: Figur | undefined, reserve = 0) => PALETTER[(figur?.kropp ?? reserve) % PALETTER.length]
 
 /** A standing pose's small idle: breathing, a blink, now and then the 6–7 hands, and sleep after a while. */
 export function hvileBevegelse(p: Pose, tid: number, sover: boolean): Pose {

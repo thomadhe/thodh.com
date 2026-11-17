@@ -1,9 +1,10 @@
 "use client"
 
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react"
+import type { Figur as FigurValg } from "../lib/duell/figur"
 import { NIVAAER } from "../lib/stegern"
 import { FOLG, hvile, klem, lagPlan, MAL_M, poseIHopp, STOV_TID, SYN, type Hopp, type Plan, type Pose } from "./stegern-motor"
-import { FARGE, geometri, hvileBevegelse, Kulisse, merkelapp, PALETTER, PIKSEL, rgb, sett, tegnFigur, tegnZzz, tekstMedKant, type Bilde } from "./stegern-piksel"
+import { FARGE, geometri, hvileBevegelse, Kulisse, merkelapp, palettFor, PIKSEL, rgb, sett, tegnFigur, tegnZzz, tekstMedKant, type Bilde } from "./stegern-piksel"
 import "./stegern-bane.css"
 
 export { lagPlan, tidTilLanding, type Hopp } from "./stegern-motor"
@@ -15,7 +16,7 @@ export { lagPlan, tidTilLanding, type Hopp } from "./stegern-motor"
 // for reduced motion.
 
 /** `deg` puts a small arrow over the runner, so a player finds themself among the lanes. */
-export type Loper = { id: string; hopp: Hopp[]; farge: number; deg?: boolean }
+export type Loper = { id: string; hopp: Hopp[]; farge: number; deg?: boolean; figur?: FigurValg }
 
 type Aktivt = { a: number; b: number; h: Hopp; plan: Plan; start: number }
 type Spor = { antall: number; aktivt: Aktivt | null; merket: number }
@@ -197,7 +198,7 @@ export function Bane({
       let sover = false
       rader.forEach((r, i) => {
         const gy = geo.bakke[i]
-        const pal = PALETTER[r.l.farge % PALETTER.length]
+        const pal = palettFor(r.l.figur, r.l.farge)
         const sovn = !redusert && !r.akt && tid - vaken.current > SOVN_S + i * 1.7
         sover ||= sovn
         let pose = r.p ?? hvile(r.akt ? r.akt.b : r.total)
@@ -215,7 +216,7 @@ export function Bane({
             for (let dx = 0; dx < lengde + ekstra; dx++) sett(bilde, x - 7 - dx, y + dy, FARGE.hvit, 0.7 - dx * 0.08)
           }
         }
-        tegnFigur(bilde, x, y, pose, pal)
+        tegnFigur(bilde, x, y, pose, pal, r.l.figur)
         if (sovn) tegnZzz(bilde, x + 4, y - 24, tid + i * 0.5)
         else if (r.l.deg && !r.p) {
           const opp = !redusert && Math.floor(tid * 2.5) % 2 === 0 ? 1 : 0
@@ -316,9 +317,36 @@ function tegnStov(b: Bilde, akt: Aktivt, t: number, tilPx: (m: number) => number
   }
 }
 
+/** How a standing figure feels: cheering after a good answer, glum after a bad one. */
+export type Stemning = "vanlig" | "glad" | "lei"
+
+/** A standing pose with a mood on top of the idle. */
+export function stemningsPose(p: Pose, stemning: Stemning, tid: number): Pose {
+  if (stemning === "glad") {
+    const opp = Math.floor(tid * 4) % 2 === 0
+    return { ...p, opp: 1, munn: 1, stor: 1.2, y: opp ? -0.12 : 0, sy: opp ? 1.04 : 0.94 }
+  }
+  if (stemning === "lei") return { ...p, munn: -1, blikk: { x: 0, y: 0.03 }, sy: 0.93, sx: 1.03, rot: -4 }
+  return p
+}
+
 /** A runner standing still, for the lobby and the podium: a little canvas of its own with the same idle. */
-export function Figur({ farge, sover = false, className = "" }: { farge: number; sover?: boolean; className?: string }) {
+export function Figur({
+  farge = 0,
+  figur,
+  sover = false,
+  stemning = "vanlig",
+  className = "",
+}: {
+  /** The seat, for a runner without a figure of its own. */
+  farge?: number
+  figur?: FigurValg
+  sover?: boolean
+  stemning?: Stemning
+  className?: string
+}) {
   const lerret = useRef<HTMLCanvasElement>(null)
+  const nokkel = figur ? `${figur.kropp}.${figur.hode}.${figur.oyne}.${figur.ekstra}` : ""
   useEffect(() => {
     const ctx = lerret.current?.getContext("2d")
     if (!ctx) return
@@ -326,19 +354,21 @@ export function Figur({ farge, sover = false, className = "" }: { farge: number;
     const data = ctx.createImageData(FIGUR_B, FIGUR_H)
     const bilde: Bilde = { w: FIGUR_B, h: FIGUR_H, d: new Uint32Array(data.data.buffer) }
     const forskyv = farge * 0.77
+    const valg = nokkel ? (nokkel.split(".").map(Number) as [number, number, number, number]) : null
+    const f = valg ? { kropp: valg[0], hode: valg[1], oyne: valg[2], ekstra: valg[3] } : undefined
     let id = 0
     const tegn = () => {
       const tid = performance.now() / 1000 + forskyv
       bilde.d.fill(0)
-      const pose = redusert ? hvile(0) : hvileBevegelse(hvile(0), tid, sover)
-      tegnFigur(bilde, 11, FIGUR_H - 3, pose, PALETTER[farge % PALETTER.length])
+      const pose = redusert ? hvile(0) : stemningsPose(hvileBevegelse(hvile(0), tid, sover), sover ? "vanlig" : stemning, tid)
+      tegnFigur(bilde, 11, FIGUR_H - 3, pose, palettFor(f, farge), f)
       if (sover && !redusert) tegnZzz(bilde, 15, FIGUR_H - 25, tid)
       ctx.putImageData(data, 0, 0)
       if (!redusert) id = window.setTimeout(tegn, document.hidden ? 1000 : IDLE_MS * (sover ? 2 : 1))
     }
     tegn()
     return () => window.clearTimeout(id)
-  }, [farge, sover])
+  }, [farge, sover, stemning, nokkel])
   return (
     <canvas
       ref={lerret}

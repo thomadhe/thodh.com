@@ -1,7 +1,8 @@
 import { z } from "zod"
-import { erGyldigKode } from "@/features/spill/lib/stegern-duell"
+import { erGyldigKode } from "@/features/spill/lib/duell/rom"
 import {
   duellSporsmal,
+  erDuellSporsmal,
   erGjentatt,
   finaleBillett,
   finaleTekst,
@@ -10,6 +11,7 @@ import {
   kanSpillesStegern,
   kvittering,
   sjetteNr,
+  stegernDuellDom,
   vurderSvar,
 } from "@/features/spill/lib/server/stegern"
 
@@ -23,6 +25,17 @@ const foresporsel = z.discriminatedUnion("type", [
   z.object({ type: z.literal("gjenta"), dato: z.string(), tidligere: tekst, kvittering: signatur, svar: tekst }),
   // The prompts for one round of a duel, drawn from earlier days only (see duellSporsmal).
   z.object({ type: z.literal("duell"), kode: z.string().refine(erGyldigKode), runde: z.number().int().min(0).max(999) }),
+  // One player's answer in a duel: judged here and signed, with the time, so the others can trust it (lib/duell/signatur.ts).
+  z.object({
+    type: z.literal("duell-svar"),
+    kode: z.string().refine(erGyldigKode),
+    runde: z.number().int().min(0).max(999),
+    i: z.number().int().min(0).max(4),
+    dato: z.string(),
+    nr: z.number().int().min(0).max(4),
+    id: z.string().min(1).max(40),
+    svar: tekst,
+  }),
 ])
 
 // Answers are judged here so the page never carries the lists. Question 6 names its earlier question only
@@ -34,7 +47,12 @@ export async function POST(request: Request) {
   if (data.type === "duell") {
     const sporsmal = duellSporsmal(data.kode, data.runde)
     if (!sporsmal.length) return Response.json({ melding: "Duellen trenger minst én tidligere dag å hente spørsmål fra." }, { status: 409 })
-    return Response.json({ sporsmal })
+    return Response.json({ sporsmal, na: Date.now() })
+  }
+  if (data.type === "duell-svar") {
+    if (!erDuellSporsmal(data.dato, data.nr)) return Response.json({ melding: "Spørsmålet hører ikke til en duell." }, { status: 400 })
+    const { dom, vurdering } = stegernDuellDom(data)
+    return Response.json({ dom, vanligste: vurdering.vanligste, sjeldneste: vurdering.sjeldneste, antall: vurdering.antall, na: Date.now() })
   }
   if (!kanSpillesStegern(data.dato)) return Response.json({ melding: "Ugyldig forespørsel." }, { status: 400 })
   if (data.type === "svar") {

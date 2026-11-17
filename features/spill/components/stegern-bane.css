@@ -1,7 +1,7 @@
 /* 6/7-stegern's pixel look: a night-blue page, dark navy panels framed by a thin glowing cyan line with
-   pixel-notched corners, chunky buttons, and neon type. Scoped to .stegern-side so no other game changes. */
+   pixel-notched corners, chunky buttons, and neon type. Scoped to .stegern-side (and .px-side for the other duels) so no other game changes. */
 
-.spill-mork.stegern-side {
+.spill-mork:is(.stegern-side, .px-side) {
   --spill-flate: #0c1333;
   --px-natt: #050817;
   --px-panel: #0b1232;
@@ -22,7 +22,7 @@
   background-attachment: fixed;
 }
 
-.stegern-side ::selection {
+:is(.stegern-side, .px-side) ::selection {
   background: var(--px-rosa);
   color: #fff;
 }
@@ -63,6 +63,13 @@
 
 .px-skrift {
   font-family: var(--font-piksel), var(--font-geist-sans), sans-serif;
+}
+
+/* Numbers that must read at a glance (Gjetteløs duel): Silkscreen's digits keep 5 and S, 8 and B apart. */
+.px-tall {
+  font-family: var(--font-etikett), monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.05em;
 }
 
 /* The neon wordmark: white core, pink and cyan pulled apart, a pink haze. */
