@@ -26,6 +26,7 @@ export const okonomi = [
     ["laks", 2, "Hvor mange kroner eksporterte Norge laks for i 2024?", "kr", 122.9e9, "Norges sjømatråd", { per: "2024", info: "Laksen sto for 70 prosent av sjømateksporten." }],
     ["eras-inntekt", 2, "Hvor mange dollar solgte Taylor Swifts Eras Tour billetter for?", "dollar", 2.078e9, "Taylor Swift Touring (via The New York Times)", { per: "2024", info: "Den første turneen som har passert 2 milliarder dollar." }],
     ["koffertkostnad", 3, "Hvor mange dollar kostet det flyselskapene å rydde opp etter kofferter som ble borte, forsinket eller skadet i 2024?", "dollar", 5e9, "SITA Baggage IT Insights 2025", { per: "2024", ca: true }],
+    ["bananer", 3, "Hvor mange tonn bananer ble produsert i verden i 2024?", "tonn", 139e6, "FAO (via Our World in Data)", { ca: true, per: "2024" }],
   ]),
   ...lag("okonomi", "fakta", [
     ["oljefondet-andel", 3, "Hvor mange prosent av alle børsnoterte aksjer i verden eier oljefondet?", "prosent", 1.5, "NBIM", { ca: true, per: "2024" }],

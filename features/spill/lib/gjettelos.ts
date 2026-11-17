@@ -34,6 +34,7 @@ export type KjentKategori =
   | "rekorder"
   | "hverdag"
   | "natur"
+  | "dyr"
 // Any other lower-case id works too; `string & {}` keeps the known ones in autocomplete.
 export type Kategori = KjentKategori | (string & {})
 
@@ -50,6 +51,7 @@ export const KATEGORIER: Record<KjentKategori, { navn: string; farge: string }> 
   rekorder: { navn: "Rekorder", farge: "#e879f9" },
   hverdag: { navn: "Hverdag", farge: "#94a3b8" },
   natur: { navn: "Natur", farge: "#a3e635" },
+  dyr: { navn: "Dyr", farge: "#2dd4bf" },
 }
 
 export const erKjentKategori = (k: string): k is KjentKategori => Object.hasOwn(KATEGORIER, k)

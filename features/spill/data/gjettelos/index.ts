@@ -1,3 +1,4 @@
+import { dyr } from "./dyr"
 import { historie } from "./historie"
 import { hverdag } from "./hverdag"
 import { kropp } from "./kropp"
@@ -26,4 +27,5 @@ export const gjettelosSporsmal: GjSporsmal[] = [
   ...rekorder,
   ...hverdag,
   ...natur,
+  ...dyr,
 ]

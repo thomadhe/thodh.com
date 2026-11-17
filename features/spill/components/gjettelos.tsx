@@ -11,6 +11,7 @@ import {
   Leaf,
   Medal,
   Palette,
+  PawPrint,
   Rocket,
   Shapes,
   Trophy,
@@ -82,6 +83,7 @@ const IKONER: Record<KjentKategori, LucideIcon> = {
   rekorder: Medal,
   hverdag: Coffee,
   natur: Leaf,
+  dyr: PawPrint,
 }
 
 function KategoriIkon({ kategori, className }: { kategori: string; className?: string }) {
