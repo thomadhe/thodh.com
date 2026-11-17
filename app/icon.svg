@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- thodh.com: the four tiles of the desktop's Start button on a tile of its dusk sky. -->
+  <defs>
+    <linearGradient id="himmel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1d1c52"/>
+      <stop offset="0.6" stop-color="#3a2a7e"/>
+      <stop offset="1" stop-color="#7a3f8f"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#himmel)"/>
+  <rect x="12" y="12" width="18" height="18" rx="5" fill="#e0687f"/>
+  <rect x="34" y="12" width="18" height="18" rx="5" fill="#f0c64a"/>
+  <rect x="12" y="34" width="18" height="18" rx="5" fill="#f4efe6"/>
+  <rect x="34" y="34" width="18" height="18" rx="5" fill="#34b26a"/>
+</svg>
