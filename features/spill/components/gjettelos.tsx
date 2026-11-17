@@ -217,7 +217,7 @@ const KURVE = Array.from({ length: 97 }, (_, i) => {
 }).join(" ")
 
 /**
- * The scoring curve on a log scale, from fifty times too low to fifty times too high, with a dot where the
+ * The scoring curve on a log scale, from a hundred times too low to a hundred times too high, with a dot where the
  * guess landed. Years are drawn on their steeper scale, earlier to the left.
  */
 function Kurve({ gjett, fasit, aarstall, farge, vis }: { gjett: number; fasit: number; aarstall: boolean; farge: string; vis: boolean }) {
@@ -564,7 +564,7 @@ export function Gjettelos({ dato, sporsmal, repris = false }: { dato: string; sp
                   = {annenForm} {enhetTekst(s)}
                 </span>
               ) : t.svar.length === 0 && !tekst ? (
-                <span className="text-neutral-400">Blink gir 100 poeng, dobbelt eller halvparten 74,6, og 50× bom 0.</span>
+                <span className="text-neutral-400">Blink gir 100 poeng, dobbelt eller halvparten 50, og 100× bom 0.</span>
               ) : null}
             </p>
           </section>

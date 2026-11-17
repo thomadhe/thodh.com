@@ -494,22 +494,20 @@ test("Gjetteløs: poeng på en symmetrisk logaritmisk skala med én desimal", ()
   assert.equal(poengFor(2469, 2469), 100)
   // The table in the rules and the README.
   const tabell: [number, number][] = [
-    [1.25, 91.6],
-    [2, 74.6],
-    [5, 45.2],
-    [10, 26.4],
-    [30, 4.7],
+    [1.25, 74.4],
+    [2, 50],
+    [5, 26.7],
+    [10, 17],
+    [30, 7.1],
   ]
   for (const [r, p] of tabell) {
     assert.equal(poengFor(100 * r, 100), p, `${r}× for høyt`)
     assert.equal(poengFor(100 / r, 100), p, `${r}× for lavt`)
   }
-  // Close to the reference game's 25.0 for 11× too high.
-  assert.ok(Math.abs(poengFor(1.1e6, 1e5) - 25) < 1.5)
-  assert.equal(poengFor(5000, 100), 0)
+  assert.equal(poengFor(10000, 100), 0)
   assert.equal(poengFor(1, 1000), 0)
   // One decimal, and falling all the way out.
-  for (let r = 1; r < 60; r *= 1.07) {
+  for (let r = 1; r < 120; r *= 1.07) {
     const p = poengFor(r, 1)
     assert.equal(Math.round(p * 10) / 10, p)
     assert.ok(p >= 0 && p <= 100)
@@ -531,7 +529,7 @@ test("Gjetteløs: poeng på en symmetrisk logaritmisk skala med én desimal", ()
   assert.equal(poengFor(ref, 1905, true), 0)
   assert.equal(poengFor(ref + 10, 1905, true), 0)
   assert.ok(poengFor(1955, 1905, true) < poengFor(1915, 1905, true))
-  assert.ok(poengFor(1915, 1905, true) > 90)
+  assert.ok(poengFor(1915, 1905, true) > 75)
   // Too early is to the left of the answer, too late to the right.
   assert.ok(gjettelosAvstand(1800, 1905, true)! < 0 && gjettelosAvstand(1950, 1905, true)! > 0)
   assert.ok(gjettelosAvstand(50, 100)! < 0 && gjettelosAvstand(200, 100)! > 0)

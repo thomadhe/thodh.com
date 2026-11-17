@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Gjettelos } from "@/features/spill/components/gjettelos"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
-import { AARSTALL_REFERANSE, formaterPoeng, KRUMNING, NULL_VED, poengFor } from "@/features/spill/lib/gjettelos"
+import { AARSTALL_REFERANSE, formaterPoeng, NULL_VED, poengFor } from "@/features/spill/lib/gjettelos"
 import { forhandsbygdeDager } from "@/features/spill/lib/ruting"
 import { dagensSporsmal, erRepris } from "@/features/spill/lib/server/gjettelos"
 import { dagForSide } from "@/features/spill/lib/server/side"
@@ -30,7 +30,7 @@ export default async function Page({ params }: PageProps<"/spill/gjettelos/[dag]
         <>
           <p>
             Poengene avhenger av hvor mange ganger for høyt eller lavt du bommer, ikke av hvor mange enheter. Med r som største delt på minste av
-            svaret ditt og fasit er poengene 100 · (1 − log r / log {NULL_VED})<sup>{KRUMNING.toLocaleString("nb-NO")}</sup>, med én desimal.
+            svaret ditt og fasit halveres poengene for hver dobling i starten, og de flater ut mot null ved {NULL_VED} ganger. Én desimal.
           </p>
           <table className="w-full text-left tabular-nums">
             <thead className="text-neutral-500">

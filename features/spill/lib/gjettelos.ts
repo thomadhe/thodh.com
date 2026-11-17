@@ -14,9 +14,9 @@ export const MAKS_SUM = ANTALL * MAKS_POENG
 export const AARSTALL_REFERANSE = 2030
 
 /** A guess this many times too high or too low scores nothing. */
-export const NULL_VED = 50
-/** How the points bend: above 1 they fall faster near the answer and level out towards zero. */
-export const KRUMNING = 1.5
+export const NULL_VED = 100
+/** How the points bend: double or half always gives 50, and below 1 the far misses keep a few points. */
+export const KRUMNING = 0.75
 /** Years count their ratio this many times over, since "how long ago" is a narrower scale than most numbers. */
 export const AARSTALL_FAKTOR = 2
 
@@ -103,18 +103,21 @@ export function avstand(gjett: number, fasit: number, aarstall = false): number 
 /** Points for a distance from `avstand`, with one decimal. */
 export function poengForAvstand(x: number | null) {
   if (x === null) return 0
-  const rest = 1 - Math.abs(x) / Math.log10(NULL_VED)
-  if (rest <= 0) return 0
-  return Math.round(MAKS_POENG * rest ** KRUMNING * 10) / 10
+  const a = Math.abs(x)
+  const kant = Math.log10(NULL_VED)
+  if (a >= kant) return 0
+  // Halves for every doubling at first, and a soft fade to nothing at NULL_VED.
+  const dobl = a / Math.log10(2)
+  return Math.round(MAKS_POENG * 2 ** -(dobl ** KRUMNING) * (1 - (a / kant) ** 4) * 10) / 10
 }
 
 /**
  * Points for one guess, from 0 to 100 with one decimal, on a symmetric logarithmic scale:
  *
- *   poeng = 100 · (1 − log(r) / log(50))^1.5,   r = larger / smaller of guess and answer
+ *   poeng = 100 · 2^(−d^0.75) · (1 − (log r / log 100)^4),   r = larger / smaller of guess and answer, d = log₂ r
  *
- * Exactly right is 100, 25 % off about 92, double or half 74.6, five times 45.2, ten times 26.4, thirty
- * times 4.7 and fifty times or more 0. Being twice too high costs the same as being half, and the same
+ * Exactly right is 100, 25 % off 74.4, double or half 50, five times 26.7, ten times 17, thirty times 7.1
+ * and a hundred times or more 0. Being twice too high costs the same as being half, and the same
  * ratio scores the same whether the answer is 8 or 8 billion.
  *
  * Years use r = how many years before 2030 the guess is against the answer, squared (`AARSTALL_FAKTOR`),
