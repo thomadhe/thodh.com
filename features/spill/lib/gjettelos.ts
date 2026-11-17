@@ -13,7 +13,15 @@ export const MAKS_SUM = ANTALL * MAKS_POENG
  */
 export const AARSTALL_REFERANSE = 2030
 
-export type Kategori =
+/** A guess this many times too high or too low scores nothing. */
+export const NULL_VED = 50
+/** How the points bend: above 1 they fall faster near the answer and level out towards zero. */
+export const KRUMNING = 1.5
+/** Years count their ratio this many times over, since "how long ago" is a narrower scale than most numbers. */
+export const AARSTALL_FAKTOR = 2
+
+/** The categories the bank uses today. The bank may bring others; `kategoriInfo` gives those a neutral look. */
+export type KjentKategori =
   | "norge"
   | "verden"
   | "historie"
@@ -26,8 +34,10 @@ export type Kategori =
   | "rekorder"
   | "hverdag"
   | "natur"
+// Any other lower-case id works too; `string & {}` keeps the known ones in autocomplete.
+export type Kategori = KjentKategori | (string & {})
 
-export const KATEGORIER: Record<Kategori, { navn: string; farge: string }> = {
+export const KATEGORIER: Record<KjentKategori, { navn: string; farge: string }> = {
   norge: { navn: "Norge", farge: "#f87171" },
   verden: { navn: "Geografi", farge: "#38bdf8" },
   historie: { navn: "Historie", farge: "#d4a373" },
@@ -42,14 +52,22 @@ export const KATEGORIER: Record<Kategori, { navn: string; farge: string }> = {
   natur: { navn: "Natur", farge: "#a3e635" },
 }
 
+export const erKjentKategori = (k: string): k is KjentKategori => Object.hasOwn(KATEGORIER, k)
+
+/** Name and colour for a category; unknown ones get their id as a name and a neutral grey. */
+export function kategoriInfo(k: Kategori): { navn: string; farge: string; kjent: boolean } {
+  if (erKjentKategori(k)) return { ...KATEGORIER[k], kjent: true }
+  const navn = k.replace(/[-_]+/g, " ").trim()
+  return { navn: navn ? navn[0].toUpperCase() + navn.slice(1) : "Spørsmål", farge: "#a1a1aa", kjent: false }
+}
+
 export type Vansk = 1 | 2 | 3
 
-/** What the page gets for each of the day's questions: never the answer or its source. */
+/** What the page gets for each of the day's questions: never the answer, its source or its difficulty. */
 export type SporsmalVisning = {
   tekst: string
   enhet: string
   kategori: Kategori
-  vansk: Vansk
   aarstall: boolean
 }
 
@@ -66,20 +84,51 @@ export type Fasit = {
 }
 
 /**
- * Points for one guess: 100 × the smaller of guess and answer divided by the larger. Exactly right is 100,
- * half or double is 50, a tenth of the answer or ten times it is 10, and 10 % off is about 90 whatever the
- * size of the number. It is the same as 100 · 2^(−|log₂(guess / answer)|): the points halve for every
- * doubling of the distance on a logarithmic scale, which keeps huge numbers fair.
+ * How many times off a guess is, as a signed power of ten: 0 is exact, 1 is ten times too high, −1 ten
+ * times too low. Years compare how long before `AARSTALL_REFERANSE` they are, count `AARSTALL_FAKTOR` times
+ * over, and are signed so that too early is negative. Null when the guess cannot be scored (a year at or
+ * after the reference).
+ */
+export function avstand(gjett: number, fasit: number, aarstall = false): number | null {
+  if (aarstall) {
+    const a = AARSTALL_REFERANSE - gjett
+    const b = AARSTALL_REFERANSE - fasit
+    if (!(a > 0) || !(b > 0) || !Number.isFinite(a) || !Number.isFinite(b)) return null
+    return -AARSTALL_FAKTOR * Math.log10(a / b)
+  }
+  if (!(gjett > 0) || !(fasit > 0) || !Number.isFinite(gjett) || !Number.isFinite(fasit)) return null
+  return Math.log10(gjett / fasit)
+}
+
+/** Points for a distance from `avstand`, with one decimal. */
+export function poengForAvstand(x: number | null) {
+  if (x === null) return 0
+  const rest = 1 - Math.abs(x) / Math.log10(NULL_VED)
+  if (rest <= 0) return 0
+  return Math.round(MAKS_POENG * rest ** KRUMNING * 10) / 10
+}
+
+/**
+ * Points for one guess, from 0 to 100 with one decimal, on a symmetric logarithmic scale:
  *
- * Years go through `AARSTALL_REFERANSE` first: the score compares how many years ago the guess and the
- * answer are. A guess at or after the reference year scores 0.
+ *   poeng = 100 · (1 − log(r) / log(50))^1.5,   r = larger / smaller of guess and answer
+ *
+ * Exactly right is 100, 25 % off about 92, double or half 74.6, five times 45.2, ten times 26.4, thirty
+ * times 4.7 and fifty times or more 0. Being twice too high costs the same as being half, and the same
+ * ratio scores the same whether the answer is 8 or 8 billion.
+ *
+ * Years use r = how many years before 2030 the guess is against the answer, squared (`AARSTALL_FAKTOR`),
+ * so years score like numbers on a scale twice as steep. A guess at or after 2030 scores 0.
  */
 export function poengFor(gjett: number, fasit: number, aarstall = false) {
-  const a = aarstall ? AARSTALL_REFERANSE - gjett : gjett
-  const b = aarstall ? AARSTALL_REFERANSE - fasit : fasit
-  if (!Number.isFinite(a) || !Number.isFinite(b) || a <= 0 || b <= 0) return 0
-  return Math.round((MAKS_POENG * Math.min(a, b)) / Math.max(a, b))
+  return poengForAvstand(avstand(gjett, fasit, aarstall))
 }
+
+/** A points value as Norwegians write it, always with one decimal: "74,6", "100,0". */
+export const formaterPoeng = (p: number) => p.toLocaleString("nb-NO", { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+
+/** Sum of points without floating-point crumbs. */
+export const summer = (poeng: number[]) => Math.round(poeng.reduce((s, p) => s + p, 0) * 10) / 10
 
 const ORD: [RegExp, number][] = [
   [/^(?:tusen|k)$/, 1e3],
@@ -91,19 +140,22 @@ const ORD: [RegExp, number][] = [
 
 /**
  * Reads a number the way Norwegians type it: "1 200 000", "1,5 mill.", "2 mrd", "12 000", "1.500" (a thousand
- * separator when three digits follow each dot), "3.5" or "6e23". Returns null for anything else or for
- * numbers that are not above zero.
+ * separator when three digits follow each dot), "3.5" or "6e23". Any kind of space separates thousands.
+ * Returns null for anything else or for numbers that are not above zero.
  */
 export function tolkTall(tekst: string): number | null {
   const t = tekst
     .toLowerCase()
-    .replace(/[\s  ]+/g, " ")
+    .replace(/[\s'’]+/g, " ")
     .replace(/\.$/, "")
     .trim()
-  const treff = /^([0-9][0-9 .,']*?)(?:\s*(?:e|·\s*10\^?)\s*([+-]?\d{1,3}))?\s*([a-zæøå]+)?\.?$/.exec(t)
+  const treff = /^([0-9][0-9 .,]*?)(?:\s*(?:e|·\s*10\^?)\s*([+-]?\d{1,3}))?\s*([a-zæøå]+)?\.?$/.exec(t)
   if (!treff) return null
-  let tall = treff[1].replace(/[ ']/g, "")
-  if (tall.includes(",")) {
+  let tall = treff[1].replace(/ /g, "")
+  if (/^\d{1,3}(?:,\d{3}){2,}$/.test(tall)) {
+    // Pasted with English thousand commas: "1,234,567". One comma stays a decimal mark.
+    tall = tall.replace(/,/g, "")
+  } else if (tall.includes(",")) {
     // Comma is the decimal mark; any dots are thousand separators.
     if ((tall.match(/,/g) ?? []).length > 1) return null
     tall = tall.replace(/\./g, "").replace(",", ".")
@@ -133,13 +185,58 @@ export function tolkAar(tekst: string): number | null {
 /** A guess as typed, read as a year or a number depending on the question. */
 export const tolkGjett = (tekst: string, aarstall: boolean) => (aarstall ? tolkAar(tekst) : tolkTall(tekst))
 
+/**
+ * The thousand separator the field puts in while typing: a no-break space, as Intl writes "nb-NO". The narrow
+ * one (U+202F) is nearly invisible at input size in most fonts, and the point is to see how big the number is.
+ */
+export const SKILLE = String.fromCharCode(0xa0)
+
+/**
+ * Groups the leading digits of what is being typed in threes: "1500000" becomes "1 500 000", "2500,75" keeps
+ * its decimals as typed, and "1,5 mill" or "2 mrd" are left as they are apart from the leading digits.
+ * Spaces typed inside the digits are replaced; one after them (before a word) stays.
+ */
+export function grupperInndata(tekst: string) {
+  return tekst.replace(/^(\s*)(\d(?:[\d\s]*\d)?)(?=\s*$|[^\d\s]|\s+\D)/, (_, foran: string, siffer: string) => {
+    const rene = siffer.replace(/\s/g, "")
+    return foran + rene.replace(/\B(?=(\d{3})+(?!\d))/g, SKILLE)
+  })
+}
+
+/**
+ * Where the caret goes after grouping: after the same number of non-space characters as before it. Spaces
+ * come and go with the grouping, so counting everything else keeps the caret next to the same digit.
+ */
+export function markorEtterGruppering(gruppert: string, foran: string) {
+  const antall = foran.replace(/\s/g, "").length
+  // Spaces typed just before the caret ("2,5 |") stay before it.
+  let mellomrom = /\s*$/.exec(foran)![0].length
+  let pos = gruppert.length
+  if (antall === 0) pos = 0
+  else {
+    let sett = 0
+    for (let i = 0; i < gruppert.length; i++) {
+      if (!/\s/.test(gruppert[i])) sett++
+      if (sett === antall) {
+        pos = i + 1
+        break
+      }
+    }
+  }
+  while (mellomrom > 0 && pos < gruppert.length && /\s/.test(gruppert[pos])) {
+    pos++
+    mellomrom--
+  }
+  return pos
+}
+
 const vanlig = new Intl.NumberFormat("nb-NO", { maximumFractionDigits: 2 })
 
 function desimal(n: number, maksSiffer = 4) {
   return n.toLocaleString("nb-NO", { maximumSignificantDigits: maksSiffer })
 }
 
-/** A number for display: "1905" for years, "2 469", "5,55 mill.", "19 742 mrd.", "43 trillioner". */
+/** A number for display: "1905" for years, "2 469", "91 000", "5,594 mill.", "19 742 mrd.", "43 trillioner". */
 export function formaterTall(n: number, aarstall = false) {
   if (aarstall) return String(Math.round(n))
   const abs = Math.abs(n)
@@ -151,35 +248,37 @@ export function formaterTall(n: number, aarstall = false) {
   if (abs >= 1e18) return `${desimal(n / 1e18)} trillioner`
   if (abs >= 1e14) return `${desimal(n / 1e12)} billioner`
   if (abs >= 1e9) return `${desimal(n / 1e9, 5)} mrd.`
-  if (abs >= 1e7) return `${desimal(n / 1e6)} mill.`
+  if (abs >= 1e6) return `${desimal(n / 1e6)} mill.`
   if (abs >= 100) return vanlig.format(n)
   return desimal(n)
 }
 
-/** How far off a guess was, in words: "riktig", "12 % for lavt", "3,2 ganger for høyt". */
+/** Every digit, grouped: "1 500 000" for what was typed as "1,5 mill.". */
+export const formaterFullt = (n: number) => (Math.abs(n) < 1e21 ? vanlig.format(n) : formaterTall(n))
+
+const ganger = (f: number) => f.toLocaleString("nb-NO", { maximumFractionDigits: f < 10 ? 1 : 0 })
+
+/** How far off a guess was, in few words: "Helt riktig", "12 % for lavt", "3,2× for høyt", "10 år for sent". */
 export function avvik(gjett: number, fasit: number, aarstall = false) {
   if (aarstall) {
     const d = Math.round(gjett - fasit)
-    if (d === 0) return "riktig år"
+    if (d === 0) return "Riktig år"
     return `${Math.abs(d)} år for ${d < 0 ? "tidlig" : "sent"}`
   }
-  if (gjett === fasit) return "helt riktig"
+  if (gjett === fasit) return "Helt riktig"
   const forhold = gjett / fasit
   const retning = forhold < 1 ? "lavt" : "høyt"
-  if (forhold >= 2 || forhold <= 0.5) {
-    const ganger = forhold >= 1 ? forhold : 1 / forhold
-    return `${ganger.toLocaleString("nb-NO", { maximumFractionDigits: ganger < 10 ? 1 : 0 })} ganger for ${retning}`
-  }
+  if (forhold >= 1.95 || forhold <= 1 / 1.95) return `${ganger(forhold >= 1 ? forhold : 1 / forhold)}× for ${retning}`
   const prosent = Math.abs(forhold - 1) * 100
-  if (prosent < 0.5) return "nesten helt riktig"
+  if (prosent < 0.5) return "Nesten helt riktig"
   return `${prosent.toLocaleString("nb-NO", { maximumFractionDigits: prosent < 10 ? 1 : 0 })} % for ${retning}`
 }
 
 /** Colour band for a score, for the reveal and the share text. */
 export function poengTrinn(poeng: number): { farge: string; emoji: string; ord: string } {
   if (poeng >= 97) return { farge: "#34d399", emoji: "🟩", ord: "Blink!" }
-  if (poeng >= 90) return { farge: "#34d399", emoji: "🟩", ord: "Veldig nær" }
-  if (poeng >= 65) return { farge: "#facc15", emoji: "🟨", ord: "Nær" }
-  if (poeng >= 35) return { farge: "#fb923c", emoji: "🟧", ord: "Et stykke unna" }
+  if (poeng >= 85) return { farge: "#34d399", emoji: "🟩", ord: "Veldig nær" }
+  if (poeng >= 60) return { farge: "#facc15", emoji: "🟨", ord: "Nær" }
+  if (poeng >= 30) return { farge: "#fb923c", emoji: "🟧", ord: "Et stykke unna" }
   return { farge: "#f43f5e", emoji: "🟥", ord: "Langt unna" }
 }

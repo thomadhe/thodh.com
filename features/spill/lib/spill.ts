@@ -140,7 +140,7 @@ export const spill: Spill[] = [
     navn: "Gjetteløs",
     href: "/spill/gjettelos",
     kort: "Hvor mange? Hvor høy? Hvilket år?",
-    regel: "Fem tallspørsmål. Gjett så nær du kan: riktig gir 100 poeng, halvparten eller dobbelt gir 50.",
+    regel: "Fem tallspørsmål. Gjett så nær du kan: riktig gir 100 poeng, dobbelt eller halvparten 74,6, og 10× bom 26,4.",
     ikon: "≈",
     farge: "bg-indigo-400 text-neutral-950",
     start: "2026-11-16",

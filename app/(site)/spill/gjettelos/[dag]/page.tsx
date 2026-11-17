@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Gjettelos } from "@/features/spill/components/gjettelos"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
-import { AARSTALL_REFERANSE } from "@/features/spill/lib/gjettelos"
+import { AARSTALL_REFERANSE, formaterPoeng, KRUMNING, NULL_VED, poengFor } from "@/features/spill/lib/gjettelos"
 import { forhandsbygdeDager } from "@/features/spill/lib/ruting"
 import { dagensSporsmal, erRepris } from "@/features/spill/lib/server/gjettelos"
 import { dagForSide } from "@/features/spill/lib/server/side"
@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   title: "Gjetteløs",
   description: "Fem tallspørsmål om dagen. Gjett så nær du kan, og få opptil 100 poeng for hvert.",
 }
+
+const EKSEMPLER = [1.25, 2, 5, 10, 30]
 
 // One cached page per date. Players use /spill/gjettelos(?dato=…); Proxy rewrites it here (features/spill/lib/ruting.ts).
 export function generateStaticParams() {
@@ -27,14 +29,38 @@ export default async function Page({ params }: PageProps<"/spill/gjettelos/[dag]
       regler={
         <>
           <p>
-            Poengene regnes ut fra hvor mange ganger for høyt eller lavt du bommer: minste tall delt på største, ganger 100. Riktig svar gir 100,
-            halvparten eller dobbelt så mye gir 50, og 10 % unna gir rundt 90, uansett om svaret er 8 eller 8 milliarder.
+            Poengene avhenger av hvor mange ganger for høyt eller lavt du bommer, ikke av hvor mange enheter. Med r som største delt på minste av
+            svaret ditt og fasit er poengene 100 · (1 − log r / log {NULL_VED})<sup>{KRUMNING.toLocaleString("nb-NO")}</sup>, med én desimal.
+          </p>
+          <table className="w-full text-left tabular-nums">
+            <thead className="text-neutral-500">
+              <tr>
+                <th className="font-normal">Bom</th>
+                {EKSEMPLER.map((r) => (
+                  <th key={r} className="font-normal">
+                    {r.toLocaleString("nb-NO")}×
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="text-neutral-900">
+              <tr>
+                <td className="text-neutral-500">Poeng</td>
+                {EKSEMPLER.map((r) => (
+                  <td key={r}>{formaterPoeng(poengFor(r, 1))}</td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Dobbelt så mye og halvparten gir like mange poeng, og det spiller ingen rolle om svaret er 8 eller 8 milliarder. Ved {NULL_VED} ganger
+            for høyt eller lavt er det tomt.
           </p>
           <p>
-            Årstall teller etter hvor lenge siden det var, regnet fra {AARSTALL_REFERANSE}. Å bomme med 10 år på noe fra 1900-tallet koster
-            omtrent like mye som å bomme med ett år på noe fra de siste årene.
+            Årstall teller etter hvor lenge siden det var, regnet fra {AARSTALL_REFERANSE}, og skalaen er dobbelt så bratt. Å bomme med 10 år på noe
+            fra 1900-tallet koster omtrent like mye som å bomme med ett år på noe fra de siste årene.
           </p>
-          <p>Skriv tallet, for eksempel «5 500 000». «5,5 mill.» og «2 mrd.» går også.</p>
+          <p>Skriv tallet, for eksempel «5 500 000». Sifrene grupperes mens du skriver. «5,5 mill.» og «2 mrd.» går også.</p>
         </>
       }
     >

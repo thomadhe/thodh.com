@@ -9,19 +9,34 @@ import { GJETTELOS_START, poengFor, type Fasit, type SporsmalVisning } from "../
 
 const etterId = new Map(gjettelosSporsmal.map((s) => [s.id, s]))
 
+/**
+ * The first three days (16–18 November 2026) as they were first played, easiest first. Saved answers are
+ * keyed by question number, so these days keep their questions and order whatever the plan says later.
+ * Every later day comes from the plan in its own (mixed) order.
+ */
+export const FASTE_DAGER: readonly (readonly string[])[] = [
+  ["historie:elizabeth", "rommet:nullpunkt", "sport:paris-ovelser", "verden:sprak", "kultur:sonetter"],
+  ["historie:forste-verdenskrig", "norge:preikestolen", "teknologi:bitcoin-maks", "sport:monaco", "kultur:avatar"],
+  ["verden:usa-flagg", "historie:fn", "rommet:iss-hoyde", "kultur:undset-nobel", "sport:curlingstein"],
+]
+
 export function kanSpillesGjettelos(dato: string, iDag = iDagOslo()) {
   return erGyldigDato(dato) && dato >= GJETTELOS_START && dato <= iDag
 }
 
+const dagerSidenStart = (dato: string) => dagNummer(dato) - dagNummer(GJETTELOS_START)
+
 /** Days since the start; the plan starts over when it runs out. */
 function indeks(dato: string) {
-  const n = dagNummer(dato) - dagNummer(GJETTELOS_START)
+  const n = dagerSidenStart(dato)
   return ((n % gjettelosPlan.length) + gjettelosPlan.length) % gjettelosPlan.length
 }
 
-/** The day's five questions with their answers, easiest first. */
+/** The day's five questions with their answers, in the order they are asked. */
 export function dagFor(dato: string): GjSporsmal[] {
-  return gjettelosPlan[indeks(dato)].map((id) => {
+  const n = dagerSidenStart(dato)
+  const ider = n >= 0 && n < FASTE_DAGER.length ? FASTE_DAGER[n] : gjettelosPlan[indeks(dato)]
+  return ider.map((id) => {
     const s = etterId.get(id)
     if (!s) throw new Error(`Gjetteløs: ukjent spørsmål ${id}`)
     return s
@@ -30,12 +45,12 @@ export function dagFor(dato: string): GjSporsmal[] {
 
 /** Whether the date replays a day from an earlier round of the plan. */
 export function erRepris(dato: string) {
-  return dagNummer(dato) - dagNummer(GJETTELOS_START) >= gjettelosPlan.length
+  return dagerSidenStart(dato) >= gjettelosPlan.length
 }
 
-/** What the page gets: the questions without answers or sources. */
+/** What the page gets: the questions without answers, sources or difficulty. */
 export function dagensSporsmal(dato: string): SporsmalVisning[] {
-  return dagFor(dato).map((s) => ({ tekst: s.tekst, enhet: s.enhet, kategori: s.kategori, vansk: s.vansk, aarstall: s.aarstall }))
+  return dagFor(dato).map((s) => ({ tekst: s.tekst, enhet: s.enhet, kategori: s.kategori, aarstall: s.aarstall }))
 }
 
 /** The answer to question `nr` and the points for `gjett`. Only asked for once the player has guessed. */

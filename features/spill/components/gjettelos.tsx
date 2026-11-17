@@ -1,27 +1,57 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import {
+  Coffee,
+  Coins,
+  Cpu,
+  Earth,
+  Flag,
+  HeartPulse,
+  Landmark,
+  Leaf,
+  Medal,
+  Palette,
+  Rocket,
+  Shapes,
+  Trophy,
+  type LucideIcon,
+} from "lucide-react"
+import { Outfit } from "next/font/google"
+import { useEffect, useLayoutEffect, useRef, useState, type ChangeEvent } from "react"
 import { flushSync } from "react-dom"
 import { formaterDato, iDagOslo, leggTilDager } from "../lib/dag"
 import {
-  AARSTALL_REFERANSE,
   ANTALL,
+  avstand,
   avvik,
+  erKjentKategori,
+  formaterPoeng,
+  formaterFullt,
   formaterTall,
   GJETTELOS_START,
-  KATEGORIER,
+  grupperInndata,
+  kategoriInfo,
+  markorEtterGruppering,
   MAKS_SUM,
+  NULL_VED,
+  poengForAvstand,
   poengTrinn,
+  SKILLE,
+  summer,
   tolkGjett,
   type Fasit,
+  type KjentKategori,
   type SporsmalVisning,
 } from "../lib/gjettelos"
 import { useDagligTilstand, useResultater, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
-import { DelKnapp, Knapp, Kort } from "./spill-ramme"
+import { DelKnapp } from "./spill-ramme"
 
 // Gjetteløs: five number questions a day. The page only has the questions; each guess goes to the server,
 // which sends back the answer, its source and the points.
+
+/** Geometric sans for Gjetteløs only: many weights, and figures that hold up at display size. */
+const skrift = Outfit({ subsets: ["latin"], display: "swap" })
 
 type Svar = { g: number; f: Fasit }
 type Tilstand = {
@@ -34,8 +64,30 @@ type Tilstand = {
 
 const tom = (): Tilstand => ({ v: 1, svar: [], videre: 0, resultat: { status: "pagar" } })
 
-const AKSENT = "#818cf8"
 const TELL_MS = 1100
+const FLATE = "rounded-[28px] border border-white/[0.07] bg-[var(--spill-flate)]"
+const STOR_KNAPP =
+  "inline-flex h-14 w-full items-center justify-center rounded-2xl bg-neutral-950 text-base font-semibold text-[#18191b] shadow-[0_1px_0_rgb(255_255_255/0.4)_inset] transition hover:bg-white active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
+
+const IKONER: Record<KjentKategori, LucideIcon> = {
+  norge: Flag,
+  verden: Earth,
+  historie: Landmark,
+  sport: Trophy,
+  rommet: Rocket,
+  teknologi: Cpu,
+  kultur: Palette,
+  okonomi: Coins,
+  kropp: HeartPulse,
+  rekorder: Medal,
+  hverdag: Coffee,
+  natur: Leaf,
+}
+
+function KategoriIkon({ kategori, className }: { kategori: string; className?: string }) {
+  const Ikon = erKjentKategori(kategori) ? IKONER[kategori] : Shapes
+  return <Ikon className={className} strokeWidth={2} aria-hidden="true" />
+}
 
 async function spor(body: { dato: string; nr: number; gjett: number }): Promise<Fasit> {
   const svar = await fetch("/spill/api/gjettelos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
@@ -44,9 +96,10 @@ async function spor(body: { dato: string; nr: number; gjett: number }): Promise<
   return data as Fasit
 }
 
-const sum = (svar: Svar[]) => svar.reduce((s, x) => s + x.f.poeng, 0)
+const sum = (svar: Svar[]) => summer(svar.map((x) => x.f.poeng))
 const enhetTekst = (s: SporsmalVisning) => (s.aarstall ? "" : s.enhet)
 const medEnhet = (n: number, s: SporsmalVisning) => [formaterTall(n, s.aarstall), enhetTekst(s)].filter(Boolean).join(" ")
+const nummer = (i: number) => String(i + 1).padStart(2, "0")
 
 /** A source as a link when it is a URL, otherwise its name. */
 function Kilde({ kilde }: { kilde: string }) {
@@ -58,42 +111,56 @@ function Kilde({ kilde }: { kilde: string }) {
   )
 }
 
-function KategoriMerke({ s }: { s: SporsmalVisning }) {
-  const k = KATEGORIER[s.kategori]
+/** The day's five categories as icons; the current one is lit, answered ones take their score's colour. */
+function Kategorirad({ sporsmal, svar, aktiv, total }: { sporsmal: SporsmalVisning[]; svar: Svar[]; aktiv: number | null; total: number }) {
   return (
-    <span className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-neutral-500">
-      <span className="h-2 w-2 rounded-full" style={{ background: k.farge }} />
-      {k.navn}
-      <span className="tracking-[0.05em] text-neutral-700" aria-label={`Vanskelighet ${s.vansk} av 3`}>
-        {"●".repeat(s.vansk)}
-        <span className="text-neutral-300">{"●".repeat(3 - s.vansk)}</span>
-      </span>
-    </span>
+    <div className="flex items-stretch gap-2">
+      <ol className="flex flex-1 gap-1 rounded-2xl border border-white/[0.06] bg-white/[0.03] p-1" aria-label={`${svar.length} av ${ANTALL} spørsmål besvart`}>
+        {sporsmal.map((s, i) => {
+          const x = svar[i]
+          const pa = aktiv === i
+          const farge = x && !pa ? poengTrinn(x.f.poeng).farge : undefined
+          return (
+            <li
+              key={i}
+              aria-current={pa ? "step" : undefined}
+              aria-label={`${nummer(i)} ${kategoriInfo(s.kategori).navn}${x ? `, ${formaterPoeng(x.f.poeng)} poeng` : ""}`}
+              className={`relative flex h-11 min-w-0 flex-1 items-center justify-center rounded-xl transition-colors duration-300 ${
+                pa ? "bg-neutral-950 text-[#18191b] shadow-sm" : x ? "" : "text-neutral-400"
+              }`}
+              style={farge ? { color: farge } : undefined}
+            >
+              <KategoriIkon kategori={s.kategori} className="h-[18px] w-[18px]" />
+              {x && !pa ? <span className="absolute bottom-1 h-1 w-1 rounded-full" style={{ background: farge }} /> : null}
+            </li>
+          )
+        })}
+      </ol>
+      <div className="flex w-[4.5rem] shrink-0 flex-col items-center justify-center rounded-2xl border border-white/[0.06] bg-white/[0.03] leading-none">
+        <span className="text-[17px] font-semibold tabular-nums text-neutral-950">{formaterPoeng(total)}</span>
+        <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.12em] text-neutral-400">av {MAKS_SUM}</span>
+      </div>
+    </div>
   )
 }
 
-/** Five segments that fill with each answer's points. */
-function Fremdrift({ svar, aktiv }: { svar: Svar[]; aktiv: number | null }) {
+/** Category, the running score and the question number along the top of the card. */
+function Topplinje({ s, nr, total, repris }: { s: SporsmalVisning; nr: number; total: number; repris: boolean }) {
+  const k = kategoriInfo(s.kategori)
   return (
-    <ol className="flex flex-1 gap-1.5" aria-label={`${svar.length} av ${ANTALL} spørsmål besvart`}>
-      {Array.from({ length: ANTALL }, (_, i) => {
-        const s = svar[i]
-        const trinn = s ? poengTrinn(s.f.poeng) : null
-        return (
-          <li key={i} className="flex min-w-0 flex-1 flex-col gap-1">
-            <span className={`relative h-2 overflow-hidden rounded-full bg-neutral-100 ${aktiv === i ? "ring-2 ring-[#818cf8]/60 ring-offset-1 ring-offset-[var(--spill-flate)]" : ""}`}>
-              {s ? (
-                <span
-                  className="absolute inset-y-0 left-0 rounded-full transition-[width] duration-700 ease-out"
-                  style={{ width: `${Math.max(4, s.f.poeng)}%`, background: trinn!.farge }}
-                />
-              ) : null}
-            </span>
-            <span className="text-center font-mono text-[10px] tabular-nums text-neutral-400">{s ? s.f.poeng : "·"}</span>
-          </li>
-        )
-      })}
-    </ol>
+    <div className="flex items-center gap-3 text-[13px] text-neutral-500">
+      <span className="flex min-w-0 flex-1 items-center gap-1.5">
+        <KategoriIkon kategori={s.kategori} className="h-4 w-4 shrink-0 text-neutral-700" />
+        <span className="truncate">{k.navn}</span>
+      </span>
+      <span className="shrink-0 tabular-nums">
+        Poeng <span className="font-semibold text-neutral-800">{formaterPoeng(total)}</span>
+      </span>
+      <span className="w-14 shrink-0 text-right font-semibold tabular-nums text-neutral-800">
+        {nr + 1}/{ANTALL}
+        {repris ? <span className="sr-only"> (repris)</span> : null}
+      </span>
+    </div>
   )
 }
 
@@ -134,54 +201,97 @@ function Teller({ verdi, aarstall, animer, onFerdig }: { verdi: number; aarstall
     return () => cancelAnimationFrame(ramme)
   }, [verdi, aarstall, animer])
   // Round the running number to the answer's precision so decimals do not flicker.
-  const desimaler = verdi < 1e7 && !Number.isInteger(verdi) ? (String(verdi).split(".")[1]?.length ?? 0) : 0
+  const desimaler = verdi < 1e6 && !Number.isInteger(verdi) ? (String(verdi).split(".")[1]?.length ?? 0) : 0
   const avrundet = landet ? verdi : Number(vist.toFixed(desimaler))
   return <span className={`inline-block ${landet && animer ? "mel-landet" : ""}`}>{formaterTall(avrundet, aarstall)}</span>
 }
 
+/** The widest distance the curve shows, either way: where the points reach zero. */
+const KANT = Math.log10(NULL_VED)
+const KURVE_H = 64
+const kurveX = (x: number) => ((Math.max(-KANT, Math.min(KANT, x)) + KANT) / (2 * KANT)) * 100
+const kurveY = (poeng: number) => KURVE_H - 4 - (poeng / 100) * (KURVE_H - 12)
+const KURVE = Array.from({ length: 97 }, (_, i) => {
+  const x = -KANT + (2 * KANT * i) / 96
+  return `${i ? "L" : "M"}${kurveX(x).toFixed(2)} ${kurveY(poengForAvstand(x)).toFixed(2)}`
+}).join(" ")
+
 /**
- * Where the guess landed on a log scale around the answer: ÷10 on the left, ×10 on the right. Years use how
- * long ago they were, with earlier years to the left.
+ * The scoring curve on a log scale, from fifty times too low to fifty times too high, with a dot where the
+ * guess landed. Years are drawn on their steeper scale, earlier to the left.
  */
-function Maaler({ gjett, fasit, aarstall, vis }: { gjett: number; fasit: number; aarstall: boolean; vis: boolean }) {
-  const forhold = aarstall ? (AARSTALL_REFERANSE - fasit) / Math.max(0.01, AARSTALL_REFERANSE - gjett) : gjett / fasit
-  const x = Math.max(-1, Math.min(1, Math.log10(forhold)))
-  const prosent = 50 + x * 46
+function Kurve({ gjett, fasit, aarstall, farge, vis }: { gjett: number; fasit: number; aarstall: boolean; farge: string; vis: boolean }) {
+  const x = avstand(gjett, fasit, aarstall) ?? KANT
+  const poeng = poengForAvstand(x)
+  const venstre = vis ? kurveX(x) : 50
+  const topp = vis ? kurveY(poeng) : kurveY(100)
   const merker = aarstall
     ? [
-        { x: 0, tekst: "tidligere" },
-        { x: 1, tekst: "" },
-        { x: 2, tekst: "fasit" },
-        { x: 3, tekst: "" },
-        { x: 4, tekst: "senere" },
+        { x: -1, tekst: "For tidlig" },
+        { x: 0, tekst: "Riktig år" },
+        { x: 1, tekst: "For sent" },
       ]
     : [
-        { x: 0, tekst: "÷10" },
-        { x: 1, tekst: "÷2" },
-        { x: 2, tekst: "fasit" },
-        { x: 3, tekst: "×2" },
-        { x: 4, tekst: "×10" },
+        { x: -1, tekst: "10× lavt" },
+        { x: 0, tekst: "Fasit" },
+        { x: 1, tekst: "10× høyt" },
       ]
-  const plass = [4, 50 - Math.log10(2) * 46, 50, 50 + Math.log10(2) * 46, 96]
   return (
-    <div className="pt-1" aria-hidden="true">
-      <div className="relative h-8">
-        <div className="absolute inset-x-[4%] top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-gradient-to-r from-rose-500/60 via-emerald-400/90 to-rose-500/60" />
-        {plass.map((p, i) => (
-          <span key={i} className={`absolute top-1/2 w-px -translate-y-1/2 bg-neutral-400 ${i === 2 ? "h-6 bg-neutral-950" : "h-3"}`} style={{ left: `${p}%` }} />
-        ))}
+    <div aria-hidden="true">
+      <div className="relative" style={{ height: KURVE_H }}>
+        <svg viewBox={`0 0 100 ${KURVE_H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full overflow-visible">
+          <defs>
+            <linearGradient id="gjettelos-fyll" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stopColor={farge} stopOpacity={vis ? 0.32 : 0.12} />
+              <stop offset="100%" stopColor={farge} stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          {[-1, -Math.log10(2), 0, Math.log10(2), 1].map((m) => (
+            <line
+              key={m}
+              x1={kurveX(m)}
+              x2={kurveX(m)}
+              y1={kurveY(100) - 4}
+              y2={KURVE_H - 4}
+              stroke="currentColor"
+              className={m === 0 ? "text-neutral-400" : "text-neutral-200"}
+              strokeDasharray="2 3"
+              vectorEffect="non-scaling-stroke"
+            />
+          ))}
+          <path d={`${KURVE} L100 ${KURVE_H - 4} L0 ${KURVE_H - 4} Z`} fill="url(#gjettelos-fyll)" className="transition-opacity duration-500" />
+          <path d={KURVE} fill="none" stroke="currentColor" strokeWidth="1.75" className="text-neutral-600" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
+          <line x1="0" x2="100" y1={KURVE_H - 4} y2={KURVE_H - 4} stroke="currentColor" className="text-neutral-200" vectorEffect="non-scaling-stroke" />
+        </svg>
         <span
-          className="absolute top-1/2 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-[var(--spill-flate)] shadow transition-[left,opacity] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
-          style={{ left: `${vis ? prosent : 50}%`, opacity: vis ? 1 : 0, background: AKSENT }}
+          className="absolute w-px -translate-x-1/2 transition-[left,top,opacity] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          style={{ left: `${venstre}%`, top: topp, bottom: 4, opacity: vis ? 0.7 : 0, background: farge }}
+        />
+        <span
+          className="absolute flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[3px] border-[var(--spill-flate)] transition-[left,top,opacity] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          style={{ left: `${venstre}%`, top: topp, opacity: vis ? 1 : 0, background: farge, boxShadow: `0 0 0 4px ${farge}40, 0 0 18px ${farge}` }}
         />
       </div>
-      <div className="relative h-4 font-mono text-[10px] text-neutral-400">
+      <div className="relative mt-1.5 h-4 text-[11px] font-medium text-neutral-400">
         {merker.map((m) => (
-          <span key={m.x} className="absolute -translate-x-1/2 whitespace-nowrap" style={{ left: `${plass[m.x]}%` }}>
+          <span key={m.x} className="absolute -translate-x-1/2 whitespace-nowrap" style={{ left: `${kurveX(m.x)}%` }}>
             {m.tekst}
           </span>
         ))}
       </div>
+    </div>
+  )
+}
+
+/** One of the two big numbers under the question: the answer or the guess. */
+function Tall({ etikett, children, enhet }: { etikett: string; children: React.ReactNode; enhet: string }) {
+  return (
+    <div className="min-w-0">
+      <p className="text-[13px] text-neutral-500">{etikett}</p>
+      <p className="mt-1 flex flex-wrap items-baseline gap-x-1.5 leading-none">
+        <span className="whitespace-nowrap text-[clamp(1.45rem,6.6vw,2.25rem)] font-bold tracking-[-0.02em] text-neutral-950 tabular-nums">{children}</span>
+        {enhet ? <span className="text-sm font-medium text-neutral-500">{enhet}</span> : null}
+      </p>
     </div>
   )
 }
@@ -203,21 +313,23 @@ function Statistikk() {
   const snitt = ferdige.length ? ferdige.reduce((s, r) => s + (r.poeng ?? 0), 0) / ferdige.length : 0
   const tall = [
     { navn: "Spilt", verdi: String(ferdige.length) },
-    { navn: "Snitt", verdi: Math.round(snitt).toLocaleString("nb-NO") },
-    { navn: "Beste", verdi: String(Math.max(0, ...ferdige.map((r) => r.poeng ?? 0))) },
+    { navn: "Snitt", verdi: formaterPoeng(snitt) },
+    { navn: "Beste", verdi: formaterPoeng(Math.max(0, ...ferdige.map((r) => r.poeng ?? 0))) },
     { navn: "På rad", verdi: String(streak(resultater, iDagOslo())) },
   ]
   return (
     <dl className="grid grid-cols-4 gap-1 text-center">
       {tall.map((t) => (
-        <div key={t.navn} className="min-w-0">
-          <dd className="truncate text-sm font-semibold tabular-nums text-neutral-950">{t.verdi}</dd>
-          <dt className="font-mono text-[10px] uppercase tracking-wider text-neutral-400">{t.navn}</dt>
+        <div key={t.navn} className="flex min-w-0 flex-col-reverse">
+          <dt className="mt-1 text-[11px] font-medium text-neutral-400">{t.navn}</dt>
+          <dd className="truncate text-lg font-semibold tabular-nums text-neutral-950">{t.verdi}</dd>
         </div>
       ))}
     </dl>
   )
 }
+
+const erSletting = (type: string | undefined) => type === "deleteContentBackward" || type === "deleteContentForward"
 
 export function Gjettelos({ dato, sporsmal, repris = false }: { dato: string; sporsmal: SporsmalVisning[]; repris?: boolean }) {
   const { verdi: t, lastet, oppdater } = useDagligTilstand<Tilstand>("gjettelos", dato, tom)
@@ -229,6 +341,9 @@ export function Gjettelos({ dato, sporsmal, repris = false }: { dato: string; sp
   const [talt, setTalt] = useState(false)
   const felt = useRef<HTMLInputElement>(null)
   const handling = useRef<HTMLDivElement>(null)
+  // Where the caret goes once the grouped text is in the field. A new object every keystroke, so the effect
+  // runs even when grouping gives back the text that was already there.
+  const [markor, setMarkor] = useState<{ pos: number } | null>(null)
 
   const ferdig = t.resultat.status !== "pagar"
   const visNr = t.videre < t.svar.length ? t.videre : null
@@ -236,6 +351,34 @@ export function Gjettelos({ dato, sporsmal, repris = false }: { dato: string; sp
   const s = sporsmal[visNr ?? nr]
   const tolket = tolkGjett(tekst, s.aarstall)
   const oppsummering = ferdig && visNr === null
+
+  useLayoutEffect(() => {
+    if (markor && felt.current && document.activeElement === felt.current) felt.current.setSelectionRange(markor.pos, markor.pos)
+  }, [markor])
+
+  const skriv = (e: ChangeEvent<HTMLInputElement>) => {
+    setMelding(null)
+    let verdi = e.target.value
+    if (s.aarstall) {
+      setTekst(verdi)
+      return
+    }
+    let pos = e.target.selectionStart ?? verdi.length
+    // Deleting just a thousand separator would come straight back with the grouping: take the digit beside it.
+    const type = (e.nativeEvent as InputEvent).inputType
+    if (erSletting(type) && tekst[pos] === SKILLE && verdi === tekst.slice(0, pos) + tekst.slice(pos + 1)) {
+      const bak = type === "deleteContentBackward"
+      let i = bak ? pos - 1 : pos
+      while (i >= 0 && i < verdi.length && /\s/.test(verdi[i])) i += bak ? -1 : 1
+      if (i >= 0 && i < verdi.length) {
+        verdi = verdi.slice(0, i) + verdi.slice(i + 1)
+        pos = bak ? i : pos
+      }
+    }
+    const gruppert = grupperInndata(verdi)
+    setTekst(gruppert)
+    setMarkor({ pos: markorEtterGruppering(gruppert, verdi.slice(0, pos)) })
+  }
 
   const send = async () => {
     if (opptatt || visNr !== null || ferdig) return
@@ -258,7 +401,10 @@ export function Gjettelos({ dato, sporsmal, repris = false }: { dato: string; sp
         return {
           ...x,
           svar,
-          resultat: svar.length < ANTALL ? { status: "pagar", etikett: `${svar.length}/${ANTALL} svar` } : { status: "ferdig", etikett: `${poeng}/${MAKS_SUM}`, poeng },
+          resultat:
+            svar.length < ANTALL
+              ? { status: "pagar", etikett: `${svar.length}/${ANTALL} svar` }
+              : { status: "ferdig", etikett: `${formaterPoeng(poeng)}/${MAKS_SUM}`, poeng },
         }
       })
       setTekst("")
@@ -280,9 +426,9 @@ export function Gjettelos({ dato, sporsmal, repris = false }: { dato: string; sp
     const svar = visNr !== null ? t.svar[visNr] : undefined
     if (!svar || fersk !== visNr) return
     const p = svar.f.poeng
-    if (p >= 90) lyder.seier()
-    else if (p >= 65) lyder.riktig()
-    else if (p >= 35) lyder.naer(p / 100)
+    if (p >= 85) lyder.seier()
+    else if (p >= 60) lyder.riktig()
+    else if (p >= 30) lyder.naer(p / 100)
     else lyder.feil()
   }
 
@@ -295,189 +441,210 @@ export function Gjettelos({ dato, sporsmal, repris = false }: { dato: string; sp
     if (visNr !== null && (talt || fersk !== visNr)) handling.current?.querySelector("button")?.focus({ preventScroll: true })
   }, [talt, visNr, fersk])
 
-  if (!lastet) return <div key="laster" className="h-96 animate-pulse rounded-3xl bg-white/5" />
-
-  const total = sum(t.svar)
+  if (!lastet) return <div key="laster" className={`${skrift.className} h-[30rem] animate-pulse rounded-[28px] bg-white/5`} />
 
   if (oppsummering) return <Oppsummering dato={dato} sporsmal={sporsmal} svar={t.svar} />
 
+  const total = sum(t.svar)
+  const aktivNr = visNr ?? nr
   const vist = visNr !== null ? t.svar[visNr] : null
   const animer = vist !== null && fersk === visNr
   const ferdigVist = vist !== null && (!animer || talt)
   const trinn = vist ? poengTrinn(vist.f.poeng) : null
+  // The running score in the card counts this answer only once it has landed.
+  const lopende = vist && !ferdigVist ? summer([total, -vist.f.poeng]) : total
+  // The other way of writing what was typed: "1 500 000" reads as "1,5 mill." and "1,5 mill" as "1 500 000".
+  const annenForm =
+    tolket === null || s.aarstall ? null : /[a-zæøå]/i.test(tekst) ? formaterFullt(tolket) : formaterTall(tolket)
+  const visAnnenForm = annenForm !== null && annenForm.replace(/\s/g, "") !== tekst.replace(/\s/g, "")
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className={`${skrift.className} flex flex-col gap-3`}>
       <p role="status" aria-live="polite" className="sr-only">
-        {vist ? `Fasit: ${medEnhet(vist.f.fasit, s)}. Du gjettet ${medEnhet(vist.g, s)}. ${vist.f.poeng} poeng.` : ""}
+        {vist ? `Fasit: ${medEnhet(vist.f.fasit, s)}. Du gjettet ${medEnhet(vist.g, s)}. ${formaterPoeng(vist.f.poeng)} poeng.` : ""}
       </p>
 
-      <Kort className="flex items-center gap-4 px-4 py-3">
-        <Fremdrift svar={t.svar} aktiv={visNr ?? nr} />
-        <p className="shrink-0 text-right font-mono text-sm font-semibold tabular-nums text-neutral-950">
-          {total}
-          <span className="text-neutral-400">/{MAKS_SUM}</span>
-        </p>
-      </Kort>
+      <Kategorirad sporsmal={sporsmal} svar={t.svar} aktiv={aktivNr} total={vist && !ferdigVist ? lopende : total} />
 
-      <Kort key={`${visNr ?? nr}-${vist ? "svar" : "sporsmal"}`} className="mel-inn p-5">
-        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-          <KategoriMerke s={s} />
-          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-neutral-400">
-            {(visNr ?? nr) + 1} av {ANTALL}
-            {repris ? " · Repris" : ""}
-          </p>
-        </div>
-        <h2 className="mt-3 font-[family-name:var(--font-visning)] text-[1.35rem] leading-snug font-extrabold tracking-[-0.03em] text-neutral-950 sm:text-[1.5rem]">
-          {s.tekst}
-        </h2>
+      {vist ? (
+        <>
+          <section
+            key={`${aktivNr}-svar`}
+            className={`${FLATE} mel-inn relative overflow-hidden p-5 sm:p-6`}
+            style={{ backgroundImage: ferdigVist ? `radial-gradient(120% 70% at 0% 0%, ${trinn!.farge}2e, transparent 70%)` : undefined }}
+          >
+            <Topplinje s={s} nr={aktivNr} total={lopende} repris={repris} />
 
-        {vist ? (
-          <div className="mt-5 space-y-4">
-            <div className="flex items-end justify-between gap-4">
-              <div className="min-w-0">
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">Fasit{vist.f.ca ? " (ca.)" : ""}</p>
-                <p className="mt-1 text-3xl font-semibold tabular-nums tracking-tight text-neutral-950 sm:text-4xl">
-                  <Teller verdi={vist.f.fasit} aarstall={s.aarstall} animer={animer} onFerdig={landet} />
+            <div className="mt-5 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-[13px] text-neutral-500">Dine poeng</p>
+                <p
+                  className={`mt-1 text-[clamp(3.5rem,17vw,4.75rem)] leading-[0.9] font-bold tracking-[-0.04em] tabular-nums transition duration-300 ${ferdigVist ? "mel-pop opacity-100" : "opacity-0"}`}
+                  style={{ color: trinn!.farge }}
+                >
+                  {formaterPoeng(vist.f.poeng)}
                 </p>
-                {enhetTekst(s) ? <p className="text-sm text-neutral-500">{enhetTekst(s)}</p> : null}
               </div>
-              <div
-                className={`flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-2xl text-[#0b1016] transition duration-300 ${ferdigVist ? "mel-pop opacity-100" : "scale-75 opacity-0"}`}
-                style={{ background: trinn!.farge }}
-              >
-                <span className="text-2xl leading-none font-bold tabular-nums">{vist.f.poeng}</span>
-                <span className="mt-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider opacity-70">poeng</span>
+              <div className={`pb-1 text-right transition-opacity duration-300 ${ferdigVist ? "opacity-100" : "opacity-0"}`}>
+                <p className="text-[17px] leading-tight font-semibold text-neutral-950">{avvik(vist.g, vist.f.fasit, s.aarstall)}</p>
+                <p className="mt-1 text-[13px] text-neutral-500">{trinn!.ord}</p>
               </div>
             </div>
 
-            <Maaler gjett={vist.g} fasit={vist.f.fasit} aarstall={s.aarstall} vis={ferdigVist} />
+            <div className="mt-6">
+              <p className="text-[13px] font-semibold text-neutral-800">
+                {nummer(aktivNr)} Spørsmål{repris ? <span className="font-normal text-neutral-400"> · repris</span> : null}
+              </p>
+              <h2 className="mt-1 text-[1.05rem] leading-snug font-medium text-neutral-800">{s.tekst}</h2>
+            </div>
 
-            <p className="text-sm text-neutral-700">
-              Du gjettet <span className="font-semibold tabular-nums text-neutral-950">{medEnhet(vist.g, s)}</span>
-              <span className="text-neutral-500"> · {avvik(vist.g, vist.f.fasit, s.aarstall)}</span>
-              {ferdigVist ? <span className="text-neutral-500"> · {trinn!.ord}</span> : null}
-            </p>
-            {vist.f.info ? <p className="text-sm leading-6 text-neutral-600">{vist.f.info}</p> : null}
-            <p className="font-mono text-[10px] leading-4 text-neutral-400">
+            <div className="mt-5 grid grid-cols-2 gap-4 border-t border-white/[0.07] pt-4">
+              <Tall etikett={vist.f.ca ? "Fasit (ca.)" : "Fasit"} enhet={enhetTekst(s)}>
+                <Teller verdi={vist.f.fasit} aarstall={s.aarstall} animer={animer} onFerdig={landet} />
+              </Tall>
+              <Tall etikett="Ditt svar" enhet={enhetTekst(s)}>
+                {formaterTall(vist.g, s.aarstall)}
+              </Tall>
+            </div>
+
+            <div className="mt-6">
+              <Kurve gjett={vist.g} fasit={vist.f.fasit} aarstall={s.aarstall} farge={trinn!.farge} vis={ferdigVist} />
+            </div>
+
+            {vist.f.info ? <p className="mt-5 text-sm leading-6 text-neutral-700">{vist.f.info}</p> : null}
+            <p className="mt-3 text-[11px] leading-4 text-neutral-400">
               Kilde: <Kilde kilde={vist.f.kilde} />
               {vist.f.per ? ` · per ${vist.f.per}` : ""}
             </p>
-            <div ref={handling} className="flex justify-end">
-              <Knapp onClick={videre} className="min-w-36">
-                {t.svar.length >= ANTALL ? "Se resultatet" : "Neste"}
-              </Knapp>
-            </div>
+          </section>
+          <div ref={handling}>
+            <button type="button" onClick={videre} className={STOR_KNAPP}>
+              {t.svar.length >= ANTALL ? "Se resultatet" : "Neste spørsmål"}
+            </button>
           </div>
-        ) : (
-          <form
-            className="mt-5 space-y-3"
-            onSubmit={(e) => {
-              e.preventDefault()
-              void send()
-            }}
-          >
-            <label className="flex h-14 items-center gap-2 rounded-2xl border border-black/10 bg-neutral-50 px-4 transition focus-within:border-[#818cf8]">
+        </>
+      ) : (
+        <form
+          className="flex flex-col gap-3"
+          onSubmit={(e) => {
+            e.preventDefault()
+            void send()
+          }}
+        >
+          <section key={`${aktivNr}-sporsmal`} className={`${FLATE} mel-inn p-5 sm:p-6`}>
+            <Topplinje s={s} nr={aktivNr} total={total} repris={repris} />
+            <p className="mt-6 text-[13px] font-semibold text-neutral-800">
+              {nummer(aktivNr)} Spørsmål{repris ? <span className="font-normal text-neutral-400"> · repris</span> : null}
+            </p>
+            <h2 className="mt-1.5 text-[clamp(1.4rem,6vw,1.75rem)] leading-[1.2] font-semibold tracking-[-0.015em] text-neutral-950">{s.tekst}</h2>
+
+            <label className="mt-6 flex h-16 items-center gap-3 rounded-2xl border border-white/10 bg-[rgb(0_0_0/0.24)] px-4 transition focus-within:border-white/35 focus-within:bg-[rgb(0_0_0/0.34)]">
               <input
                 ref={felt}
                 value={tekst}
-                onChange={(e) => {
-                  setTekst(e.target.value)
-                  setMelding(null)
-                }}
+                onChange={skriv}
                 maxLength={40}
                 inputMode={s.aarstall ? "numeric" : "decimal"}
                 autoComplete="off"
                 autoCorrect="off"
                 spellCheck={false}
                 enterKeyHint="go"
-                placeholder={s.aarstall ? "Årstall" : "Ditt anslag"}
-                aria-label={s.aarstall ? "Årstall" : `Ditt anslag i ${s.enhet}`}
-                className="h-full min-w-0 flex-1 bg-transparent text-xl font-semibold tabular-nums text-neutral-950 outline-none placeholder:font-normal placeholder:text-neutral-400"
+                placeholder={s.aarstall ? "Årstall" : "Ditt svar"}
+                aria-label={s.aarstall ? "Årstall" : `Ditt svar i ${s.enhet}`}
+                className="h-full min-w-0 flex-1 bg-transparent text-[1.75rem] font-semibold tracking-[-0.01em] text-neutral-950 tabular-nums outline-none placeholder:text-xl placeholder:font-normal placeholder:text-neutral-400"
               />
-              {enhetTekst(s) ? <span className="shrink-0 text-sm text-neutral-500">{enhetTekst(s)}</span> : null}
+              {enhetTekst(s) ? <span className="max-w-[40%] shrink-0 truncate text-sm font-medium text-neutral-500">{enhetTekst(s)}</span> : null}
             </label>
 
-            <div className="flex min-h-9 flex-wrap items-center gap-2">
-              <p className="ml-auto min-w-0 truncate font-mono text-[11px] tabular-nums text-neutral-500" aria-live="polite">
-                {tekst.trim() && tolket !== null ? `= ${medEnhet(tolket, s)}` : ""}
-              </p>
-            </div>
-
-            {melding ? <p className="font-mono text-[11px] text-rose-500">{melding}</p> : null}
-
-            <button
-              type="submit"
-              disabled={opptatt || !tekst.trim()}
-              className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#818cf8] text-sm font-semibold text-[#0b1016] transition hover:bg-[#a5b4fc] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              {opptatt ? "Sjekker …" : "Gjett"}
-            </button>
-            {t.svar.length === 0 ? (
-              <p className="text-center font-mono text-[10px] text-neutral-400">Opptil 100 poeng per spørsmål. Halvparten eller dobbelt gir 50.</p>
-            ) : null}
-          </form>
-        )}
-      </Kort>
+            <p className="mt-2 min-h-5 text-[13px] tabular-nums" aria-live="polite">
+              {melding ? (
+                <span className="text-rose-400">{melding}</span>
+              ) : visAnnenForm ? (
+                <span className="text-neutral-500">
+                  = {annenForm} {enhetTekst(s)}
+                </span>
+              ) : t.svar.length === 0 && !tekst ? (
+                <span className="text-neutral-400">Blink gir 100 poeng, dobbelt eller halvparten 74,6, og 50× bom 0.</span>
+              ) : null}
+            </p>
+          </section>
+          <button type="submit" disabled={opptatt || !tekst.trim()} className={STOR_KNAPP}>
+            {opptatt ? "Sjekker …" : "Gjett"}
+          </button>
+        </form>
+      )}
     </div>
   )
 }
 
 function Oppsummering({ dato, sporsmal, svar }: { dato: string; sporsmal: SporsmalVisning[]; svar: Svar[] }) {
   const total = sum(svar)
+  const snitt = poengTrinn(total / ANTALL)
   const omtale =
     total >= 450 ? "Utrolig treffsikkert." : total >= 380 ? "Sterkt anslått!" : total >= 300 ? "Godt gjettet." : total >= 200 ? "Ikke verst." : "Tallene var vriene i dag."
   const delTekst = [
-    `Gjetteløs · ${formaterDato(dato, "kort")} · ${total}/${MAKS_SUM}`,
+    `Gjetteløs · ${formaterDato(dato, "kort")} · ${formaterPoeng(total)}/${MAKS_SUM}`,
     svar.map((x) => poengTrinn(x.f.poeng).emoji).join(""),
-    svar.map((x) => x.f.poeng).join(" · "),
+    svar.map((x) => formaterPoeng(x.f.poeng)).join(" · "),
     "thodh.com/spill/gjettelos",
   ].join("\n")
 
   return (
-    <div className="mel-inn flex flex-col gap-3">
-      <Kort className="px-5 py-6 text-center">
-        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-neutral-400">Dagens resultat</p>
-        <p className="mt-2 text-6xl font-semibold tabular-nums tracking-tight text-neutral-950">
-          {total}
-          <span className="text-2xl text-neutral-400">/{MAKS_SUM}</span>
+    <div className={`${skrift.className} mel-inn flex flex-col gap-3`}>
+      <section
+        className={`${FLATE} px-5 pt-5 pb-6 text-center`}
+        style={{ backgroundImage: `radial-gradient(110% 80% at 50% 0%, ${snitt.farge}26, transparent 70%)` }}
+      >
+        <p className="text-[13px] font-medium text-neutral-500">Dagens resultat · {formaterDato(dato, "kort")}</p>
+        <p className="mt-3 leading-none">
+          <span className="text-[clamp(4rem,20vw,5.5rem)] font-bold tracking-[-0.045em] tabular-nums" style={{ color: snitt.farge }}>
+            {formaterPoeng(total)}
+          </span>
+          <span className="ml-1 text-2xl font-semibold text-neutral-400">/{MAKS_SUM}</span>
         </p>
-        <p className="mt-2 text-sm text-neutral-500">{omtale}</p>
+        <p className="mt-3 text-[15px] text-neutral-700">{omtale}</p>
         <p className="mt-3 text-lg tracking-[0.2em]" aria-hidden="true">
           {svar.map((x) => poengTrinn(x.f.poeng).emoji).join("")}
         </p>
         <div className="mt-4 flex justify-center">
           <DelKnapp tekst={delTekst} />
         </div>
-      </Kort>
-      <Kort className="px-4 py-3">
+      </section>
+      <section className={`${FLATE} px-4 py-4`}>
         <Statistikk />
-      </Kort>
-      <ul className="flex flex-col gap-1.5">
+      </section>
+      <ul className="flex flex-col gap-2">
         {svar.map((x, i) => {
           const s = sporsmal[i]
           const trinn = poengTrinn(x.f.poeng)
           return (
-            <li key={i} className="rounded-2xl border border-black/5 bg-[var(--spill-flate)] px-4 py-3">
-              <div className="flex items-start gap-3">
-                <div className="min-w-0 flex-1">
-                  <KategoriMerke s={s} />
-                  <p className="mt-1 text-sm font-medium text-neutral-900">{s.tekst}</p>
-                  <p className="mt-1 text-sm text-neutral-500">
-                    Fasit <span className="font-semibold tabular-nums text-neutral-900">{x.f.ca ? "ca. " : ""}{medEnhet(x.f.fasit, s)}</span>
-                    <span className="block sm:inline">
-                      <span className="max-sm:hidden"> · </span>du: <span className="tabular-nums">{medEnhet(x.g, s)}</span>
-                    </span>
-                  </p>
-                  <p className="mt-1 font-mono text-[10px] text-neutral-400">
-                    Kilde: <Kilde kilde={x.f.kilde} />
-                    {x.f.per ? ` · per ${x.f.per}` : ""}
-                  </p>
-                </div>
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-bold tabular-nums text-[#0b1016]" style={{ background: trinn.farge }}>
-                  {x.f.poeng}
-                </span>
+            <li key={i} className="flex items-start gap-3 rounded-[22px] border border-white/[0.06] bg-[var(--spill-flate)] px-4 py-3.5">
+              <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/[0.05] text-neutral-700">
+                <KategoriIkon kategori={s.kategori} className="h-4 w-4" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-[12px] text-neutral-500">
+                  {nummer(i)} · {kategoriInfo(s.kategori).navn}
+                </p>
+                <p className="mt-0.5 text-sm leading-snug font-medium text-neutral-900">{s.tekst}</p>
+                <p className="mt-1.5 text-[13px] text-neutral-500">
+                  Fasit{" "}
+                  <span className="font-semibold tabular-nums text-neutral-900">
+                    {x.f.ca ? "ca. " : ""}
+                    {medEnhet(x.f.fasit, s)}
+                  </span>
+                  <span className="block sm:inline">
+                    <span className="max-sm:hidden"> · </span>Ditt svar <span className="tabular-nums text-neutral-700">{medEnhet(x.g, s)}</span>
+                  </span>
+                </p>
+                <p className="mt-1 text-[11px] text-neutral-400">
+                  {avvik(x.g, x.f.fasit, s.aarstall)} · Kilde: <Kilde kilde={x.f.kilde} />
+                  {x.f.per ? ` · per ${x.f.per}` : ""}
+                </p>
               </div>
+              <span className="shrink-0 pt-0.5 text-xl font-bold tabular-nums tracking-[-0.02em]" style={{ color: trinn.farge }}>
+                {formaterPoeng(x.f.poeng)}
+              </span>
             </li>
           )
         })}
