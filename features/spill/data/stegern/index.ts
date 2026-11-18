@@ -11,7 +11,19 @@ import { dager10 } from "./dager-10"
 import { dager11 } from "./dager-11"
 import { dager12 } from "./dager-12"
 import { dager13 } from "./dager-13"
+import { dager14 } from "./dager-14"
+import { dager15 } from "./dager-15"
+import { dager16 } from "./dager-16"
+import { dager17 } from "./dager-17"
+import { dager18 } from "./dager-18"
+import { dager19 } from "./dager-19"
+import { dager20 } from "./dager-20"
+import { dager21 } from "./dager-21"
+import { dager22 } from "./dager-22"
+import { dager23 } from "./dager-23"
+import { dager24 } from "./dager-24"
+import { dager25 } from "./dager-25"
 import type { StegernDag } from "./typer"
 
 /** Every day in order from the start date. Add new days at the end so earlier days keep their prompts. */
-export const stegernDager: StegernDag[] = [...dager1, ...dager2, ...dager3, ...dager4, ...dager5, ...dager6, ...dager7, ...dager8, ...dager9, ...dager10, ...dager11, ...dager12, ...dager13]
+export const stegernDager: StegernDag[] = [...dager1, ...dager2, ...dager3, ...dager4, ...dager5, ...dager6, ...dager7, ...dager8, ...dager9, ...dager10, ...dager11, ...dager12, ...dager13, ...dager14, ...dager15, ...dager16, ...dager17, ...dager18, ...dager19, ...dager20, ...dager21, ...dager22, ...dager23, ...dager24, ...dager25]
