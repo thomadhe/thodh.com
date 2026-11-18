@@ -191,7 +191,7 @@ export function lesStatus(x: unknown): Status | null {
   if (!Array.isArray(sporsmal) || sporsmal.length > NORMALE || !Array.isArray(frister) || frister.length > NORMALE) return null
   const sp: DuellSporsmal[] = []
   for (const s of sporsmal) {
-    if (!erObjekt(s) || !erTekst(s.dato, 10) || !erHeltall(s.nr, 0, NORMALE - 1) || !erTekst(s.tekst, 200)) return null
+    if (!erObjekt(s) || !erTekst(s.dato, 10) || !erHeltall(s.nr, 0, 9999) || !erTekst(s.tekst, 200)) return null
     sp.push({ dato: s.dato, nr: s.nr, tekst: s.tekst })
   }
   if ((fase === "sporsmal" || fase === "visning" || (fase === "slutt" && modus === "runder")) && sp.length !== NORMALE) return null

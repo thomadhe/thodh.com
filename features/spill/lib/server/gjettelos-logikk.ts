@@ -2,6 +2,7 @@
 // import it; only server code (./gjettelos.ts) uses it.
 
 import { gjettelosSporsmal } from "../../data/gjettelos"
+import { gjettelosDuellBank } from "../../data/gjettelos-duell"
 import { gjettelosPlan } from "../../data/gjettelos/plan"
 import type { GjSporsmal } from "../../data/gjettelos/typer"
 import { dagNummer, erGyldigDato, iDagOslo, iRotasjon, leggTilDager } from "../dag"
@@ -72,9 +73,17 @@ export function vurder(dato: string, nr: number, gjett: number): Fasit {
 /** Days ahead whose questions a duel never uses, so a duel cannot spoil them if the plan or the bank repeats. */
 export const GJ_DUELL_SPERRE_DAGER = 14
 
+/** Questions of the duel bank are addressed with this in place of a date; `nr` is then the index in the bank. */
+export const GJ_BANK = "bank"
+
+/** A duel question by its address: a bank question, or question `nr` of an earlier day. */
+function duellSporsmalFor(dato: string, nr: number) {
+  return dato === GJ_BANK ? gjettelosDuellBank[nr] : dagFor(dato)[nr]
+}
+
 /**
- * The questions a duel may ask: every question played on a day before today, once (from its latest date), and never
- * one that is scheduled today or within GJ_DUELL_SPERRE_DAGER days.
+ * The questions a duel may ask: the whole duel bank, and every question played on a day before today, once (from its
+ * latest date), never one that is scheduled today or within GJ_DUELL_SPERRE_DAGER days.
  */
 export function gjettelosDuellPulje(iDag = iDagOslo()): { dato: string; nr: number }[] {
   const sperret = new Set<string>()
@@ -88,7 +97,8 @@ export function gjettelosDuellPulje(iDag = iDagOslo()): { dato: string; nr: numb
       ut.push({ dato: d, nr })
     })
   }
-  return ut.reverse()
+  // The duel bank, which the daily game never plays, comes first.
+  return [...gjettelosDuellBank.map((_, nr) => ({ dato: GJ_BANK, nr })), ...ut.reverse()]
 }
 
 export type GjDuellSporsmal = SporsmalVisning & { dato: string; nr: number }
@@ -106,13 +116,14 @@ export function gjettelosDuellSporsmal(kode: string, runde: number, iDag = iDagO
     if (!valgt.some((v) => v.dato === p.dato && v.nr === p.nr)) valgt.push(p)
   }
   return valgt.map(({ dato, nr }) => {
-    const s = dagFor(dato)[nr]
+    const s = duellSporsmalFor(dato, nr)
     return { dato, nr, tekst: s.tekst, enhet: s.enhet, kategori: s.kategori, aarstall: s.aarstall }
   })
 }
 
 /** Whether a duel may use question `nr` of `dato` now. Yesterday's pool counts too, for a round begun before midnight. */
 export function erGjettelosDuellSporsmal(dato: string, nr: number, iDag = iDagOslo()) {
+  if (dato === GJ_BANK) return Number.isInteger(nr) && nr >= 0 && nr < gjettelosDuellBank.length
   const finnes = (pulje: { dato: string; nr: number }[]) => pulje.some((p) => p.dato === dato && p.nr === nr)
   return finnes(gjettelosDuellPulje(iDag)) || finnes(gjettelosDuellPulje(leggTilDager(iDag, -1)))
 }
@@ -126,7 +137,7 @@ export function gjettelosDuellStempel(p: DuellRef & { id: string; gjett: number 
 
 /** The answer to a duel question, signed, for the host to share once the question has closed. */
 export function gjettelosDuellFasit(p: DuellRef) {
-  const s = dagFor(p.dato)[p.nr]
+  const s = duellSporsmalFor(p.dato, p.nr)
   return signerDom({
     s: "gjettelos-fasit",
     k: p.kode,

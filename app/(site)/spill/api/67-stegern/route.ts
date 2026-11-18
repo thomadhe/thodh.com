@@ -33,8 +33,9 @@ const foresporsel = z.discriminatedUnion("type", [
     runde: z.number().int().min(0).max(999),
     // The question in the round; in Startpistolen the prompt's running number, which keeps growing.
     i: z.number().int().min(0).max(100_000),
-    dato: z.string(),
-    nr: z.number().int().min(0).max(4),
+    // A prompt of an earlier day, or with dato "bank" an index in the duel bank.
+    dato: z.string().max(10),
+    nr: z.number().int().min(0).max(9999),
     id: z.string().min(1).max(40),
     svar: tekst,
   }),

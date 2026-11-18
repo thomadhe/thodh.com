@@ -3,6 +3,7 @@
 
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto"
 import { stegernDager } from "../../data/stegern"
+import { stegernDuellBank } from "../../data/stegern-duell"
 import type { StegernDag, StegernSporsmal } from "../../data/stegern/typer"
 import { dagNummer, erGyldigDato, iDagOslo, iRotasjon, leggTilDager, tilfeldig } from "../dag"
 import { land, omrader, type Kontinent } from "../geografi"
@@ -404,26 +405,44 @@ export function duellDager(iDag = iDagOslo()) {
 
 export type DuellSporsmal = { dato: string; nr: number; tekst: string }
 
+/** Prompts of the duel bank are addressed with this in place of a date; `nr` is then the index in the bank. */
+export const BANK = "bank"
+
+/** A duel prompt by its address: a bank prompt, or prompt `nr` of an earlier day. */
+function duellOppgaveFor(dato: string, nr: number): StegernSporsmal {
+  return dato === BANK ? stegernDuellBank[nr] : dagFor(dato).sporsmal[nr]
+}
+
 /**
- * The five prompts for round `runde` of the duel in room `kode`. Each round walks on through a shuffle of the
- * past days, one prompt per day, and every pass through the days takes a different prompt from each, so a room
- * sees every prompt once before any comes back. Answers are judged by date and number, as on the daily page.
+ * Every prompt a duel may use now: the whole duel bank, which the daily game never plays, and the five prompts of
+ * each earlier day that duellDager allows.
+ */
+export function duellPulje(iDag = iDagOslo()): { dato: string; nr: number }[] {
+  const bank = stegernDuellBank.map((_, nr) => ({ dato: BANK, nr }))
+  const dager = duellDager(iDag).flatMap((dato) => Array.from({ length: NORMALE }, (_, nr) => ({ dato, nr })))
+  return [...bank, ...dager]
+}
+
+/**
+ * The prompts for round `runde` of the duel in room `kode`. Each round walks on through one shuffle of the pool,
+ * so a room sees every prompt once before any comes back. Answers are judged by address, as on the daily page.
  */
 export function duellSporsmal(kode: string, runde: number, iDag = iDagOslo(), antall = NORMALE): DuellSporsmal[] {
-  const dager = duellDager(iDag)
-  if (!dager.length) return []
+  const pulje = duellPulje(iDag)
+  if (!pulje.length) return []
   const salt = `stegern:duell:${kode}`
-  return Array.from({ length: antall }, (_, i) => {
-    const n = runde * antall + i
-    const dato = iRotasjon(dager, n, salt)
-    const nr = iRotasjon([0, 1, 2, 3, 4], Math.floor(n / dager.length), `${salt}:${dato}`)
-    return { dato, nr, tekst: dagFor(dato).sporsmal[nr].tekst }
+  const n = Math.min(antall, pulje.length)
+  return Array.from({ length: n }, (_, i) => {
+    const { dato, nr } = iRotasjon(pulje, runde * n + i, salt)
+    return { dato, nr, tekst: duellOppgaveFor(dato, nr).tekst }
   })
 }
 
-/** Whether a duel may use prompt `nr` of `dato` now. Yesterday's list counts too, for a round that began before midnight. */
+/** Whether a duel may use this prompt now. Yesterday's list counts too, for a round that began before midnight. */
 export function erDuellSporsmal(dato: string, nr: number, iDag = iDagOslo()) {
-  return Number.isInteger(nr) && nr >= 0 && nr < NORMALE && (duellDager(iDag).includes(dato) || duellDager(leggTilDager(iDag, -1)).includes(dato))
+  if (!Number.isInteger(nr) || nr < 0) return false
+  if (dato === BANK) return nr < stegernDuellBank.length
+  return nr < NORMALE && (duellDager(iDag).includes(dato) || duellDager(leggTilDager(iDag, -1)).includes(dato))
 }
 
 /**
@@ -431,7 +450,7 @@ export function erDuellSporsmal(dato: string, nr: number, iDag = iDagOslo()) {
  * round in which room, and when the server judged it. Other players trust only this, never a tier a client claims.
  */
 export function stegernDuellDom(p: { kode: string; runde: number; i: number; dato: string; nr: number; id: string; svar: string }, na = Date.now()) {
-  const v = vurderSvar(p.dato, p.nr, p.svar)
+  const v = vurderOppgave(oppgave(duellOppgaveFor(p.dato, p.nr)), p.svar)
   const dom = signerDom({ s: "stegern", k: p.kode, r: p.runde, i: p.i, d: p.dato, nr: p.nr, id: p.id, t: p.svar, n: v.nivaa, tr: v.treff, ts: na })
   return { dom, vurdering: v }
 }

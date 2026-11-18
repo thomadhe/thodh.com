@@ -19,7 +19,8 @@ const foresporsel = z.object({
 })
 
 const rom = { kode: z.string().refine(erGyldigKode), runde: z.number().int().min(0).max(999) }
-const sporsmal = { ...rom, i: z.number().int().min(0).max(ANTALL - 1), dato: z.string(), nr: z.number().int().min(0).max(ANTALL - 1) }
+// `nr` is a question of an earlier day, or with dato "bank" an index in the duel bank.
+const sporsmal = { ...rom, i: z.number().int().min(0).max(ANTALL - 1), dato: z.string().max(10), nr: z.number().int().min(0).max(9999) }
 const duell = z.discriminatedUnion("type", [
   // The questions for one round of a duel, from earlier days only, without their answers.
   z.object({ type: z.literal("duell"), ...rom }),

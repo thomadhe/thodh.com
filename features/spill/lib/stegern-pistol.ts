@@ -233,7 +233,7 @@ export function lesPistol(x: unknown, deltakere: Deltaker[]): Pistol | null {
   if (x.sporsmal.length < 1 || x.sporsmal.length > 40) return null
   const sporsmal: PistolSporsmal[] = []
   for (const s of x.sporsmal) {
-    if (!erObjekt(s) || !erTekst(s.dato, 10) || !erHeltall(s.nr, 0, 4) || !erTekst(s.tekst, 200)) return null
+    if (!erObjekt(s) || !erTekst(s.dato, 10) || !erHeltall(s.nr, 0, 9999) || !erTekst(s.tekst, 200)) return null
     sporsmal.push({ dato: s.dato, nr: s.nr, tekst: s.tekst })
   }
   const ider = new Set(deltakere.map((d) => d.id))

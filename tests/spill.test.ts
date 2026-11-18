@@ -51,7 +51,9 @@ import {
   dagensSporsmal,
   dagFor,
   DUELL_SPERRE_DAGER,
+  BANK,
   duellDager,
+  duellPulje,
   duellSporsmal,
   erGjentatt,
   erRepris,
@@ -116,10 +118,13 @@ import { iTide, plasser, SLINGRING_MS } from "../features/spill/lib/duell/rom"
 import { apne } from "../features/spill/lib/duell/signatur"
 import { erSignert, offentligNokkel, signer } from "../features/spill/lib/server/duell-signatur"
 import { erDuellSporsmal, stegernDuellDom } from "../features/spill/lib/server/stegern-logikk"
+import { stegernDuellBank } from "../features/spill/data/stegern-duell"
+import { gjettelosDuellBank } from "../features/spill/data/gjettelos-duell"
 import {
   erGjettelosDuellSporsmal,
   GJ_DUELL_SPERRE_DAGER,
   gjettelosDuellFasit,
+  GJ_BANK,
   gjettelosDuellPulje,
   gjettelosDuellSporsmal,
   gjettelosDuellStempel,
@@ -884,34 +889,36 @@ test("6/7-stegern duell: verten er den som har vært lengst i rommet", () => {
   assert.ok(!deltakere.some((d) => d.id === "s6"), "den sjuende venter til neste runde")
 })
 
-test("6/7-stegern duell: spørsmål bare fra tidligere dager", () => {
+test("6/7-stegern duell: duellbanken og tidligere dager, aldri dagens eller kommende", () => {
   const iDag = "2026-11-17"
   const tidligere = duellDager(iDag)
   assert.equal(tidligere.length, 15)
   assert.ok(tidligere.every((d) => d >= STEGERN_START && d < iDag))
-  const runder = Array.from({ length: 15 }, (_, r) => duellSporsmal("BCDF", r, iDag))
-  for (const runde of runder) {
-    assert.equal(runde.length, NORMALE)
-    // One prompt per day in a round, and the text is the one the daily page would judge.
-    assert.equal(new Set(runde.map((s) => s.dato)).size, NORMALE)
-    for (const s of runde) {
-      assert.ok(s.dato < iDag && s.dato >= STEGERN_START, s.dato)
-      assert.equal(s.tekst, dagFor(s.dato).sporsmal[s.nr].tekst)
-      assert.ok(kanSpillesStegern(s.dato, iDag))
-    }
+  const pulje = duellPulje(iDag)
+  assert.equal(pulje.length, stegernDuellBank.length + tidligere.length * NORMALE)
+  const tekstFor = (q: { dato: string; nr: number }) => (q.dato === BANK ? stegernDuellBank[q.nr].tekst : dagFor(q.dato).sporsmal[q.nr].tekst)
+  const runder = Math.floor(pulje.length / NORMALE)
+  const alle = Array.from({ length: runder }, (_, r) => duellSporsmal("BCDF", r, iDag)).flat()
+  for (const q of alle) {
+    // The text is the one the server judges, and a daily prompt is always from an earlier day.
+    assert.equal(q.tekst, tekstFor(q))
+    if (q.dato !== BANK) assert.ok(q.dato < iDag && q.dato >= STEGERN_START && kanSpillesStegern(q.dato, iDag), q.dato)
+    assert.ok(erDuellSporsmal(q.dato, q.nr, iDag))
   }
-  // The same room and round always get the same prompts; a room sees every prompt once before any repeats.
-  assert.deepEqual(duellSporsmal("BCDF", 3, iDag), runder[3])
-  const alle = runder.flat().map((s) => `${s.dato}:${s.nr}`)
-  assert.equal(new Set(alle).size, 75)
-  assert.notDeepEqual(duellSporsmal("ZXWV", 0, iDag), runder[0])
-  // Never today's or a future day's prompts, also after the bank has started over.
-  for (const dag of [STEGERN_START, leggTilDager(STEGERN_START, 1), leggTilDager(STEGERN_START, 3)]) {
-    assert.ok(duellSporsmal("BCDF", 0, dag).every((s) => s.dato < dag), dag)
+  // A room sees every prompt once before any comes back; the same room and round always get the same prompts.
+  assert.equal(new Set(alle.map((q) => `${q.dato}:${q.nr}`)).size, alle.length)
+  assert.ok(alle.some((q) => q.dato === BANK) && alle.some((q) => q.dato !== BANK))
+  assert.deepEqual(duellSporsmal("BCDF", 3, iDag), alle.slice(3 * NORMALE, 4 * NORMALE))
+  assert.notDeepEqual(duellSporsmal("ZXWV", 0, iDag), duellSporsmal("BCDF", 0, iDag))
+  // Never today's or a future day's prompts; on the first day only the bank.
+  for (const dag of [STEGERN_START, leggTilDager(STEGERN_START, 1), leggTilDager(STEGERN_START, 3), leggTilDager(STEGERN_START, stegernDager.length + 2)]) {
+    for (let r = 0; r < 40; r++) assert.ok(duellSporsmal("BCDF", r, dag).every((q) => q.dato === BANK || q.dato < dag), dag)
   }
-  assert.deepEqual(duellSporsmal("BCDF", 0, STEGERN_START), [])
-  // The first day after the start gives the one past day's five prompts.
-  assert.deepEqual(duellSporsmal("BCDF", 0, leggTilDager(STEGERN_START, 1)).map((s) => s.nr).sort(), [0, 1, 2, 3, 4])
+  assert.ok(duellSporsmal("BCDF", 0, STEGERN_START).every((q) => q.dato === BANK))
+  assert.equal(erDuellSporsmal(BANK, stegernDuellBank.length, iDag), false)
+  assert.equal(erDuellSporsmal(BANK, 0, iDag), true)
+  // Startpistolen asks for more prompts at once.
+  assert.equal(duellSporsmal("BCDF", 0, iDag, 30).length, 30)
   const etterRunde = leggTilDager(STEGERN_START, stegernDager.length + 5)
   const sperret = new Set(Array.from({ length: DUELL_SPERRE_DAGER + 1 }, (_, k) => dagFor(leggTilDager(etterRunde, k))))
   const brukt = duellDager(etterRunde)
@@ -1057,9 +1064,11 @@ test("Gjetteløs duell: spørsmål bare fra tidligere dager, aldri dagens eller 
     const pulje = gjettelosDuellPulje(iDag)
     const sperret = new Set(Array.from({ length: GJ_DUELL_SPERRE_DAGER + 1 }, (_, k) => gjettelosFor(leggTilDager(iDag, k)).map((s) => s.id)).flat())
     assert.ok(pulje.length > 0, iDag)
-    const ider = pulje.map((p) => gjettelosFor(p.dato)[p.nr].id)
+    const dager = pulje.filter((p) => p.dato !== GJ_BANK)
+    assert.equal(pulje.length - dager.length, gjettelosDuellBank.length, `${iDag}: hele duellbanken`)
+    const ider = dager.map((p) => gjettelosFor(p.dato)[p.nr].id)
     assert.equal(new Set(ider).size, ider.length, `${iDag}: hvert spørsmål én gang`)
-    for (const p of pulje) {
+    for (const p of dager) {
       assert.ok(p.dato < iDag && p.dato >= GJETTELOS_START, `${iDag}: ${p.dato}`)
       assert.ok(!sperret.has(gjettelosFor(p.dato)[p.nr].id), `${iDag}: ${p.dato} #${p.nr} kommer snart igjen`)
     }
@@ -1072,11 +1081,13 @@ test("Gjetteløs duell: spørsmål bare fra tidligere dager, aldri dagens eller 
       assert.deepEqual(Object.keys(q).sort(), ["aarstall", "dato", "enhet", "kategori", "nr", "tekst"])
     }
   }
-  assert.deepEqual(gjettelosDuellPulje(GJETTELOS_START), [], "første dag har ingen tidligere dager")
-  assert.deepEqual(gjettelosDuellSporsmal("BCDF", 0, GJETTELOS_START), [])
+  assert.ok(gjettelosDuellPulje(GJETTELOS_START).every((p) => p.dato === GJ_BANK), "første dag: bare duellbanken")
+  assert.equal(gjettelosDuellSporsmal("BCDF", 0, GJETTELOS_START).length, ANTALL)
+  assert.ok(erGjettelosDuellSporsmal(GJ_BANK, gjettelosDuellBank.length - 1, "2026-11-17"))
+  assert.equal(erGjettelosDuellSporsmal(GJ_BANK, gjettelosDuellBank.length, "2026-11-17"), false)
   assert.equal(erGjettelosDuellSporsmal("2026-11-17", 0, "2026-11-17"), false, "aldri dagens")
   // Today (17 November) only the first day has been played.
-  assert.deepEqual(gjettelosDuellPulje("2026-11-17").map((p) => p.dato), Array(5).fill(GJETTELOS_START))
+  assert.deepEqual(gjettelosDuellPulje("2026-11-17").filter((p) => p.dato !== GJ_BANK).map((p) => p.dato), Array(5).fill(GJETTELOS_START))
   // A room sees (nearly) every question once before any comes back, and a round is the same for everyone.
   const iDag = "2026-12-24"
   const runder = Math.floor(gjettelosDuellPulje(iDag).length / ANTALL)
@@ -1252,8 +1263,8 @@ test("Startpistolen: bare holderens signerte, gyldige og nye svar sender pistole
   assert.equal(gjeldende(p).tekst, pistolSporsmal[0].tekst)
   const q = gjeldende(p)
   // Find an accepted answer to the first prompt, and a wrong one.
-  const kandidater = ["pizza", "Kenya", "Alfa", "maur", "Mongolia", "Norge", "rød", "hund", "eple", "Oslo", "fotball", "gitar"]
-  const gyldig = kandidater.find((t) => vurderSvar(q.dato, q.nr, t).nivaa > 0)
+  const kandidater = ["pizza", "Kenya", "Alfa", "maur", "Mongolia", "Norge", "rød", "hund", "eple", "Oslo", "fotball", "gitar", "Mars", "Jupiter"]
+  const gyldig = kandidater.find((t) => stegernDuellDom({ kode: "BCDF", runde: 0, i: 0, dato: q.dato, nr: q.nr, id: "a", svar: t }).vurdering.nivaa > 0)
   assert.ok(gyldig, q.tekst)
   const ok = vurderPistolsvar(apne(pistolDom(p, gyldig, 105_000)), "BCDF", 0, p)
   assert.ok(ok.ok)

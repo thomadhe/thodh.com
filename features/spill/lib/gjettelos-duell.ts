@@ -137,7 +137,7 @@ export function lesGjStatus(x: unknown): GjStatus | null {
   if (!Array.isArray(sporsmal) || sporsmal.length > ANTALL || !Array.isArray(frister) || frister.length > ANTALL || !erObjekt(fasiter)) return null
   const sp: GjDuellSporsmal[] = []
   for (const s of sporsmal) {
-    if (!erObjekt(s) || !erTekst(s.dato, 10) || !erHeltall(s.nr, 0, ANTALL - 1) || !erTekst(s.tekst, 300) || !erTekst(s.enhet, 60) || !erTekst(s.kategori, 40) || typeof s.aarstall !== "boolean") return null
+    if (!erObjekt(s) || !erTekst(s.dato, 10) || !erHeltall(s.nr, 0, 9999) || !erTekst(s.tekst, 300) || !erTekst(s.enhet, 60) || !erTekst(s.kategori, 40) || typeof s.aarstall !== "boolean") return null
     sp.push({ dato: s.dato, nr: s.nr, tekst: s.tekst, enhet: s.enhet, kategori: s.kategori, aarstall: s.aarstall })
   }
   if (fase !== "lobby" && (sp.length < 1 || nr >= sp.length)) return null
