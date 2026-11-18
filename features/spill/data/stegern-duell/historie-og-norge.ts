@@ -88,11 +88,6 @@ export const historieOgNorge = [
     { nei: "Eiffeltårnet, Liseberg, Big Ben, Colosseum, Tivoli" },
   ),
   sp(
-    "Nevn en norsk stavkirke",
-    "Urnes stavkirke/Urnes, Borgund stavkirke/Borgund, Heddal stavkirke/Heddal, Fantoft stavkirke/Fantoft, Gol stavkirke/Gol | Hopperstad stavkirke/Hopperstad, Lom stavkirke/Lom, Ringebu stavkirke/Ringebu, Kaupanger stavkirke/Kaupanger, Undredal stavkirke/Undredal, Røldal stavkirke/Røldal | Eidsborg stavkirke/Eidsborg, Uvdal stavkirke/Uvdal, Nore stavkirke/Nore, Flesberg stavkirke/Flesberg, Rollag stavkirke/Rollag, Hedalen stavkirke/Hedalen, Garmo stavkirke/Garmo, Høre stavkirke/Høre, Lomen stavkirke/Lomen, Øye stavkirke/Øye, Hegge stavkirke/Hegge, Reinli stavkirke/Reinli, Torpo stavkirke/Torpo, Haltdalen stavkirke/Haltdalen, Kvernes stavkirke/Kvernes, Rødven stavkirke/Rødven, Grip stavkirke/Grip | Vang stavkirke/Wang stavkirke/Vang | ",
-    { nei: "Nidarosdomen, Stavanger domkirke, Ishavskatedralen, Oslo domkirke" },
-  ),
-  sp(
     "Nevn noe som hører med til 17. mai",
     "barnetoget/barnetog/tog, flagg, is, pølser, bunad, korps/skolekorps, russ/russen | Ja vi elsker/nasjonalsangen, buekorps, bløtkake, kransekake, 17. mai-frokost/frokost, hurrarop/hurra, sløyfe/17. mai-sløyfe, kongefamilien på Slottsbalkongen/Slottsbalkongen/kongefamilien, Slottet, Karl Johan, folketog/borgertog, 17. mai-tale/tale, kransenedleggelse, russetog, flaggheising, 17. mai-komiteen, 17. mai-leker/leker, sekkeløp, potetløp, eggeløp, fiskedam, loddsalg/tombola/lotteri, brus, vafler, kaker, kaffe, Henrik Wergeland/Wergeland, Grunnloven, Eidsvoll, 1814, salutt/kanonsalutt, finklær/dress, rødt hvitt og blått, vimpler, ballonger, trommer, marsjmusikk/marsj | Gud signe Noregs land, Norge i rødt hvitt og blått, Vi ere en nasjon vi med, Sønner av Norge, Kongesangen/Gud sign vår konge god, russelue, russekort, regn, folkefest, eggerøre, røkelaks, spekemat, champagne/sjampanje, rømmegrøt, pølse i lompe/lompe, hornmusikk, flaggborg, Christian Magnus Falsen, Wergelands grav | | ",
     { nei: "julenissen, påskeegg, fyrverkeri, juletre, sankthansbål" },
@@ -118,11 +113,6 @@ export const historieOgNorge = [
     { nei: "LOL, OMG, ASAP, BTW, USA" },
   ),
   sp(
-    "Nevn et ord for snø eller en type snø",
-    "snø, slaps, sludd, puddersnø/pudder, kramsnø | nysnø, skare/skaresnø, fokksnø, tørrsnø, våtsnø, løssnø, kornsnø, snøfonn/fonn, skavl/snøskavl, snøfnugg, snøføyke/føyk, snødrev, sørpe, gammelsnø, råttensnø/råtten snø, snøfall, snøbyge, snøstorm | vindpakket snø/vindpakka snø, sukkersnø, kunstsnø/kanonsnø/maskinsnø, firn, sne, snøkave/snøkav, snørokk, snøhaug, brøytekant, klabbsnø, snøvær, flaksnø, kladdeføre, klisterføre, skareføre | | ",
-    { nei: "regn, is, hagl, rim, tåke, frost" },
-  ),
-  sp(
     "Nevn noe du finner på en norsk hytte",
     "peis, utedo/utedass, ved/vedkasse, hyttebok, ski, vedovn | parafinlampe, stearinlys/lys, kortstokk, brettspill, Yatzy, puslespill, ukeblader, kryssord, solcellepanel/solcelle, vanndunk/vannkanne, bøtte, akebrett/kjelke, truger, ryggsekk/sekk, kart, kikkert, radio, gasskomfyr, kaffekjele, termos, kakao, Kvikk Lunsj, appelsiner, brunost, vaffeljern, køyeseng/køyesenger, sovepose, pledd/ullteppe, ullsokker, skismøring/smøring, snøskuffe/snømåke/snøspade, flagg/flaggstang, terrasse, bålpanne, grill, badstue/sauna, boblebad/jacuzzi, aggregat, brønn, båt/robåt, fiskestang, garn, blåbær, multer, gevir/elgtrofé, reinskinn/reinsdyrskinn, saueskinn, lusekofte, Donald-blader/Donald Duck, Allers, Hjemmet, torvtak, tømmervegger/tømmer, hyttenøkkel | mus, maur, vedskjul, vedhoggestabbe/hoggestabbe, øks, sag, strikketøy, sjakkbrett, fyrstikker, tennbrikker, avispapir, kaffetrakter, kokekaffe, ostehøvel, hyttekos, TV, wifi, strøm, gapahuk, vannpumpe, vannbærer, snøscooter, skiløype | | ",
     { nei: "basseng, heis, T-bane, kontor" },
@@ -136,10 +126,5 @@ export const historieOgNorge = [
     "Nevn et sted, en bydel eller et strøk i Trondheim",
     "Nidarosdomen, Bakklandet, Solsiden, Midtbyen, Lade, Byåsen, Heimdal | Tiller, Moholt, Gløshaugen, Lerkendal, Ila, Møllenberg, Strinda, Ranheim, Charlottenlund, Saupstad, Kolstad, Flatåsen, Sverresborg, Munkholmen, Kristiansten, Bymarka, Granåsen, Nardo, Valentinlyst, Tyholt, Rosenborg, Singsaker, Elgeseter, Øya, Trolla, Leangen, Jakobsli, Brundalen, Vikåsen, Stavset, Hallset, Kattem, Okstad, Nyhavna, Brattøra, Ravnkloa, Kalvskinnet, Gamle Bybro, Torvet/Torget, Nordre gate, Dragvoll, Stiftsgården, Ringve | Sjetnemarka, Sandmoen, Rotvoll, Bispehaugen, Fagerheim, Ugla, Steinberget, Hoeggen, Romolslia, Risvollan, Persaunet, Berg, Tempe, Sorgenfri, Skansen, Marinen, Bakke kirke, Trondheim S/Trondheim sentralstasjon, City Lade, Leutenhaven, Lianvatnet, Theisendammen, Skistua, Fjellseter, Vassfjellet, Trondheim Spektrum, Pirbadet, Tyholttårnet | | ",
     { nei: "Oslo, Bergen, Stjørdal, Malvik, Orkanger, Melhus" },
-  ),
-  sp(
-    "Nevn en militær grad",
-    "general, kaptein, løytnant, major, oberst, sersjant, admiral | menig, korporal, visekorporal, fenrik, oberstløytnant, brigader, generalmajor, generalløytnant, viseadmiral, kontreadmiral, kommandør, kommandørkaptein, orlogskaptein, kapteinløytnant, kadett, rekrutt | oversersjant, stabssersjant, kommandersersjant, sjefsersjant, matros, kvartermester, fanejunker, feltmarskalk, storadmiral, generalissimus, korvettkaptein, fregattkaptein, sekondløytnant, premierløytnant, rittmester, furer, flaggkommandør | marskalk | ",
-    { nei: "konge, sjef, soldat, president, politimester" },
   ),
 ]

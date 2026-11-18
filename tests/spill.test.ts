@@ -1262,9 +1262,8 @@ test("Startpistolen: bare holderens signerte, gyldige og nye svar sender pistole
   const p = { ...startPistol(), tur: 100_000, lunte: 120_000 }
   assert.equal(gjeldende(p).tekst, pistolSporsmal[0].tekst)
   const q = gjeldende(p)
-  // Find an accepted answer to the first prompt, and a wrong one.
-  const kandidater = ["pizza", "Kenya", "Alfa", "maur", "Mongolia", "Norge", "rød", "hund", "eple", "Oslo", "fotball", "gitar", "Mars", "Jupiter"]
-  const gyldig = kandidater.find((t) => stegernDuellDom({ kode: "BCDF", runde: 0, i: 0, dato: q.dato, nr: q.nr, id: "a", svar: t }).vurdering.nivaa > 0)
+  // An accepted answer to the first prompt (the most common one, which even a miss is shown), and a wrong one.
+  const gyldig = stegernDuellDom({ kode: "BCDF", runde: 0, i: 0, dato: q.dato, nr: q.nr, id: "a", svar: "qqqzzz" }).vurdering.vanligste[0]
   assert.ok(gyldig, q.tekst)
   const ok = vurderPistolsvar(apne(pistolDom(p, gyldig, 105_000)), "BCDF", 0, p)
   assert.ok(ok.ok)

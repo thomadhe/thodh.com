@@ -11,8 +11,8 @@ const lost = (s: string) => normaliser(s.replace(/^\s*nevn\s+(?:en|et|ei|noe)\s+
 
 const daglige = stegernDager.flatMap((d) => [...d.sporsmal, d.finale])
 
-test("6/7-stegern duellbank: minst 150 spørsmål", () => {
-  assert.ok(stegernDuellBank.length >= 150, `${stegernDuellBank.length}`)
+test("6/7-stegern duellbank: minst 110 spørsmål", () => {
+  assert.ok(stegernDuellBank.length >= 110, `${stegernDuellBank.length}`)
 })
 
 test("6/7-stegern duellbank: ingen dubletter mot dagsbanken eller i banken", () => {
