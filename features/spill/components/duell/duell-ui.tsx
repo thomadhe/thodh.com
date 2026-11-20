@@ -187,7 +187,6 @@ export function Lobby({
           <button
             type="button"
             className={`px-knapp ${klar ? "px-knapp-mork" : ""}`}
-            disabled={!navn.trim()}
             onClick={() => {
               lyder.velg()
               settKlar(!klar)
@@ -205,11 +204,15 @@ export function Lobby({
             {starter ? "Starter …" : "Start duellen ▶"}
           </button>
           <p className="text-[13px] leading-5 text-[#8b9bd0]">
-            {antallKlare < MIN_SPILLERE ? "Del lenken eller koden. Du kan starte når minst én til har trykket klar." : "De som er klare, er med. De andre ser på og blir med i neste runde."}
+            {antallKlare >= MIN_SPILLERE
+              ? "De som er klare, er med. De andre ser på og blir med i neste runde."
+              : iRommet.length < MIN_SPILLERE
+                ? "Del lenken eller koden. Du kan starte når minst én til er inne og har trykket klar."
+                : "Venter på at minst én av de andre trykker klar."}
           </p>
         </div>
       ) : (
-        <p className="mt-3 text-[13px] leading-5 text-[#8b9bd0]">{klar ? "Venter på at verten starter." : "Skriv navnet ditt og trykk klar."}</p>
+        <p className="mt-3 text-[13px] leading-5 text-[#8b9bd0]">{klar ? "Venter på at verten starter." : "Trykk klar når du er med. Navnet er valgfritt."}</p>
       )}
       {melding ? <p className="px-etikett mt-2 text-[#fb7185]">{melding}</p> : null}
       <div className="mt-4 border-t-[3px] border-dotted border-[#1d2757] pt-3 text-[13px] leading-5 text-[#8b9bd0]">{info}</div>
