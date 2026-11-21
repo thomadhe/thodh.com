@@ -13,6 +13,33 @@ export const U = 14
 
 export type Bilde = { w: number; h: number; d: Uint32Array }
 
+/**
+ * A pixel buffer shown on a canvas. The canvas holds the art enlarged by a whole number of device pixels per art
+ * pixel (nearest-neighbour), so the browser at most shrinks it a touch to its CSS size. Every art pixel then comes
+ * out the same width at any devicePixelRatio or zoom (no uneven columns that shimmer while the scene scrolls), and
+ * the edges stay sharp. `cssPerPiksel` is how many CSS pixels one art pixel covers.
+ */
+export function lagSkjerm(lerret: HTMLCanvasElement, w: number, h: number, cssPerPiksel: number) {
+  const k = Math.max(1, Math.ceil(cssPerPiksel * (window.devicePixelRatio || 1) - 0.05))
+  lerret.width = w * k
+  lerret.height = h * k
+  const ctx = lerret.getContext("2d")
+  const kilde = document.createElement("canvas")
+  kilde.width = w
+  kilde.height = h
+  const kctx = kilde.getContext("2d")
+  if (!ctx || !kctx) return null
+  const data = kctx.createImageData(w, h)
+  const bilde: Bilde = { w, h, d: new Uint32Array(data.data.buffer) }
+  const vis = () => {
+    kctx.putImageData(data, 0, 0)
+    ctx.imageSmoothingEnabled = false
+    ctx.clearRect(0, 0, lerret.width, lerret.height)
+    ctx.drawImage(kilde, 0, 0, lerret.width, lerret.height)
+  }
+  return { bilde, vis }
+}
+
 /** A colour packed the way ImageData stores it (RGBA bytes, little-endian). */
 export function rgb(hex: string, a = 255) {
   const n = parseInt(hex.slice(1), 16)
@@ -509,7 +536,8 @@ export function hvileBevegelse(p: Pose, tid: number, sover: boolean): Pose {
   const blunk = tid % 3.7 < 0.14
   const t7 = tid % 7
   const hender = t7 > 5.4 && t7 < 6.6
-  const opp = Math.floor(tid * 6) % 2 === 0
+  // The hands weigh up and down three times a second: lively, but slow enough not to flicker at the idle tick.
+  const opp = Math.floor(tid * 3) % 2 === 0
   return {
     ...p,
     sy: pust ? 0.94 : 1,
@@ -747,7 +775,8 @@ export class Kulisse {
     // Two ridges of mountains, the far one paler and slower.
     this.rygg(b, g, this.fjellBak, kam * 0.06, FJELL_BAK, FJELL_BAK_LYS, null, 8)
     this.rygg(b, g, this.fjell, kam * 0.12, FJELL, FJELL_LYS, SNO, 4)
-    // Grandstands and floodlights, with camera flashes in the crowd.
+    // Grandstands and floodlights, with an occasional camera flash in the crowd (two flashers, about once a second
+    // each, so the stand sparkles a little instead of flickering).
     const t = this.tribune.lag
     const tx = Math.round(kam * 0.3)
     const ty = topp - 7 - t.h
@@ -757,9 +786,9 @@ export class Kulisse {
         if (c) sett(b, x, ty + y, c)
       }
     }
-    for (let k = 0; k < 4; k++) {
-      const takt = tid * 1.7 + k * 0.37
-      if (takt % 1 > 0.12) continue
+    for (let k = 0; k < 2; k++) {
+      const takt = tid * 0.8 + k * 0.5
+      if (takt % 1 > 0.1) continue
       const n = this.tribune.publikum.length
       const i = this.tribune.publikum[Math.floor(tilfeldig(`blits:${k}:${Math.floor(takt)}`)() * n)]
       const x = ((((i % t.w) - tx) % t.w) + t.w) % t.w

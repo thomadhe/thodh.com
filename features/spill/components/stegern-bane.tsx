@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react"
+import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react"
 import type { Figur as FigurValg } from "../lib/duell/figur"
 import { NIVAAER } from "../lib/stegern"
 import { FOLG, hvile, klem, lagPlan, MAL_M, poseIHopp, STOV_TID, SYN, type Hopp, type Plan, type Pose } from "./stegern-motor"
-import { FARGE, geometri, hvileBevegelse, Kulisse, merkelapp, palettFor, PIKSEL, rgb, sett, tegnFigur, tegnZzz, tekstMedKant, type Bilde } from "./stegern-piksel"
+import { FARGE, geometri, hvileBevegelse, Kulisse, lagSkjerm, merkelapp, palettFor, PIKSEL, rgb, sett, tegnFigur, tegnZzz, tekstMedKant, type Bilde } from "./stegern-piksel"
 import "./stegern-bane.css"
 
 export { lagPlan, tidTilLanding, type Hopp } from "./stegern-motor"
@@ -32,6 +32,26 @@ function planFor(h: Hopp) {
   if (!p) planer.set(nokkel, (p = lagPlan(h.dm / 10, h)))
   return p
 }
+
+/** The screen's devicePixelRatio, kept up to date when the page is zoomed or moved to another screen. */
+function abonnerPaDpr(varsle: () => void) {
+  let mq = matchMedia(`(resolution: ${window.devicePixelRatio || 1}dppx)`)
+  const ved = () => {
+    mq.removeEventListener("change", ved)
+    mq = matchMedia(`(resolution: ${window.devicePixelRatio || 1}dppx)`)
+    mq.addEventListener("change", ved)
+    varsle()
+  }
+  mq.addEventListener("change", ved)
+  return () => mq.removeEventListener("change", ved)
+}
+
+export const useDpr = () =>
+  useSyncExternalStore(
+    abonnerPaDpr,
+    () => window.devicePixelRatio || 1,
+    () => 1,
+  )
 
 const landinger = (hopp: Hopp[]) => hopp.reduce<number[]>((acc, h) => [...acc, (acc.at(-1) ?? 0) + h.dm / 10], [])
 const metertekst = (m: number) => `+${m.toLocaleString("nb-NO", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} M`
@@ -61,6 +81,7 @@ export function Bane({
   const w = Math.max(60, Math.ceil(bredde / PIKSEL))
   const baner = Math.max(1, lopere.length)
   const geo = geometri(w, baner)
+  const dpr = useDpr()
 
   const props = useRef({ lopere, oversikt, mal })
   const spor = useRef(new Map<string, Spor>())
@@ -107,11 +128,10 @@ export function Bane({
   useEffect(() => {
     const geo = geometri(w, baner)
     const c = lerret.current
-    const ctx = c?.getContext("2d")
-    if (!c || !ctx) return
+    const skjerm = c ? lagSkjerm(c, geo.w, geo.h, PIKSEL) : null
+    if (!skjerm) return
     const redusert = matchMedia("(prefers-reduced-motion: reduce)").matches
-    const data = ctx.createImageData(geo.w, geo.h)
-    const bilde: Bilde = { w: geo.w, h: geo.h, d: new Uint32Array(data.data.buffer) }
+    const bilde = skjerm.bilde
     const kulisse = new Kulisse()
     if (!vaken.current) vaken.current = performance.now() / 1000
     let forrige = performance.now()
@@ -219,7 +239,7 @@ export function Bane({
         tegnFigur(bilde, x, y, pose, pal, r.l.figur)
         if (sovn) tegnZzz(bilde, x + 4, y - 24, tid + i * 0.5)
         else if (r.l.deg && !r.p) {
-          const opp = !redusert && Math.floor(tid * 2.5) % 2 === 0 ? 1 : 0
+          const opp = !redusert && Math.floor(tid * 1.2) % 2 === 0 ? 1 : 0
           for (let k = 0; k < 3; k++) for (let dx = -2 + k; dx <= 2 - k; dx++) sett(bilde, x + dx, y - 25 + k - opp, FARGE.hvit)
         }
         if (r.akt && !redusert) {
@@ -236,7 +256,7 @@ export function Bane({
         }
       })
 
-      ctx.putImageData(data, 0, 0)
+      skjerm.vis()
 
       const fortsatt = rader.some((r) => r.s.aktivt) || !framme
       if (fortsatt) raf = requestAnimationFrame(tegn)
@@ -257,17 +277,11 @@ export function Bane({
       raf = 0
       vekk.current = () => {}
     }
-  }, [w, baner])
+  }, [w, baner, dpr])
 
   return (
     <div ref={ramme} className="stegern-bane relative w-full overflow-hidden" style={{ height: geo.h * PIKSEL }} role="img" aria-label={etikett}>
-      <canvas
-        ref={lerret}
-        width={geo.w}
-        height={geo.h}
-        className="absolute top-0 left-1/2 block max-w-none -translate-x-1/2"
-        style={{ width: geo.w * PIKSEL, height: geo.h * PIKSEL, imageRendering: "pixelated" }}
-      />
+      <canvas ref={lerret} className="absolute top-0 left-1/2 block max-w-none -translate-x-1/2" style={{ width: geo.w * PIKSEL, height: geo.h * PIKSEL }} />
       {children}
     </div>
   )
@@ -323,7 +337,8 @@ export type Stemning = "vanlig" | "glad" | "lei"
 /** A standing pose with a mood on top of the idle. */
 export function stemningsPose(p: Pose, stemning: Stemning, tid: number): Pose {
   if (stemning === "glad") {
-    const opp = Math.floor(tid * 4) % 2 === 0
+    // A cheerful bounce, about once a second: fast hopping at the idle tick read as jitter.
+    const opp = Math.floor(tid * 2) % 2 === 0
     return { ...p, opp: 1, munn: 1, stor: 1.2, y: opp ? -0.12 : 0, sy: opp ? 1.04 : 0.94 }
   }
   if (stemning === "lei") return { ...p, munn: -1, blikk: { x: 0, y: 0.03 }, sy: 0.93, sx: 1.03, rot: -4 }
@@ -346,13 +361,14 @@ export function Figur({
   className?: string
 }) {
   const lerret = useRef<HTMLCanvasElement>(null)
+  const dpr = useDpr()
   const nokkel = figur ? `${figur.kropp}.${figur.hode}.${figur.oyne}.${figur.ekstra}` : ""
   useEffect(() => {
-    const ctx = lerret.current?.getContext("2d")
-    if (!ctx) return
+    const c = lerret.current
+    const skjerm = c ? lagSkjerm(c, FIGUR_B, FIGUR_H, (c.clientHeight || FIGUR_H * 2) / FIGUR_H) : null
+    if (!skjerm) return
     const redusert = matchMedia("(prefers-reduced-motion: reduce)").matches
-    const data = ctx.createImageData(FIGUR_B, FIGUR_H)
-    const bilde: Bilde = { w: FIGUR_B, h: FIGUR_H, d: new Uint32Array(data.data.buffer) }
+    const bilde = skjerm.bilde
     const forskyv = farge * 0.77
     const valg = nokkel ? (nokkel.split(".").map(Number) as [number, number, number, number]) : null
     const f = valg ? { kropp: valg[0], hode: valg[1], oyne: valg[2], ekstra: valg[3] } : undefined
@@ -363,21 +379,14 @@ export function Figur({
       const pose = redusert ? hvile(0) : stemningsPose(hvileBevegelse(hvile(0), tid, sover), sover ? "vanlig" : stemning, tid)
       tegnFigur(bilde, 11, FIGUR_H - 3, pose, palettFor(f, farge), f)
       if (sover && !redusert) tegnZzz(bilde, 15, FIGUR_H - 25, tid)
-      ctx.putImageData(data, 0, 0)
+      skjerm.vis()
       if (!redusert) id = window.setTimeout(tegn, document.hidden ? 1000 : IDLE_MS * (sover ? 2 : 1))
     }
     tegn()
     return () => window.clearTimeout(id)
-  }, [farge, sover, stemning, nokkel])
+  }, [farge, sover, stemning, nokkel, dpr])
   return (
-    <canvas
-      ref={lerret}
-      width={FIGUR_B}
-      height={FIGUR_H}
-      aria-hidden="true"
-      className={`block ${className}`}
-      style={{ imageRendering: "pixelated", aspectRatio: `${FIGUR_B} / ${FIGUR_H}` }}
-    />
+    <canvas ref={lerret} aria-hidden="true" className={`block ${className}`} style={{ aspectRatio: `${FIGUR_B} / ${FIGUR_H}` }} />
   )
 }
 

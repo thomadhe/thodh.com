@@ -357,7 +357,7 @@ export function GjettelosDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: st
 
   const lenke = typeof window === "undefined" ? "" : `${window.location.origin}/spill/gjettelos/duell/${kode}`
 
-  if (!rom.klient || !rom.okt) return <div className="px-panel h-[260px] animate-pulse" />
+  if (!rom.klient || !rom.okt) return <div className="px-panel h-[260px] motion-safe:animate-pulse" />
 
   return (
     <div className="flex flex-col gap-4">
@@ -374,7 +374,7 @@ export function GjettelosDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: st
                   const ferdig = i < ferdige
                   const aktiv = status.fase === "sporsmal" && i === status.nr
                   return (
-                    <li key={i} className={`px-brikke ${ferdig ? "bg-[#38e8ff] text-[#04141a]" : aktiv ? "px-blink bg-white text-[#0b1020]" : "bg-[#121a45]/90 text-[#6b7bb0]"}`}>
+                    <li key={i} className={`px-brikke ${ferdig ? "bg-[#38e8ff] text-[#04141a]" : aktiv ? "bg-white text-[#0b1020]" : "bg-[#121a45]/90 text-[#a5b4e8]"}`}>
                       {i + 1}
                     </li>
                   )
@@ -390,7 +390,7 @@ export function GjettelosDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: st
 
       {tilkobling === "feil" ? (
         <section className="px-panel px-panel-rosa p-4">
-          <p className="px-skrift text-[20px] text-white">Fikk ikke kontakt med rommet.</p>
+          <p className="text-[18px] font-semibold text-white">Fikk ikke kontakt med rommet.</p>
           <p className="mt-1 text-sm text-[#b9c3ea]">Sjekk nettet og last siden på nytt. Du kommer tilbake på samme plass.</p>
         </section>
       ) : tilkobling === "kobler" ? (
@@ -429,7 +429,7 @@ export function GjettelosDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: st
             </p>
             {igjen !== null ? <p className={`px-skrift text-[22px] leading-none font-bold tabular-nums ${igjen <= 5 ? "text-[#ff4fd8]" : "text-white"}`}>{igjen}</p> : null}
           </div>
-          <h2 className="px-skrift mt-2 text-[24px] leading-[1.15] font-semibold text-white">{sporsmal.tekst}</h2>
+          <h2 className="mt-2 text-[22px] leading-[1.25] font-semibold tracking-[-0.01em] text-balance text-white sm:text-[24px]">{sporsmal.tekst}</h2>
           {igjenMs !== null ? (
             <div className="mt-3">
               <Klokke igjenMs={igjenMs} />
@@ -443,7 +443,7 @@ export function GjettelosDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: st
               <p className="px-tall mt-1 text-[28px] leading-none font-bold text-white">
                 {formaterTall(mittGjett.g, sporsmal.aarstall)} <span className="text-[16px] font-normal text-[#9fb0dd]">{enhetTekst(sporsmal)}</span>
               </p>
-              <p className="mt-2 text-[13px] text-[#8b9bd0]">Fasit kommer når alle har svart eller tiden er ute.</p>
+              <p className="mt-2 text-[13px] text-[#a5b4e8]">Fasit kommer når alle har svart eller tiden er ute.</p>
             </div>
           ) : mittRaa ? (
             <p className="px-etikett px-blink mt-3">Låser inn …</p>
@@ -469,7 +469,7 @@ export function GjettelosDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: st
                     enterKeyHint="go"
                     placeholder={sporsmal.aarstall ? "Årstall" : "Ditt svar"}
                     aria-label={sporsmal.aarstall ? "Årstall" : `Ditt svar i ${sporsmal.enhet}`}
-                    className="px-tall h-full min-w-0 flex-1 bg-transparent text-[22px] font-bold outline-none placeholder:text-[18px] placeholder:font-normal placeholder:text-[#4b5a92]"
+                    className="h-full min-w-0 flex-1 bg-transparent text-[22px] font-bold tabular-nums outline-none placeholder:text-[18px] placeholder:font-normal placeholder:text-[#8d9cd4]"
                   />
                   {enhetTekst(sporsmal) ? <span className="max-w-[40%] shrink-0 truncate text-[14px] text-[#9fb0dd]">{enhetTekst(sporsmal)}</span> : null}
                 </label>
@@ -481,11 +481,11 @@ export function GjettelosDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: st
                 {melding ? (
                   <span className="text-[#fb7185]">{melding}</span>
                 ) : tolket !== null && !sporsmal.aarstall && /[a-zæøå]/i.test(tekst) ? (
-                  <span className="text-[#8b9bd0]">
+                  <span className="text-[#a5b4e8]">
                     = {formaterFullt(tolket)} {enhetTekst(sporsmal)}
                   </span>
                 ) : tolket !== null && !sporsmal.aarstall && tolket >= 1e6 ? (
-                  <span className="text-[#8b9bd0]">= {formaterTall(tolket)}</span>
+                  <span className="text-[#a5b4e8]">= {formaterTall(tolket)}</span>
                 ) : null}
               </p>
             </form>
@@ -558,10 +558,10 @@ function Tallinje({ fasit, rader }: { fasit: GjFasit; rader: { id: string; navn:
           ),
         )}
       </div>
-      <div className="relative h-4 text-[11px] text-[#8b9bd0]">
-        <span className="px-etikett absolute left-0 !text-[10px]">{formaterTall(verdiVed(-spenn), fasit.aarstall)}</span>
-        <span className="px-etikett absolute left-1/2 -translate-x-1/2 !text-[10px] text-[#a3e635]">Fasit</span>
-        <span className="px-etikett absolute right-0 !text-[10px]">{formaterTall(verdiVed(spenn), fasit.aarstall)}</span>
+      <div className="relative h-4 text-[11px] text-[#a5b4e8]">
+        <span className="px-etikett absolute left-0 !text-[11px]">{formaterTall(verdiVed(-spenn), fasit.aarstall)}</span>
+        <span className="px-etikett absolute left-1/2 -translate-x-1/2 !text-[11px] text-[#a3e635]">Fasit</span>
+        <span className="px-etikett absolute right-0 !text-[11px]">{formaterTall(verdiVed(spenn), fasit.aarstall)}</span>
       </div>
     </div>
   )
@@ -632,23 +632,23 @@ function Visning({
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[13px] font-medium text-[#d7defa]">{p.navn}</p>
                 <p className="truncate text-[15px] leading-tight text-white">
-                  {g ? <span className="px-tall font-bold">{formaterTall(g.g, sporsmal.aarstall)}</span> : "Ikke noe svar"}
+                  {g ? <span className="font-bold tabular-nums">{formaterTall(g.g, sporsmal.aarstall)}</span> : "Ikke noe svar"}
                   {g && enhetTekst(sporsmal) ? <span className="text-[13px] text-[#9fb0dd]"> {enhetTekst(sporsmal)}</span> : null}
                 </p>
-                {g ? <p className="text-[11px] text-[#8b9bd0]">{avvik(g.g, fasit.fasit, fasit.aarstall)}</p> : null}
+                {g ? <p className="text-[12px] text-[#a5b4e8]">{avvik(g.g, fasit.fasit, fasit.aarstall)}</p> : null}
               </div>
               <div className="flex shrink-0 flex-col items-end">
                 <span className="px-tall text-[22px] leading-none font-bold" style={{ color: trinn.farge, textShadow: `0 0 14px ${trinn.farge}99` }}>
                   {formaterPoeng(q)}
                 </span>
-                <span className="px-etikett mt-1 !text-[10px]">Sum {formaterPoeng(p.poeng)}</span>
+                <span className="px-etikett mt-1 !text-[11px]">Sum {formaterPoeng(p.poeng)}</span>
               </div>
             </li>
           )
         })}
       </ol>
       {fasit.info ? <p className="mt-3 text-[13px] leading-5 text-[#c7d2fe]">{fasit.info}</p> : null}
-      <p className="mt-2 text-[11px] leading-4 text-[#6b7bb0]">
+      <p className="mt-2 text-[12px] leading-4 text-[#a5b4e8]">
         Kilde: <Kilde kilde={fasit.kilde} />
         {fasit.per ? ` · per ${fasit.per}` : ""}
       </p>
@@ -697,11 +697,11 @@ function Slutt({
       <section className="px-panel px-panel-rosa p-4">
         <p className="px-etikett text-center text-[#ffb3ee]">Duellen er over</p>
         <div className="mt-3">
-          <Pall verdiKlasse="px-tall text-[13px]" rader={stilling.map((p) => ({ id: p.id, navn: p.navn, figur: p.figur, plass: p.plass, verdi: `${formaterPoeng(p.poeng)} p` }))} />
+          <Pall verdiKlasse="text-[13px] font-semibold" rader={stilling.map((p) => ({ id: p.id, navn: p.navn, figur: p.figur, plass: p.plass, verdi: `${formaterPoeng(p.poeng)} p` }))} />
         </div>
         {min ? (
-          <p className="px-skrift mt-4 text-center text-[18px] text-white">
-            Du ble nummer <span className="px-neon px-neon-liten">{min.plass}</span> med <span className="px-tall text-[16px]">{formaterPoeng(min.poeng)}</span> av <span className="px-tall text-[16px]">{maks}</span>
+          <p className="mt-4 text-center text-[17px] font-semibold text-white">
+            Du ble nummer <span className="px-neon px-neon-liten">{min.plass}</span> med <span className="tabular-nums">{formaterPoeng(min.poeng)}</span> av <span className="tabular-nums">{maks}</span>
           </p>
         ) : null}
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
@@ -723,7 +723,7 @@ function Slutt({
           <Plassrad key={p.id} p={p} meg={meg} />
         ))}
       </ol>
-      <p className="text-center text-[13px] text-[#8b9bd0]">
+      <p className="text-center text-[13px] text-[#a5b4e8]">
         <Link href="/spill/gjettelos" className="underline decoration-dotted underline-offset-4 hover:text-white">
           Til dagens Gjetteløs
         </Link>
@@ -736,9 +736,9 @@ function Plassrad({ p, meg }: { p: Deltaker & { poeng: number; plass: number; pe
   return (
     <li className={`px-panel px-panel-dempet p-2.5 ${p.id === meg ? "bg-[#14205a]" : ""}`}>
       <div className="flex items-center gap-2">
-        <span className="px-skrift w-6 shrink-0 text-center text-[18px] text-[#8b9bd0]">{p.plass}</span>
+        <span className="px-skrift w-6 shrink-0 text-center text-[18px] text-[#a5b4e8]">{p.plass}</span>
         <span className="h-3 w-3 shrink-0" style={{ background: figurFarge(p.figur) }} aria-hidden="true" />
-        <span className="px-skrift min-w-0 flex-1 truncate text-[17px] text-white">{p.navn}</span>
+        <span className="min-w-0 flex-1 truncate text-[16px] font-semibold text-white">{p.navn}</span>
         <span className="px-tall text-[16px] font-bold text-white">{formaterPoeng(p.poeng)}</span>
       </div>
       <ul className="mt-2 flex flex-wrap gap-1 pl-8" aria-label="Poeng per spørsmål">

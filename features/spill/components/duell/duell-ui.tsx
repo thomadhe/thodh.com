@@ -10,7 +10,7 @@ import { Figur, type Stemning } from "../stegern-bane"
 // The pixel pieces every duel room shares: the room code with its invite link, the lobby with the figure editor,
 // who has answered, and the podium. They use the px-* look from stegern-bane.css.
 
-/** The room code, big, with the invite link. */
+/** The room code, big, with the invite link. Set in Silkscreen, whose C and O (and B and 8) never look alike. */
 export function Romlinje({ kode, lenke, kompakt, delTekst }: { kode: string; lenke: string; kompakt: boolean; delTekst: string }) {
   const [kopiert, setKopiert] = useState(false)
   const del = async () => {
@@ -28,7 +28,7 @@ export function Romlinje({ kode, lenke, kompakt, delTekst }: { kode: string; len
     <section className={`px-panel flex items-center justify-between gap-3 ${kompakt ? "px-3 py-2" : "p-3.5"}`}>
       <div className="min-w-0">
         <p className="px-etikett">Romkode</p>
-        <p className={`px-neon leading-none tracking-[0.2em] ${kompakt ? "mt-1 text-[22px]" : "mt-1.5 text-[34px]"}`}>{kode}</p>
+        <p className={`px-neon font-[family-name:var(--font-etikett)] leading-none tracking-[0.16em] ${kompakt ? "mt-1 text-[22px]" : "mt-1.5 text-[32px]"}`}>{kode}</p>
       </div>
       <button type="button" onClick={del} className="px-knapp px-knapp-cyan px-knapp-liten">
         {kopiert ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
@@ -62,16 +62,16 @@ export function FigurVelger({ figur, settFigur }: { figur: FigurValg; settFigur:
           <Shuffle className="h-4 w-4" />
         </button>
       </div>
-      <ul className="grid min-w-0 flex-1 gap-1">
+      <ul className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)] gap-1">
         {FIGUR_VALG.map((v) => (
           <li key={v.felt} className="flex items-center gap-1">
-            <span className="px-etikett w-[52px] shrink-0">{v.navn}</span>
+            <span className="px-etikett w-[50px] shrink-0">{v.navn}</span>
             <button type="button" className="px-knapp px-knapp-mork px-knapp-liten !min-h-[32px] !px-1.5" onClick={() => bla(v.felt, -1)} aria-label={`Forrige ${v.navn.toLowerCase()}`}>
               <ChevronLeft className="h-4 w-4" />
             </button>
-            <span className="px-skrift flex min-w-0 flex-1 items-center justify-center gap-1.5 truncate text-center text-[15px] text-white">
+            <span className="flex min-w-0 flex-1 items-center justify-center gap-1.5 truncate text-center text-[14px] font-medium text-white">
               {v.felt === "kropp" ? <span className="h-2.5 w-2.5 shrink-0" style={{ background: figurFarge(figur) }} aria-hidden="true" /> : null}
-              {v.valg[figur[v.felt]]}
+              <span className="min-w-0 truncate">{v.valg[figur[v.felt]]}</span>
             </span>
             <button type="button" className="px-knapp px-knapp-mork px-knapp-liten !min-h-[32px] !px-1.5" onClick={() => bla(v.felt, 1)} aria-label={`Neste ${v.navn.toLowerCase()}`}>
               <ChevronRight className="h-4 w-4" />
@@ -138,7 +138,7 @@ export function Lobby({
           if (!t)
             return (
               <li key={`ledig-${i}`} className="flex h-[30px] items-center gap-3 border-2 border-dashed border-[#1d2757] px-3">
-                <span className="px-etikett text-[#3b4a85]">Ledig plass</span>
+                <span className="text-[13px] text-[#8d9cd4]">Ledig plass</span>
               </li>
             )
           const deg = t.id === meg
@@ -149,9 +149,9 @@ export function Lobby({
             <li key={t.id} className={`px-panel px-panel-dempet flex h-[46px] items-center gap-2.5 pr-2 pl-1 ${deg ? "bg-[#14205a]" : ""}`}>
               <Figur figur={f} farge={i} sover={!erKlar} className="h-10 w-[33px] shrink-0" />
               <span className="h-3 w-3 shrink-0" style={{ background: figurFarge(f) }} aria-hidden="true" />
-              <span className="px-skrift min-w-0 flex-1 truncate text-[17px] text-white">
+              <span className="min-w-0 flex-1 truncate text-[16px] font-semibold text-white">
                 {t.navn || `Spiller ${i + 1}`}
-                {deg ? <span className="text-[#8b9bd0]"> (deg)</span> : null}
+                {deg ? <span className="text-[#a5b4e8]"> (deg)</span> : null}
               </span>
               {t.id === vertId ? (
                 <span className="px-merke bg-[#facc15]">
@@ -161,7 +161,7 @@ export function Lobby({
               ) : tilskuer ? (
                 <span className="px-merke bg-[#263370] text-[#c7d2fe]">Ser på</span>
               ) : (
-                <span className={`px-merke ${erKlar ? "bg-[#a3e635]" : "bg-[#263370] text-[#8b9bd0]"}`}>{erKlar ? "Klar" : "Venter"}</span>
+                <span className={`px-merke ${erKlar ? "bg-[#a3e635]" : "bg-[#263370] text-[#c7d2fe]"}`}>{erKlar ? "Klar" : "Venter"}</span>
               )}
             </li>
           )
@@ -203,7 +203,7 @@ export function Lobby({
           <button type="button" className="px-knapp px-knapp-rosa w-full" disabled={!kanStarte || starter} onClick={start}>
             {starter ? "Starter …" : "Start duellen ▶"}
           </button>
-          <p className="text-[13px] leading-5 text-[#8b9bd0]">
+          <p className="text-[13px] leading-5 text-[#a5b4e8]">
             {antallKlare >= MIN_SPILLERE
               ? "De som er klare, er med. De andre ser på og blir med i neste runde."
               : iRommet.length < MIN_SPILLERE
@@ -212,10 +212,10 @@ export function Lobby({
           </p>
         </div>
       ) : (
-        <p className="mt-3 text-[13px] leading-5 text-[#8b9bd0]">{klar ? "Venter på at verten starter." : "Trykk klar når du er med. Navnet er valgfritt."}</p>
+        <p className="mt-3 text-[13px] leading-5 text-[#a5b4e8]">{klar ? "Venter på at verten starter." : "Trykk klar når du er med. Navnet er valgfritt."}</p>
       )}
-      {melding ? <p className="px-etikett mt-2 text-[#fb7185]">{melding}</p> : null}
-      <div className="mt-4 border-t-[3px] border-dotted border-[#1d2757] pt-3 text-[13px] leading-5 text-[#8b9bd0]">{info}</div>
+      {melding ? <p className="mt-2 text-[13px] font-medium text-[#fda4af]">{melding}</p> : null}
+      <div className="mt-4 border-t-[3px] border-dotted border-[#1d2757] pt-3 text-[13px] leading-5 text-[#a5b4e8]">{info}</div>
     </section>
   )
 }
@@ -247,7 +247,7 @@ export function HarSvart({ deltakere, har, tilstede }: { deltakere: Deltaker[]; 
 export type Pallrad = { id: string; navn: string; figur: FigurValg; plass: number; verdi: string }
 
 /** The podium: second, first, third, each figure on a block in its colour, the score under the name. */
-export function Pall({ rader, verdiKlasse = "px-skrift text-[14px]" }: { rader: Pallrad[]; verdiKlasse?: string }) {
+export function Pall({ rader, verdiKlasse = "text-[14px] font-semibold" }: { rader: Pallrad[]; verdiKlasse?: string }) {
   const pall = [rader[1], rader[0], rader[2]]
   const hoyde = (plass: number) => [76, 52, 36][plass - 1] ?? 28
   const stemning = (plass: number): Stemning => (plass === 1 ? "glad" : "vanlig")
@@ -258,7 +258,7 @@ export function Pall({ rader, verdiKlasse = "px-skrift text-[14px]" }: { rader: 
           <div key={p.id} className="flex min-w-0 flex-col items-center">
             {p.plass === 1 ? <Crown className="px-svev mb-0.5 h-5 w-5 text-[#facc15]" aria-hidden="true" /> : null}
             <Figur figur={p.figur} stemning={stemning(p.plass)} className="h-14 w-[46px]" />
-            <p className="px-skrift mt-1 w-full truncate text-center text-[15px] text-white">{p.navn}</p>
+            <p className="mt-1 w-full truncate text-center text-[14px] font-semibold text-white">{p.navn}</p>
             <p className={`${verdiKlasse} tabular-nums text-[#c7d2fe]`}>{p.verdi}</p>
             <div
               className="mt-1 flex w-full items-start justify-center pt-1.5"

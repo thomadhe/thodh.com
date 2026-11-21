@@ -425,7 +425,7 @@ export function StegernDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: stri
 
   const lenke = typeof window === "undefined" ? "" : `${window.location.origin}/spill/67-stegern/duell/${kode}`
 
-  if (!rom.klient || !rom.okt) return <div className="px-panel h-[260px] animate-pulse" />
+  if (!rom.klient || !rom.okt) return <div className="px-panel h-[260px] motion-safe:animate-pulse" />
 
   return (
     <div className="flex flex-col gap-4">
@@ -457,7 +457,7 @@ export function StegernDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: stri
                   const ferdig = i < synligeSvar
                   const aktiv = status.fase === "sporsmal" && i === status.nr
                   return (
-                    <li key={i} className={`px-brikke ${ferdig ? "bg-[#38e8ff] text-[#04141a]" : aktiv ? "px-blink bg-white text-[#0b1020]" : "bg-[#121a45]/90 text-[#6b7bb0]"}`}>
+                    <li key={i} className={`px-brikke ${ferdig ? "bg-[#38e8ff] text-[#04141a]" : aktiv ? "bg-white text-[#0b1020]" : "bg-[#121a45]/90 text-[#a5b4e8]"}`}>
                       {i + 1}
                     </li>
                   )
@@ -474,7 +474,7 @@ export function StegernDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: stri
 
       {tilkobling === "feil" ? (
         <section className="px-panel px-panel-rosa p-4">
-          <p className="px-skrift text-[20px] text-white">Fikk ikke kontakt med rommet.</p>
+          <p className="text-[18px] font-semibold text-white">Fikk ikke kontakt med rommet.</p>
           <p className="mt-1 text-sm text-[#b9c3ea]">Sjekk nettet og last siden på nytt. Du kommer tilbake på samme plass.</p>
         </section>
       ) : tilkobling === "kobler" ? (
@@ -559,7 +559,7 @@ export function StegernDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: stri
             </p>
             {igjen !== null ? <p className={`px-skrift text-[22px] leading-none font-bold tabular-nums ${igjen <= 5 ? "text-[#ff4fd8]" : "text-white"}`}>{igjen}</p> : null}
           </div>
-          <p className="px-skrift mt-2 text-[26px] leading-[1.15] font-semibold text-white">{sporsmal?.tekst}</p>
+          <p className="mt-2 text-[22px] leading-[1.25] font-semibold tracking-[-0.01em] text-balance text-white sm:text-[24px]">{sporsmal?.tekst}</p>
           {fristNa ? (
             <div className="mt-3">
               <Klokke igjenMs={fristNa - na} />
@@ -570,7 +570,7 @@ export function StegernDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: stri
           ) : mittSvar ? (
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <NivaaMerke n={mittSvar.n} />
-              <p className="px-skrift min-w-0 text-[17px] text-white">{mittSvar.treff ?? (mittSvar.t ? `«${mittSvar.t}» er ikke på lista.` : "Ikke noe svar.")}</p>
+              <p className="min-w-0 text-[16px] leading-6 font-semibold text-white">{mittSvar.treff ?? (mittSvar.t ? `«${mittSvar.t}» er ikke på lista.` : "Ikke noe svar.")}</p>
             </div>
           ) : mittRaa ? (
             <p className="px-etikett px-blink mt-3">Sjekker svaret …</p>
@@ -600,7 +600,7 @@ export function StegernDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: stri
               </button>
             </form>
           )}
-          {melding ? <p className="px-etikett mt-2 text-[#fb7185]">{melding}</p> : null}
+          {melding ? <p className="mt-2 text-[13px] font-medium text-[#fda4af]">{melding}</p> : null}
           <HarSvart deltakere={status.deltakere} har={(id) => !!godkjente[id]?.[status.nr]} tilstede={tilstedeIder} />
         </section>
       ) : status.fase === "visning" ? (
@@ -645,21 +645,21 @@ function Visning({
       <p className="px-etikett">
         Spørsmål {status.nr + 1} av {NORMALE} · svarene
       </p>
-      <p className="px-skrift mt-1.5 text-[20px] leading-tight font-semibold text-white">{sporsmal?.tekst}</p>
+      <p className="mt-1.5 text-[19px] leading-snug font-semibold text-balance text-white">{sporsmal?.tekst}</p>
       <ol className="mt-3 grid gap-1.5">
         {stilling.map((p) => {
           const s = svar[p.id]?.[status.nr]
           return (
             <li key={p.id} className={`px-panel px-panel-dempet flex items-center gap-2 py-1.5 pr-2 pl-1 ${p.id === meg ? "bg-[#14205a]" : ""}`}>
-              <span className="px-skrift w-6 shrink-0 text-center text-[16px] text-[#8b9bd0]">{p.plass}</span>
+              <span className="px-skrift w-6 shrink-0 text-center text-[16px] text-[#a5b4e8]">{p.plass}</span>
               <span className="h-3 w-3 shrink-0" style={{ background: figurFarge(p.figur) }} aria-hidden="true" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[13px] font-medium text-[#d7defa]">{p.navn}</p>
-                <p className="px-skrift truncate text-[16px] leading-tight text-white">{s ? (s.treff ?? (s.t ? `«${s.t}»` : "Ikke noe svar")) : "For sent"}</p>
+                <p className="truncate text-[15px] leading-tight font-semibold text-white">{s ? (s.treff ?? (s.t ? `«${s.t}»` : "Ikke noe svar")) : "For sent"}</p>
               </div>
               <div className="flex shrink-0 flex-col items-end gap-1">
                 <NivaaMerke n={s?.n ?? 0} />
-                <span className="px-skrift text-[14px] leading-none tabular-nums text-[#c7d2fe]">{meter(p.dm)}</span>
+                <span className="text-[13px] leading-none font-semibold tabular-nums text-[#c7d2fe]">{meter(p.dm)}</span>
               </div>
             </li>
           )
@@ -714,7 +714,7 @@ function Slutt({
           <Pall rader={stilling.map((p) => ({ id: p.id, navn: p.navn, figur: p.figur, plass: p.plass, verdi: meter(p.dm) }))} />
         </div>
         {min ? (
-          <p className="px-skrift mt-4 text-center text-[18px] text-white">
+          <p className="mt-4 text-center text-[17px] font-semibold text-white">
             Du ble nummer <span className="px-neon px-neon-liten">{min.plass}</span> med {meter(min.dm)}
           </p>
         ) : null}
@@ -737,7 +737,7 @@ function Slutt({
           <Plassrad key={p.id} p={p} status={status} svar={svar} meg={meg} />
         ))}
       </ol>
-      <p className="text-center text-[13px] text-[#8b9bd0]">
+      <p className="text-center text-[13px] text-[#a5b4e8]">
         <Link href="/spill/67-stegern" className="underline decoration-dotted underline-offset-4 hover:text-white">
           Til dagens 6/7-stegern
         </Link>
@@ -750,9 +750,9 @@ function Plassrad({ p, status, svar, meg }: { p: Deltaker & { dm: number; plass:
   return (
     <li className={`px-panel px-panel-dempet p-2.5 ${p.id === meg ? "bg-[#14205a]" : ""}`}>
       <div className="flex items-center gap-2">
-        <span className="px-skrift w-6 shrink-0 text-center text-[18px] text-[#8b9bd0]">{p.plass}</span>
+        <span className="px-skrift w-6 shrink-0 text-center text-[18px] text-[#a5b4e8]">{p.plass}</span>
         <span className="h-3 w-3 shrink-0" style={{ background: figurFarge(p.figur) }} aria-hidden="true" />
-        <span className="px-skrift min-w-0 flex-1 truncate text-[17px] text-white">{p.navn}</span>
+        <span className="min-w-0 flex-1 truncate text-[16px] font-semibold text-white">{p.navn}</span>
         <span className="px-skrift text-[17px] font-semibold tabular-nums text-white">{meter(p.dm)}</span>
       </div>
       <ul className="mt-2 flex flex-wrap gap-1 pl-8" aria-label="Svarene">

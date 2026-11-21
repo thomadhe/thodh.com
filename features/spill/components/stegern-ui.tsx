@@ -16,7 +16,7 @@ export function NivaaMerke({ n, finale = false, kort = false }: { n: Nivaa; fina
   return (
     <span className="px-merke shrink-0" style={{ background: NIVAAER[n].farge }}>
       {NIVAAER[n].navn}
-      {kort ? null : <span className="opacity-70">+{meter(hoppDm(n, finale)).replace(" m", "")}</span>}
+      {kort ? null : <span className="font-medium">+{meter(hoppDm(n, finale)).replace(" m", "")}</span>}
     </span>
   )
 }
@@ -24,20 +24,20 @@ export function NivaaMerke({ n, finale = false, kort = false }: { n: Nivaa; fina
 /** The answer reveal: the most common and the rarest accepted answers. */
 export function Avsloring({ vanligste, sjeldneste, antall, finale = false }: { vanligste: string[]; sjeldneste: string[]; antall: number; finale?: boolean }) {
   return (
-    <dl className="space-y-1.5 text-[13px] leading-5">
+    <dl className="space-y-1.5 text-[14px] leading-5">
       {vanligste.length ? (
         <div className="flex gap-2">
-          <dt className="px-etikett w-[74px] shrink-0 pt-0.5 text-[#38bdf8]">Vanligst</dt>
+          <dt className="w-[78px] shrink-0 font-semibold text-[#7dd3fc]">Vanligst</dt>
           <dd className="min-w-0 text-[#d7defa]">{vanligste.join(", ")}</dd>
         </div>
       ) : null}
       {sjeldneste.length ? (
         <div className="flex gap-2">
-          <dt className="px-etikett w-[74px] shrink-0 pt-0.5 text-[#e879f9]">Sjeldnest</dt>
+          <dt className="w-[78px] shrink-0 font-semibold text-[#f0abfc]">Sjeldnest</dt>
           <dd className="min-w-0 text-[#d7defa]">{sjeldneste.join(", ")}</dd>
         </div>
       ) : null}
-      <p className="px-etikett text-[10px] text-[#5f6fa8]">
+      <p className="text-[12px] text-[#a5b4e8]">
         {antall} godkjente svar{finale ? " · finalen teller 1,7×" : ""}
       </p>
     </dl>
@@ -144,7 +144,7 @@ export function DuellInngang() {
           </button>
         </form>
       </div>
-      {feil ? <p className="px-etikett mt-2 text-[#fb7185]">Koden er fire bokstaver, uten vokaler.</p> : null}
+      {feil ? <p className="mt-2 text-[13px] font-medium text-[#fda4af]">Koden er fire bokstaver, uten vokaler.</p> : null}
     </section>
   )
 }
