@@ -45,9 +45,9 @@ function Stepper({ navn, verdi, enhet, kan, endre }: { navn: string; verdi: stri
           –
         </button>
       ) : null}
-      <span className="px-tall w-[74px] text-center text-[14px] text-white">
+      <span className="w-[74px] text-center text-[14px] font-semibold tabular-nums text-white">
         {verdi}
-        {enhet ? <span className="text-[11px] text-[#9fb0dd]"> {enhet}</span> : null}
+        {enhet ? <span className="text-[12px] font-normal text-[#b4c1ec]"> {enhet}</span> : null}
       </span>
       {kan ? (
         <button type="button" className="px-knapp px-knapp-mork px-knapp-liten !min-h-[30px] !px-2" onClick={() => endre(1)} aria-label={`Mer ${navn.toLowerCase()}`}>
@@ -174,7 +174,7 @@ export function PistolPanel({
           {levende}/{pistol.spillere.length} igjen
         </p>
       </div>
-      <p key={pistol.sp} className="px-skrift px-hopp-inn mt-1.5 text-[24px] leading-[1.15] font-semibold text-white">
+      <p key={pistol.sp} className="px-hopp-inn mt-1.5 text-[22px] leading-[1.25] font-semibold tracking-[-0.01em] text-balance text-white sm:text-[24px]">
         {q?.tekst}
       </p>
       <div className="mt-3 min-h-[60px]">
@@ -185,13 +185,13 @@ export function PistolPanel({
             {holder ? <Figur figur={holder.figur} className="h-10 w-[33px] shrink-0" /> : null}
             <div className="min-w-0">
               <p className="px-etikett text-[#fde047]">{holder?.navn ?? "Noen"} har pistolen</p>
-              <p className="px-skrift truncate text-[20px] text-white">
-                {skriver || <span className="px-blink text-[#4b5a92]">tenker …</span>}
+              <p className="truncate text-[19px] font-semibold text-white">
+                {skriver || <span className="px-blink text-[#8d9cd4]">tenker …</span>}
               </p>
             </div>
           </div>
         )}
-        {melding ? <p className="px-etikett mt-2 text-[#fb7185]">{melding}</p> : null}
+        {melding ? <p className="mt-2 text-[13px] font-medium text-[#fda4af]">{melding}</p> : null}
       </div>
       {pistol.svar.length ? (
         <ul className="mt-3 flex flex-wrap gap-1" aria-label="Sagt i denne kategorien">
@@ -210,10 +210,10 @@ export function PistolPanel({
           return (
             <li key={s.id} className={`flex items-center gap-2 ${ute ? "opacity-45" : ""}`}>
               <span className="h-3 w-3 shrink-0" style={{ background: figurFarge(d.figur) }} aria-hidden="true" />
-              <span className={`px-skrift min-w-0 flex-1 truncate text-[16px] ${s.id === pistol.holder ? "text-[#fde047]" : "text-white"}`}>
+              <span className={`min-w-0 flex-1 truncate text-[15px] font-semibold ${s.id === pistol.holder ? "text-[#fde047]" : "text-white"}`}>
                 {d.navn}
-                {s.id === meg ? <span className="text-[#8b9bd0]"> (deg)</span> : null}
-                {!tilstede.has(s.id) && !ute ? <span className="text-[#8b9bd0]"> · borte</span> : null}
+                {s.id === meg ? <span className="text-[#a5b4e8]"> (deg)</span> : null}
+                {!tilstede.has(s.id) && !ute ? <span className="text-[#a5b4e8]"> · borte</span> : null}
               </span>
               {ute ? <span className="px-merke bg-[#263370] text-[#c7d2fe]">Ute</span> : <Hjerter liv={s.liv} />}
               <span className="w-[64px] shrink-0">
@@ -248,9 +248,9 @@ export function PistolSlutt({ pistol, deltakere, meg, erVert, vertNavn, spillIgj
       <section className="px-panel px-panel-rosa p-4">
         <p className="px-etikett text-center text-[#ffb3ee]">Startpistolen er over</p>
         <div className="mt-3">
-          <Pall rader={rader} verdiKlasse="px-skrift text-[13px]" />
+          <Pall rader={rader} verdiKlasse="text-[13px] font-semibold" />
         </div>
-        <p className="px-skrift mt-4 text-center text-[18px] text-white">
+        <p className="mt-4 text-center text-[17px] font-semibold text-white">
           {min?.plass === 1 ? (
             <>
               Du står igjen <span className="px-neon px-neon-liten">alene</span>!
@@ -273,7 +273,7 @@ export function PistolSlutt({ pistol, deltakere, meg, erVert, vertNavn, spillIgj
           </DelKnapp>
         </div>
       </section>
-      <p className="text-center text-[13px] text-[#8b9bd0]">
+      <p className="text-center text-[13px] text-[#a5b4e8]">
         <Link href="/spill/67-stegern" className="underline decoration-dotted underline-offset-4 hover:text-white">
           Til dagens 6/7-stegern
         </Link>

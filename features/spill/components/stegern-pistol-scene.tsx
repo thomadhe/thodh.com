@@ -5,7 +5,7 @@ import { tilfeldig } from "../lib/dag"
 import { KROPPER, type Figur } from "../lib/duell/figur"
 import { serverNa } from "../lib/duell/signatur"
 import { MAKS_LIV, type Pistol } from "../lib/stegern-pistol"
-import { stemningsPose } from "./stegern-bane"
+import { stemningsPose, useDpr } from "./stegern-bane"
 import { hvile, type Pose } from "./stegern-motor"
 import {
   FARGE,
@@ -13,6 +13,7 @@ import {
   geometri,
   hvileBevegelse,
   Kulisse,
+  lagSkjerm,
   merkelapp,
   palettFor,
   PIKSEL,
@@ -72,7 +73,8 @@ function tegnScene(b: Bilde, kulisse: Kulisse, spillere: Pistolspiller[], p: Pic
     if (s.ute) pose = { ...pose, sy: 0.82, sx: 1.08 }
     if (harPistol) {
       pose = { ...pose, armer: [pose.armer[0], { x: 0.2, y: -0.2 }], blikk: { x: 0.05, y: 0 }, stor: 1.15 }
-      if (!redusert && !iSmell) x += Math.floor(na / 70) % 2
+      // A nervous tremble: one pixel back and forth a few times a second, not a buzz.
+      if (!redusert && !iSmell) x += Math.floor(na / 180) % 2
     }
     if (p.hopp?.id === s.id && hoppDt >= 0 && hoppDt < HOPP_MS && !redusert) {
       const u = hoppDt / HOPP_MS
@@ -96,9 +98,9 @@ function tegnScene(b: Bilde, kulisse: Kulisse, spillere: Pistolspiller[], p: Pic
     else for (let k = 0; k < MAKS_LIV; k++) tegnHjerte(b, x0 - 8 + k * 6, hy, k < s.liv)
     if (s.deg) for (let k = 0; k < 3; k++) for (let ddx = -2 + k; ddx <= 2 - k; ddx++) sett(b, x0 + ddx, hy - 5 + k, FARGE.hvit)
 
-    // The life bar under the feet, in the figure's colour; it flashes when it fills.
+    // The life bar under the feet, in the figure's colour; it lights up white once, briefly, when it fills.
     const plussDt = p.pluss?.id === s.id ? na - p.pluss.ts : Infinity
-    const blink = plussDt >= 0 && plussDt < 600 && Math.floor(plussDt / 100) % 2 === 0
+    const blink = plussDt >= 0 && plussDt < 250
     const bw = 16
     const bx = x0 - bw / 2
     const by = bakke + 4
@@ -184,6 +186,7 @@ export function Startlinje({
   const [bredde, setBredde] = useState(360)
   const w = Math.max(60, Math.ceil(bredde / PIKSEL))
   const geo = geometri(w, 1)
+  const dpr = useDpr()
   const props = useRef({ spillere, pistol, neste })
 
   useLayoutEffect(() => {
@@ -201,33 +204,26 @@ export function Startlinje({
   })
 
   useEffect(() => {
-    const ctx = lerret.current?.getContext("2d")
-    if (!ctx) return
     const geo = geometri(w, 1)
+    const c = lerret.current
+    const skjerm = c ? lagSkjerm(c, geo.w, geo.h, PIKSEL) : null
+    if (!skjerm) return
     const redusert = matchMedia("(prefers-reduced-motion: reduce)").matches
-    const data = ctx.createImageData(geo.w, geo.h)
-    const bilde: Bilde = { w: geo.w, h: geo.h, d: new Uint32Array(data.data.buffer) }
     const kulisse = new Kulisse()
     let id = 0
     const tegn = () => {
       const { spillere, pistol, neste } = props.current
-      tegnScene(bilde, kulisse, spillere, pistol, neste, serverNa(), redusert)
-      ctx.putImageData(data, 0, 0)
+      tegnScene(skjerm.bilde, kulisse, spillere, pistol, neste, serverNa(), redusert)
+      skjerm.vis()
       id = window.setTimeout(tegn, document.hidden ? 1000 : redusert ? 250 : TICK_MS)
     }
     tegn()
     return () => window.clearTimeout(id)
-  }, [w])
+  }, [w, dpr])
 
   return (
     <div ref={ramme} className="stegern-bane relative w-full overflow-hidden" style={{ height: geo.h * PIKSEL }} role="img" aria-label={etikett}>
-      <canvas
-        ref={lerret}
-        width={geo.w}
-        height={geo.h}
-        className="absolute top-0 left-1/2 block max-w-none -translate-x-1/2"
-        style={{ width: geo.w * PIKSEL, height: geo.h * PIKSEL, imageRendering: "pixelated" }}
-      />
+      <canvas ref={lerret} className="absolute top-0 left-1/2 block max-w-none -translate-x-1/2" style={{ width: geo.w * PIKSEL, height: geo.h * PIKSEL }} />
       {children}
     </div>
   )

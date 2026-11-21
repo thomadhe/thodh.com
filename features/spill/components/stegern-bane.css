@@ -1,5 +1,7 @@
 /* 6/7-stegern's pixel look: a night-blue page, dark navy panels framed by a thin glowing cyan line with
-   pixel-notched corners, chunky buttons, and neon type. Scoped to .stegern-side (and .px-side for the other duels) so no other game changes. */
+   pixel-notched corners, chunky buttons, and neon type. Scoped to .stegern-side (and .px-side for the other duels) so no other game changes.
+   The pixel faces are for headings, scores and the stage art only; everything people read or tap (questions, answers,
+   labels, buttons, fields) is set in the site's sans, with text colours at WCAG AA or better on the navy panels. */
 
 .spill-mork:is(.stegern-side, .px-side) {
   --spill-flate: #0c1333;
@@ -10,8 +12,9 @@
   --px-rosa: #ff4fd8;
   --px-lime: #a3e635;
   --px-gul: #facc15;
-  --px-blek: #9fb0dd;
-  --px-dempet: #6b7bb0;
+  --px-blek: #b4c1ec;
+  --px-dempet: #98a8dc;
+  --px-tekst: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --px-omriss: #070a17;
   background-color: var(--px-natt);
   background-image:
@@ -27,278 +30,278 @@
   color: #fff;
 }
 
-/* A panel: navy inside a one-pixel cyan frame whose corners are cut, with a soft glow. */
-.px-panel {
-  position: relative;
-  border: 3px solid transparent;
-  border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='3' shape-rendering='crispEdges'%3E%3Cpath d='M1 0h1v1H1zM0 1h1v1H0zM2 1h1v1H2zM1 2h1v1H1z' fill='%2338e8ff'/%3E%3C/svg%3E") 1 / 3px stretch;
-  background: linear-gradient(180deg, var(--px-panel-2), var(--px-panel) 55%) padding-box;
-  box-shadow:
-    0 0 16px -2px rgb(56 232 255 / 0.4),
-    inset 0 0 22px rgb(56 232 255 / 0.07);
-  color: #e8ecff;
-}
+/* The px-* pieces sit in Tailwind's components layer, so a utility on the same element (a colour, a size) wins. */
+@layer components {
+  /* A panel: navy inside a one-pixel cyan frame whose corners are cut, with a soft glow. */
+  .px-panel {
+    position: relative;
+    border: 3px solid transparent;
+    border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='3' shape-rendering='crispEdges'%3E%3Cpath d='M1 0h1v1H1zM0 1h1v1H0zM2 1h1v1H2zM1 2h1v1H1z' fill='%2338e8ff'/%3E%3C/svg%3E") 1 / 3px stretch;
+    background: linear-gradient(180deg, var(--px-panel-2), var(--px-panel) 55%) padding-box;
+    box-shadow:
+      0 0 14px -4px rgb(56 232 255 / 0.28),
+      inset 0 0 22px rgb(56 232 255 / 0.05);
+    color: #e8ecff;
+  }
 
-.px-panel-rosa {
-  border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='3' shape-rendering='crispEdges'%3E%3Cpath d='M1 0h1v1H1zM0 1h1v1H0zM2 1h1v1H2zM1 2h1v1H1z' fill='%23ff4fd8'/%3E%3C/svg%3E");
-  box-shadow:
-    0 0 16px -2px rgb(255 79 216 / 0.45),
-    inset 0 0 22px rgb(255 79 216 / 0.08);
-}
+  .px-panel-rosa {
+    border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='3' shape-rendering='crispEdges'%3E%3Cpath d='M1 0h1v1H1zM0 1h1v1H0zM2 1h1v1H2zM1 2h1v1H1z' fill='%23ff4fd8'/%3E%3C/svg%3E");
+    box-shadow:
+      0 0 14px -4px rgb(255 79 216 / 0.3),
+      inset 0 0 22px rgb(255 79 216 / 0.05);
+  }
 
-.px-panel-dempet {
-  border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='3' shape-rendering='crispEdges'%3E%3Cpath d='M1 0h1v1H1zM0 1h1v1H0zM2 1h1v1H2zM1 2h1v1H1z' fill='%23263370'/%3E%3C/svg%3E");
-  box-shadow: none;
-}
+  .px-panel-dempet {
+    border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='3' shape-rendering='crispEdges'%3E%3Cpath d='M1 0h1v1H1zM0 1h1v1H0zM2 1h1v1H2zM1 2h1v1H1z' fill='%23263370'/%3E%3C/svg%3E");
+    box-shadow: none;
+  }
 
-/* Small uppercase pixel labels: "SPØRSMÅL 2 AV 5", "KLAR 1/4". */
-.px-etikett {
-  font-family: var(--font-etikett), monospace;
-  font-size: 11px;
-  line-height: 1.2;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--px-blek);
-}
+  /* Small uppercase labels: "SPØRSMÅL 2 AV 5", "KLAR 1/4". In the sans, not a bitmap face, so they hold up at 12px. */
+  .px-etikett {
+    font-family: var(--px-tekst);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--px-blek);
+  }
 
-.px-skrift {
-  font-family: var(--font-piksel), var(--font-geist-sans), sans-serif;
-}
+  .px-skrift {
+    font-family: var(--font-piksel), var(--font-geist-sans), sans-serif;
+  }
 
-/* Numbers that must read at a glance (Gjetteløs duel): Silkscreen's digits keep 5 and S, 8 and B apart. */
-.px-tall {
-  font-family: var(--font-etikett), monospace;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.05em;
-}
+  /* Numbers that must read at a glance (Gjetteløs duel): Silkscreen's digits keep 5 and S, 8 and B apart. */
+  .px-tall {
+    font-family: var(--font-etikett), monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.05em;
+  }
 
-/* The neon wordmark: white core, pink and cyan pulled apart, a pink haze. */
-.px-neon {
-  font-family: var(--font-piksel), sans-serif;
-  font-weight: 700;
-  color: #fff4fe;
-  letter-spacing: 0.02em;
-  text-shadow:
-    3px 0 0 var(--px-rosa),
-    -3px 0 0 var(--px-cyan),
-    0 0 14px rgb(255 79 216 / 0.75),
-    0 0 32px rgb(56 232 255 / 0.35);
-}
+  /* The neon wordmark: a white core with a hard pink drop and a soft pink haze. One offset, not a pink-and-cyan
+     split on both sides, so the letters never look doubled. */
+  .px-neon {
+    font-family: var(--font-piksel), sans-serif;
+    font-weight: 700;
+    color: #fff4fe;
+    letter-spacing: 0.02em;
+    text-shadow:
+      2px 2px 0 rgb(255 79 216 / 0.9),
+      0 0 18px rgb(255 79 216 / 0.4);
+  }
 
-.px-neon-liten {
-  text-shadow:
-    2px 0 0 var(--px-rosa),
-    -2px 0 0 var(--px-cyan),
-    0 0 10px rgb(255 79 216 / 0.6);
-}
+  .px-neon-liten {
+    text-shadow:
+      1px 1px 0 rgb(255 79 216 / 0.9),
+      0 0 10px rgb(255 79 216 / 0.35);
+  }
 
-/* Chunky buttons with cut corners and a lit top edge. */
-.px-knapp {
-  --knapp-flate: var(--px-lime);
-  --knapp-tekst: #0b1020;
-  display: inline-flex;
-  min-height: 46px;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0 1.15rem;
-  border: 3px solid var(--px-omriss);
-  background: var(--knapp-flate);
-  color: var(--knapp-tekst);
-  font-family: var(--font-piksel), sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  clip-path: polygon(3px 0, calc(100% - 3px) 0, calc(100% - 3px) 3px, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 3px calc(100% - 3px), 0 calc(100% - 3px), 0 3px, 3px 3px);
-  box-shadow:
-    inset 0 3px 0 rgb(255 255 255 / 0.45),
-    inset 0 -5px 0 rgb(0 0 0 / 0.28);
-  cursor: pointer;
-  transition: transform 80ms steps(2), filter 120ms;
-}
+  /* Chunky buttons with cut corners and a lit top edge; the label in the bold sans. */
+  .px-knapp {
+    --knapp-flate: var(--px-lime);
+    --knapp-tekst: #0b1020;
+    display: inline-flex;
+    min-height: 46px;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0 1.15rem;
+    border: 3px solid var(--px-omriss);
+    background: var(--knapp-flate);
+    color: var(--knapp-tekst);
+    font-family: var(--px-tekst);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    clip-path: polygon(3px 0, calc(100% - 3px) 0, calc(100% - 3px) 3px, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 3px calc(100% - 3px), 0 calc(100% - 3px), 0 3px, 3px 3px);
+    box-shadow:
+      inset 0 3px 0 rgb(255 255 255 / 0.45),
+      inset 0 -5px 0 rgb(0 0 0 / 0.28);
+    cursor: pointer;
+    transition: transform 80ms ease-out, filter 120ms ease-out;
+  }
 
-.px-knapp:hover {
-  filter: brightness(1.08);
-}
+  .px-knapp:hover {
+    filter: brightness(1.08);
+  }
 
-.px-knapp:active:not(:disabled) {
-  transform: translateY(2px);
-  box-shadow:
-    inset 0 3px 0 rgb(0 0 0 / 0.2),
-    inset 0 -2px 0 rgb(0 0 0 / 0.2);
-}
+  .px-knapp:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow:
+      inset 0 3px 0 rgb(0 0 0 / 0.2),
+      inset 0 -2px 0 rgb(0 0 0 / 0.2);
+  }
 
-.px-knapp:focus-visible {
-  outline: none;
-  box-shadow:
-    inset 0 0 0 3px #fff,
-    inset 0 -5px 0 rgb(0 0 0 / 0.28);
-}
+  .px-knapp:focus-visible {
+    outline: none;
+    box-shadow:
+      inset 0 0 0 3px #fff,
+      inset 0 -5px 0 rgb(0 0 0 / 0.28);
+  }
 
-.px-knapp:disabled {
-  cursor: not-allowed;
-  filter: grayscale(0.85) brightness(0.6);
-}
+  .px-knapp:disabled {
+    cursor: not-allowed;
+    filter: grayscale(0.85) brightness(0.6);
+  }
 
-.px-knapp-rosa {
-  --knapp-flate: var(--px-rosa);
-  --knapp-tekst: #1a0418;
-}
+  .px-knapp-rosa {
+    --knapp-flate: var(--px-rosa);
+    --knapp-tekst: #1a0418;
+  }
 
-.px-knapp-cyan {
-  --knapp-flate: var(--px-cyan);
-  --knapp-tekst: #04141a;
-}
+  .px-knapp-cyan {
+    --knapp-flate: var(--px-cyan);
+    --knapp-tekst: #04141a;
+  }
 
-.px-knapp-mork {
-  --knapp-flate: #18224f;
-  --knapp-tekst: #dfe7ff;
-  border-color: #2b3a80;
-  box-shadow:
-    inset 0 3px 0 rgb(255 255 255 / 0.12),
-    inset 0 -5px 0 rgb(0 0 0 / 0.3);
-}
+  .px-knapp-mork {
+    --knapp-flate: #18224f;
+    --knapp-tekst: #dfe7ff;
+    border-color: #2b3a80;
+    box-shadow:
+      inset 0 3px 0 rgb(255 255 255 / 0.12),
+      inset 0 -5px 0 rgb(0 0 0 / 0.3);
+  }
 
-.px-knapp-liten {
-  min-height: 36px;
-  padding: 0 0.75rem;
-  font-size: 14px;
-}
+  .px-knapp-liten {
+    min-height: 36px;
+    padding: 0 0.75rem;
+    font-size: 13px;
+  }
 
-/* Text field: a dark slot in the same frame. */
-.px-felt {
-  border: 3px solid transparent;
-  border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='3' shape-rendering='crispEdges'%3E%3Cpath d='M1 0h1v1H1zM0 1h1v1H0zM2 1h1v1H2zM1 2h1v1H1z' fill='%233b4c99'/%3E%3C/svg%3E") 1 / 3px stretch;
-  background: #050920 padding-box;
-  color: #fff;
-  font-family: var(--font-piksel), sans-serif;
-  font-size: 20px;
-  caret-color: var(--px-lime);
-  outline: none;
-  box-shadow: inset 0 3px 0 rgb(0 0 0 / 0.45);
-}
+  /* Text field: a dark slot in the same frame. */
+  .px-felt {
+    border: 3px solid transparent;
+    border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='3' shape-rendering='crispEdges'%3E%3Cpath d='M1 0h1v1H1zM0 1h1v1H0zM2 1h1v1H2zM1 2h1v1H1z' fill='%233b4c99'/%3E%3C/svg%3E") 1 / 3px stretch;
+    background: #050920 padding-box;
+    color: #fff;
+    font-family: var(--px-tekst);
+    font-size: 18px;
+    font-weight: 500;
+    caret-color: var(--px-lime);
+    outline: none;
+    box-shadow: inset 0 3px 0 rgb(0 0 0 / 0.45);
+  }
 
-.px-felt::placeholder {
-  color: #4b5a92;
-}
+  .px-felt::placeholder {
+    color: #8191c8;
+  }
 
-.px-felt:focus {
-  border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='3' shape-rendering='crispEdges'%3E%3Cpath d='M1 0h1v1H1zM0 1h1v1H0zM2 1h1v1H2zM1 2h1v1H1z' fill='%23a3e635'/%3E%3C/svg%3E");
-  box-shadow:
-    inset 0 3px 0 rgb(0 0 0 / 0.45),
-    0 0 14px -2px rgb(163 230 53 / 0.45);
-}
+  .px-felt:focus {
+    border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='3' shape-rendering='crispEdges'%3E%3Cpath d='M1 0h1v1H1zM0 1h1v1H0zM2 1h1v1H2zM1 2h1v1H1z' fill='%23a3e635'/%3E%3C/svg%3E");
+    box-shadow:
+      inset 0 3px 0 rgb(0 0 0 / 0.45),
+      0 0 14px -2px rgb(163 230 53 / 0.45);
+  }
 
-/* Tags and chips with cut corners. */
-.px-merke {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35em;
-  padding: 3px 7px 2px;
-  font-family: var(--font-etikett), monospace;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #0b1020;
-  clip-path: polygon(2px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 0 calc(100% - 2px), 0 2px);
-}
+  /* Tags and chips with cut corners. */
+  .px-merke {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    padding: 3px 7px;
+    font-family: var(--px-tekst);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #0b1020;
+    clip-path: polygon(2px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 0 calc(100% - 2px), 0 2px);
+  }
 
-.px-brikke {
-  display: flex;
-  height: 24px;
-  width: 24px;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-etikett), monospace;
-  font-size: 11px;
-  font-weight: 700;
-  clip-path: polygon(3px 0, calc(100% - 3px) 0, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0 calc(100% - 3px), 0 3px);
-}
+  .px-brikke {
+    display: flex;
+    height: 24px;
+    width: 24px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--px-tekst);
+    font-size: 12px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    clip-path: polygon(3px 0, calc(100% - 3px) 0, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0 calc(100% - 3px), 0 3px);
+  }
 
-/* The countdown: blocks that go out one by one. */
-.px-klokke {
-  display: grid;
-  grid-template-columns: repeat(15, 1fr);
-  gap: 3px;
-}
+  /* The countdown: blocks that go out one by one. */
+  .px-klokke {
+    display: grid;
+    grid-template-columns: repeat(15, 1fr);
+    gap: 3px;
+  }
 
-.px-klokke > span {
-  height: 8px;
-  background: #18224f;
-}
+  .px-klokke > span {
+    height: 8px;
+    background: #18224f;
+    transition: background-color 400ms ease-out;
+  }
 
-.px-klokke > span[data-pa] {
-  background: var(--px-lime);
-  box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.35);
-}
-
-.px-klokke[data-snart] > span[data-pa] {
-  background: var(--px-rosa);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .px-blink {
-    animation: px-blink 1.1s steps(1) infinite;
+  .px-klokke > span[data-pa] {
+    background: var(--px-lime);
+    box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.35);
   }
 
   .px-klokke[data-snart] > span[data-pa] {
-    animation: px-blink 0.5s steps(1) infinite;
+    background: var(--px-rosa);
+  }
+}
+
+/* Motion is soft and slow: a gentle pulse for "waiting" text, a short fade-up for new panels, no hard blinking.
+   With reduced motion, none of it runs. */
+@media (prefers-reduced-motion: no-preference) {
+  .px-blink {
+    animation: px-puls 2.2s ease-in-out infinite;
   }
 
   .px-hopp-inn {
-    animation: px-hopp-inn 320ms steps(4) both;
+    animation: px-hopp-inn 260ms ease-out both;
   }
 
   .px-svev {
-    animation: px-svev 2.4s steps(2) infinite;
+    animation: px-svev 3s ease-in-out infinite;
   }
 
   .px-rist {
-    animation: px-rist 360ms steps(6);
+    animation: px-rist 300ms ease-in-out;
   }
 }
 
-/* A wrong answer in Startpistolen: the field shakes. */
+@media (prefers-reduced-motion: reduce) {
+  .px-knapp,
+  .px-klokke > span {
+    transition: none;
+  }
+}
+
+/* A wrong answer in Startpistolen: the field gives a small shake. */
 @keyframes px-rist {
-  20%,
-  60% {
-    transform: translateX(-6px);
+  25%,
+  75% {
+    transform: translateX(-3px);
   }
-  40%,
-  80% {
-    transform: translateX(6px);
+  50% {
+    transform: translateX(3px);
   }
 }
 
-@keyframes px-blink {
+@keyframes px-puls {
   50% {
-    opacity: 0.25;
+    opacity: 0.6;
   }
 }
 
 @keyframes px-hopp-inn {
   from {
     opacity: 0;
-    transform: translateY(9px);
+    transform: translateY(6px);
   }
 }
 
 @keyframes px-svev {
   50% {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
   }
-}
-
-/* Pixel scanline sheen over the scene. */
-.px-skann::after {
-  content: "";
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(180deg, rgb(0 0 0 / 0.08) 0 1px, transparent 1px 3px);
 }

@@ -2,9 +2,9 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react"
 import { KROPPER, type Figur } from "../lib/duell/figur"
-import { stemningsPose, type Stemning } from "./stegern-bane"
+import { stemningsPose, useDpr, type Stemning } from "./stegern-bane"
 import { hvile } from "./stegern-motor"
-import { FARGE, fyll, hvileBevegelse, merkelapp, palettFor, PIKSEL, rgb, sett, tegnFigur, tekst, tekstBredde, type Bilde } from "./stegern-piksel"
+import { FARGE, fyll, hvileBevegelse, lagSkjerm, merkelapp, palettFor, PIKSEL, rgb, sett, tegnFigur, tekst, tekstBredde, type Bilde } from "./stegern-piksel"
 
 // The Gjetteløs duel's stage: a pixel quiz studio with a marquee scoreboard, spotlights and one lectern per player.
 // Each player's figure stands behind their lectern with their score above, a lamp on the lectern that lights when
@@ -76,7 +76,8 @@ function tegnStudio(b: Bilde, spillere: Studiospiller[], skjerm: string, lys: st
     sett(b, sx, y, SKJERM_KANT, 0.8)
     sett(b, sx + sw - 1, y, SKJERM_KANT, 0.8)
   }
-  const steg = Math.floor(tid * 6)
+  // The bulbs chase round slowly (two steps a second), a calm marquee rather than a strobe.
+  const steg = Math.floor(tid * 2)
   let n = 0
   const paere = (x: number, y: number) => sett(b, x, y, (n++ + steg) % 3 === 0 ? PAERE : PAERE_AV)
   for (let x = sx - 2; x < sx + sw + 2; x += 3) paere(x, sy - 2)
@@ -153,6 +154,7 @@ export function Studio({
   const lerret = useRef<HTMLCanvasElement>(null)
   const [bredde, setBredde] = useState(360)
   const w = Math.max(60, Math.ceil(bredde / PIKSEL))
+  const dpr = useDpr()
   const props = useRef({ spillere, skjerm, lys })
   const tegnNa = useRef<() => void>(() => {})
 
@@ -172,16 +174,15 @@ export function Studio({
   })
 
   useEffect(() => {
-    const ctx = lerret.current?.getContext("2d")
-    if (!ctx) return
+    const c = lerret.current
+    const flate = c ? lagSkjerm(c, w, H, PIKSEL) : null
+    if (!flate) return
     const redusert = matchMedia("(prefers-reduced-motion: reduce)").matches
-    const data = ctx.createImageData(w, H)
-    const bilde: Bilde = { w, h: H, d: new Uint32Array(data.data.buffer) }
     let id = 0
     const tegn = () => {
       const { spillere, skjerm, lys } = props.current
-      tegnStudio(bilde, spillere, skjerm, lys, redusert ? 0 : performance.now() / 1000)
-      ctx.putImageData(data, 0, 0)
+      tegnStudio(flate.bilde, spillere, skjerm, lys, redusert ? 0 : performance.now() / 1000)
+      flate.vis()
     }
     tegnNa.current = tegn
     const loop = () => {
@@ -193,17 +194,11 @@ export function Studio({
       window.clearTimeout(id)
       tegnNa.current = () => {}
     }
-  }, [w])
+  }, [w, dpr])
 
   return (
     <div ref={ramme} className="relative w-full overflow-hidden" style={{ height: H * PIKSEL }} role="img" aria-label={etikett}>
-      <canvas
-        ref={lerret}
-        width={w}
-        height={H}
-        className="absolute top-0 left-1/2 block max-w-none -translate-x-1/2"
-        style={{ width: w * PIKSEL, height: H * PIKSEL, imageRendering: "pixelated" }}
-      />
+      <canvas ref={lerret} className="absolute top-0 left-1/2 block max-w-none -translate-x-1/2" style={{ width: w * PIKSEL, height: H * PIKSEL }} />
       {children}
     </div>
   )
