@@ -15,6 +15,7 @@ try {
   const gjDuelBank = path.join(temporary, "gjettelos-duellbank.test.mjs");
   const stDuelBank = path.join(temporary, "stegern-duellbank.test.mjs");
   const stegernDays = path.join(temporary, "stegern-dager.test.mjs");
+  const anelseslos = path.join(temporary, "anelseslos.test.mjs");
   for (const [entry, outfile] of [
     ["features/otsjoba/tests/learning.test.ts", learning],
     ["tests/tutor.test.ts", api],
@@ -25,10 +26,11 @@ try {
     ["tests/gjettelos-duellbank.test.ts", gjDuelBank],
     ["tests/stegern-duellbank.test.ts", stDuelBank],
     ["tests/stegern-dager.test.ts", stegernDays],
+    ["tests/anelseslos.test.ts", anelseslos],
   ]) {
     await build({ entryPoints: [entry], outfile, bundle: true, platform: "node", format: "esm" });
   }
-  const result = spawnSync(process.execPath, ["--test", learning, api, accounts, chessRelay, chessPush, games, gjDuelBank, stDuelBank, stegernDays, "tests/game.test.mjs", "tests/turn-clock.test.mjs", "tests/chess-session.test.mjs", "tests/chess-online.test.mjs", "tests/sjakk-oppgaver.test.mjs", "tests/sjakk-apninger.test.mjs", "tests/sjakk-kurs.test.mjs", "tests/sjakk-for-1.test.mjs"], { stdio: "inherit" });
+  const result = spawnSync(process.execPath, ["--test", learning, api, accounts, chessRelay, chessPush, games, gjDuelBank, stDuelBank, stegernDays, anelseslos, "tests/game.test.mjs", "tests/turn-clock.test.mjs", "tests/chess-session.test.mjs", "tests/chess-online.test.mjs", "tests/sjakk-oppgaver.test.mjs", "tests/sjakk-apninger.test.mjs", "tests/sjakk-kurs.test.mjs", "tests/sjakk-for-1.test.mjs"], { stdio: "inherit" });
   process.exitCode = result.status ?? 1;
 } finally {
   // Only remove the dedicated directory created for this test run.

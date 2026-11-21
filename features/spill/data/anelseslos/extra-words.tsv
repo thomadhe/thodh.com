@@ -1,0 +1,4 @@
+# Hand-added words for Anelsesløs. One per line, tab-separated:
+#   word<TAB>3+ existing vocabulary words close in meaning (space-separated)<TAB>optional inflections
+# The vector is the mean of the anchors. See features/spill/lib/server/anelseslos-logikk.ts.
+duvet	quilt blanket bedding	duvets
