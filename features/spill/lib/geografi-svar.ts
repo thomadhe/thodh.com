@@ -100,13 +100,36 @@ export function avstand(a: Omrade, b: Omrade) {
   return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)))
 }
 
-/** Initial compass bearing (degrees, 0 = north) from a towards b. */
-export function retning(a: Omrade, b: Omrade) {
-  const rad = Math.PI / 180
-  const y = Math.sin((b.lng - a.lng) * rad) * Math.cos(b.lat * rad)
-  const x =
-    Math.cos(a.lat * rad) * Math.sin(b.lat * rad) - Math.sin(a.lat * rad) * Math.cos(b.lat * rad) * Math.cos((b.lng - a.lng) * rad)
-  return ((Math.atan2(y, x) / rad) + 360) % 360
+type Punkt = Pick<Omrade, "lat" | "lng">
+
+/** Mercator y for a latitude, clamped short of the poles where it goes to infinity. */
+const mercatorY = (lat: number) => {
+  const rad = (Math.max(-89.9, Math.min(89.9, lat)) * Math.PI) / 180
+  return Math.log(Math.tan(Math.PI / 4 + rad / 2))
+}
+
+/**
+ * Map direction from a towards b in degrees clockwise from north (0 = up, 90 = right), in [0, 360).
+ *
+ * This is the rhumb-line bearing: the straight line between the two centres on a Mercator map, which is
+ * what players read off a world map (Worldle and the like use it too). The great-circle start bearing we
+ * used before is what a plane flies, and it disagrees with every flat map over long distances: Norway to
+ * Mexico pointed north-west instead of west/south-west, and Iceland to New Zealand pointed north over
+ * the pole. East–west goes the short way across the antimeridian, like the distance in `avstand`.
+ */
+export function retning(a: Punkt, b: Punkt) {
+  const dLng = ((((b.lng - a.lng) % 360) + 540) % 360) - 180
+  const dY = mercatorY(b.lat) - mercatorY(a.lat)
+  if (dLng === 0 && dY === 0) return 0
+  return ((Math.atan2((dLng * Math.PI) / 180, dY) * 180) / Math.PI + 360) % 360
+}
+
+/** The eight share-text arrows, clockwise from north, matching the rotation of the on-screen arrow. */
+export const PILER = ["⬆️", "↗️", "➡️", "↘️", "⬇️", "↙️", "⬅️", "↖️"] as const
+
+/** Nearest of the eight arrows for a bearing in degrees (any value; wraps around). */
+export function retningsPil(grader: number) {
+  return PILER[((Math.round(grader / 45) % 8) + 8) % 8]
 }
 
 /**

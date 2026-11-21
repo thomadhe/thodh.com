@@ -4,14 +4,11 @@ import { ArrowUp } from "lucide-react"
 import { useRef, useState } from "react"
 import type { Omrade as Land } from "../lib/geografi"
 import { fargetone, naerhetsfarge, type Fargeanker } from "../lib/farger"
-import { avstand, forslag, naerhet, retning } from "../lib/geografi-svar"
+import { avstand, forslag, naerhet, retning, retningsPil } from "../lib/geografi-svar"
 import { Knapp } from "./spill-ramme"
 
 // Shared by the "guess the country" games (Omriss, Canvas): the guess field with suggestions and the
 // Worldle-style result rows with distance, direction and a colour bar.
-
-const PILER = ["⬆️", "↗️", "➡️", "↘️", "⬇️", "↙️", "⬅️", "↖️"]
-const pil = (grader: number) => PILER[Math.round(grader / 45) % 8]
 
 const km = (n: number) => `${Math.round(n).toLocaleString("nb-NO")} km`
 
@@ -60,7 +57,7 @@ export function delRad(gjett: Land, fasit: Land) {
   const p = naerhet(avstand(gjett, fasit))
   const hele = Math.floor(p / 20)
   const halv = p % 20 >= 10 ? 1 : 0
-  return "🟩".repeat(hele) + "🟨".repeat(halv) + "⬜".repeat(5 - hele - halv) + pil(retning(gjett, fasit))
+  return "🟩".repeat(hele) + "🟨".repeat(halv) + "⬜".repeat(5 - hele - halv) + retningsPil(retning(gjett, fasit))
 }
 
 /** Text field with country suggestions; Enter picks the highlighted one. */
