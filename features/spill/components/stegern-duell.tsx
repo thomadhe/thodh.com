@@ -78,14 +78,25 @@ function etterMottak(for_: Status, ny: Status, rom: Romkontekst<Status>) {
 /** Prompts fetched for one game of Startpistolen; a new one comes after every bang. */
 const PISTOL_SPORSMAL = 20
 
-export function StegernDuell({ kode, supabaseUrl, supabaseNokkel }: { kode: string; supabaseUrl: string; supabaseNokkel: string }) {
+export function StegernDuell({
+  kode,
+  supabaseUrl,
+  supabaseNokkel,
+  startModus = "runder",
+}: {
+  kode: string
+  supabaseUrl: string
+  supabaseNokkel: string
+  startModus?: "runder" | "pistol"
+}) {
+  const lagStartStatus = useCallback((runde: number): Status => ({ ...startStatus(runde), modus: startModus }), [startModus])
   const rom = useDuellrom<Status>({
     kanal: "stegern-duell",
     lagring: "stegern:duell",
     kode,
     supabaseUrl,
     supabaseNokkel,
-    start: startStatus,
+    start: lagStartStatus,
     les: lesStatus,
     taImot,
     hendelser: {

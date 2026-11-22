@@ -6,6 +6,7 @@ import { filmtitler, type Filmtittel } from "../data/emovi/titler"
 import { formaterDato } from "../lib/dag"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
+import { spillSpor } from "../lib/resultat-klient"
 import { DelKnapp, Knapp, Kort, sekundarKnapp } from "./spill-ramme"
 
 // Emovi: five emojis, one film, three lives. A wrong guess or asking for a hint costs a life, and every
@@ -19,12 +20,7 @@ type Tilstand = { v: 2; gjetninger: Gjetning[]; hint: string[]; fasit?: Filmtitt
 // v2: lives (Oct 2026); older saves start fresh.
 const tom = (): Tilstand => ({ v: 2, gjetninger: [], hint: [], resultat: { status: "pagar" } })
 
-async function spor<T>(body: unknown): Promise<T> {
-  const svar = await fetch("/spill/api/emovi", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
-  const data = await svar.json().catch(() => ({ melding: "Noe gikk galt." }))
-  if (!svar.ok) throw new Error(data.melding ?? "Noe gikk galt.")
-  return data as T
-}
+const spor = <T,>(body: Record<string, unknown>) => spillSpor<T>("emovi", "/spill/api/emovi", body)
 
 const enkel = (s: string) =>
   s

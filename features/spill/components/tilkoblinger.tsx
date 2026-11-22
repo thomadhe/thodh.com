@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { formaterDato, stokk } from "../lib/dag"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
+import { spillSpor } from "../lib/resultat-klient"
 import type { Brikke, Gruppe } from "../lib/server/tilkoblinger"
 import { Forstorrelse, ForstorrKnapp } from "./forstorrelse"
 import { DelKnapp, Knapp, sekundarKnapp } from "./spill-ramme"
@@ -23,12 +24,7 @@ const tom = (): Tilstand => ({ v: 2, forsok: [], funnet: [], feil: 0, resultat: 
 const FARGE = ["bg-amber-300 text-neutral-950", "bg-emerald-400 text-neutral-950", "bg-sky-400 text-neutral-950", "bg-fuchsia-400 text-neutral-950"]
 const EMOJI = ["🟨", "🟩", "🟦", "🟪"]
 
-async function spor<T>(body: unknown): Promise<T> {
-  const svar = await fetch("/spill/api/tilkoblinger", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
-  const data = await svar.json().catch(() => ({ melding: "Noe gikk galt." }))
-  if (!svar.ok) throw new Error(data.melding ?? "Noe gikk galt.")
-  return data as T
-}
+const spor = <T,>(body: Record<string, unknown>) => spillSpor<T>("tilkoblinger", "/spill/api/tilkoblinger", body)
 
 function GruppeRad({ g }: { g: Funnet }) {
   return (

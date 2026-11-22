@@ -6,6 +6,7 @@ import { flushSync } from "react-dom"
 import { formaterDato, iDagOslo, leggTilDager } from "../lib/dag"
 import { useDagligTilstand, useResultater, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
+import { spillSpor } from "../lib/resultat-klient"
 import { GJENTA_DM, hoppDm, MAKS_DM, meter, NIVAAER, NORMALE, SEKUNDER, STEGERN_START, type Nivaa, type Vurdering } from "../lib/stegern"
 import { Bane, tidTilLanding, type Hopp } from "./stegern-bane"
 import { Avsloring, DelKnapp, DuellInngang, Klokke, NivaaMerke } from "./stegern-ui"
@@ -55,12 +56,7 @@ const tom = (): Tilstand => ({
   resultat: { status: "pagar" },
 })
 
-async function spor<T>(body: unknown): Promise<T> {
-  const svar = await fetch("/spill/api/67-stegern", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
-  const data = await svar.json().catch(() => ({ melding: "Noe gikk galt." }))
-  if (!svar.ok) throw new Error(data.melding ?? "Noe gikk galt.")
-  return data as T
-}
+const spor = <T,>(body: Record<string, unknown>) => spillSpor<T>("67-stegern", "/spill/api/67-stegern", body)
 
 const tilSvar = (t: string, v: Vurdering & { kvittering?: string }): Svar => ({ t, n: v.nivaa, treff: v.treff, v: v.vanligste, s: v.sjeldneste, a: v.antall, k: v.kvittering })
 

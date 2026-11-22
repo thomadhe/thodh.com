@@ -5,6 +5,7 @@ import { formaterDato } from "../lib/dag"
 import { fargetone, naerhetsfarge, type Fargeanker } from "../lib/farger"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
+import { spillSpor } from "../lib/resultat-klient"
 import { DelKnapp, Knapp, Kort, sekundarKnapp } from "./spill-ramme"
 
 type Gjetning = { ord: string; avstand: number; hint?: boolean }
@@ -100,16 +101,7 @@ function Vei({ gjetninger, antall }: { gjetninger: Gjetning[]; antall: number })
   )
 }
 
-async function spor<T>(body: unknown): Promise<T> {
-  const svar = await fetch("/spill/api/anelseslos", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  })
-  const data = await svar.json().catch(() => ({ melding: "Noe gikk galt. Prøv igjen." }))
-  if (!svar.ok) throw new Error(data.melding ?? "Noe gikk galt.")
-  return data as T
-}
+const spor = <T,>(body: Record<string, unknown>) => spillSpor<T>("anelseslos", "/spill/api/anelseslos", body)
 
 export function Anelseslos({ dato, antall }: { dato: string; antall: number }) {
   const { verdi, lastet, oppdater } = useDagligTilstand<Tilstand>("anelseslos", dato, tom)
