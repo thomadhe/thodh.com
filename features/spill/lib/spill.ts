@@ -2,6 +2,8 @@
 export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas" | "soket" | "emovi" | "rusle" | "tilkoblinger" | "havet" | "heksagonal-jakt" | "67-stegern" | "gjettelos"
 /** Free-play quizzes without a daily puzzle. */
 export type QuizId = "verdens-land" | "hovedsteder"
+/** Standalone multiplayer duels without a daily puzzle. */
+export type DuellSpillId = "moggern"
 
 export type Spill<Id extends string = SpillId> = {
   id: Id
@@ -168,6 +170,18 @@ export const quizer: Spill<QuizId>[] = [
   },
 ]
 
-export function finnSpill(id: SpillId | QuizId): Spill<SpillId | QuizId> {
-  return [...spill, ...quizer].find((s) => s.id === id)!
+export const duellSpill: Spill<DuellSpillId>[] = [
+  {
+    id: "moggern",
+    navn: "Moggern",
+    href: "/spill/moggern",
+    kort: "1v1 kameraduell med venner.",
+    regel: "Gå inn i et privat rom med én venn, slå på kameraet og hold blikket i 10 sekunder. Alt er tull, video går direkte mellom nettleserne og ingenting lagres.",
+    ikon: "◈",
+    farge: "bg-lime-400 text-neutral-950",
+  },
+]
+
+export function finnSpill(id: SpillId | QuizId | DuellSpillId): Spill<SpillId | QuizId | DuellSpillId> {
+  return [...spill, ...quizer, ...duellSpill].find((s) => s.id === id)!
 }

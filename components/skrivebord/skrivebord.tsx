@@ -44,6 +44,7 @@ const dagligeProgrammer: Program[] = [
 const spillProgrammer: Program[] = [
   { id: "land", navn: "Verdens land", mal: "/spill/verdens-land", ikon: "jord" },
   { id: "hovedsteder", navn: "Hovedsteder", mal: "/spill/hovedsteder", ikon: "stjerne" },
+  { id: "moggern", navn: "Moggern", mal: "/spill/moggern", ikon: "moggern" },
   { id: "sjakk-1", navn: "Sjakk for 1", mal: "/sjakk-for-1", ikon: "sjakk1" },
   { id: "sjakk", navn: "Sjakk for 2", mal: "/sjakk", logo: "/sjakk/favicon.svg" },
 ]

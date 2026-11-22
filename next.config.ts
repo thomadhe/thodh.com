@@ -17,6 +17,22 @@ const nextConfig: NextConfig = {
       { source: "/sjakk-for-1/apninger", destination: "/sjakk/apninger/index.html" },
     ];
   },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [{ key: "Permissions-Policy", value: "camera=()" }],
+      },
+      {
+        source: "/spill/moggern",
+        headers: [{ key: "Permissions-Policy", value: "camera=(self), microphone=()" }],
+      },
+      {
+        source: "/spill/moggern/:path*",
+        headers: [{ key: "Permissions-Policy", value: "camera=(self), microphone=()" }],
+      },
+    ];
+  },
   // Anelsesløs reads its word vectors from disk at runtime.
   outputFileTracingIncludes: {
     "/spill/api/anelseslos": ["./features/spill/data/anelseslos/**/*"],

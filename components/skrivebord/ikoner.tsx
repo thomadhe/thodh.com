@@ -30,6 +30,7 @@ export type IkonNavn =
   | "sekskant"
   | "stegern"
   | "anslag"
+  | "moggern"
 
 const omriss = "#111"
 
@@ -244,6 +245,16 @@ const tegninger: Record<IkonNavn, React.ReactNode> = {
       <path d="M8 12c2-2 4 2 6 0s4 2 6 0 3-1 4-1M8 17c2-2 4 2 6 0s4 2 6 0 3-1 4-1" fill="none" stroke="#111" strokeWidth="2" />
       <rect x="7" y="22" width="18" height="3" fill="#1e1b4b" />
       <rect x="18" y="20" width="3" height="7" fill="#fff" stroke={omriss} />
+    </>
+  ),
+  moggern: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
+      <path d="M7 11V7h4M21 7h4v4M25 21v4h-4M11 25H7v-4" fill="none" stroke="#a3e635" strokeWidth="2" />
+      <path d="M12 12h8v6l-2 4h-4l-2-4Z" fill="#f4f4f5" stroke={omriss} />
+      <rect x="13" y="14" width="2" height="2" fill="#111" />
+      <rect x="17" y="14" width="2" height="2" fill="#111" />
+      <rect x="14" y="19" width="4" height="1.5" fill="#111" />
     </>
   ),
 }

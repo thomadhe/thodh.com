@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react"
 import { formaterDato, iDagOslo, leggTilDager, START_DATO } from "../lib/dag"
 import { settLyd, useLydPa } from "../lib/lyd"
-import { finnSpill, type QuizId, type SpillId } from "../lib/spill"
+import { finnSpill, type DuellSpillId, type QuizId, type SpillId } from "../lib/spill"
 import { Kalender } from "./kalender"
 import { visningsskrift } from "./skrift"
 import { StegernLogo } from "./stegern-logo"
@@ -16,7 +16,7 @@ type Panel = "kalender" | "regler" | null
 const ingenEndring = () => () => {}
 
 /** Games with a drawn logo in the header tile instead of the `ikon` glyph. */
-const logoer: Partial<Record<SpillId | QuizId, ReactNode>> = {
+const logoer: Partial<Record<SpillId | QuizId | DuellSpillId, ReactNode>> = {
   "67-stegern": <StegernLogo className="h-7 w-7" />,
 }
 
@@ -36,7 +36,7 @@ export function SpillRamme({
   bred = false,
   klasse = "",
 }: {
-  spillId: SpillId | QuizId
+  spillId: SpillId | QuizId | DuellSpillId
   dato?: string
   /** Whether this is today's puzzle. Proxy decides it per request; the cached page must not read the clock. */
   iDag?: boolean
