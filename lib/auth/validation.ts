@@ -8,7 +8,18 @@ export const authInput = z.object({
 }).strict();
 
 // /sjakk/apninger is the old address, still in links out there; it redirects.
-const nesteSider: unknown[] = ["/konto", "/sjakk-for-1", "/sjakk-for-1/apninger", "/sjakk/apninger", "/spill/moggern"];
+const nesteSider: unknown[] = [
+  "/konto",
+  "/sjakk-for-1",
+  "/sjakk-for-1/apninger",
+  "/sjakk/apninger",
+  "/spill",
+  "/spill/historikk",
+  "/spill/ledertavle",
+  "/spill/venner",
+  "/spill/dueller",
+  "/spill/moggern",
+];
 const moggernRom = /^\/spill\/moggern\/[BCDFGHJKLMNPQRSTVWXZ]{4}$/;
 
 export function safeNext(value: unknown): string {

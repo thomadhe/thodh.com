@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState, type ReactNode } from "react"
 import { lyder } from "../lib/lyd"
@@ -145,6 +146,11 @@ export function DuellInngang() {
         </form>
       </div>
       {feil ? <p className="mt-2 text-[13px] font-medium text-[#fda4af]">Koden er fire bokstaver, uten vokaler.</p> : null}
+      <p className="mt-3 text-xs text-[#b9c3ea]/80">
+        <Link href="/spill/dueller" className="underline-offset-4 hover:text-white hover:underline">
+          Utfordre venner eller se duell-innboks →
+        </Link>
+      </p>
     </section>
   )
 }

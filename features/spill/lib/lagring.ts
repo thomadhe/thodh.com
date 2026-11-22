@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useState, useSyncExternalStore } from "react"
+import { lagreKlientSpillResultat } from "./resultat-klient"
 import type { SpillId } from "./spill"
 
 // Progress lives in localStorage, one entry per game and date: "spill:<id>:<dato>".
@@ -91,6 +92,10 @@ export function useDagligTilstand<T extends { resultat: Resultat }>(id: SpillId,
       setTilstand((forrige) => {
         const verdi = endring(forrige.verdi)
         skrivLagret(id, forrige.dato, verdi)
+        if (forrige.verdi.resultat.status === "pagar" && verdi.resultat.status !== "pagar") {
+          const ferdigDato = forrige.dato
+          queueMicrotask(() => lagreKlientSpillResultat(id, ferdigDato, verdi))
+        }
         return { ...forrige, verdi }
       })
     },

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { formaterDato } from "../lib/dag"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
+import { spillSpor } from "../lib/resultat-klient"
 import { SANG_KATEGORIER, TRINN, type SangKategori } from "../lib/sanglos"
 import { DelKnapp, Knapp, Kort, sekundarKnapp } from "./spill-ramme"
 
@@ -22,16 +23,7 @@ const tom = (): Tilstand => ({
   resultat: { status: "pagar" },
 })
 
-async function spor<T>(body: unknown): Promise<T> {
-  const svar = await fetch("/spill/api/sanglos", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  })
-  const data = await svar.json().catch(() => ({ melding: "Noe gikk galt." }))
-  if (!svar.ok) throw new Error(data.melding ?? "Noe gikk galt.")
-  return data as T
-}
+const spor = <T,>(body: Record<string, unknown>) => spillSpor<T>("sanglos", "/spill/api/sanglos", body)
 
 /** Same title and artist, ignoring versions ("- Radio Edit", "(feat. X)"). */
 const sangNokkel = (s: SangValg) => `${sok(s.title.split(/\s[-–]\s|\s?[([]/)[0])}|${sok(s.artist)}`

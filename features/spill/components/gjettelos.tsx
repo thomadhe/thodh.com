@@ -46,6 +46,7 @@ import {
 } from "../lib/gjettelos"
 import { useDagligTilstand, useResultater, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
+import { spillSpor } from "../lib/resultat-klient"
 import { DelKnapp } from "./spill-ramme"
 
 // Gjetteløs: five number questions a day. The page only has the questions; each guess goes to the server,
@@ -91,12 +92,7 @@ function KategoriIkon({ kategori, className }: { kategori: string; className?: s
   return <Ikon className={className} strokeWidth={2} aria-hidden="true" />
 }
 
-async function spor(body: { dato: string; nr: number; gjett: number }): Promise<Fasit> {
-  const svar = await fetch("/spill/api/gjettelos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
-  const data = await svar.json().catch(() => ({ melding: "Noe gikk galt." }))
-  if (!svar.ok) throw new Error(data.melding ?? "Noe gikk galt.")
-  return data as Fasit
-}
+const spor = (body: { dato: string; nr: number; gjett: number }) => spillSpor<Fasit>("gjettelos", "/spill/api/gjettelos", body)
 
 const sum = (svar: Svar[]) => summer(svar.map((x) => x.f.poeng))
 const enhetTekst = (s: SporsmalVisning) => (s.aarstall ? "" : s.enhet)

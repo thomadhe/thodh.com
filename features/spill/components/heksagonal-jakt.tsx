@@ -6,6 +6,7 @@ import { formaterDato } from "../lib/dag"
 import { MAKS_POENG, NIVAER, rundePoeng, UNNA, type Utfall } from "../lib/heksagon"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
+import { spillSpor } from "../lib/resultat-klient"
 import type { JaktFasit, JaktSted } from "../lib/server/heksagonal-jakt"
 import { DelKnapp, Knapp, Kort } from "./spill-ramme"
 
@@ -54,12 +55,7 @@ function oppgjor(runde: Runde) {
   return { poeng, klasse, siste }
 }
 
-async function spor<T>(body: unknown): Promise<T> {
-  const svar = await fetch("/spill/api/heksagonal-jakt", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
-  const data = await svar.json().catch(() => ({ melding: "Noe gikk galt." }))
-  if (!svar.ok) throw new Error(data.melding ?? "Noe gikk galt.")
-  return data as T
-}
+const spor = <T,>(body: Record<string, unknown>) => spillSpor<T>("heksagonal-jakt", "/spill/api/heksagonal-jakt", body)
 
 // A taller map on phones, where it is narrow; a wider one on larger screens.
 const bred = "(min-width: 640px)"

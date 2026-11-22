@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { visningsskrift } from "@/features/spill/components/skrift"
 import { SpillOversikt } from "@/features/spill/components/spill-oversikt"
+import { SpillSosialNav } from "@/features/spill/components/spill-sosial-ramme"
 import { velgDato } from "@/features/spill/lib/dag"
 
 export const metadata: Metadata = {
@@ -23,9 +24,12 @@ export default async function Page({ searchParams }: PageProps<"/spill">) {
           </Link>
         </header>
         <main className="flex flex-1 flex-col justify-center gap-8 pt-4 pb-16">
-          <h1 className="text-center font-[family-name:var(--font-visning)] text-[2.4rem] leading-[0.95] font-extrabold tracking-[-0.05em] text-neutral-50 sm:text-[3.6rem]">
-            Daglige minigames
-          </h1>
+          <div className="flex flex-col items-center gap-4">
+            <h1 className="text-center font-[family-name:var(--font-visning)] text-[2.4rem] leading-[0.95] font-extrabold tracking-[-0.05em] text-neutral-50 sm:text-[3.6rem]">
+              Daglige minigames
+            </h1>
+            <SpillSosialNav aktiv="spill" />
+          </div>
           <SpillOversikt key={dato} dato={dato} />
           <p className="text-center font-mono text-[11px] leading-6 text-neutral-500">
             Nye spill hver natt.

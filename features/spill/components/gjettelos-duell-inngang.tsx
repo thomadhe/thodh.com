@@ -2,6 +2,7 @@
 
 import { Users } from "lucide-react"
 import { Outfit } from "next/font/google"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { erGyldigKode, lagKode, normaliserKode } from "../lib/duell/rom"
@@ -77,6 +78,11 @@ export function GjettelosDuellInngang() {
         </form>
       </div>
       {feil ? <p className="mt-2 text-[13px] text-rose-400">Koden er fire bokstaver, uten vokaler.</p> : null}
+      <p className="mt-3 text-xs text-neutral-500">
+        <Link href="/spill/dueller" className="underline-offset-4 hover:text-neutral-800 hover:underline">
+          Utfordre venner eller se duell-innboks →
+        </Link>
+      </p>
     </section>
   )
 }

@@ -15,9 +15,11 @@ export const metadata: Metadata = {
 
 // A duel room, /spill/67-stegern/duell/<KODE>. The page is only the frame; everything in the room happens in the
 // browser over Supabase Realtime (features/spill/components/stegern-duell.tsx). Proxy does not touch this path.
-export default async function Page({ params }: PageProps<"/spill/67-stegern/duell/[kode]">) {
+export default async function Page({ params, searchParams }: PageProps<"/spill/67-stegern/duell/[kode]">) {
   const kode = normaliserKode(decodeURIComponent((await params).kode))
   if (!erGyldigKode(kode)) notFound()
+  const { modus } = await searchParams
+  const startModus = modus === "pistol" ? "pistol" : "runder"
   const { url, key } = supabaseConfig()
   return (
     <SpillRamme
@@ -41,7 +43,7 @@ export default async function Page({ params }: PageProps<"/spill/67-stegern/duel
         </>
       }
     >
-      <StegernDuell kode={kode} supabaseUrl={url} supabaseNokkel={key} />
+      <StegernDuell kode={kode} supabaseUrl={url} supabaseNokkel={key} startModus={startModus} />
     </SpillRamme>
   )
 }

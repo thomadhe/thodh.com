@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react"
 import { formaterDato } from "../lib/dag"
 import { useDagligTilstand, type Resultat } from "../lib/lagring"
 import { lyder } from "../lib/lyd"
+import { spillSpor } from "../lib/resultat-klient"
 import { SOKET_FORSOK, type Bokstavsvar } from "../lib/soket"
 import { DelKnapp, Kort } from "./spill-ramme"
 
@@ -21,12 +22,7 @@ const RUTE: Record<Bokstavsvar, string> = {
 }
 const EMOJI: Record<Bokstavsvar, string> = { riktig: "🟩", plass: "🟨", ikke: "⬜" }
 
-async function spor<T>(body: unknown): Promise<T> {
-  const svar = await fetch("/spill/api/soket", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
-  const data = await svar.json().catch(() => ({ melding: "Noe gikk galt." }))
-  if (!svar.ok) throw new Error(data.melding ?? "Noe gikk galt.")
-  return data as T
-}
+const spor = <T,>(body: Record<string, unknown>) => spillSpor<T>("soket", "/spill/api/soket", body)
 
 export function Soket({ dato, prompt, lengde }: { dato: string; prompt: string; lengde: number }) {
   const { verdi, lastet, oppdater } = useDagligTilstand<Tilstand>("soket", dato, tom)
