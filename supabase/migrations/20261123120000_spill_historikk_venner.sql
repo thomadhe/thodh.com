@@ -189,10 +189,10 @@ create table public.spill_duell_utfordringer (
   id uuid primary key default gen_random_uuid(),
   avsender_id uuid not null references auth.users(id) on delete cascade,
   mottaker_id uuid not null references auth.users(id) on delete cascade,
-  spill_id text not null check (spill_id in ('67-stegern', 'gjettelos')),
+  spill_id text not null check (spill_id in ('67-stegern', 'gjettelos', 'moggern')),
   modus text not null default 'runder' check (
     (spill_id = '67-stegern' and modus in ('runder', 'pistol'))
-    or (spill_id = 'gjettelos' and modus = 'runder')
+    or (spill_id in ('gjettelos', 'moggern') and modus = 'runder')
   ),
   romkode text not null check (romkode ~ '^[BCDFGHJKLMNPQRSTVWXZ]{4}$'),
   status text not null default 'venter' check (status in ('venter', 'godtatt', 'avslatt', 'avbrutt')),

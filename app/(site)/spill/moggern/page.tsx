@@ -17,7 +17,17 @@ export default async function Page() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const bruker = user ? { id: user.id, visningsnavn: utledVisningsnavn(user) } : null
+  let visningsnavn = user ? utledVisningsnavn(user) : ""
+  if (user) {
+    const { data: profil } = await supabase
+      .from("spill_profiler")
+      .select("visningsnavn")
+      .eq("user_id", user.id)
+      .maybeSingle()
+    if (profil?.visningsnavn) visningsnavn = profil.visningsnavn
+  }
+
+  const bruker = user ? { id: user.id, visningsnavn } : null
 
   return (
     <SpillRamme

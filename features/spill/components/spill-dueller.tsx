@@ -9,6 +9,7 @@ import {
   DUELL_MODUS_VALG,
   DUELL_SPILL,
   duellRomLenke,
+  duellSpillKortNavn,
   duellSpillNavn,
   type DuellModus,
   type DuellSpillId,
@@ -226,7 +227,7 @@ export function SpillDueller({
                   : "border-white/10 bg-[#18191b] text-neutral-300 hover:border-white/25"
               }`}
             >
-              {s === "67-stegern" ? "6/7-stegern" : "Gjetteløs"}
+              {duellSpillKortNavn(s)}
             </button>
           ))}
         </div>
@@ -249,6 +250,10 @@ export function SpillDueller({
               </button>
             ))}
           </div>
+        ) : kodeSpill === "moggern" ? (
+          <p className="rounded-xl border border-white/[0.06] bg-[#18191b] px-3.5 py-2.5 text-xs text-neutral-400">
+            1v1 kameraduell kun for venner (maks 2 spillere) – krever innlogging for å slå på kamera. Video går direkte peer-to-peer.
+          </p>
         ) : (
           <p className="rounded-xl border border-white/[0.06] bg-[#18191b] px-3.5 py-2.5 text-xs text-neutral-400">
             5 tallspørsmål fra tidligere dager – nærmest fasit vinner. 2–6 spillere.
@@ -458,7 +463,7 @@ export function SpillDueller({
                             : "border-white/10 bg-[#18191b] text-neutral-300 hover:border-white/25"
                         }`}
                       >
-                        {s === "67-stegern" ? "6/7-stegern" : "Gjetteløs"}
+                        {duellSpillKortNavn(s)}
                       </button>
                     ))}
                   </div>

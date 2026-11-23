@@ -260,7 +260,7 @@ export type VennOppforing = {
 
 // ---- Duel challenges ----
 
-export const DUELL_SPILL = ["67-stegern", "gjettelos"] as const
+export const DUELL_SPILL = ["67-stegern", "gjettelos", "moggern"] as const
 export type DuellSpillId = (typeof DUELL_SPILL)[number]
 export type DuellModus = "runder" | "pistol"
 
@@ -270,6 +270,7 @@ export const DUELL_MODUS_VALG: Record<DuellSpillId, readonly { id: DuellModus; n
     { id: "pistol", navn: "Startpistolen", kort: "Varm potet med skjult lunte og liv" },
   ],
   gjettelos: [{ id: "runder", navn: "Vanlig duell", kort: "5 tallspørsmål, nærmest fasit vinner" }],
+  moggern: [{ id: "runder", navn: "1v1 med kamera", kort: "10 s kameraduell med venner, høyeste poengsum mogger" }],
 }
 
 export type DuellUtfordring = {
@@ -290,11 +291,21 @@ export function duellRomLenke(spillId: DuellSpillId, romkode: string, modus: Due
   if (spillId === "67-stegern") {
     return modus === "pistol" ? `/spill/67-stegern/duell/${romkode}?modus=pistol` : `/spill/67-stegern/duell/${romkode}`
   }
+  if (spillId === "moggern") {
+    return `/spill/moggern/${romkode}`
+  }
   return `/spill/gjettelos/duell/${romkode}`
+}
+
+export function duellSpillKortNavn(spillId: DuellSpillId) {
+  if (spillId === "67-stegern") return "6/7-stegern"
+  if (spillId === "moggern") return "Moggern"
+  return "Gjetteløs"
 }
 
 export function duellSpillNavn(spillId: DuellSpillId, modus: DuellModus) {
   if (spillId === "67-stegern") return modus === "pistol" ? "6/7-stegern · Startpistolen" : "6/7-stegern"
+  if (spillId === "moggern") return "Moggern (kamera)"
   return "Gjetteløs"
 }
 

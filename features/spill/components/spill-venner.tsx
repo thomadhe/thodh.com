@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react"
 import {
   DUELL_MODUS_VALG,
   DUELL_SPILL,
+  duellSpillKortNavn,
   duellSpillNavn,
   normaliserVennekode,
   type DuellModus,
@@ -114,7 +115,7 @@ export function SpillVenner({
         tekst={
           startKode
             ? `Logg inn for å legge til vennen din med kode ${normaliserVennekode(startKode).slice(0, 6)}, se venne-ledertavlen og utfordre til duell.`
-            : "Del vennekoden din for å sammenligne månedens resultater og utfordre hverandre til dueller i 6/7-stegern og Gjetteløs."
+            : "Del vennekoden din for å sammenligne månedens resultater og utfordre hverandre til dueller i 6/7-stegern, Gjetteløs og Moggern."
         }
       />
     )
@@ -384,7 +385,7 @@ export function SpillVenner({
                                 : "border-white/10 text-neutral-300 hover:bg-white/5"
                             }`}
                           >
-                            {s === "67-stegern" ? "6/7-stegern" : "Gjetteløs"}
+                            {duellSpillKortNavn(s)}
                           </button>
                         ))}
                       </div>

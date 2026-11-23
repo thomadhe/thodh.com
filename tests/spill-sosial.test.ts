@@ -78,6 +78,8 @@ test("månedsfunksjoner og duell-lenker", () => {
   assert.equal(duellRomLenke("67-stegern", "KPMG", "runder"), "/spill/67-stegern/duell/KPMG")
   assert.equal(duellRomLenke("67-stegern", "KPMG", "pistol"), "/spill/67-stegern/duell/KPMG?modus=pistol")
   assert.equal(duellRomLenke("gjettelos", "KPMG", "pistol"), "/spill/gjettelos/duell/KPMG")
+  assert.equal(duellRomLenke("moggern", "KPMG", "runder"), "/spill/moggern/KPMG")
+  assert.equal(duellRomLenke("moggern", "KPMG", "pistol"), "/spill/moggern/KPMG")
 })
 
 test("alle 14 daglige spill er klassifisert som enten server- eller klientsjekket uten overlapp", () => {

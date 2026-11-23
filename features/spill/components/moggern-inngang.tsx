@@ -144,6 +144,18 @@ export function MoggernInngang({ bruker }: { bruker: MoggernBruker | null }) {
         </div>
 
         {feil ? <p className="mt-2 text-xs text-rose-400">Romkoden er 4 konsonanter (ingen vokaler, f.eks. BCDF).</p> : null}
+
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 pt-4 text-xs text-neutral-600">
+          <span>Vil du sende direkte utfordring til en venn?</span>
+          <div className="flex items-center gap-3 font-medium">
+            <Link href="/spill/venner" className="text-neutral-900 underline underline-offset-4 hover:text-lime-700">
+              Venneliste
+            </Link>
+            <Link href="/spill/dueller" className="text-neutral-900 underline underline-offset-4 hover:text-lime-700">
+              Dueller →
+            </Link>
+          </div>
+        </div>
       </Kort>
 
       <SlikRegnesDet />
