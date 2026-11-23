@@ -45,7 +45,14 @@ import {
   type SpillerSluttResultat,
   type WebRtcSignal,
 } from "../lib/moggern/duell"
-import { fangVideoBilde, lagreDagensBeste, lesDagensBeste, type DagensBeste } from "../lib/moggern/duell-kort"
+import {
+  fangRelayRamme,
+  fangVideoBilde,
+  lagreDagensBeste,
+  lesDagensBeste,
+  lesRelayRamme,
+  type DagensBeste,
+} from "../lib/moggern/duell-kort"
 import { opprettAnsiktSporer, opprettHandSporer, type AnsiktSporer, type HandSporer } from "../lib/moggern/landmarker"
 import { samleLysStatus, type LysAnalyse } from "../lib/moggern/lys"
 import {
@@ -106,6 +113,12 @@ const SPORING_MIN_INTERVALL_MS = 40
 const PEAK_BILDE_INTERVALL_MS = 550
 /** Expression strength from which a mog-uttrykk pill is shown. */
 const UTTRYKK_VIS_TERSKEL = 0.12
+/** Cadence for automatic HTTPS/WSS video relay fallback (~4.3 fps) when P2P WebRTC is blocked (5G CGNAT / strict Wi-Fi). */
+const RELAY_INTERVALL_MS = 230
+/** Wait briefly for direct WebRTC P2P to link up before engaging automatic WSS video relay. */
+const RELAY_OPPSTART_MS = 2800
+/** Clear relay status if no frames arrive for this long. */
+const RELAY_UTLOP_MS = 3800
 
 /** Dark glass used by every floating HUD element over the videos (explicit colours: unaffected by .spill-mork). */
 const GLASS = "border border-white/10 bg-[#111214]/65 text-white backdrop-blur-md"
@@ -246,8 +259,16 @@ function AktivtMoggernRom({
   const motFinisherBonusRef = useRef<number>(0)
   const [peakBilder, setPeakBilder] = useState<Record<string, string | null>>({})
   const [motstanderKameraPa, setMotstanderKameraPa] = useState(false)
+  const [relayAktiv, setRelayAktiv] = useState(false)
   const [forlattVarsel, setForlattVarsel] = useState<string | null>(null)
   const [mittNavn, setMittNavn] = useState(bruker.visningsnavn)
+  const fjernRelayLerretRef = useRef<HTMLCanvasElement | null>(null)
+  const relayFangLerretRef = useRef<HTMLCanvasElement | null>(null)
+  const relayRammeNrRef = useRef(0)
+  const sisteAnalysertRelayNrRef = useRef(0)
+  const sisteRelayTidRef = useRef(0)
+  const relayBildeLasterRef = useRef(false)
+  const harFjernWebRtcRef = useRef(false)
   useVisningsnavnSynk(setMittNavn)
 
   const hendelser = useMemo(
@@ -259,7 +280,47 @@ function AktivtMoggernRom({
         const p = payload as { id?: unknown; pa?: unknown }
         if (typeof p?.id === "string" && p.id !== romCtx.meg && typeof p.pa === "boolean") {
           setMotstanderKameraPa(p.pa)
+          if (!p.pa) {
+            relayRammeNrRef.current = 0
+            sisteAnalysertRelayNrRef.current = 0
+            setRelayAktiv(false)
+            tømSporingsLerret(fjernRelayLerretRef.current)
+          }
         }
+      },
+      ramme: (payload: unknown, romCtx: Romkontekst<MoggernStatus>) => {
+        if (harFjernWebRtcRef.current) return
+        const ramme = lesRelayRamme(payload)
+        if (!ramme || ramme.av === romCtx.meg) return
+        sisteRelayTidRef.current = Date.now()
+        setMotstanderKameraPa(true)
+        setRelayAktiv(true)
+        if (relayBildeLasterRef.current) return
+        const lerret = fjernRelayLerretRef.current
+        if (!lerret) return
+        relayBildeLasterRef.current = true
+        const img = new Image()
+        img.onload = () => {
+          relayBildeLasterRef.current = false
+          if (harFjernWebRtcRef.current) return
+          const maal = fjernRelayLerretRef.current
+          if (!maal) return
+          const w = img.naturalWidth || ramme.w
+          const h = img.naturalHeight || ramme.h
+          if (w < 64 || h < 64) return
+          if (maal.width !== w || maal.height !== h) {
+            maal.width = w
+            maal.height = h
+          }
+          const ctx = maal.getContext("2d")
+          if (!ctx) return
+          ctx.drawImage(img, 0, 0, w, h)
+          relayRammeNrRef.current += 1
+        }
+        img.onerror = () => {
+          relayBildeLasterRef.current = false
+        }
+        img.src = ramme.dataUrl
       },
       rapport: (payload: unknown, romCtx: Romkontekst<MoggernStatus>) => {
         const rapport = lesMoggernRapport(payload)
@@ -304,6 +365,10 @@ function AktivtMoggernRom({
           const hvem = typeof p.navn === "string" && p.navn ? p.navn : "Motstanderen"
           setForlattVarsel(`${hvem} forlot rommet.`)
           setMotstanderKameraPa(false)
+          relayRammeNrRef.current = 0
+          sisteAnalysertRelayNrRef.current = 0
+          setRelayAktiv(false)
+          tømSporingsLerret(fjernRelayLerretRef.current)
           if (romCtx.erVert() && romCtx.status().fase !== "lobby") {
             romCtx.settStatus((s) => ({ ...moggernStart(s.runde + 1), v: 1 }))
             romCtx.kringkast()
@@ -516,11 +581,75 @@ function AktivtMoggernRom({
   }, [webrtc.fjernLydStrom])
 
   useEffect(() => {
-    motLiveRef.current = { struktur: null, styrker: null }
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMotLive(null)
-    if (!webrtc.fjernStrom) tømSporingsLerret(motSporingLerretRef.current)
+    harFjernWebRtcRef.current = !!webrtc.fjernStrom
+    if (webrtc.fjernStrom) {
+      relayRammeNrRef.current = 0
+      sisteAnalysertRelayNrRef.current = 0
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setRelayAktiv(false)
+      tømSporingsLerret(fjernRelayLerretRef.current)
+    }
   }, [webrtc.fjernStrom])
+
+  useEffect(() => {
+    if (!motstanderId) {
+      relayRammeNrRef.current = 0
+      sisteAnalysertRelayNrRef.current = 0
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setRelayAktiv(false)
+      tømSporingsLerret(fjernRelayLerretRef.current)
+    }
+  }, [motstanderId])
+
+  useEffect(() => {
+    if (!relayAktiv) return
+    const id = window.setInterval(() => {
+      if (Date.now() - sisteRelayTidRef.current > RELAY_UTLOP_MS) {
+        relayRammeNrRef.current = 0
+        sisteAnalysertRelayNrRef.current = 0
+        setRelayAktiv(false)
+        tømSporingsLerret(fjernRelayLerretRef.current)
+      }
+    }, 1200)
+    return () => window.clearInterval(id)
+  }, [relayAktiv])
+
+  // Automatic HTTPS/WSS video relay fallback when direct P2P WebRTC is blocked (e.g. 5G CGNAT / strict Wi-Fi without TURN).
+  // Yields immediately with zero traffic whenever direct WebRTC video connects.
+  const harDirekteVideo = webrtc.status === "tilkoblet" && !!webrtc.fjernStrom
+  useEffect(() => {
+    if (!lokalStrom || !motstanderId || !meg || tilkobling !== "klar" || visResultat || harDirekteVideo) return
+    const forsinkelse = webrtc.status === "feil" || relayAktiv ? 0 : RELAY_OPPSTART_MS
+    let intervallId: number | null = null
+    const startId = window.setTimeout(() => {
+      const fangLerret = (relayFangLerretRef.current ??= document.createElement("canvas"))
+      const sendRamme = () => {
+        const video = egenVideoRef.current
+        if (!video) return
+        const ramme = fangRelayRamme(video, fangLerret)
+        if (ramme) {
+          send("ramme", { av: meg, ...ramme })
+        }
+      }
+      sendRamme()
+      intervallId = window.setInterval(sendRamme, RELAY_INTERVALL_MS)
+    }, forsinkelse)
+
+    return () => {
+      window.clearTimeout(startId)
+      if (intervallId !== null) window.clearInterval(intervallId)
+    }
+  }, [lokalStrom, motstanderId, meg, tilkobling, visResultat, harDirekteVideo, webrtc.status, relayAktiv, send])
+
+  const harMotVideoVisning = !!webrtc.fjernStrom || relayAktiv
+  useEffect(() => {
+    if (!harMotVideoVisning) {
+      motLiveRef.current = { struktur: null, styrker: null }
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setMotLive(null)
+      tømSporingsLerret(motSporingLerretRef.current)
+    }
+  }, [harMotVideoVisning])
 
   const visBanner = useCallback((type: "utlost" | "feilet", avMeg: boolean, navn: string) => {
     if (bannerTimerRef.current !== null) {
@@ -948,21 +1077,29 @@ function AktivtMoggernRom({
 
         const motSporer = motSporerRef.current
         const fjernVideo = fjernVideoRef.current
+        const fjernRelay = fjernRelayLerretRef.current
         const motOverlay = motSporingLerretRef.current
-        if (!erSoloAktiv && taOffisiell && !motPeakBildeRef.current && fjernVideo && fjernVideo.srcObject) {
-          const fallback = fangVideoBilde(fjernVideo, false)
+        const brukerDirekte = !!fjernVideo && !!fjernVideo.srcObject
+        const brukerRelay = !brukerDirekte && relayRammeNrRef.current > 0 && !!fjernRelay
+        const fjernKilde = brukerDirekte ? fjernVideo : brukerRelay ? fjernRelay : null
+        const nyRelayRamme = brukerRelay && relayRammeNrRef.current !== sisteAnalysertRelayNrRef.current
+        const taMotOffisiell = maler && (brukerRelay ? nyRelayRamme : taOffisiell)
+
+        if (!erSoloAktiv && taMotOffisiell && !motPeakBildeRef.current && fjernKilde) {
+          const fallback = fangVideoBilde(fjernKilde, false)
           if (fallback) {
             motPeakBildeRef.current = fallback
             motPeakTidRef.current = naTid
           }
         }
-        if (!erSoloAktiv && motSporer && fjernVideo && fjernVideo.srcObject) {
+        if (!erSoloAktiv && motSporer && fjernKilde && (!brukerRelay || nyRelayRamme)) {
+          if (brukerRelay) sisteAnalysertRelayNrRef.current = relayRammeNrRef.current
           try {
-            const ut = motSporer.analyser(fjernVideo, lerret, taOffisiell)
+            const ut = motSporer.analyser(fjernKilde, lerret, taMotOffisiell)
             if (ut) {
               if (motOverlay) {
                 if (visSporingRef.current) {
-                  tegnAnsiktSporing(motOverlay, fjernVideo, ut.punkter, {
+                  tegnAnsiktSporing(motOverlay, fjernKilde, ut.punkter, {
                     speilet: false,
                     gyldig: ut.ramme.gyldig,
                     rizzlerGull: motFinisherStatusRef.current === "utlost",
@@ -971,7 +1108,7 @@ function AktivtMoggernRom({
                   tømSporingsLerret(motOverlay)
                 }
               }
-              if (taOffisiell) {
+              if (taMotOffisiell) {
                 motRammerRef.current.push(ut.ramme)
                 if (ut.lys) motLysRef.current.push(ut.lys)
                 if (ut.ramme.gyldig) {
@@ -981,7 +1118,7 @@ function AktivtMoggernRom({
                     motPeakPoengRef.current < 0 ||
                     (p > motPeakPoengRef.current + 0.05 && naTid - motPeakTidRef.current >= PEAK_BILDE_INTERVALL_MS)
                   ) {
-                    const bilde = fangVideoBilde(fjernVideo, false)
+                    const bilde = fangVideoBilde(fjernKilde, false)
                     if (bilde) {
                       motPeakBildeRef.current = bilde
                       motPeakPoengRef.current = p
@@ -991,13 +1128,13 @@ function AktivtMoggernRom({
                 }
               }
               const forsteMot = motLiveRef.current.struktur === null
-              if (oppdaterHud || forsteMot) {
+              if (oppdaterHud || forsteMot || brukerRelay) {
                 const live = oppdaterLivePoeng(motLiveRef.current, ut.ramme)
                 if (live) setMotLive(live)
               }
             }
           } catch {}
-        } else if (motOverlay) {
+        } else if (!fjernKilde && motOverlay) {
           tømSporingsLerret(motOverlay)
         }
 
@@ -1077,8 +1214,15 @@ function AktivtMoggernRom({
     if (!egenPeakBildeRef.current && egenVideoRef.current) {
       egenPeakBildeRef.current = fangVideoBilde(egenVideoRef.current, true)
     }
-    if (!motPeakBildeRef.current && fjernVideoRef.current) {
-      motPeakBildeRef.current = fangVideoBilde(fjernVideoRef.current, false)
+    if (!motPeakBildeRef.current) {
+      const fjernKilde = fjernVideoRef.current?.srcObject
+        ? fjernVideoRef.current
+        : relayRammeNrRef.current > 0
+          ? fjernRelayLerretRef.current
+          : null
+      if (fjernKilde) {
+        motPeakBildeRef.current = fangVideoBilde(fjernKilde, false)
+      }
     }
 
     const rapport = lagRapport()
@@ -1160,7 +1304,7 @@ function AktivtMoggernRom({
 
   // ---- Start duel / solo / rematch actions ----
   const motstanderKlar = !!motstander && motstander.klar && motstander.runde === status.runde
-  const motstanderHarVideo = !!webrtc.fjernStrom || motstanderKameraPa
+  const motstanderHarVideo = !!webrtc.fjernStrom || relayAktiv || motstanderKameraPa
   const kanStarteDuell =
     erVert &&
     status.fase === "lobby" &&
@@ -1633,12 +1777,17 @@ function AktivtMoggernRom({
               className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${webrtc.fjernStrom ? "opacity-100" : "opacity-0"}`}
             />
             <canvas
+              ref={fjernRelayLerretRef}
+              aria-label={motstander ? `Direktebilde fra ${motNavn}` : undefined}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${!webrtc.fjernStrom && relayAktiv ? "opacity-100" : "opacity-0"}`}
+            />
+            <canvas
               ref={motSporingLerretRef}
               aria-hidden="true"
-              className={`pointer-events-none absolute inset-0 h-full w-full transition-opacity duration-300 ${webrtc.fjernStrom && visSporing ? "opacity-100" : "opacity-0"}`}
+              className={`pointer-events-none absolute inset-0 h-full w-full transition-opacity duration-300 ${harMotVideoVisning && visSporing ? "opacity-100" : "opacity-0"}`}
             />
 
-            {!webrtc.fjernStrom ? (
+            {!harMotVideoVisning ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
                 <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.06] text-white/60">
                   {motstander ? <Loader2 className="h-5 w-5 animate-spin" /> : <Camera className="h-5 w-5" aria-hidden="true" />}
@@ -1656,7 +1805,7 @@ function AktivtMoggernRom({
                   </>
                 ) : null}
                 <p className="max-w-xs text-xs leading-5 text-white/45">
-                  {!motstander ? "Send romkoden eller lenken til én venn." : "Videoen går direkte mellom nettleserne deres (peer-to-peer)."}
+                  {!motstander ? "Send romkoden eller lenken til én venn." : "Kobler over Wi-Fi eller 5G — bytter automatisk til mobil-relay ved behov."}
                 </p>
               </div>
             ) : null}
@@ -1668,20 +1817,35 @@ function AktivtMoggernRom({
               <span className={`${GLASS} inline-flex h-8 max-w-[55%] items-center gap-1.5 rounded-full px-3 text-xs font-medium`}>
                 {motstander && !erVert ? <Crown className="h-3.5 w-3.5 shrink-0 text-amber-300" aria-label="Vert" /> : null}
                 <span className="truncate">{motstander ? motNavn : "Ledig plass"}</span>
+                {motstander && !webrtc.fjernStrom && relayAktiv ? (
+                  <span className="shrink-0 rounded-full bg-cyan-400/20 px-1.5 py-0.5 text-[9px] font-semibold tracking-wide text-cyan-200">
+                    5G/Relay
+                  </span>
+                ) : null}
                 {motstander ? (
                   <span
-                    aria-label={webrtc.status === "tilkoblet" ? "Video tilkoblet" : webrtc.status === "feil" ? "Videofeil" : "Kobler video"}
+                    aria-label={
+                      webrtc.status === "tilkoblet" || relayAktiv
+                        ? "Video tilkoblet"
+                        : webrtc.status === "feil"
+                          ? "Videofeil"
+                          : "Kobler video"
+                    }
                     className={`h-1.5 w-1.5 shrink-0 rounded-full ${
-                      webrtc.status === "tilkoblet" ? "bg-emerald-400" : webrtc.status === "feil" ? "bg-rose-400" : "bg-amber-300"
+                      webrtc.status === "tilkoblet" || relayAktiv
+                        ? "bg-emerald-400"
+                        : webrtc.status === "feil"
+                          ? "bg-rose-400"
+                          : "bg-amber-300"
                     }`}
                   />
                 ) : null}
               </span>
-              <LiveRating live={motLive} modell={modell} aktiv={!!webrtc.fjernStrom && modell !== "feil"} />
+              <LiveRating live={motLive} modell={modell} aktiv={harMotVideoVisning && modell !== "feil"} />
             </div>
 
             <div className="absolute inset-x-2.5 bottom-2.5 flex flex-col gap-2 sm:inset-x-3.5 sm:bottom-3.5">
-              {webrtc.fjernStrom ? <UttrykkPiller styrker={motLive?.styrker ?? null} /> : null}
+              {harMotVideoVisning ? <UttrykkPiller styrker={motLive?.styrker ?? null} /> : null}
               {motstander ? (
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   {status.fase === "lobby" ? (
@@ -1707,7 +1871,7 @@ function AktivtMoggernRom({
                         Slå på lyd
                       </button>
                     ) : null}
-                    {webrtc.status === "feil" || (!webrtc.fjernStrom && motstanderKameraPa) ? (
+                    {!harMotVideoVisning && (webrtc.status === "feil" || motstanderKameraPa) ? (
                       <button
                         type="button"
                         onClick={webrtc.koblePaaNytt}
@@ -1720,7 +1884,9 @@ function AktivtMoggernRom({
                   </div>
                 </div>
               ) : null}
-              {webrtc.feil && motstander ? <p className={`${GLASS} rounded-2xl px-3 py-2 text-[11px] leading-4 text-rose-200`}>{webrtc.feil}</p> : null}
+              {webrtc.feil && !relayAktiv && motstander ? (
+                <p className={`${GLASS} rounded-2xl px-3 py-2 text-[11px] leading-4 text-rose-200`}>{webrtc.feil}</p>
+              ) : null}
             </div>
           </div>
 

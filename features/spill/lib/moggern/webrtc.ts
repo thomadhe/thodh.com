@@ -21,13 +21,13 @@ export {
   stoppStrom,
 } from "./kamera"
 
-const ICE_HENT_TIMEOUT_MS = 2000
+const ICE_HENT_TIMEOUT_MS = 3500
 /** Interval for repeating `klar-video` handshake pings until the peer connection links up. */
 const HANDTRYKK_INTERVALL_MS = 1600
 /** Minimum spacing between back-to-back offer attempts triggered by `klar-video` pings. */
 const TILBUD_KARANTENE_MS = 1300
-/** Grace period before treating a transient `disconnected` state as a failure (mobile Wi-Fi/4G handovers). */
-const FRAKOBLET_FRIST_MS = 4500
+/** Grace period before attempting ICE restart / marking failure on `disconnected` (mobile Wi-Fi/5G handovers). */
+const FRAKOBLET_FRIST_MS = 3200
 /** Cap for queued early signals received before `RTCPeerConnection` is ready. */
 const MAKS_VENTENDE_SIGNALER = 60
 
@@ -310,6 +310,7 @@ export function useMoggernWebRtc({
 
     const pc = new RTCPeerConnection({
       iceServers: iceKonfigRef.current.iceServers as RTCIceServer[],
+      iceCandidatePoolSize: 2,
     })
     pcRef.current = pc
     setStatus("kobler")
@@ -443,6 +444,16 @@ export function useMoggernWebRtc({
             frakobletTimerRef.current = null
             if (pcRef.current !== pc) return
             if (pc.connectionState !== "connected" && pc.iceConnectionState !== "connected" && pc.iceConnectionState !== "completed") {
+              if (!autoRestartetRef.current) {
+                autoRestartetRef.current = true
+                setStatus("kobler")
+                if (erTilbyder) {
+                  sendTilbud(pc, meg, motstanderId, { iceRestart: true, tving: true })
+                } else {
+                  sendSignalRef.current({ fra: meg, til: motstanderId, type: "klar-video" })
+                }
+                return
+              }
               markerFeil()
             }
           }, FRAKOBLET_FRIST_MS)

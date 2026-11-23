@@ -18,8 +18,8 @@ import {
   type MoggernRapport,
   type SpillerMaaling,
 } from "../features/spill/lib/moggern/duell"
-import { lesDagensBesteFraTekst, oppdaterDagensBesteVerdi } from "../features/spill/lib/moggern/duell-kort"
-import { byggIceKonfig, STANDARD_STUN } from "../features/spill/lib/moggern/ice"
+import { lesDagensBesteFraTekst, lesRelayRamme, oppdaterDagensBesteVerdi } from "../features/spill/lib/moggern/duell-kort"
+import { byggIceKonfig, hentIceKonfig, normaliserIceTjenere, STANDARD_STUN } from "../features/spill/lib/moggern/ice"
 import { analyserLuminans, analyserRgbaLys, samleLysStatus } from "../features/spill/lib/moggern/lys"
 import {
   aggregerRammer,
@@ -67,7 +67,6 @@ import { kartleggPunktTilVisning } from "../features/spill/lib/moggern/sporing-t
 import {
   COOKED_DISSER,
   DELPOENG_DISSER,
-  GENERELLE_DISSER,
   lagTipsOgDiss,
   LYS_DISSER,
   rangForPoeng,
@@ -1143,8 +1142,8 @@ test("Moggern kurerte disser: riktig utvalg og nedprioritering av ansiktstredjed
   const td2 = lagTipsOgDiss({ delpoeng: veldigSvakTredjedeler, lysStatus: "ok", fro: "TEST:2" })
   assert.ok(DELPOENG_DISSER.ansiktstredjedeler.includes(td2.diss), `forventet tredjedel-diss, fikk: ${td2.diss}`)
 
-  // General cooked roasts contain the user's exact lines and trigger on low total or getting mogged hard
-  assert.ok(COOKED_DISSER.includes("Jaja, personlighet er det som er viktig."))
+  // General cooked roasts only trigger on low total (< 4.5) or getting mogged hard (>= 1.5)
+  assert.equal(COOKED_DISSER.length, 4)
   assert.ok(COOKED_DISSER.includes("Du er cooked … kom deg på seminar med Datingcoach Norge."))
 
   const lavScoreDiss = lagTipsOgDiss({ delpoeng: littSvakTredjedeler, lysStatus: "ok", total: 3.8, fro: "COOK:1" })
@@ -1160,18 +1159,88 @@ test("Moggern kurerte disser: riktig utvalg og nedprioritering av ansiktstredjed
   })
   assert.ok(COOKED_DISSER.includes(hardtMoggetDiss.diss), `forventet cooked-diss når mogget hardt, fikk: ${hardtMoggetDiss.diss}`)
 
-  // Mid-tier rounds deterministically blend general roasts and sub-score roasts; elite scores stay specific
-  let antallGenerelle = 0
-  let antallSpesifikke = 0
-  for (let i = 0; i < 40; i++) {
-    const res = lagTipsOgDiss({ delpoeng: littSvakTredjedeler, lysStatus: "ok", total: 6.1, moggetMed: 0.4, fro: `MID:${i}` })
-    if (GENERELLE_DISSER.includes(res.diss)) antallGenerelle++
-    else if (DELPOENG_DISSER.kjevelinje.includes(res.diss)) antallSpesifikke++
+  // Regular rounds (not cooked) always roast a specific sub-score
+  for (let i = 0; i < 25; i++) {
+    const mid = lagTipsOgDiss({ delpoeng: littSvakTredjedeler, lysStatus: "ok", total: 6.1, moggetMed: 0.4, fro: `MID:${i}` })
+    assert.ok(DELPOENG_DISSER.kjevelinje.includes(mid.diss), `forventet spesifikk diss, fikk: ${mid.diss}`)
   }
-  assert.ok(antallGenerelle > 0 && antallSpesifikke > 0, `generelle=${antallGenerelle}, spesifikke=${antallSpesifikke}`)
+})
 
-  for (let i = 0; i < 20; i++) {
-    const elite = lagTipsOgDiss({ delpoeng: littSvakTredjedeler, lysStatus: "ok", total: 8.4, moggetMed: 0, fro: `ELITE:${i}` })
-    assert.ok(!COOKED_DISSER.includes(elite.diss) && !GENERELLE_DISSER.includes(elite.diss))
-  }
+test("Moggern 5G/Wi-Fi: Cloudflare/Metered TURN-støtte, port-53-filtrering og WSS relay-validering", async () => {
+  // Port 53 URLs are stripped because browsers block them
+  const norm = normaliserIceTjenere([
+    {
+      urls: [
+        "turn:turn.cloudflare.com:53?transport=udp",
+        "turn:turn.cloudflare.com:3478?transport=udp",
+        "turns:turn.cloudflare.com:443?transport=tcp",
+        "javascript:alert(1)",
+      ],
+      username: "cf-user",
+      credential: "cf-pass",
+    },
+  ])
+  assert.equal(norm.harTurn, true)
+  assert.deepEqual(norm.tjenere[0].urls, [
+    "turn:turn.cloudflare.com:3478?transport=udp",
+    "turns:turn.cloudflare.com:443?transport=tcp",
+  ])
+
+  // Cloudflare Realtime TURN is only called for logged-in users
+  let cfKall = 0
+  const cfFetch = (async () => {
+    cfKall++
+    return new Response(
+      JSON.stringify({
+        iceServers: [
+          {
+            urls: ["turn:turn.cloudflare.com:3478?transport=udp", "turns:turn.cloudflare.com:443?transport=tcp"],
+            username: "u1",
+            credential: "p1",
+          },
+        ],
+      }),
+      { status: 201 },
+    )
+  }) as typeof fetch
+
+  const utlogget = await hentIceKonfig(
+    { MOGGERN_CF_TURN_KEY_ID: "kid", MOGGERN_CF_TURN_API_TOKEN: "tok" },
+    false,
+    cfFetch,
+  )
+  assert.equal(utlogget.harTurn, false)
+  assert.equal(cfKall, 0)
+
+  const innloggetCf = await hentIceKonfig(
+    { MOGGERN_CF_TURN_KEY_ID: "kid", MOGGERN_CF_TURN_API_TOKEN: "tok" },
+    true,
+    cfFetch,
+  )
+  assert.equal(innloggetCf.harTurn, true)
+  assert.equal(cfKall, 1)
+  assert.equal(innloggetCf.iceServers.length, STANDARD_STUN.length + 1)
+
+  // Metered TURN API fallback works when Cloudflare is not configured
+  const meteredFetch = (async () =>
+    new Response(
+      JSON.stringify([
+        { urls: "turns:global.relay.metered.ca:443?transport=tcp", username: "m-user", credential: "m-pass" },
+      ]),
+      { status: 200 },
+    )) as typeof fetch
+  const innloggetMetered = await hentIceKonfig(
+    { MOGGERN_METERED_DOMAIN: "demo.metered.live", MOGGERN_METERED_API_KEY: "m-key" },
+    true,
+    meteredFetch,
+  )
+  assert.equal(innloggetMetered.harTurn, true)
+  assert.equal(innloggetMetered.iceServers.length, STANDARD_STUN.length + 1)
+
+  // Relay frame validator accepts valid compact JPEGs and rejects oversized/non-JPEG payloads
+  const okRamme = lesRelayRamme({ av: "spiller-2", dataUrl: "data:image/jpeg;base64,AAAA", w: 240, h: 180 })
+  assert.deepEqual(okRamme, { av: "spiller-2", dataUrl: "data:image/jpeg;base64,AAAA", w: 240, h: 180 })
+  assert.equal(lesRelayRamme({ av: "spiller-2", dataUrl: "data:image/png;base64,AAAA", w: 240, h: 180 }), null)
+  assert.equal(lesRelayRamme({ av: "spiller-2", dataUrl: "data:image/jpeg;base64," + "A".repeat(60_000), w: 240, h: 180 }), null)
+  assert.equal(lesRelayRamme({ av: "spiller-2", dataUrl: "data:image/jpeg;base64,AAAA", w: 1200, h: 900 }), null)
 })

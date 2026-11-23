@@ -68,14 +68,27 @@ export function lagreDagensBeste(poeng: number, modus: "duell" | "solo"): { verd
 }
 
 /**
- * Captures a crisp 4:5 portrait snapshot from a live HTMLVideoElement using object-cover cropping.
- * Kept strictly ephemeral in browser memory and optional 2-player room broadcast (never persisted).
+ * Captures a crisp 4:5 portrait snapshot from a live HTMLVideoElement or relay HTMLCanvasElement
+ * using object-cover cropping. Kept strictly ephemeral in browser memory / 2-player room broadcast (never persisted).
  */
-export function fangVideoBilde(video: HTMLVideoElement, speilet: boolean, bredde = 280, hoyde = 350): string | null {
+export function fangVideoBilde(
+  kilde: HTMLVideoElement | HTMLCanvasElement,
+  speilet: boolean,
+  bredde = 280,
+  hoyde = 350,
+): string | null {
   if (typeof document === "undefined") return null
-  const vw = video.videoWidth
-  const vh = video.videoHeight
-  if (!vw || !vh || video.readyState < 2) return null
+  let vw = 0
+  let vh = 0
+  if (typeof HTMLVideoElement !== "undefined" && kilde instanceof HTMLVideoElement) {
+    if (kilde.readyState < 2) return null
+    vw = kilde.videoWidth
+    vh = kilde.videoHeight
+  } else {
+    vw = (kilde as HTMLCanvasElement).width
+    vh = (kilde as HTMLCanvasElement).height
+  }
+  if (!vw || !vh) return null
 
   const lerret = document.createElement("canvas")
   lerret.width = bredde
@@ -94,7 +107,7 @@ export function fangVideoBilde(video: HTMLVideoElement, speilet: boolean, bredde
     ctx.translate(bredde, 0)
     ctx.scale(-1, 1)
   }
-  ctx.drawImage(video, dx, dy, tegnB, tegnH)
+  ctx.drawImage(kilde, dx, dy, tegnB, tegnH)
   ctx.restore()
 
   try {
@@ -104,6 +117,76 @@ export function fangVideoBilde(video: HTMLVideoElement, speilet: boolean, bredde
   } catch {
     return null
   }
+}
+
+export type RelayRamme = {
+  av: string
+  dataUrl: string
+  w: number
+  h: number
+}
+
+const MAKS_RELAY_TEGN = 48_000
+
+/**
+ * Captures a lightweight proportional JPEG frame (~6–10 KB, unflipped like WebRTC)
+ * for automatic HTTPS/WSS fallback when direct P2P WebRTC is blocked by 5G CGNAT or strict Wi-Fi.
+ */
+export function fangRelayRamme(
+  video: HTMLVideoElement,
+  lerret: HTMLCanvasElement,
+  maksSide = 240,
+): { dataUrl: string; w: number; h: number } | null {
+  const vw = video.videoWidth
+  const vh = video.videoHeight
+  if (!vw || !vh || video.readyState < 2 || video.paused || video.ended) return null
+
+  const skala = Math.min(1, maksSide / Math.max(vw, vh))
+  const w = Math.max(64, Math.round(vw * skala))
+  const h = Math.max(64, Math.round(vh * skala))
+  if (lerret.width !== w || lerret.height !== h) {
+    lerret.width = w
+    lerret.height = h
+  }
+  const ctx = lerret.getContext("2d")
+  if (!ctx) return null
+  ctx.drawImage(video, 0, 0, w, h)
+
+  try {
+    const dataUrl = lerret.toDataURL("image/jpeg", 0.55)
+    if (dataUrl.length <= MAKS_RELAY_TEGN) return { dataUrl, w, h }
+    const mindre = lerret.toDataURL("image/jpeg", 0.38)
+    return mindre.length <= MAKS_RELAY_TEGN ? { dataUrl: mindre, w, h } : null
+  } catch {
+    return null
+  }
+}
+
+/** Validates an incoming ephemeral video relay frame broadcast over Supabase Realtime. */
+export function lesRelayRamme(x: unknown): RelayRamme | null {
+  if (!x || typeof x !== "object") return null
+  const o = x as Record<string, unknown>
+  if (typeof o.av !== "string" || !o.av || o.av.length > 64) return null
+  if (
+    typeof o.dataUrl !== "string" ||
+    !o.dataUrl.startsWith("data:image/jpeg;base64,") ||
+    o.dataUrl.length > MAKS_RELAY_TEGN
+  ) {
+    return null
+  }
+  if (
+    typeof o.w !== "number" ||
+    typeof o.h !== "number" ||
+    !Number.isInteger(o.w) ||
+    !Number.isInteger(o.h) ||
+    o.w < 64 ||
+    o.w > 400 ||
+    o.h < 64 ||
+    o.h > 400
+  ) {
+    return null
+  }
+  return { av: o.av, dataUrl: o.dataUrl, w: o.w, h: o.h }
 }
 
 export type DuellKortSpiller = {

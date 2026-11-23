@@ -58,6 +58,20 @@ async function lagLandmarker(delegate: "GPU" | "CPU"): Promise<FaceLandmarker> {
   })
 }
 
+export type BildeKilde = HTMLVideoElement | HTMLCanvasElement
+
+function lesKildeMaal(kilde: BildeKilde): { vw: number; vh: number } | null {
+  if (typeof HTMLVideoElement !== "undefined" && kilde instanceof HTMLVideoElement) {
+    if (kilde.readyState < 2 || kilde.paused || kilde.ended || kilde.videoWidth < 64 || kilde.videoHeight < 64) {
+      return null
+    }
+    return { vw: kilde.videoWidth, vh: kilde.videoHeight }
+  }
+  const c = kilde as HTMLCanvasElement
+  if (c.width < 64 || c.height < 64) return null
+  return { vw: c.width, vh: c.height }
+}
+
 export type AnalyseringsUtfall = {
   ramme: RammeResultat
   lys: LysAnalyse | null
@@ -65,31 +79,31 @@ export type AnalyseringsUtfall = {
 }
 
 export type AnsiktSporer = {
-  /** Analyses the current frame of one dedicated <video> stream using temporal VIDEO tracking. */
-  analyser: (video: HTMLVideoElement, lysLerret: HTMLCanvasElement, taLys?: boolean) => AnalyseringsUtfall | null
+  /** Analyses the current frame of one dedicated <video> or relay <canvas> stream using temporal VIDEO tracking. */
+  analyser: (kilde: BildeKilde, lysLerret: HTMLCanvasElement, taLys?: boolean) => AnalyseringsUtfall | null
   /** Releases WebGL/WASM resources when leaving the room. */
   lukk: () => void
 }
 
-function maalLys(video: HTMLVideoElement, lerret: HTMLCanvasElement): LysAnalyse {
+function maalLys(kilde: BildeKilde, vw: number, vh: number, lerret: HTMLCanvasElement): LysAnalyse {
   // Tiny downscaled luminance check (< 0.2 ms); never inspects colour/skin tone.
   const maksBredde = 120
-  const skala = video.videoWidth > maksBredde ? maksBredde / video.videoWidth : 1
-  const bredde = Math.max(32, Math.round(video.videoWidth * skala))
-  const hoyde = Math.max(32, Math.round(video.videoHeight * skala))
+  const skala = vw > maksBredde ? maksBredde / vw : 1
+  const bredde = Math.max(32, Math.round(vw * skala))
+  const hoyde = Math.max(32, Math.round(vh * skala))
   if (lerret.width !== bredde || lerret.height !== hoyde) {
     lerret.width = bredde
     lerret.height = hoyde
   }
   const ctx = lerret.getContext("2d", { willReadFrequently: true })
   if (!ctx) return { status: "ok", snittLys: 128, andelOvereksponert: 0, andelUndereksponert: 0, kontrast: 40 }
-  ctx.drawImage(video, 0, 0, bredde, hoyde)
+  ctx.drawImage(kilde, 0, 0, bredde, hoyde)
   const bildeData = ctx.getImageData(0, 0, bredde, hoyde)
   return analyserRgbaLys(bildeData.data, 2)
 }
 
 /**
- * Creates an isolated VIDEO-mode Face Landmarker tracker for a single video stream.
+ * Creates an isolated VIDEO-mode Face Landmarker tracker for a single video or relay canvas stream.
  * Tries GPU first, falls back to CPU on init error, and also auto-recovers to CPU if a GPU WebGL
  * driver silently outputs empty landmarks on lit video frames.
  */
@@ -134,11 +148,10 @@ export async function opprettAnsiktSporer(): Promise<AnsiktSporer> {
   }
 
   return {
-    analyser(video, lysLerret, taLys = false) {
+    analyser(kilde, lysLerret, taLys = false) {
       if (lukket) return null
-      if (video.readyState < 2 || video.paused || video.ended || video.videoWidth < 64 || video.videoHeight < 64) {
-        return null
-      }
+      const maal = lesKildeMaal(kilde)
+      if (!maal) return null
 
       const na = Math.round(performance.now())
       const ts = na > sisteTs ? na : sisteTs + 1
@@ -146,7 +159,7 @@ export async function opprettAnsiktSporer(): Promise<AnsiktSporer> {
 
       let resultat
       try {
-        resultat = instans.detectForVideo(video, ts)
+        resultat = instans.detectForVideo(kilde, ts)
       } catch {
         byttTilCpu()
         return null
@@ -162,9 +175,9 @@ export async function opprettAnsiktSporer(): Promise<AnsiktSporer> {
         blendshapes = kart
       }
 
-      const ramme = vurderRamme(punkter, matrise, video.videoWidth, video.videoHeight, blendshapes)
+      const ramme = vurderRamme(punkter, matrise, maal.vw, maal.vh, blendshapes)
       const trengerGpuSjekk = delegate === "GPU" && !settAnsikt && !(punkter && punkter.length >= 468)
-      const lys = taLys || trengerGpuSjekk ? maalLys(video, lysLerret) : null
+      const lys = taLys || trengerGpuSjekk ? maalLys(kilde, maal.vw, maal.vh, lysLerret) : null
 
       if (punkter && punkter.length >= 468) {
         settAnsikt = true

@@ -76,7 +76,7 @@ export function tømSporingsLerret(lerret: HTMLCanvasElement | null) {
  */
 export function tegnAnsiktSporing(
   lerret: HTMLCanvasElement,
-  video: HTMLVideoElement,
+  kilde: HTMLVideoElement | HTMLCanvasElement,
   punkter: readonly Punkt3D[] | null,
   opts: { speilet: boolean; gyldig?: boolean; rizzlerGull?: boolean },
 ) {
@@ -97,10 +97,9 @@ export function tegnAnsiktSporing(
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
   ctx.clearRect(0, 0, visningBredde, visningHoyde)
 
-  if (!punkter || punkter.length < 468 || video.videoWidth < 64 || video.videoHeight < 64) return
-
-  const vw = video.videoWidth
-  const vh = video.videoHeight
+  const vw = typeof HTMLVideoElement !== "undefined" && kilde instanceof HTMLVideoElement ? kilde.videoWidth : (kilde as HTMLCanvasElement).width
+  const vh = typeof HTMLVideoElement !== "undefined" && kilde instanceof HTMLVideoElement ? kilde.videoHeight : (kilde as HTMLCanvasElement).height
+  if (!punkter || punkter.length < 468 || vw < 64 || vh < 64) return
   const p = (idx: number): VisningsPunkt | null => {
     const pt = punkter[idx]
     if (!pt) return null
