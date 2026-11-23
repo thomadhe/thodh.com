@@ -18,7 +18,12 @@ import {
   type MoggernRapport,
   type SpillerMaaling,
 } from "../features/spill/lib/moggern/duell"
-import { lesDagensBesteFraTekst, lesRelayRamme, oppdaterDagensBesteVerdi } from "../features/spill/lib/moggern/duell-kort"
+import {
+  deleTekstForKort,
+  lesDagensBesteFraTekst,
+  lesRelayRamme,
+  oppdaterDagensBesteVerdi,
+} from "../features/spill/lib/moggern/duell-kort"
 import { byggIceKonfig, hentIceKonfig, normaliserIceTjenere, STANDARD_STUN } from "../features/spill/lib/moggern/ice"
 import { analyserLuminans, analyserRgbaLys, samleLysStatus } from "../features/spill/lib/moggern/lys"
 import {
@@ -1243,4 +1248,8 @@ test("Moggern 5G/Wi-Fi: Cloudflare/Metered TURN-støtte, port-53-filtrering og W
   assert.equal(lesRelayRamme({ av: "spiller-2", dataUrl: "data:image/png;base64,AAAA", w: 240, h: 180 }), null)
   assert.equal(lesRelayRamme({ av: "spiller-2", dataUrl: "data:image/jpeg;base64," + "A".repeat(60_000), w: 240, h: 180 }), null)
   assert.equal(lesRelayRamme({ av: "spiller-2", dataUrl: "data:image/jpeg;base64,AAAA", w: 1200, h: 900 }), null)
+
+  // Share caption stays short and uncluttered because the PNG card carries photo, score, rank and roast
+  assert.equal(deleTekstForKort(true), "Moggern (Solo-test) · thodh.com")
+  assert.equal(deleTekstForKort(false), "Moggern · thodh.com")
 })

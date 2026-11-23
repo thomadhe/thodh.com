@@ -242,26 +242,35 @@ function brytTekst(ctx: CanvasRenderingContext2D, tekst: string, maksBredde: num
   return linjer
 }
 
-/**
- * Renders a shareable dark-mode PNG duel card (1200×675 for 1v1, 820×920 for solo)
- * completely client-side and triggers a browser file download.
- */
-export async function lastNedDuellKortPng(input: {
-  tittel: string
+export type DuellKortInput = {
+  /** Short headline for 1v1 duels (omitted on solo so name/score/rank aren't duplicated). */
+  tittel?: string | null
   underTittel: string
   spillere: DuellKortSpiller[]
   filnavn: string
-}): Promise<boolean> {
-  if (typeof document === "undefined" || input.spillere.length === 0) return false
+}
+
+/** Short, clean caption paired with the shared PNG card image (no duplicated score dump). */
+export function deleTekstForKort(solo: boolean): string {
+  return solo ? "Moggern (Solo-test) · thodh.com" : "Moggern · thodh.com"
+}
+
+/**
+ * Renders a clean, uncluttered dark-mode PNG result card (1200×640 for 1v1, 820×620 for solo)
+ * completely client-side and returns it as a PNG Blob.
+ */
+export async function lagDuellKortBlob(input: DuellKortInput): Promise<Blob | null> {
+  if (typeof document === "undefined" || input.spillere.length === 0) return null
   const erSolo = input.spillere.length === 1
+  const harTittel = !erSolo && !!input.tittel?.trim()
   const W = erSolo ? 820 : 1200
-  const H = erSolo ? 880 : 675
+  const H = erSolo ? 600 : 630
 
   const lerret = document.createElement("canvas")
   lerret.width = W
   lerret.height = H
   const ctx = lerret.getContext("2d")
-  if (!ctx) return false
+  if (!ctx) return null
 
   // Background + subtle top lime radial glow matching Gjetteløs dark theme
   ctx.fillStyle = "#111214"
@@ -275,28 +284,31 @@ export async function lastNedDuellKortPng(input: {
 
   const font = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
 
-  // Header
+  // Minimal header
   ctx.textAlign = "center"
   ctx.fillStyle = "#bef264"
-  ctx.font = `600 18px ${font}`
-  ctx.fillText(input.underTittel.toUpperCase(), W / 2, 54)
+  ctx.font = `600 17px ${font}`
+  ctx.fillText(input.underTittel.toUpperCase(), W / 2, 46)
 
-  ctx.fillStyle = "#f4f4f5"
-  ctx.font = `700 ${erSolo ? 36 : 38}px ${font}`
-  const tittelLinjer = brytTekst(ctx, input.tittel, W - 120, 2)
-  tittelLinjer.forEach((linje, i) => {
-    ctx.fillText(linje, W / 2, 104 + i * 44)
-  })
+  let kortTopp = 76
+  if (harTittel && input.tittel) {
+    ctx.fillStyle = "#f4f4f5"
+    ctx.font = `700 34px ${font}`
+    const tittelLinjer = brytTekst(ctx, input.tittel, W - 120, 2)
+    tittelLinjer.forEach((linje, i) => {
+      ctx.fillText(linje, W / 2, 92 + i * 40)
+    })
+    kortTopp = tittelLinjer.length > 1 ? 160 : 124
+  }
 
-  const kortTopp = tittelLinjer.length > 1 ? 182 : 148
-  const kortBunn = H - 64
+  const kortBunn = H - 54
   const kortHoyde = kortBunn - kortTopp
 
   // Preload local peak portraits
   const bilder = await Promise.all(input.spillere.map((s) => (s.bildeUrl ? lastBilde(s.bildeUrl) : Promise.resolve(null))))
 
-  const marg = 48
-  const mellomrom = 28
+  const marg = 44
+  const mellomrom = 26
   const kortBredde = erSolo ? W - marg * 2 : (W - marg * 2 - mellomrom) / 2
 
   for (let i = 0; i < input.spillere.length; i++) {
@@ -316,8 +328,8 @@ export async function lastNedDuellKortPng(input: {
     ctx.restore()
 
     const pad = 28
-    const bildeW = erSolo ? 240 : 186
-    const bildeH = erSolo ? 300 : 232
+    const bildeW = erSolo ? 228 : 182
+    const bildeH = erSolo ? 285 : 228
     const bildeX = x + pad
     const bildeY = y + pad
 
@@ -350,27 +362,36 @@ export async function lastNedDuellKortPng(input: {
     ctx.stroke()
     ctx.restore()
 
-    // Right column of card: name, big score, rank badge
-    const infoX = bildeX + bildeW + 24
+    // Right column: optional winner tag, name, big score, rank badge, optional Rizzler badge
+    const infoX = bildeX + bildeW + 26
     const infoMaksW = x + kortBredde - pad - infoX
     ctx.textAlign = "left"
 
-    ctx.fillStyle = s.erVinner ? "#bef264" : "#a1a1aa"
-    ctx.font = `600 15px ${font}`
-    ctx.fillText(s.erVinner ? "★ VINNER" : erSolo ? "SOLO-TEST" : "DUELLANT", infoX, bildeY + 22)
+    let curY = bildeY + 26
+    if (s.erVinner) {
+      ctx.fillStyle = "#bef264"
+      ctx.font = `700 14px ${font}`
+      ctx.fillText("★ VINNER", infoX, curY)
+      curY += 34
+    } else if (!erSolo) {
+      curY += 10
+    }
 
     ctx.fillStyle = "#f4f4f5"
-    ctx.font = `700 30px ${font}`
+    ctx.font = `700 ${erSolo ? 34 : 30}px ${font}`
     const navnLinje = brytTekst(ctx, s.navn, infoMaksW, 1)[0] ?? s.navn
-    ctx.fillText(navnLinje, infoX, bildeY + 60)
+    ctx.fillText(navnLinje, infoX, curY)
 
     // Score
+    const poengY = curY + (erSolo ? 94 : 82)
+    const poengTekst = formaterMoggernPoeng(s.poeng)
     ctx.fillStyle = "#ffffff"
-    ctx.font = `700 72px ${font}`
-    ctx.fillText(formaterMoggernPoeng(s.poeng), infoX, bildeY + 144)
+    ctx.font = `700 ${erSolo ? 82 : 70}px ${font}`
+    ctx.fillText(poengTekst, infoX, poengY)
+    const poengW = ctx.measureText(poengTekst).width
     ctx.fillStyle = "#71717a"
-    ctx.font = `600 20px ${font}`
-    ctx.fillText("/ 10", infoX + ctx.measureText(formaterMoggernPoeng(s.poeng)).width + 10, bildeY + 144)
+    ctx.font = `600 22px ${font}`
+    ctx.fillText("/ 10", infoX + poengW + 10, poengY)
 
     // Rank pill
     const rang = rangForPoeng(s.poeng)
@@ -379,7 +400,7 @@ export async function lastNedDuellKortPng(input: {
     const pillTekstW = ctx.measureText(rang.tittel).width
     const pillW = pillTekstW + 32
     const pillH = 38
-    const pillY = bildeY + 168
+    const pillY = poengY + 24
     ctx.save()
     tegnAvrundetRekt(ctx, infoX, pillY, pillW, pillH, 19)
     ctx.fillStyle = farge.bg
@@ -388,13 +409,13 @@ export async function lastNedDuellKortPng(input: {
     ctx.fillStyle = farge.fg
     ctx.fillText(rang.tittel, infoX + 16, pillY + 25)
 
-    // Optional Rizzler Finisher / Rizz failed pill right below rank badge
+    // Optional Rizzler Finisher / Rizz failed pill
     if (s.finisherBonus && s.finisherBonus !== 0) {
       const erGull = s.finisherBonus > 0
-      const fTekst = erGull ? "🤫 Rizzler-finisher +0,4" : "😂 Rizz failed −0,3"
+      const fTekst = erGull ? "🤫 Rizzler +0,4" : "😂 Rizz failed −0,3"
       ctx.font = `700 14px ${font}`
       const fW = Math.min(infoMaksW, ctx.measureText(fTekst).width + 22)
-      const fY = pillY + pillH + 8
+      const fY = pillY + pillH + 10
       ctx.save()
       tegnAvrundetRekt(ctx, infoX, fY, fW, 28, 14)
       ctx.fillStyle = erGull ? "rgba(252, 211, 77, 0.22)" : "rgba(244, 63, 94, 0.22)"
@@ -407,45 +428,88 @@ export async function lastNedDuellKortPng(input: {
       ctx.fillText(fTekst, infoX + 11, fY + 19)
     }
 
-    // Bottom section of card: expression verdict + roast quote
-    let tekstY = bildeY + bildeH + 34
-    const bunnMaksW = kortBredde - pad * 2
-    if (s.uttrykkTekst) {
-      ctx.fillStyle = "#d4d4d8"
-      ctx.font = `600 17px ${font}`
-      const uLinjer = brytTekst(ctx, s.uttrykkTekst, bunnMaksW, 2)
-      for (const l of uLinjer) {
-        ctx.fillText(l, x + pad, tekstY)
-        tekstY += 24
-      }
-      tekstY += 10
-    }
+    // Bottom section: roast quote only (clean, uncluttered)
     if (s.diss) {
+      const dissY = bildeY + bildeH + 40
+      const bunnMaksW = kortBredde - pad * 2
       ctx.fillStyle = "#fda4af"
-      ctx.font = `500 17px ${font}`
+      ctx.font = `500 ${erSolo ? 21 : 18}px ${font}`
       const dLinjer = brytTekst(ctx, `«${s.diss}»`, bunnMaksW, 3)
-      for (const l of dLinjer) {
-        ctx.fillText(l, x + pad, tekstY)
-        tekstY += 24
-      }
+      dLinjer.forEach((l, idx) => {
+        ctx.fillText(l, x + pad, dissY + idx * (erSolo ? 29 : 25))
+      })
     }
   }
 
-  // Footer
+  // Minimal footer
   ctx.textAlign = "center"
   ctx.fillStyle = "#71717a"
-  ctx.font = `500 16px ${font}`
-  ctx.fillText("thodh.com/spill/moggern  ·  Alt her er tull — ingen vitenskap, ingen opptak", W / 2, H - 26)
+  ctx.font = `500 15px ${font}`
+  ctx.fillText("thodh.com/spill/moggern", W / 2, H - 20)
 
-  const blob = await new Promise<Blob | null>((resolve) => lerret.toBlob((b) => resolve(b), "image/png"))
-  if (!blob) return false
+  return new Promise<Blob | null>((resolve) => lerret.toBlob((b) => resolve(b), "image/png"))
+}
+
+function utlosNedlasting(blob: Blob, filnavn: string) {
   const url = URL.createObjectURL(blob)
   const a = document.createElement("a")
   a.href = url
-  a.download = input.filnavn
+  a.download = filnavn
   document.body.appendChild(a)
   a.click()
   a.remove()
   window.setTimeout(() => URL.revokeObjectURL(url), 4000)
+}
+
+/** Downloads the rendered PNG result card directly. */
+export async function lastNedDuellKortPng(input: DuellKortInput): Promise<boolean> {
+  const blob = await lagDuellKortBlob(input)
+  if (!blob) return false
+  utlosNedlasting(blob, input.filnavn)
   return true
+}
+
+export type DelKortUtfall = "delt" | "kopiert" | "lastet-ned" | "avbrutt" | "feil"
+
+/**
+ * Shares the PNG result card image with a short caption:
+ * 1. Native Web Share API with image file (iOS/Android/macOS/Edge share sheet).
+ * 2. Desktop image clipboard (`image/png`) so pasting drops the card directly into chat.
+ * 3. Direct PNG file download fallback.
+ */
+export async function delDuellKortPng(input: DuellKortInput & { tekst: string }): Promise<DelKortUtfall> {
+  const blob = await lagDuellKortBlob(input)
+  if (!blob) return "feil"
+
+  if (typeof File !== "undefined" && typeof navigator !== "undefined" && typeof navigator.share === "function") {
+    const fil = new File([blob], input.filnavn, { type: "image/png" })
+    const kanDeleFil = typeof navigator.canShare === "function" && navigator.canShare({ files: [fil] })
+    if (kanDeleFil) {
+      try {
+        await navigator.share({ files: [fil], text: input.tekst })
+        return "delt"
+      } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") return "avbrutt"
+        // Some mobile browsers reject combining files + text; retry with image file only.
+        try {
+          await navigator.share({ files: [fil] })
+          return "delt"
+        } catch (err2) {
+          if (err2 instanceof Error && err2.name === "AbortError") return "avbrutt"
+        }
+      }
+    }
+  }
+
+  if (typeof ClipboardItem !== "undefined" && typeof navigator !== "undefined" && navigator.clipboard?.write) {
+    try {
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })])
+      return "kopiert"
+    } catch {
+      // Fall through to file download.
+    }
+  }
+
+  utlosNedlasting(blob, input.filnavn)
+  return "lastet-ned"
 }

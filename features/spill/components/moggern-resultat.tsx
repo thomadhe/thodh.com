@@ -3,12 +3,14 @@
 import {
   AlertTriangle,
   ArrowLeft,
+  Check,
   Crown,
   Download,
   Flame,
   Lightbulb,
   Loader2,
   RotateCcw,
+  Share2,
   Sparkles,
   Trophy,
 } from "lucide-react"
@@ -20,7 +22,13 @@ import {
   type MoggernRapport,
   type SpillerSluttResultat,
 } from "../lib/moggern/duell"
-import { lastNedDuellKortPng, type DuellKortSpiller } from "../lib/moggern/duell-kort"
+import {
+  delDuellKortPng,
+  deleTekstForKort,
+  lastNedDuellKortPng,
+  type DuellKortInput,
+  type DuellKortSpiller,
+} from "../lib/moggern/duell-kort"
 import { DELPOENG_LISTE, formaterBonus, formaterMoggernPoeng } from "../lib/moggern/poeng"
 import {
   ANSVARSFRASKRIVELSE_PAAMINNELSE,
@@ -30,7 +38,6 @@ import {
   vinnerLinje,
 } from "../lib/moggern/tekster"
 import { MFLATE, MKNAPP, MKNAPP_SEKUNDAR } from "./moggern-forklaring"
-import { DelKnapp } from "./spill-ramme"
 
 function useTelleOpp(maal: number, varighetMs = 850): number {
   const [verdi, setVerdi] = useState(0)
@@ -285,6 +292,8 @@ export function MoggernResultat({
   dagensBeste?: { poeng: number; nyRekord: boolean } | null
 }) {
   const [lasterKort, setLasterKort] = useState(false)
+  const [delerKort, setDelerKort] = useState(false)
+  const [deltStatus, setDeltStatus] = useState<string | null>(null)
   const utfall = useMemo(() => {
     if (solo && soloResultat) {
       return {
@@ -330,72 +339,78 @@ export function MoggernResultat({
     return `${deltakere[0].navn} ${s0} – ${s1} ${deltakere[1].navn}`
   }, [solo, deltakere, stilling])
 
-  const deleTekst = useMemo(() => {
-    const linjer = [solo ? "Moggern (Solo-test) · thodh.com" : "Moggern · thodh.com", hovedLinje]
-    for (const s of utfall.spillere) {
-      if (s.offisiell?.ok) {
-        const rang = rangForPoeng(s.offisiell.total)
-        const finisherTag =
-          s.offisiell.finisherBonus && s.offisiell.finisherBonus > 0
-            ? " · 🤫 Rizzler-finisher"
-            : s.offisiell.finisherBonus && s.offisiell.finisherBonus < 0
-              ? " · 😂 Rizz failed"
-              : ""
-        linjer.push(`${s.deltaker.navn}: ${formaterMoggernPoeng(s.offisiell.total)}/10 (${rang.tittel})${finisherTag}`)
-      }
-    }
-    if (stillingTekst) linjer.push(`Stilling i rommet: ${stillingTekst}`)
-    linjer.push("(Alt her er tull.)")
-    return linjer.join("\n")
-  }, [solo, hovedLinje, utfall.spillere, stillingTekst])
-
   const kanLasteNedKort = utfall.spillere.some((s) => s.offisiell?.ok)
+
+  const byggKortInput = useCallback((): DuellKortInput => {
+    const kortSpillere: DuellKortSpiller[] = utfall.spillere
+      .filter((s) => s.offisiell?.ok)
+      .map((s) => {
+        const maaling = s.offisiell!
+        const mot = utfall.spillere.find((x) => x.deltaker.id !== s.deltaker.id)
+        const motPoeng = mot?.offisiell?.ok ? mot.offisiell.total : null
+        const moggetMed =
+          !solo && typeof motPoeng === "number"
+            ? Math.max(0, Math.round((motPoeng - maaling.total) * 10) / 10)
+            : undefined
+        const td = lagTipsOgDiss({
+          delpoeng: maaling.delpoeng,
+          lysStatus: maaling.lysStatus,
+          kvalitet: maaling.kvalitet,
+          total: maaling.total,
+          moggetMed,
+          fro: `${fro}:${s.deltaker.id}`,
+        })
+        return {
+          navn: s.deltaker.navn,
+          poeng: maaling.total,
+          erVinner: !solo && utfall.vinnerId === s.deltaker.id,
+          bildeUrl: bilder[s.deltaker.id] ?? null,
+          diss: td.diss,
+          finisherBonus: maaling.finisherBonus,
+        }
+      })
+    return {
+      tittel: solo ? null : hovedLinje,
+      underTittel: solo
+        ? "Moggern (Solo-test) · thodh.com"
+        : `Moggern · thodh.com${stillingTekst ? ` · ${stillingTekst}` : ""}`,
+      spillere: kortSpillere,
+      filnavn: solo ? `moggern-solo-${kode.toLowerCase()}.png` : `moggern-duell-${kode.toLowerCase()}-r${runde + 1}.png`,
+    }
+  }, [utfall, fro, solo, bilder, hovedLinje, kode, runde, stillingTekst])
 
   const lastNedKort = useCallback(async () => {
     if (!kanLasteNedKort || lasterKort) return
     setLasterKort(true)
     try {
-      const kortSpillere: DuellKortSpiller[] = utfall.spillere
-        .filter((s) => s.offisiell?.ok)
-        .map((s) => {
-          const maaling = s.offisiell!
-          const dom = uttrykkDom(maaling.uttrykkSnitt)
-          const mot = utfall.spillere.find((x) => x.deltaker.id !== s.deltaker.id)
-          const motPoeng = mot?.offisiell?.ok ? mot.offisiell.total : null
-          const moggetMed =
-            !solo && typeof motPoeng === "number"
-              ? Math.max(0, Math.round((motPoeng - maaling.total) * 10) / 10)
-              : undefined
-          const td = lagTipsOgDiss({
-            delpoeng: maaling.delpoeng,
-            lysStatus: maaling.lysStatus,
-            kvalitet: maaling.kvalitet,
-            total: maaling.total,
-            moggetMed,
-            fro: `${fro}:${s.deltaker.id}`,
-          })
-          return {
-            navn: s.deltaker.navn,
-            poeng: maaling.total,
-            erVinner: !solo && utfall.vinnerId === s.deltaker.id,
-            bildeUrl: bilder[s.deltaker.id] ?? null,
-            uttrykkTekst: dom?.tekst ?? null,
-            diss: td.diss,
-            finisherBonus: maaling.finisherBonus,
-          }
-        })
-      await lastNedDuellKortPng({
-        tittel: hovedLinje,
-        underTittel: solo
-          ? `Moggern Solo-test · 15 s`
-          : `Moggern · Rom ${kode} · Runde ${runde + 1}${stillingTekst ? ` · ${stillingTekst}` : ""}`,
-        spillere: kortSpillere,
-        filnavn: solo ? `moggern-solo-${kode.toLowerCase()}.png` : `moggern-duell-${kode.toLowerCase()}-r${runde + 1}.png`,
-      })
+      await lastNedDuellKortPng(byggKortInput())
     } finally {
       setLasterKort(false)
     }
-  }, [kanLasteNedKort, lasterKort, utfall, fro, solo, bilder, hovedLinje, kode, runde, stillingTekst])
+  }, [kanLasteNedKort, lasterKort, byggKortInput])
+
+  const delKort = useCallback(async () => {
+    if (!kanLasteNedKort || delerKort) return
+    setDelerKort(true)
+    try {
+      const res = await delDuellKortPng({
+        ...byggKortInput(),
+        tekst: deleTekstForKort(solo),
+      })
+      if (res === "kopiert") {
+        setDeltStatus("Bilde kopiert ✓")
+        window.setTimeout(() => setDeltStatus(null), 2200)
+      } else if (res === "lastet-ned") {
+        setDeltStatus("Bilde lastet ned ✓")
+        window.setTimeout(() => setDeltStatus(null), 2200)
+      } else if (res === "delt") {
+        setDeltStatus("Delt ✓")
+        window.setTimeout(() => setDeltStatus(null), 1800)
+      }
+    } finally {
+      setDelerKort(false)
+    }
+  }, [kanLasteNedKort, delerKort, byggKortInput, solo])
 
   return (
     <section className="flex w-full min-w-0 flex-col gap-4 sm:gap-5" aria-live="polite">
@@ -457,17 +472,33 @@ export function MoggernResultat({
             </span>
           )}
           {kanLasteNedKort ? (
-            <button
-              type="button"
-              onClick={() => void lastNedKort()}
-              disabled={lasterKort}
-              className={`${MKNAPP_SEKUNDAR} max-w-full px-4 sm:px-5`}
-            >
-              {lasterKort ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden="true" /> : <Download className="h-4 w-4 shrink-0" aria-hidden="true" />}
-              {solo ? "Last ned kort (PNG)" : "Last ned duellkort"}
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={() => void delKort()}
+                disabled={delerKort}
+                className={`${MKNAPP_SEKUNDAR} max-w-full px-4 sm:px-5`}
+              >
+                {delerKort ? (
+                  <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden="true" />
+                ) : deltStatus ? (
+                  <Check className="h-4 w-4 shrink-0 text-lime-400" aria-hidden="true" />
+                ) : (
+                  <Share2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+                )}
+                {deltStatus ?? "Del resultat"}
+              </button>
+              <button
+                type="button"
+                onClick={() => void lastNedKort()}
+                disabled={lasterKort}
+                className={`${MKNAPP_SEKUNDAR} max-w-full px-4 sm:px-5`}
+              >
+                {lasterKort ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden="true" /> : <Download className="h-4 w-4 shrink-0" aria-hidden="true" />}
+                Last ned bilde
+              </button>
+            </>
           ) : null}
-          <DelKnapp tekst={deleTekst} />
         </div>
       </div>
 
