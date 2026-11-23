@@ -210,9 +210,9 @@ async function lagHandLandmarker(delegate: "GPU" | "CPU"): Promise<HandLandmarke
     },
     runningMode: "VIDEO",
     numHands: 2,
-    minHandDetectionConfidence: 0.35,
-    minHandPresenceConfidence: 0.35,
-    minTrackingConfidence: 0.35,
+    minHandDetectionConfidence: 0.22,
+    minHandPresenceConfidence: 0.22,
+    minTrackingConfidence: 0.22,
   })
 }
 

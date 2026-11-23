@@ -9,21 +9,24 @@ import { PUNKTER, type Punkt3D } from "./poeng"
 export const RIZZLER_BONUS = 0.4
 /** Score penalty if the player smiles or laughs while charging the Rizzler Finisher. */
 export const RIZZLER_FEIL_STRAFF = -0.3
-/** How long the finger-on-jawline / shush pose must be held continuously to fire (ms). */
-export const RIZZLER_HOLD_MS = 1100
-/** Finisher unlocks during the final 6 seconds of a 15 s round. */
-export const RIZZLER_VINDU_MS = 6000
+/** How long the finger-on-jawline / shush pose must be held to fire (ms). */
+export const RIZZLER_HOLD_MS = 650
+/** Grace period (ms) for transient MediaPipe hand-tracking flickers before resetting the charge bar. */
+export const RIZZLER_GLIPP_MS = 650
+/** Finisher unlocks for everyone during the final 7 seconds of a 15 s round (even when trailing). */
+export const RIZZLER_VINDU_MS = 7000
 /** Smile blendshape strength (0–1) that breaks character and triggers "Rizz failed!". */
-export const RIZZLER_SMIL_TERSKEL = 0.45
-/** Minimum live score to unlock the Rizzler Finisher in Solo-test mode. */
-export const RIZZLER_SOLO_MIN_POENG = 6.0
+export const RIZZLER_SMIL_TERSKEL = 0.55
+/** Minimum live score to unlock the Rizzler Finisher in Solo-test mode (0 = always unlocked in final window). */
+export const RIZZLER_SOLO_MIN_POENG = 0
 
 const HAND_HANDLED = 0
+const HAND_PEKE_MCP = 5
 const HAND_PEKE_PIP = 6
 const HAND_PEKE_TIPP = 8
 const HAND_ANDRE_TIPPER = [12, 16, 20] as const
 
-/** Chin, jawline, and "shush" lip anchor points on the 478-point face mesh. */
+/** Chin, jawline, cheek-jaw, and "shush" lip/nose anchor points on the 478-point face mesh. */
 const KJEVELINJE_ANKERE = [
   PUNKTER.hake,
   PUNKTER.hoyreHakeKropp,
@@ -33,11 +36,17 @@ const KJEVELINJE_ANKERE = [
   PUNKTER.hoyreKjeveHjorne,
   PUNKTER.venstreKjeveHjorne,
   PUNKTER.underleppeBunn,
+  PUNKTER.overleppeTopp,
   PUNKTER.munnMidt,
+  PUNKTER.hoyreMunnvik,
+  PUNKTER.venstreMunnvik,
+  PUNKTER.neseTipp,
+  PUNKTER.hoyreKinnben,
+  PUNKTER.venstreKinnben,
 ] as const
 
-/** Max distance from index fingertip to nearest jawline/chin anchor, as a fraction of cheekbone width. */
-const MAKS_AVSTAND_ANDEL = 0.34
+/** Max distance from index fingertip to nearest jawline/chin/lip anchor, as a fraction of cheekbone width. */
+const MAKS_AVSTAND_ANDEL = 0.52
 
 export type RizzlerPoseResultat = {
   aktiv: boolean
@@ -46,8 +55,8 @@ export type RizzlerPoseResultat = {
 }
 
 /**
- * Checks whether any detected hand is holding an extended index finger near the chin, jawline, or lips
- * ("shush" 🤫 or jawline-trace 👉) without being a flat open palm.
+ * Checks whether any detected hand is holding an extended index finger (or 2-finger jawline trace)
+ * near the chin, jawline, or lips ("shush" 🤫 or jawline-trace 👉) without being a flat open palm.
  */
 export function erRizzlerPose(
   hender: readonly (readonly Punkt3D[])[] | null | undefined,
@@ -73,33 +82,39 @@ export function erRizzlerPose(
   for (const hand of hender) {
     if (!hand || hand.length < 21) continue
     const handledd = hand[HAND_HANDLED]
+    const pekeMcp = hand[HAND_PEKE_MCP]
     const pekePip = hand[HAND_PEKE_PIP]
     const pekeTipp = hand[HAND_PEKE_TIPP]
     if (!handledd || !pekePip || !pekeTipp) continue
 
-    const avstand = (a: Punkt3D, c: Punkt3D) => Math.hypot((a.x - c.x) * b, (a.y - c.y) * h)
+    const avstand2D = (a: Punkt3D, c: Punkt3D) => Math.hypot((a.x - c.x) * b, (a.y - c.y) * h)
+    const avstand3D = (a: Punkt3D, c: Punkt3D) =>
+      Math.hypot((a.x - c.x) * b, (a.y - c.y) * h, ((a.z ?? 0) - (c.z ?? 0)) * b)
 
-    // 1. Index finger must be extended away from the wrist past its middle joint.
-    const pekeLengde = avstand(pekeTipp, handledd)
-    const pipLengde = avstand(pekePip, handledd)
-    if (pekeLengde < 10 || pekeLengde <= pipLengde * 1.1) continue
+    // 1. Index finger must be extended (checks 3D length too so pointing straight toward the chin/camera still locks on).
+    const pekeLengde = avstand3D(pekeTipp, handledd)
+    const pipLengde = avstand3D(pekePip, handledd)
+    const utstraktFraHandledd = pekeLengde >= 8 && pekeLengde > pipLengde * 1.02
+    const utstraktFraKnoke =
+      !!pekeMcp && avstand3D(pekeTipp, pekeMcp) > avstand3D(pekePip, pekeMcp) * 1.08
+    if (!utstraktFraHandledd && !utstraktFraKnoke) continue
 
-    // 2. At least two of middle/ring/pinky must be noticeably more curled than the index finger
-    //    so waving an open hand near the face does not falsely trigger.
-    let krøllet = 0
+    // 2. Reject a flat open palm (all three of middle/ring/pinky stretched as far as the index finger),
+    //    while allowing both 1-finger shush/point and 2-finger jawline trace.
+    let krollet = 0
     for (const tippIdx of HAND_ANDRE_TIPPER) {
       const t = hand[tippIdx]
       if (!t) continue
-      if (avstand(t, handledd) < pekeLengde * 0.9) krøllet += 1
+      if (avstand3D(t, handledd) < pekeLengde * 0.95) krollet += 1
     }
-    if (krøllet < 2) continue
+    if (krollet < 2) continue
 
-    // 3. Measure closest distance from index tip to any chin / jawline / shush-lip anchor.
+    // 3. Measure closest 2D screen distance from index tip to any chin / jawline / shush-lip anchor.
     let minPx = Number.POSITIVE_INFINITY
     for (const ankerIdx of KJEVELINJE_ANKERE) {
       const anker = ansikt[ankerIdx]
       if (!anker) continue
-      const d = avstand(pekeTipp, anker)
+      const d = avstand2D(pekeTipp, anker)
       if (d < minPx) minPx = d
     }
 

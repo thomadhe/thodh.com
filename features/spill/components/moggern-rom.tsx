@@ -74,9 +74,9 @@ import {
   lesRizzlerHendelse,
   RIZZLER_BONUS,
   RIZZLER_FEIL_STRAFF,
+  RIZZLER_GLIPP_MS,
   RIZZLER_HOLD_MS,
   RIZZLER_SMIL_TERSKEL,
-  RIZZLER_SOLO_MIN_POENG,
   RIZZLER_VINDU_MS,
 } from "../lib/moggern/rizzler"
 import { tegnAnsiktSporing, tømSporingsLerret } from "../lib/moggern/sporing-tegner"
@@ -491,6 +491,9 @@ function AktivtMoggernRom({
   const egenFinisherBonusRef = useRef<number>(0)
   const finisherLadeStartRef = useRef<number | null>(null)
   const sisteRizzlerSettRef = useRef<number>(0)
+  const finisherSmilPaRadRef = useRef<number>(0)
+  const finisherUtlostTidRef = useRef<number>(0)
+  const gyldigeEgenRef = useRef<number>(0)
   const lobbyRizzlerRef = useRef<boolean>(false)
   const kanBrukeFinisherRef = useRef<boolean>(false)
   const mittNavnRef = useRef(mittNavn)
@@ -856,14 +859,9 @@ function AktivtMoggernRom({
     return 0
   }, [aktivFase, aktivStartTid, na])
 
-  // Keep Rizzler Finisher eligibility synced for the rAF loop (leader in final 6 s of 1v1, or >= 6.0 in Solo-test).
+  // Keep Rizzler Finisher eligibility synced for the rAF loop (unlocked for everyone in the final 7 s — both leading & comeback!).
   const iFinisherVindu = aktivFase === "maling" && gjenstarMs > 0 && gjenstarMs <= RIZZLER_VINDU_MS
-  const kanBrukeFinisher =
-    iFinisherVindu &&
-    egenFinisherStatus === "inaktiv" &&
-    (erSoloAktiv
-      ? (egenLive?.total ?? 0) >= RIZZLER_SOLO_MIN_POENG
-      : !!egenLive && !!motLive && egenLive.total - motLive.total >= 0.1)
+  const kanBrukeFinisher = iFinisherVindu && egenFinisherStatus === "inaktiv"
 
   useEffect(() => {
     kanBrukeFinisherRef.current = kanBrukeFinisher
@@ -919,6 +917,9 @@ function AktivtMoggernRom({
       motFinisherBonusRef.current = 0
       finisherLadeStartRef.current = null
       sisteRizzlerSettRef.current = 0
+      finisherSmilPaRadRef.current = 0
+      finisherUtlostTidRef.current = 0
+      gyldigeEgenRef.current = 0
       lobbyRizzlerRef.current = false
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setPeakBilder({})
@@ -961,18 +962,18 @@ function AktivtMoggernRom({
           try {
             const ut = egenSporer.analyser(egenVideo, lerret, taOffisiell)
             if (ut) {
-              // Optional Rizzler Finisher hand tracking (runs in lobby preview or when unlocked in final 6 s).
+              // Optional Rizzler Finisher hand tracking (runs in lobby preview or when unlocked in final 7 s).
               const handSporer = handSporerRef.current
               const skalSjekkeHand =
                 !!handSporer &&
                 !!ut.punkter &&
                 ut.punkter.length >= 468 &&
                 (iLobby
-                  ? naTid - sisteHandTid >= 160
+                  ? naTid - sisteHandTid >= 140
                   : maler &&
                     egenFinisherStatusRef.current === "inaktiv" &&
                     (kanBrukeFinisherRef.current || finisherLadeStartRef.current !== null) &&
-                    naTid - sisteHandTid >= 95)
+                    naTid - sisteHandTid >= 75)
 
               if (skalSjekkeHand && handSporer && ut.punkter) {
                 sisteHandTid = naTid
@@ -989,11 +990,18 @@ function AktivtMoggernRom({
                     sisteRizzlerSettRef.current = naTid
                     if (finisherLadeStartRef.current === null) {
                       finisherLadeStartRef.current = naTid
+                      finisherSmilPaRadRef.current = 0
                     }
                     if (smil >= RIZZLER_SMIL_TERSKEL) {
+                      finisherSmilPaRadRef.current += 1
+                    } else {
+                      finisherSmilPaRadRef.current = 0
+                    }
+                    if (finisherSmilPaRadRef.current >= 2) {
                       egenFinisherStatusRef.current = "feilet"
                       egenFinisherBonusRef.current = RIZZLER_FEIL_STRAFF
                       finisherLadeStartRef.current = null
+                      finisherSmilPaRadRef.current = 0
                       setEgenFinisherStatus("feilet")
                       setFinisherFremdrift(0)
                       lyder.rizzFeil()
@@ -1006,6 +1014,8 @@ function AktivtMoggernRom({
                         egenFinisherStatusRef.current = "utlost"
                         egenFinisherBonusRef.current = RIZZLER_BONUS
                         finisherLadeStartRef.current = null
+                        finisherSmilPaRadRef.current = 0
+                        finisherUtlostTidRef.current = naTid
                         setEgenFinisherStatus("utlost")
                         setFinisherFremdrift(1)
                         lyder.rizzler()
@@ -1019,8 +1029,9 @@ function AktivtMoggernRom({
                         }
                       }
                     }
-                  } else if (finisherLadeStartRef.current !== null && naTid - sisteRizzlerSettRef.current > 260) {
+                  } else if (finisherLadeStartRef.current !== null && naTid - sisteRizzlerSettRef.current > RIZZLER_GLIPP_MS) {
                     finisherLadeStartRef.current = null
+                    finisherSmilPaRadRef.current = 0
                     setFinisherFremdrift(0)
                   }
                 }
@@ -1030,6 +1041,12 @@ function AktivtMoggernRom({
                 egenFinisherStatusRef.current === "utlost" ||
                 finisherLadeStartRef.current !== null ||
                 (iLobby && lobbyRizzlerRef.current)
+
+              // Protect score from chin/jaw hand occlusion while charging or right after landing the Rizzler Finisher.
+              const handPaAnsikt =
+                maler &&
+                (finisherLadeStartRef.current !== null ||
+                  (finisherUtlostTidRef.current > 0 && naTid - finisherUtlostTidRef.current < 1100))
 
               if (egenOverlay) {
                 if (visSporingRef.current) {
@@ -1042,11 +1059,12 @@ function AktivtMoggernRom({
                   tømSporingsLerret(egenOverlay)
                 }
               }
-              if (taOffisiell) {
+              if (taOffisiell && !(handPaAnsikt && gyldigeEgenRef.current >= MIN_GYLDIGE_RAMMER)) {
                 egenRammerRef.current.push(ut.ramme)
                 if (ut.lys) egenLysRef.current.push(ut.lys)
                 if (ut.ramme.gyldig) {
-                  setGyldigeEgen((n) => n + 1)
+                  gyldigeEgenRef.current += 1
+                  setGyldigeEgen(gyldigeEgenRef.current)
                   const p = ut.ramme.total ?? 0
                   if (
                     egenPeakPoengRef.current < 0 ||
@@ -1062,7 +1080,7 @@ function AktivtMoggernRom({
                 }
               }
               const forsteEgen = egenLiveRef.current.struktur === null
-              if (oppdaterHud || forsteEgen) {
+              if ((oppdaterHud || forsteEgen) && (!handPaAnsikt || forsteEgen)) {
                 setEgenVeiledning(ut.ramme.veiledning)
                 const live = oppdaterLivePoeng(egenLiveRef.current, ut.ramme)
                 if (live) setEgenLive(live)
@@ -1648,7 +1666,7 @@ function AktivtMoggernRom({
                   <p className="text-[11px] leading-4 font-bold tracking-tight text-amber-300">
                     {finisherFremdrift > 0
                       ? "🤫 Lader Rizzler Finisher … IKKE SMIL!"
-                      : "🤫 RIZZLER FINISHER KLAR — pek på haka/kjevelinja!"}
+                      : "🤫 RIZZLER FINISHER KLAR — pek på haka/kjevelinja eller 🤫!"}
                   </p>
                   <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/15">
                     <div

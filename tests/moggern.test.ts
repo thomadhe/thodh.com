@@ -1064,6 +1064,17 @@ test("Moggern Rizzler Finisher: peke-på-hake-gest, åpen hånd avvises og finis
   assert.equal(treff.aktiv, true)
   assert.ok(treff.avstandAndel !== null && treff.avstandAndel < 0.1)
 
+  // Two-finger jawline trace (index + middle extended, ring + pinky curled) -> active!
+  const toFinger = lagHand({ pekeTipp: { x: hake.x + 0.02, y: hake.y, z: 0 } })
+  toFinger[12] = { x: hake.x + 0.03, y: hake.y + 0.01, z: 0 }
+  assert.equal(erRizzlerPose([toFinger], ansikt, 640, 480).aktiv, true)
+
+  // Foreshortened finger pointing toward the lips/camera (extended in Z) -> active!
+  const munn = ansikt[PUNKTER.munnMidt]
+  const shush3D = lagHand({ pekeTipp: { x: munn.x, y: munn.y, z: -0.14 } })
+  shush3D[6] = { x: munn.x, y: munn.y + 0.02, z: -0.05 }
+  assert.equal(erRizzlerPose([shush3D], ansikt, 640, 480).aktiv, true)
+
   // Open palm near chin -> rejected (prevents accidental wave triggers)
   const aapen = erRizzlerPose([lagHand({ pekeTipp: hake, aapenHand: true })], ansikt, 640, 480)
   assert.equal(aapen.aktiv, false)

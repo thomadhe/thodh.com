@@ -236,9 +236,10 @@ export function SlikRegnesDet({ aapenSomStandard = false }: { aapenSomStandard?:
           </div>
 
           <div className="break-words rounded-[20px] border border-amber-300/20 bg-amber-300/[0.06] p-4 text-xs leading-5 text-neutral-700">
-            <strong className="font-semibold text-amber-200">🤫 Rizzler Finisher (+0,4 / −0,3):</strong> Leder du i de siste 6 sekundene av duellen
-            (eller har ≥ 6,0 i solo-test), låses finisheren opp. Pek på eller stryk pekefingeren langs haka/kjevelinja i ~1,1 sekund uten å smile for
-            gull-effekt, bass-drop og +0,4 bonus. Knekk sammen i et smil midt i posen, og du får «Rizz failed!» (−0,3).
+            <strong className="font-semibold text-amber-200">🤫 Rizzler Finisher (+0,4 / −0,3):</strong> I de siste 7 sekundene av hver runde (både
+            duell og solo-test, uansett poengsum) låses finisheren opp. Pek på haka/kjevelinja eller hold 🤫-finger ved leppa i ~0,65 sek uten å
+            smile for gull-effekt, bass-drop og +0,4 bonus — ansiktspoengene fryses mens hånda er ved ansiktet. Knekk sammen i et smil midt i
+            posen, og du får «Rizz failed!» (−0,3).
           </div>
 
           <div className="break-words rounded-[20px] border border-white/[0.06] bg-[#1f2124] p-4 text-xs leading-5 text-neutral-600">
