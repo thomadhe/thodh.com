@@ -49,6 +49,13 @@ const spillProgrammer: Program[] = [
   { id: "sjakk", navn: "Sjakk for 2", mal: "/sjakk", logo: "/sjakk/favicon.svg" },
 ]
 
+const sosialProgrammer: Program[] = [
+  { id: "venner", navn: "Venner", mal: "/spill/venner", ikon: "venner" },
+  { id: "ledertavle", navn: "Ledertavle", mal: "/spill/ledertavle", ikon: "ledertavle" },
+  { id: "dueller", navn: "Dueller", mal: "/spill/dueller", ikon: "dueller" },
+  { id: "historikk", navn: "Historikk", mal: "/spill/historikk", ikon: "historikk" },
+]
+
 const appProgrammer: Program[] = [
   { id: "karriere", navn: "Karrierepiloten", mal: "https://karrierepiloten.com", logo: "/logos/karrierepiloten.jpg" },
 ]
@@ -59,11 +66,12 @@ const systemProgrammer: Program[] = [
   { id: "konto", navn: "Konto", mal: "/konto", ikon: "person" },
 ]
 
-const alleProgrammer = [...dagligeProgrammer, ...spillProgrammer, ...appProgrammer, ...systemProgrammer]
+const alleProgrammer = [...dagligeProgrammer, ...spillProgrammer, ...sosialProgrammer, ...appProgrammer, ...systemProgrammer]
 
 const grupper: (readonly [string, Program[]])[] = [
   ["Daglig", dagligeProgrammer],
   ["Spill", spillProgrammer],
+  ["Sosialt", sosialProgrammer],
   ["Apper", appProgrammer],
 ]
 
@@ -187,12 +195,14 @@ function Tittellinje({
 function SkrivebordIkon({
   p,
   valgt,
+  varsel = 0,
   velg,
   apne,
   forvarsel,
 }: {
   p: Program
   valgt: boolean
+  varsel?: number
   velg: () => void
   apne: () => void
   forvarsel: () => void
@@ -212,8 +222,16 @@ function SkrivebordIkon({
       onPointerEnter={forvarsel}
       onFocus={forvarsel}
     >
-      <span className="os-ikon-bilde transition duration-150 group-hover:-translate-y-0.5 group-hover:-rotate-3">
+      <span className="os-ikon-bilde relative transition duration-150 group-hover:-translate-y-0.5 group-hover:-rotate-3">
         <ProgramIkon p={p} storrelse={40} />
+        {varsel > 0 ? (
+          <span
+            className="absolute -top-1 -right-1.5 inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full border border-black/80 bg-rose-500 px-1 font-mono text-[10px] leading-none font-bold text-white shadow-[1px_1px_0_#0009]"
+            aria-label={`${varsel} uleste`}
+          >
+            {varsel > 9 ? "9+" : varsel}
+          </span>
+        ) : null}
       </span>
       <span className="os-ikon-tekst px-0.5 text-[12px] leading-tight text-white">{p.navn}</span>
     </button>
@@ -308,8 +326,29 @@ export function Skrivebord() {
   const [vinduer, setVinduer] = useState<Vindu[]>([])
   const [valgt, setValgt] = useState<string | null>(null)
   const [start, setStart] = useState(false)
+  const [varsler, setVarsler] = useState<{ venner: number; dueller: number }>({ venner: 0, dueller: 0 })
   const flate = useRef<HTMLDivElement>(null)
   const nesteZ = useRef(1)
+
+  useEffect(() => {
+    let aktivt = true
+    void Promise.all([
+      fetch("/spill/api/venner", { cache: "no-store" })
+        .then((r) => (r.ok ? (r.json() as Promise<{ foresporslerInn?: unknown[] }>) : null))
+        .catch(() => null),
+      fetch("/spill/api/utfordringer", { cache: "no-store" })
+        .then((r) => (r.ok ? (r.json() as Promise<{ antallVentende?: number }>) : null))
+        .catch(() => null),
+    ]).then(([vennerData, utfordringData]) => {
+      if (!aktivt) return
+      const v = Array.isArray(vennerData?.foresporslerInn) ? vennerData.foresporslerInn.length : 0
+      const d = typeof utfordringData?.antallVentende === "number" ? utfordringData.antallVentende : 0
+      if (v > 0 || d > 0) setVarsler({ venner: v, dueller: d })
+    })
+    return () => {
+      aktivt = false
+    }
+  }, [])
 
   const synlige = vinduer.filter((v) => !v.min)
   const aktivMal = synlige.length ? synlige.reduce((a, b) => (b.z > a.z ? b : a)).mal : null
@@ -411,11 +450,14 @@ export function Skrivebord() {
 
   const innhold = (v: Vindu) => (v.mal === "om" ? <OmThodh lukk={() => lukk(v.mal)} /> : <Papirkurv />)
 
+  const varselFor = (id: string) => (id === "venner" ? varsler.venner : id === "dueller" ? varsler.dueller : 0)
+
   const ikon = (p: Program) => (
     <SkrivebordIkon
       key={p.id}
       p={p}
       valgt={valgt === p.id}
+      varsel={varselFor(p.id)}
       velg={() => setValgt(p.id)}
       apne={() => apne(p.mal)}
       forvarsel={() => forvarsel(p.mal)}
@@ -444,7 +486,16 @@ export function Skrivebord() {
           }
         }}
       >
-        <nav aria-label="Programmer" className="pointer-events-none absolute inset-0 flex flex-col gap-3 p-2 sm:flex-row sm:gap-1">
+        <nav
+          aria-label="Programmer"
+          onPointerDown={(e) => {
+            if (e.target === e.currentTarget) {
+              setValgt(null)
+              setStart(false)
+            }
+          }}
+          className="absolute inset-0 flex flex-col gap-3 p-2 max-sm:overflow-y-auto max-sm:pb-24 sm:pointer-events-none sm:flex-row sm:gap-1"
+        >
           {grupper.map(([tittel, liste]) => (
             <div key={tittel} className="pointer-events-auto flex flex-col">
               <p className="mb-0.5 px-2 text-[10px] tracking-[0.2em] text-white/70 uppercase">{tittel}</p>
@@ -500,29 +551,38 @@ export function Skrivebord() {
       </div>
 
       {start ? (
-        <div className="os-ut os-apne absolute bottom-[38px] left-0.5 z-[10000] flex w-64 p-[3px]" role="menu">
-          <div className="flex w-7 items-end justify-center bg-gradient-to-t from-[var(--os-tittel)] to-[var(--os-tittel-2)] pb-2">
+        <div className="os-ut os-apne absolute bottom-[38px] left-0.5 z-[10000] flex max-h-[calc(100dvh-56px)] w-64 p-[3px]" role="menu">
+          <div className="flex w-7 shrink-0 items-end justify-center bg-gradient-to-t from-[var(--os-tittel)] to-[var(--os-tittel-2)] pb-2">
             <span className="rotate-180 text-[15px] font-bold tracking-wide text-white [writing-mode:vertical-rl]">
               thodh<span className="font-normal">98</span>
             </span>
           </div>
-          <div className="flex-1 py-1">
+          <div className="flex-1 overflow-y-auto py-1">
             {[...grupper, ["", systemProgrammer.filter((p) => p.id !== "papirkurv")] as const].map(([tittel, liste], i) => (
               <div key={i} className={i ? "mt-1 border-t border-[var(--os-skygge)] pt-1 shadow-[inset_0_1px_#fff]" : ""}>
                 {tittel ? <p className="px-2 pt-0.5 text-[10px] tracking-widest text-neutral-600 uppercase">{tittel}</p> : null}
-                {liste.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    role="menuitem"
-                    onClick={() => apne(p.mal)}
-                    className="flex w-full items-center gap-2.5 px-2 py-1 text-left text-[12px] hover:bg-[var(--os-tittel)] hover:text-white focus:bg-[var(--os-tittel)] focus:text-white focus:outline-none"
-                  >
-                    <ProgramIkon p={p} storrelse={20} />
-                    {p.navn}
-                    {p.mal.startsWith("http") ? <span className="ml-auto text-[10px] opacity-60">↗</span> : null}
-                  </button>
-                ))}
+                {liste.map((p) => {
+                  const antall = varselFor(p.id)
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      role="menuitem"
+                      onClick={() => apne(p.mal)}
+                      className="flex w-full items-center gap-2.5 px-2 py-1 text-left text-[12px] hover:bg-[var(--os-tittel)] hover:text-white focus:bg-[var(--os-tittel)] focus:text-white focus:outline-none"
+                    >
+                      <ProgramIkon p={p} storrelse={20} />
+                      <span>{p.navn}</span>
+                      {antall > 0 ? (
+                        <span className="ml-auto inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 font-mono text-[10px] font-bold text-white">
+                          {antall > 9 ? "9+" : antall}
+                        </span>
+                      ) : p.mal.startsWith("http") ? (
+                        <span className="ml-auto text-[10px] opacity-60">↗</span>
+                      ) : null}
+                    </button>
+                  )
+                })}
               </div>
             ))}
           </div>

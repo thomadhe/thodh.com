@@ -17,9 +17,10 @@ const FANER: { id: AktivFane; href: string; navn: string; Ikon: typeof Trophy }[
   { id: "dueller", href: "/spill/dueller", navn: "Dueller", Ikon: Swords },
 ]
 
-/** Compact navigation pill bar shown on /spill and all social spill pages, with live pending challenge badge. */
+/** Compact navigation pill bar shown on /spill and all social spill pages, with live friend-request and challenge badges. */
 export function SpillSosialNav({ aktiv }: { aktiv: AktivFane }) {
   const [ventende, setVentende] = useState(0)
+  const [vennerVentende, setVennerVentende] = useState(0)
   const [innlogget, setInnlogget] = useState<boolean | null>(null)
   const [navn, setNavn] = useState<string | null>(null)
   useVisningsnavnSynk(setNavn)
@@ -34,10 +35,12 @@ export function SpillSosialNav({ aktiv }: { aktiv: AktivFane }) {
           return
         }
         setInnlogget(true)
-        void fetch("/spill/api/profil", { cache: "no-store" })
+        void fetch("/spill/api/venner", { cache: "no-store" })
           .then((p) => (p.ok ? p.json() : null))
-          .then((d: { profil?: ProfilInfo | null } | null) => {
-            if (aktivt && d?.profil?.visningsnavn) setNavn(d.profil.visningsnavn)
+          .then((d: { profil?: ProfilInfo | null; foresporslerInn?: unknown[] } | null) => {
+            if (!aktivt) return
+            if (d?.profil?.visningsnavn) setNavn(d.profil.visningsnavn)
+            if (Array.isArray(d?.foresporslerInn)) setVennerVentende(d.foresporslerInn.length)
           })
           .catch(() => undefined)
         if (r.ok) {
@@ -57,6 +60,8 @@ export function SpillSosialNav({ aktiv }: { aktiv: AktivFane }) {
     <nav aria-label="Spillmeny" className="flex flex-wrap items-center justify-center gap-2">
       {FANER.map(({ id, href, navn, Ikon }) => {
         const valgt = aktiv === id
+        const merke = id === "dueller" ? ventende : id === "venner" ? vennerVentende : 0
+        const merkeTekst = id === "dueller" ? `${merke} ventende utfordringer` : `${merke} ventende venneforespørsler`
         return (
           <Link
             key={id}
@@ -70,12 +75,12 @@ export function SpillSosialNav({ aktiv }: { aktiv: AktivFane }) {
           >
             <Ikon className="h-3.5 w-3.5" aria-hidden="true" />
             <span>{navn}</span>
-            {id === "dueller" && ventende > 0 ? (
+            {merke > 0 ? (
               <span
                 className="ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 font-mono text-[10px] font-bold text-white"
-                aria-label={`${ventende} ventende utfordringer`}
+                aria-label={merkeTekst}
               >
-                {ventende}
+                {merke > 9 ? "9+" : merke}
               </span>
             ) : null}
           </Link>

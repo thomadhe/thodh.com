@@ -31,6 +31,10 @@ export type IkonNavn =
   | "stegern"
   | "anslag"
   | "moggern"
+  | "venner"
+  | "ledertavle"
+  | "dueller"
+  | "historikk"
 
 const omriss = "#111"
 
@@ -255,6 +259,41 @@ const tegninger: Record<IkonNavn, React.ReactNode> = {
       <rect x="13" y="14" width="2" height="2" fill="#111" />
       <rect x="17" y="14" width="2" height="2" fill="#111" />
       <rect x="14" y="19" width="4" height="1.5" fill="#111" />
+    </>
+  ),
+  venner: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
+      <circle cx="20.5" cy="12" r="3.2" fill="#f3c69f" stroke={omriss} />
+      <path d="M15.5 24c.5-4.2 2.5-6 5-6s4.5 1.8 5 6Z" fill="#a78bfa" stroke={omriss} />
+      <circle cx="12.5" cy="11.5" r="3.8" fill="#f7d5b2" stroke={omriss} />
+      <path d="M6.5 25c.7-5 3-7 6-7s5.3 2 6 7Z" fill="#34d399" stroke={omriss} />
+    </>
+  ),
+  ledertavle: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
+      <path d="M9 9H6v4c0 2 1.5 3.5 3.5 3.5M23 9h3v4c0 2-1.5 3.5-3.5 3.5" fill="none" stroke="#facc15" strokeWidth="2" />
+      <path d="M10 8h12v6c0 3.5-2.5 6-6 6s-6-2.5-6-6Z" fill="#facc15" stroke={omriss} />
+      <rect x="14" y="20" width="4" height="3" fill="#eab308" stroke={omriss} />
+      <rect x="11" y="23" width="10" height="3" fill="#ca8a04" stroke={omriss} />
+    </>
+  ),
+  dueller: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
+      <path d="M9 9l12 12M23 9L11 21" stroke="#e4e4e7" strokeWidth="3" strokeLinecap="square" />
+      <path d="M8 19l5 5M24 19l-5 5" stroke="#f43f5e" strokeWidth="2.5" strokeLinecap="square" />
+      <rect x="7" y="21" width="3" height="3" fill="#facc15" />
+      <rect x="22" y="21" width="3" height="3" fill="#facc15" />
+    </>
+  ),
+  historikk: (
+    <>
+      <rect x="3" y="3" width="26" height="26" rx="3" fill="#2b2d31" stroke={omriss} />
+      <circle cx="16" cy="16" r="8.5" fill="#18191b" stroke="#38bdf8" strokeWidth="2.2" />
+      <path d="M16 11v5.5l4 2.5" fill="none" stroke="#f4f4f5" strokeWidth="2" strokeLinecap="square" />
+      <path d="M8 11l3-3v4Z" fill="#38bdf8" />
     </>
   ),
 }
