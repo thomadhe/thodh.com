@@ -1,7 +1,7 @@
 import assert from "node:assert/strict"
 import { readFileSync } from "node:fs"
 import test from "node:test"
-import { aggregerLedertavle, type RaTavleRad } from "../features/spill/lib/server/ledertavle-logikk"
+import { aggregerLedertavle, aggregerSeierherre, type RaTavleRad } from "../features/spill/lib/server/ledertavle-logikk"
 import {
   beregnTidSek,
   lesBevis,
@@ -16,6 +16,7 @@ import {
   erGyldigManed,
   erGyldigVennekode,
   flyttManed,
+  formaterTavleDato,
   formaterTidSek,
   KLIENT_SPILL,
   klemTidSek,
@@ -251,4 +252,70 @@ test("visningsnavn: eierens ønskede navn godtas, og profil-API-et tar imot POST
   const konfig = readFileSync("next.config.ts", "utf8")
   assert.match(konfig, /source: "\/:path\*"[\s\S]*camera=\(self\)/)
   assert.doesNotMatch(konfig, /camera=\(\)/)
+})
+
+test("daglig ledertavle og dagens seierherre kårer vinner per dag og per spill", () => {
+  assert.ok(formaterTavleDato("2026-11-23", "2026-11-23").startsWith("I dag · "))
+  assert.ok(formaterTavleDato("2026-11-22", "2026-11-23").startsWith("I går · "))
+  assert.ok(!formaterTavleDato("2026-11-20", "2026-11-23").includes("2026"))
+  assert.ok(formaterTavleDato("2025-11-20", "2026-11-23").includes("2025"))
+
+  const u1 = "11111111-1111-4111-8111-111111111111"
+  const u2 = "22222222-2222-4222-8222-222222222222"
+  const u3 = "33333333-3333-4333-8333-333333333333"
+
+  const lag = (spillId: "anelseslos" | "gjettelos", del: Omit<RaTavleRad, "signatur">): RaTavleRad => ({
+    ...del,
+    signatur: signerResultatRad({
+      userId: del.bruker_id,
+      spillId,
+      dato: del.dato,
+      status: del.status,
+      poeng: typeof del.poeng === "number" ? del.poeng : null,
+      forsok: del.forsok,
+      hintAntall: del.hint_antall,
+      tidSek: del.tid_sek,
+    }),
+  })
+
+  // Dag 1 (2026-11-23): Ada vinner begge spill (4+4=8 p), Bjørn nr 2 i begge (3+3=6 p), Celine forfalsket rad forkastes
+  const perSpill = {
+    anelseslos: [
+      lag("anelseslos", { bruker_id: u1, visningsnavn: "Ada", dato: "2026-11-23", status: "vunnet", poeng: 6, forsok: 6, hint_antall: 0, tid_sek: 40 }),
+      lag("anelseslos", { bruker_id: u2, visningsnavn: "Bjørn", dato: "2026-11-23", status: "vunnet", poeng: 11, forsok: 11, hint_antall: 1, tid_sek: 70 }),
+      { bruker_id: u3, visningsnavn: "Jukser", dato: "2026-11-23", status: "vunnet" as const, poeng: 1, forsok: 1, hint_antall: 0, tid_sek: 5, signatur: "ugyldig" },
+      // Dag 2 (2026-11-22): Bjørn vinner alene
+      lag("anelseslos", { bruker_id: u2, visningsnavn: "Bjørn", dato: "2026-11-22", status: "vunnet", poeng: 5, forsok: 5, hint_antall: 0, tid_sek: 35 }),
+    ],
+    gjettelos: [
+      lag("gjettelos", { bruker_id: u1, visningsnavn: "Ada", dato: "2026-11-23", status: "ferdig", poeng: 420, forsok: 5, hint_antall: 0, tid_sek: 90 }),
+      lag("gjettelos", { bruker_id: u2, visningsnavn: "Bjørn", dato: "2026-11-23", status: "ferdig", poeng: 380, forsok: 5, hint_antall: 0, tid_sek: 85 }),
+    ],
+  }
+
+  // Enkeltdag (2026-11-23)
+  const dagRes = aggregerSeierherre(perSpill, u1, true, "2026-11-23")
+  assert.equal(dagRes.rader.length, 2)
+  assert.equal(dagRes.rader[0].visningsnavn, "Ada")
+  assert.equal(dagRes.rader[0].plass, 1)
+  assert.equal(dagRes.rader[0].poeng, 8)
+  assert.equal(dagRes.rader[0].seiere, 2)
+  assert.equal(dagRes.rader[0].dagsseiere, 1)
+  assert.equal(dagRes.rader[0].erMeg, true)
+  assert.equal(dagRes.rader[1].visningsnavn, "Bjørn")
+  assert.equal(dagRes.rader[1].poeng, 6)
+  assert.equal(dagRes.rader[1].dagsseiere, 0)
+  assert.equal(dagRes.spillVinnere.length, 2)
+  assert.equal(dagRes.spillVinnere[0].spillId, "anelseslos")
+  assert.equal(dagRes.spillVinnere[0].vinnere[0].visningsnavn, "Ada")
+  assert.equal(dagRes.spillVinnere[0].verdiTekst, "6 gjett")
+
+  // Hele måneden: Bjørn har 6 + 4 = 10 p og 1 dagsseier, Ada har 8 p og 1 dagsseier
+  const mndRes = aggregerSeierherre(perSpill, u2, true)
+  assert.equal(mndRes.rader[0].visningsnavn, "Bjørn")
+  assert.equal(mndRes.rader[0].poeng, 10)
+  assert.equal(mndRes.rader[0].dagsseiere, 1)
+  assert.equal(mndRes.rader[1].visningsnavn, "Ada")
+  assert.equal(mndRes.rader[1].poeng, 8)
+  assert.equal(mndRes.rader[1].dagsseiere, 1)
 })

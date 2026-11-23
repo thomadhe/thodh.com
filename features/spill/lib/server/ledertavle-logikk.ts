@@ -1,7 +1,16 @@
 // Pure leaderboard aggregation, tie-breaking, signature verification and client-game replay helpers.
 // Kept free of "server-only" so unit tests can import and verify every rule directly.
 
-import { formaterTidSek, TAVLE_META, type ServerSpillId, type TavleMetrikk, type TavleOppforing } from "../sosial"
+import {
+  formaterTidSek,
+  SERVER_SPILL,
+  TAVLE_META,
+  type ServerSpillId,
+  type SpillVinnerKort,
+  type TavleMetrikk,
+  type TavleOppforing,
+  type TotaltOppforing,
+} from "../sosial"
 import { verifiserResultatRad } from "./resultat-signatur"
 
 export type RaTavleRad = {
@@ -29,6 +38,24 @@ function avrund(n: number, desimaler = 1): number {
 
 function formaterDesimal(n: number, maks = 1): string {
   return n.toLocaleString("nb-NO", { minimumFractionDigits: 0, maximumFractionDigits: maks })
+}
+
+function erGyldigRad(spillId: ServerSpillId, r: RaTavleRad, krevSignatur: boolean): boolean {
+  if (!krevSignatur) return true
+  const poeng = tilTall(r.poeng)
+  return verifiserResultatRad(
+    {
+      userId: r.bruker_id,
+      spillId,
+      dato: String(r.dato).slice(0, 10),
+      status: r.status,
+      poeng,
+      forsok: r.forsok,
+      hintAntall: r.hint_antall,
+      tidSek: r.tid_sek,
+    },
+    r.signatur,
+  )
 }
 
 export function aggregerLedertavle(
@@ -62,23 +89,8 @@ export function aggregerLedertavle(
   const settDag = new Set<string>()
 
   for (const r of rader) {
+    if (!erGyldigRad(spillId, r, krevSignatur)) continue
     const poeng = tilTall(r.poeng)
-    if (krevSignatur) {
-      const ok = verifiserResultatRad(
-        {
-          userId: r.bruker_id,
-          spillId,
-          dato: String(r.dato).slice(0, 10),
-          status: r.status,
-          poeng,
-          forsok: r.forsok,
-          hintAntall: r.hint_antall,
-          tidSek: r.tid_sek,
-        },
-        r.signatur,
-      )
-      if (!ok) continue
-    }
     const dagNokkel = `${r.bruker_id}:${String(r.dato).slice(0, 10)}`
     if (settDag.has(dagNokkel)) continue
     settDag.add(dagNokkel)
@@ -110,11 +122,12 @@ export function aggregerLedertavle(
     if (erFullfort) s.fullfort++
     if (erLost) s.lost++
 
+    if (erFullfort && r.tid_sek !== null && r.tid_sek > 0) {
+      s.tidSum += r.tid_sek
+      s.tidAntall++
+    }
+
     if (r.status === "vunnet") {
-      if (r.tid_sek !== null && r.tid_sek > 0) {
-        s.tidSum += r.tid_sek
-        s.tidAntall++
-      }
       s.hintSum += r.hint_antall
       s.hintAntall++
       if (r.forsok !== null && r.forsok > 0) {
@@ -212,4 +225,135 @@ export function aggregerLedertavle(
     void _
     return { ...rest, plass: forste >= 0 ? forste + 1 : i + 1 }
   })
+}
+
+const PLASS_BONUS: Record<number, number> = { 1: 3, 2: 2, 3: 1 }
+
+/**
+ * Computes the overall champion ("Seierherre") leaderboard across all server-verified daily games.
+ * Each solved/completed game gives 1 base point + placement bonus (1st: +3, 2nd: +2, 3rd: +1).
+ * Works identically for a single day ("Dagens seierherre") and a full month ("Månedens seierherre").
+ */
+export function aggregerSeierherre(
+  perSpill: Partial<Record<ServerSpillId, RaTavleRad[]>>,
+  megId: string | null,
+  krevSignatur: boolean,
+  enkeltDag?: string,
+): { rader: TotaltOppforing[]; spillVinnere: SpillVinnerKort[] } {
+  type TotalSamler = {
+    brukerId: string
+    visningsnavn: string
+    poeng: number
+    seiere: number
+    dagsseiere: number
+    spilt: number
+  }
+  type DagSamler = { brukerId: string; poeng: number; seiere: number; spilt: number }
+
+  const totalt = new Map<string, TotalSamler>()
+  const perDag = new Map<string, Map<string, DagSamler>>()
+  const spillVinnere: SpillVinnerKort[] = []
+
+  const hentTotal = (brukerId: string, visningsnavn: string): TotalSamler => {
+    let s = totalt.get(brukerId)
+    if (!s) {
+      s = { brukerId, visningsnavn, poeng: 0, seiere: 0, dagsseiere: 0, spilt: 0 }
+      totalt.set(brukerId, s)
+    }
+    return s
+  }
+
+  for (const spillId of SERVER_SPILL) {
+    const rader = perSpill[spillId]
+    if (!rader?.length) continue
+
+    const etterDato = new Map<string, RaTavleRad[]>()
+    for (const r of rader) {
+      if (!erGyldigRad(spillId, r, krevSignatur)) continue
+      const dato = String(r.dato).slice(0, 10)
+      if (enkeltDag && dato !== enkeltDag) continue
+      const liste = etterDato.get(dato)
+      if (liste) liste.push(r)
+      else etterDato.set(dato, [r])
+    }
+
+    const dagMetrikk = TAVLE_META[spillId].dagStandard
+
+    for (const [dato, dagsRader] of etterDato) {
+      const rangert = aggregerLedertavle(spillId, dagsRader, megId, dagMetrikk, false)
+      if (!rangert.length) continue
+
+      let dagKart = perDag.get(dato)
+      if (!dagKart) {
+        dagKart = new Map<string, DagSamler>()
+        perDag.set(dato, dagKart)
+      }
+
+      for (const rad of rangert) {
+        const bonus = PLASS_BONUS[rad.plass] ?? 0
+        const delta = 1 + bonus
+        const vant = rad.plass === 1 ? 1 : 0
+
+        const ts = hentTotal(rad.brukerId, rad.visningsnavn)
+        ts.poeng += delta
+        ts.seiere += vant
+        ts.spilt += 1
+
+        let ds = dagKart.get(rad.brukerId)
+        if (!ds) {
+          ds = { brukerId: rad.brukerId, poeng: 0, seiere: 0, spilt: 0 }
+          dagKart.set(rad.brukerId, ds)
+        }
+        ds.poeng += delta
+        ds.seiere += vant
+        ds.spilt += 1
+      }
+
+      if (enkeltDag && dato === enkeltDag) {
+        const forstePlass = rangert.filter((r) => r.plass === 1)
+        spillVinnere.push({
+          spillId,
+          vinnere: forstePlass.map((r) => ({ brukerId: r.brukerId, visningsnavn: r.visningsnavn, erMeg: r.erMeg })),
+          verdiTekst: forstePlass[0].verdiTekst,
+          deltakere: rangert.length,
+        })
+      }
+    }
+  }
+
+  // Crown each day's overall winner(s).
+  for (const dagKart of perDag.values()) {
+    const spillere = [...dagKart.values()]
+    if (!spillere.length) continue
+    spillere.sort((a, b) => b.poeng - a.poeng || b.seiere - a.seiere || b.spilt - a.spilt)
+    const topp = spillere[0]
+    for (const d of spillere) {
+      if (d.poeng === topp.poeng && d.seiere === topp.seiere && d.spilt === topp.spilt) {
+        const ts = totalt.get(d.brukerId)
+        if (ts) ts.dagsseiere += 1
+      } else {
+        break
+      }
+    }
+  }
+
+  const liste = [...totalt.values()].sort(
+    (a, b) => b.poeng - a.poeng || b.seiere - a.seiere || b.spilt - a.spilt || a.visningsnavn.localeCompare(b.visningsnavn, "nb"),
+  )
+
+  const ut: TotaltOppforing[] = liste.map((k, i) => {
+    const forste = liste.findIndex((x) => x.poeng === k.poeng && x.seiere === k.seiere && x.spilt === k.spilt)
+    return {
+      plass: forste >= 0 ? forste + 1 : i + 1,
+      brukerId: k.brukerId,
+      visningsnavn: k.visningsnavn,
+      erMeg: megId !== null && k.brukerId === megId,
+      poeng: k.poeng,
+      seiere: k.seiere,
+      dagsseiere: k.dagsseiere,
+      spilt: k.spilt,
+    }
+  })
+
+  return { rader: ut, spillVinnere }
 }

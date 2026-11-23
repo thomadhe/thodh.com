@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "Ledertavle · Daglige minigames",
-  description: "Månedlige ledertavler for daglige spill – både globalt og blant venner.",
+  description: "Daglige og månedlige ledertavler med dagens seierherre – både globalt og blant venner.",
   robots: { index: false },
 }
 
@@ -17,7 +17,7 @@ export default async function Page() {
     <SpillSosialSide
       aktiv="ledertavle"
       tittel="Ledertavle"
-      undertittel="Månedens beste spillere globalt og blant venner."
+      undertittel="Dagens seierherre og topplister per dag og måned – globalt og blant venner."
     >
       <SpillLedertavle innlogget={Boolean(innlogget)} />
     </SpillSosialSide>

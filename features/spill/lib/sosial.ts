@@ -1,7 +1,7 @@
-// Shared types, rules and helpers for game history, monthly leaderboards, friends and duel challenges.
+// Shared types, rules and helpers for game history, daily/monthly leaderboards, friends and duel challenges.
 // Pure TypeScript without React, Next or Node imports, so both client components, server routes and tests use it.
 
-import { iDagOslo, START_DATO } from "./dag"
+import { formaterDato, iDagOslo, leggTilDager, START_DATO } from "./dag"
 import { spill, type Spill, type SpillId } from "./spill"
 
 export function spillEtterId(id: string): Spill | undefined {
@@ -47,7 +47,7 @@ export function validerVisningsnavn(s: string): { ok: true; navn: string } | { o
   return { ok: true, navn }
 }
 
-// ---- Time & month formatting ----
+// ---- Time, day & month formatting ----
 
 export function klemTidSek(sek: number | null | undefined): number | null {
   if (typeof sek !== "number" || !Number.isFinite(sek) || sek <= 0) return null
@@ -65,6 +65,7 @@ export function formaterTidSek(sek: number | null | undefined): string {
   return `${m} m ${String(r).padStart(2, "0")} s`
 }
 
+export const FORSTE_DATO = START_DATO
 export const FORSTE_MANED = START_DATO.slice(0, 7) // "2026-10"
 
 export function gjeldendeManed(iDag = iDagOslo()) {
@@ -98,6 +99,14 @@ export function formaterManed(maned: string): string {
   return tekst.charAt(0).toUpperCase() + tekst.slice(1)
 }
 
+export function formaterTavleDato(dato: string, iDag = iDagOslo()): string {
+  const kort = formaterDato(dato, "kort")
+  if (dato === iDag) return `I dag · ${kort}`
+  if (dato === leggTilDager(iDag, -1)) return `I går · ${kort}`
+  const aar = dato.slice(0, 4)
+  return aar === iDag.slice(0, 4) ? kort : `${kort} ${aar}`
+}
+
 // ---- Leaderboard games & metrics ----
 
 /** Games with server-side answer judging and server-verified results, eligible for leaderboards. */
@@ -124,11 +133,15 @@ export function erServerSpill(id: string): id is ServerSpillId {
 
 export type TavleMetrikk = "lost" | "tid" | "hint" | "forsok" | "feil" | "poeng"
 export type TavleOmfang = "global" | "venner"
+export type TavlePeriode = "dag" | "maned"
+export type TavleValg = "totalt" | ServerSpillId
 
 export type TavleSpillMeta = {
   id: ServerSpillId
   metrikker: readonly TavleMetrikk[]
   standard: TavleMetrikk
+  dagMetrikker: readonly TavleMetrikk[]
+  dagStandard: TavleMetrikk
   /** "vunnet" counts wins; "fullfort" counts completed days (for score-based games). */
   lostRegel: "vunnet" | "fullfort"
   lostEtikett: string
@@ -140,6 +153,8 @@ export const TAVLE_META: Record<ServerSpillId, TavleSpillMeta> = {
     id: "anelseslos",
     metrikker: ["lost", "tid", "hint", "forsok"],
     standard: "lost",
+    dagMetrikker: ["forsok", "tid", "hint"],
+    dagStandard: "forsok",
     lostRegel: "vunnet",
     lostEtikett: "Flest løste",
   },
@@ -147,6 +162,8 @@ export const TAVLE_META: Record<ServerSpillId, TavleSpillMeta> = {
     id: "soket",
     metrikker: ["lost", "forsok", "tid"],
     standard: "lost",
+    dagMetrikker: ["forsok", "tid"],
+    dagStandard: "forsok",
     lostRegel: "vunnet",
     lostEtikett: "Flest løste",
   },
@@ -154,6 +171,8 @@ export const TAVLE_META: Record<ServerSpillId, TavleSpillMeta> = {
     id: "emovi",
     metrikker: ["lost", "hint", "tid"],
     standard: "lost",
+    dagMetrikker: ["hint", "tid"],
+    dagStandard: "hint",
     lostRegel: "vunnet",
     lostEtikett: "Flest løste",
   },
@@ -161,6 +180,8 @@ export const TAVLE_META: Record<ServerSpillId, TavleSpillMeta> = {
     id: "tilkoblinger",
     metrikker: ["lost", "feil", "tid"],
     standard: "lost",
+    dagMetrikker: ["feil", "tid"],
+    dagStandard: "feil",
     lostRegel: "vunnet",
     lostEtikett: "Flest løste",
   },
@@ -168,6 +189,8 @@ export const TAVLE_META: Record<ServerSpillId, TavleSpillMeta> = {
     id: "67-stegern",
     metrikker: ["lost", "poeng"],
     standard: "lost",
+    dagMetrikker: ["poeng"],
+    dagStandard: "poeng",
     lostRegel: "fullfort",
     lostEtikett: "Flest dager",
     poengEnhet: "m",
@@ -176,6 +199,8 @@ export const TAVLE_META: Record<ServerSpillId, TavleSpillMeta> = {
     id: "gjettelos",
     metrikker: ["lost", "poeng"],
     standard: "lost",
+    dagMetrikker: ["poeng"],
+    dagStandard: "poeng",
     lostRegel: "fullfort",
     lostEtikett: "Flest dager",
     poengEnhet: "p",
@@ -184,6 +209,8 @@ export const TAVLE_META: Record<ServerSpillId, TavleSpillMeta> = {
     id: "sanglos",
     metrikker: ["lost", "poeng"],
     standard: "lost",
+    dagMetrikker: ["poeng"],
+    dagStandard: "poeng",
     lostRegel: "vunnet",
     lostEtikett: "Flest 3/3",
     poengEnhet: "/3",
@@ -192,13 +219,15 @@ export const TAVLE_META: Record<ServerSpillId, TavleSpillMeta> = {
     id: "heksagonal-jakt",
     metrikker: ["lost", "poeng"],
     standard: "lost",
+    dagMetrikker: ["poeng"],
+    dagStandard: "poeng",
     lostRegel: "fullfort",
     lostEtikett: "Flest dager",
     poengEnhet: "p",
   },
 }
 
-export function metrikkEtikett(spillId: ServerSpillId, m: TavleMetrikk): string {
+export function metrikkEtikett(spillId: ServerSpillId, m: TavleMetrikk, periode: TavlePeriode = "maned"): string {
   switch (m) {
     case "lost":
       return TAVLE_META[spillId].lostEtikett
@@ -211,6 +240,9 @@ export function metrikkEtikett(spillId: ServerSpillId, m: TavleMetrikk): string 
     case "feil":
       return "Færrest feil"
     case "poeng":
+      if (periode === "dag") {
+        return spillId === "67-stegern" ? "Lengde (m)" : spillId === "sanglos" ? "Riktige" : "Poeng"
+      }
       return spillId === "67-stegern" ? "Høyest snitt (m)" : spillId === "sanglos" ? "Snitt riktige" : "Høyest snitt"
   }
 }
@@ -241,6 +273,24 @@ export type TavleOppforing = {
   snittFeil: number | null
   snittPoeng: number | null
   verdiTekst: string
+}
+
+export type TotaltOppforing = {
+  plass: number
+  brukerId: string
+  visningsnavn: string
+  erMeg: boolean
+  poeng: number
+  seiere: number
+  dagsseiere: number
+  spilt: number
+}
+
+export type SpillVinnerKort = {
+  spillId: ServerSpillId
+  vinnere: { brukerId: string; visningsnavn: string; erMeg: boolean }[]
+  verdiTekst: string
+  deltakere: number
 }
 
 export type ProfilInfo = {
