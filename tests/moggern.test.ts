@@ -53,6 +53,7 @@ import {
   type Punkt3D,
 } from "../features/spill/lib/moggern/poeng"
 import { hentKameraStrom, KAMERA_ONSKER, KAMERA_RESERVE } from "../features/spill/lib/moggern/kamera"
+import { kartleggPunktTilVisning } from "../features/spill/lib/moggern/sporing-tegner"
 import {
   DELPOENG_DISSER,
   lagTipsOgDiss,
@@ -604,7 +605,7 @@ test("Moggern poeng: asymmetrisk Gauss-platå er flatt i målområdet og faller 
 test("Moggern kalibrering: bjelkekurve sprer poengene over hele 0–10 og bevarer rekkefølgen", () => {
   // Typical raw score sits at the middle of the scale, extremes reach the ends
   assert.ok(Math.abs(kalibrerPoeng(KALIBRERING_SNITT) - 5) < 1e-6)
-  assert.ok(kalibrerPoeng(10) > 9.9)
+  assert.ok(kalibrerPoeng(10) > 9.8)
   assert.ok(kalibrerPoeng(0) < 0.01)
   // Strictly monotonic
   let forrige = -1
@@ -615,8 +616,8 @@ test("Moggern kalibrering: bjelkekurve sprer poengene over hele 0–10 og bevare
     forrige = k
   }
   // A 1-point raw gap in the crowded middle becomes a much bigger visible gap
-  assert.ok(kalibrerPoeng(7.3) - kalibrerPoeng(6.3) > 2.5)
-  // Spread across the rank ladder: weak → Bjeffern, average → 5–6.5, strong → 7–8.9, elite → 9+
+  assert.ok(kalibrerPoeng(8.4) - kalibrerPoeng(7.4) > 3.5)
+  // Spread across the rank ladder: weak → Bjeffern, typical webcam raw ~7.9 → 5.0 (Normie), strong ~8.7 → ~8.0, elite 9.5 → 9+
   const lik = (n: number): DelpoengKart => ({
     symmetri: n,
     oyevinkel: n,
@@ -626,18 +627,18 @@ test("Moggern kalibrering: bjelkekurve sprer poengene over hele 0–10 og bevare
     oyeavstand: n,
     harmoni: n,
   })
-  assert.equal(rangForPoeng(regnTotal(lik(4.5))).tittel, "Bjeffern")
-  assert.ok(regnTotal(lik(7.0)) >= 5 && regnTotal(lik(7.0)) < 6.5, `snitt=${regnTotal(lik(7.0))}`)
-  assert.ok(regnTotal(lik(8.0)) >= 7 && regnTotal(lik(8.0)) < 9, `sterk=${regnTotal(lik(8.0))}`)
+  assert.equal(rangForPoeng(regnTotal(lik(6.0))).tittel, "Bjeffern")
+  assert.ok(regnTotal(lik(7.9)) >= 4.9 && regnTotal(lik(7.9)) <= 5.1, `snitt=${regnTotal(lik(7.9))}`)
+  assert.ok(regnTotal(lik(8.7)) >= 7.5 && regnTotal(lik(8.7)) < 8.8, `sterk=${regnTotal(lik(8.7))}`)
   assert.ok(regnTotal(lik(9.5)) >= 9, `elite=${regnTotal(lik(9.5))}`)
   assert.equal(regnRaaPoeng(lik(7)), 7)
   // Bonus is added after calibration and the final total is clamped to [0, 10]
-  assert.equal(regnTotal(lik(10), 2.7), 10)
-  assert.equal(regnTotal(lik(0), -1), 0)
-  assert.ok(regnTotal(lik(7), 0.9) > regnTotal(lik(7)))
+  assert.equal(regnTotal(lik(10), 2.45), 10)
+  assert.equal(regnTotal(lik(0), -3), 0)
+  assert.ok(regnTotal(lik(7.9), 0.8) > regnTotal(lik(7.9)))
 })
 
-test("Moggern mog-uttrykk: hvilende ansikt gir 0, poserte uttrykk gir bonus/straff med riktige porter", () => {
+test("Moggern mog-uttrykk: hvilende ansikt gir 0, poserte uttrykk gir bonus og stygge grimaser krasjer scoren", () => {
   const hvile: Blendshapes = {
     browOuterUpLeft: 0.12,
     browOuterUpRight: 0.1,
@@ -659,36 +660,69 @@ test("Moggern mog-uttrykk: hvilende ansikt gir 0, poserte uttrykk gir bonus/stra
   for (const u of MOG_UTTRYKK) assert.equal(ro.styrker[u.id], 0, u.id)
   assert.equal(regnMogUttrykk(null).bonus, 0)
 
-  // The Rock: one eyebrow raised (difference ≥ 0.65 → full +0.9)
+  // The Rock: one eyebrow raised (difference ≥ 0.62 → full +0.8)
   const rock = regnMogUttrykk({ ...hvile, browOuterUpLeft: 0.85, browOuterUpRight: 0.1 })
   assert.equal(rock.styrker["the-rock"], 1)
-  assert.ok(Math.abs(rock.bonus - 0.9) < 1e-9)
+  assert.ok(Math.abs(rock.bonus - 0.8) < 1e-9)
   // Both eyebrows up is NOT The Rock
   assert.equal(regnMogUttrykk({ ...hvile, browOuterUpLeft: 0.85, browOuterUpRight: 0.8 }).styrker["the-rock"], 0)
 
   // Jegerøyne: squint without blinking; closing the eyes cancels it
-  assert.ok(Math.abs(regnMogUttrykk({ ...hvile, eyeSquintLeft: 0.95, eyeSquintRight: 0.92 }).bonus - 0.7) < 1e-9)
-  assert.equal(regnMogUttrykk({ ...hvile, eyeSquintLeft: 0.95, eyeSquintRight: 0.92, eyeBlinkLeft: 0.9, eyeBlinkRight: 0.85 }).bonus, 0)
+  assert.ok(Math.abs(regnMogUttrykk({ ...hvile, eyeSquintLeft: 0.9, eyeSquintRight: 0.88 }).bonus - 0.65) < 1e-9)
+  assert.equal(regnMogUttrykk({ ...hvile, eyeSquintLeft: 0.9, eyeSquintRight: 0.88, eyeBlinkLeft: 0.9, eyeBlinkRight: 0.85 }).bonus, 0)
 
-  // Innsugde kinn: pucker with closed mouth and no smile; open jaw cancels it
-  assert.ok(Math.abs(regnMogUttrykk({ ...hvile, mouthPucker: 0.97 }).bonus - 0.65) < 1e-9)
-  assert.equal(regnMogUttrykk({ ...hvile, mouthPucker: 0.97, jawOpen: 0.5 }).styrker["innsugde-kinn"], 0)
+  // Innsugde kinn: pucker with closed mouth and no smile; open jaw cancels it and triggers Munn-puster penalty
+  assert.ok(Math.abs(regnMogUttrykk({ ...hvile, mouthPucker: 0.9 }).bonus - 0.55) < 1e-9)
+  const gapPucker = regnMogUttrykk({ ...hvile, mouthPucker: 0.9, jawOpen: 0.5 })
+  assert.equal(gapPucker.styrker["innsugde-kinn"], 0)
+  assert.ok(gapPucker.bonus < -2.0, `gapPucker=${gapPucker.bonus}`)
 
   // Mewing: jaw forward counts double, or pressed lips
   assert.ok(Math.abs(regnMogUttrykk({ ...hvile, jawForward: 0.36 }).bonus - 0.45) < 1e-9)
   assert.ok(regnMogUttrykk({ ...hvile, mouthPressLeft: 0.6, mouthPressRight: 0.6 }).bonus > 0.2)
 
-  // Penalties: smiling and puffed cheeks
+  // Anti-mog penalties: smiling, puffed cheeks, mouth-breathing, grimaces, prey eyes, ugly frown
   const smil = regnMogUttrykk({ ...hvile, mouthSmileLeft: 0.9, mouthSmileRight: 0.85 })
-  assert.ok(Math.abs(smil.bonus + 0.6) < 1e-9)
-  assert.ok(Math.abs(regnMogUttrykk({ ...hvile, cheekPuff: 0.8 }).bonus + 0.4) < 1e-9)
+  assert.ok(Math.abs(smil.bonus + 1.4) < 1e-9)
+  assert.ok(Math.abs(regnMogUttrykk({ ...hvile, cheekPuff: 0.8 }).bonus + 2.0) < 1e-9)
+  assert.ok(Math.abs(regnMogUttrykk({ ...hvile, jawOpen: 0.7 }).bonus + 2.8) < 1e-9)
+  assert.ok(Math.abs(regnMogUttrykk({ ...hvile, noseSneerLeft: 0.8 }).bonus + 3.2) < 1e-9)
+  assert.ok(Math.abs(regnMogUttrykk({ ...hvile, eyeWideLeft: 0.8, eyeWideRight: 0.8 }).bonus + 2.2) < 1e-9)
+  assert.ok(Math.abs(regnMogUttrykk({ ...hvile, mouthFrownLeft: 0.8, mouthFrownRight: 0.8 }).bonus + 1.8) < 1e-9)
+
+  // Making a grimace cancels ALL positive mog bonuses (e.g. squinting + scrunching nose never awards Jegerøyne)
+  const styggGrimase = regnMogUttrykk({
+    ...hvile,
+    eyeSquintLeft: 0.9,
+    eyeSquintRight: 0.9,
+    mouthPucker: 0.9,
+    jawOpen: 0.65,
+    noseSneerLeft: 0.85,
+    mouthFrownLeft: 0.75,
+    mouthFrownRight: 0.75,
+  })
+  assert.equal(styggGrimase.styrker.jegeroyne, 0)
+  assert.equal(styggGrimase.styrker["innsugde-kinn"], 0)
+  assert.ok(styggGrimase.bonus <= -7.0, `styggGrimase=${styggGrimase.bonus}`)
+
+  // Even a 9.5 ideal synthetic face drops straight to Bjeffern (< 3.0) when making an ugly face!
+  const matrise = lagRotasjonsMatrise(0, 0, 0)
+  const ideellStygg = vurderRamme(lagSyntetiskAnsikt(), matrise, 640, 480, {
+    jawOpen: 0.75,
+    noseSneerLeft: 0.85,
+    eyeWideLeft: 0.7,
+    eyeWideRight: 0.7,
+    cheekPuff: 0.65,
+  })
+  assert.equal(rangForPoeng(ideellStygg.total!).tittel, "Bjeffern")
+  assert.ok(ideellStygg.total! <= 1.5, `ideellStygg=${ideellStygg.total}`)
 
   // Ramp is smooth and monotonic between thresholds
   assert.equal(rampe(0.3, 0.3, 0.65), 0)
   assert.equal(rampe(0.65, 0.3, 0.65), 1)
   assert.ok(Math.abs(rampe(0.475, 0.3, 0.65) - 0.5) < 1e-9)
 
-  // Everything at once stays within the documented bounds
+  // Everything positive at once stays within the documented bounds
   const alt = regnMogUttrykk({
     browOuterUpLeft: 1,
     eyeSquintLeft: 1,
@@ -697,23 +731,37 @@ test("Moggern mog-uttrykk: hvilende ansikt gir 0, poserte uttrykk gir bonus/stra
     jawForward: 1,
   })
   assert.ok(Math.abs(alt.bonus - MAKS_UTTRYKK_BONUS) < 1e-9)
-  assert.ok(Math.abs(MAKS_UTTRYKK_BONUS - 2.7) < 1e-9)
-  assert.ok(Math.abs(MIN_UTTRYKK_BONUS + 1.0) < 1e-9)
-  assert.equal(formaterBonus(0.9), "+0,9")
-  assert.equal(formaterBonus(-0.4), "−0,4")
+  assert.ok(Math.abs(MAKS_UTTRYKK_BONUS - 2.45) < 1e-9)
+  assert.ok(Math.abs(MIN_UTTRYKK_BONUS + 13.4) < 1e-9)
+  assert.equal(formaterBonus(0.8), "+0,8")
+  assert.equal(formaterBonus(-2.8), "−2,8")
 })
 
 test("Moggern live-poeng og duell: eksponentiell glatting og bonus som må holdes gjennom målingen", () => {
   assert.equal(glattEksponentielt(null, 5, 0.3), 5)
   assert.ok(Math.abs(glattEksponentielt(5, 10, 0.3) - 6.5) < 1e-9)
-  assert.equal(bonusForStyrker({ "the-rock": 1, jegeroyne: 0, "innsugde-kinn": 0, mewing: 0, smiler: 1, "oppblaste-kinn": 0 }), 0.3)
+  assert.equal(
+    bonusForStyrker({
+      "the-rock": 1,
+      jegeroyne: 0,
+      "innsugde-kinn": 0,
+      mewing: 0,
+      smiler: 1,
+      "oppblaste-kinn": 0,
+      "munn-puster": 0,
+      grimase: 0,
+      bytteoyne: 0,
+      "sur-geip": 0,
+    }),
+    -0.6,
+  )
 
   const matrise = lagRotasjonsMatrise(0, 0, 0)
   const ansikt = lagSyntetiskAnsikt()
   const rolig = vurderRamme(ansikt, matrise, 640, 480)
   const rock = vurderRamme(ansikt, matrise, 640, 480, { browOuterUpLeft: 0.9, browOuterUpRight: 0.05 })
   assert.equal(rolig.uttrykk!.bonus, 0)
-  assert.ok(Math.abs(rock.uttrykk!.bonus - 0.9) < 1e-9)
+  assert.ok(Math.abs(rock.uttrykk!.bonus - 0.8) < 1e-9)
   assert.deepEqual(rock.delpoeng, rolig.delpoeng)
 
   // Live HUD reacts within a few frames but does not jump instantly
@@ -722,10 +770,10 @@ test("Moggern live-poeng og duell: eksponentiell glatting og bonus som må holde
   assert.ok(forste)
   assert.equal(forste.bonus, 0)
   const etterEn = oppdaterLivePoeng(tilstand, rock)!
-  assert.ok(etterEn.bonus > 0 && etterEn.bonus < 0.9)
+  assert.ok(etterEn.bonus > 0 && etterEn.bonus < 0.8)
   let siste = etterEn
   for (let i = 0; i < 25; i++) siste = oppdaterLivePoeng(tilstand, rock)!
-  assert.ok(siste.bonus > 0.85, `bonus=${siste.bonus}`)
+  assert.ok(siste.bonus > 0.75, `bonus=${siste.bonus}`)
   assert.ok(siste.total > forste.total)
   assert.ok(siste.total <= 10)
   // Missing-face frames never update the live score
@@ -747,11 +795,28 @@ test("Moggern live-poeng og duell: eksponentiell glatting og bonus som må holde
   // Duel aggregation: holding The Rock all 10 s earns the bonus; a 2-frame flash does not
   const holdt = aggregerRammer(Array.from({ length: 30 }, () => rock))
   assert.equal(holdt.ok, true)
-  assert.ok(holdt.uttrykkBonus > 0.8, `holdt=${holdt.uttrykkBonus}`)
+  assert.ok(holdt.uttrykkBonus > 0.7, `holdt=${holdt.uttrykkBonus}`)
   assert.equal(holdt.total, regnTotal(holdt.delpoeng, holdt.uttrykkBonus))
   const blink = aggregerRammer([...Array.from({ length: 28 }, () => rolig), rock, rock])
   assert.ok(blink.uttrykkBonus < 0.1, `blink=${blink.uttrykkBonus}`)
   assert.equal(aggregerRammer(Array.from({ length: 30 }, () => rolig)).uttrykkBonus, 0)
+})
+
+test("Moggern sporing-tegner: kartleggPunktTilVisning matcher object-cover beskjæring og selfie-speiling", () => {
+  // Exact 4:3 video in 4:3 box (no cropping)
+  assert.deepEqual(kartleggPunktTilVisning({ x: 0.25, y: 0.5 }, 640, 480, 640, 480, false), { x: 160, y: 240 })
+  assert.deepEqual(kartleggPunktTilVisning({ x: 0.25, y: 0.5 }, 640, 480, 640, 480, true), { x: 480, y: 240 })
+
+  // 16:9 video (1280×720) cropped inside a tall 360×720 box (scale = 1, drawn 1280×720, offsetX = -460)
+  const senter = kartleggPunktTilVisning({ x: 0.5, y: 0.5 }, 1280, 720, 360, 720, false)
+  assert.deepEqual(senter, { x: 180, y: 360 })
+  const venstre = kartleggPunktTilVisning({ x: 0.4, y: 0.25 }, 1280, 720, 360, 720, false)
+  assert.ok(Math.abs(venstre.x - 52) < 1e-9 && Math.abs(venstre.y - 180) < 1e-9)
+  const speilet = kartleggPunktTilVisning({ x: 0.4, y: 0.25 }, 1280, 720, 360, 720, true)
+  assert.ok(Math.abs(speilet.x - (360 - 52)) < 1e-9 && Math.abs(speilet.y - 180) < 1e-9)
+
+  // Degenerate dimensions never produce NaN
+  assert.deepEqual(kartleggPunktTilVisning({ x: 0.5, y: 0.5 }, 0, 0, 640, 480, false), { x: 0, y: 0 })
 })
 
 test("Moggern kamera: prøver selfie-ønsker først og faller tilbake til video: true ved avvist oppsett", async () => {

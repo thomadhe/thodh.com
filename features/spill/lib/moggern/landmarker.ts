@@ -6,7 +6,7 @@
 
 import type { FaceLandmarker } from "@mediapipe/tasks-vision"
 import { analyserRgbaLys, type LysAnalyse } from "./lys"
-import { vurderRamme, type Blendshapes, type RammeResultat } from "./poeng"
+import { vurderRamme, type Blendshapes, type Punkt3D, type RammeResultat } from "./poeng"
 
 // Pinned to the installed @mediapipe/tasks-vision version so JS glue and WASM always match.
 const WASM_BASIS = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.3/wasm"
@@ -58,12 +58,13 @@ async function lagLandmarker(delegate: "GPU" | "CPU"): Promise<FaceLandmarker> {
 
 export type AnalyseringsUtfall = {
   ramme: RammeResultat
-  lys: LysAnalyse
+  lys: LysAnalyse | null
+  punkter: readonly Punkt3D[] | null
 }
 
 export type AnsiktSporer = {
   /** Analyses the current frame of one dedicated <video> stream using temporal VIDEO tracking. */
-  analyser: (video: HTMLVideoElement, lysLerret: HTMLCanvasElement) => AnalyseringsUtfall | null
+  analyser: (video: HTMLVideoElement, lysLerret: HTMLCanvasElement, taLys?: boolean) => AnalyseringsUtfall | null
   /** Releases WebGL/WASM resources when leaving the room. */
   lukk: () => void
 }
@@ -131,7 +132,7 @@ export async function opprettAnsiktSporer(): Promise<AnsiktSporer> {
   }
 
   return {
-    analyser(video, lysLerret) {
+    analyser(video, lysLerret, taLys = false) {
       if (lukket) return null
       if (video.readyState < 2 || video.paused || video.ended || video.videoWidth < 64 || video.videoHeight < 64) {
         return null
@@ -160,19 +161,20 @@ export async function opprettAnsiktSporer(): Promise<AnsiktSporer> {
       }
 
       const ramme = vurderRamme(punkter, matrise, video.videoWidth, video.videoHeight, blendshapes)
-      const lys = maalLys(video, lysLerret)
+      const trengerGpuSjekk = delegate === "GPU" && !settAnsikt && !(punkter && punkter.length >= 468)
+      const lys = taLys || trengerGpuSjekk ? maalLys(video, lysLerret) : null
 
       if (punkter && punkter.length >= 468) {
         settAnsikt = true
         tommePaRad = 0
-      } else if (delegate === "GPU" && !settAnsikt && lys.snittLys >= 10) {
+      } else if (trengerGpuSjekk && lys && lys.snittLys >= 10) {
         tommePaRad += 1
         if (tommePaRad >= GPU_RESERVE_TERSKEL) {
           byttTilCpu()
         }
       }
 
-      return { ramme, lys }
+      return { ramme, lys, punkter }
     },
     lukk() {
       if (lukket) return

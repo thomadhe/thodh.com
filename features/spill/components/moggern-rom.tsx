@@ -11,6 +11,7 @@ import {
   LogOut,
   Play,
   RefreshCw,
+  ScanFace,
   ShieldCheck,
   UserCheck,
   Wifi,
@@ -51,6 +52,7 @@ import {
   type RammeResultat,
   type Veiledning,
 } from "../lib/moggern/poeng"
+import { tegnAnsiktSporing, tømSporingsLerret } from "../lib/moggern/sporing-tegner"
 import { rangForPoeng } from "../lib/moggern/tekster"
 import { hentKameraStrom, kameraFeilTekst, stoppStrom, useMoggernWebRtc } from "../lib/moggern/webrtc"
 import { useDuellrom, type Romkontekst } from "./duell/bruk-duellrom"
@@ -69,8 +71,10 @@ const VEILEDNING_TEKST: Record<Veiledning, string> = {
 }
 
 const MAALING_INTERVALL_MS = 140
-/** Live HUD rating outside the official measurement (lobby, countdown). */
-const LIVE_INTERVALL_MS = 120
+/** Live HUD React state update cadence (ms); keeps score smoothing responsive without re-rendering at 25 fps. */
+const HUD_INTERVALL_MS = 110
+/** Minimum interval between green tracking overlay redraws (~25 fps on GPU, adapts down on slower CPUs). */
+const SPORING_MIN_INTERVALL_MS = 40
 /** Expression strength from which a mog-uttrykk pill is shown. */
 const UTTRYKK_VIS_TERSKEL = 0.12
 
@@ -293,6 +297,7 @@ function AktivtMoggernRom({
   const [motLive, setMotLive] = useState<LivePoeng | null>(null)
   const [gyldigeEgen, setGyldigeEgen] = useState(0)
   const [gyldigeMot, setGyldigeMot] = useState(0)
+  const [visSporing, setVisSporing] = useState(true)
   const [na, setNa] = useState(() => serverNa())
   const landmarkerKlar = modell === "klar"
 
@@ -301,13 +306,24 @@ function AktivtMoggernRom({
   const montertRef = useRef(true)
   /** Set when the player turns the camera off themselves, so auto-start never overrides that choice. */
   const manueltAvRef = useRef(false)
+  const visSporingRef = useRef(true)
   const egenSporerRef = useRef<AnsiktSporer | null>(null)
   const motSporerRef = useRef<AnsiktSporer | null>(null)
   const egenVideoRef = useRef<HTMLVideoElement | null>(null)
   const fjernVideoRef = useRef<HTMLVideoElement | null>(null)
+  const egenSporingLerretRef = useRef<HTMLCanvasElement | null>(null)
+  const motSporingLerretRef = useRef<HTMLCanvasElement | null>(null)
   const lerretRef = useRef<HTMLCanvasElement | null>(null)
   const egenLiveRef = useRef<LivePoengTilstand>({ struktur: null, styrker: null })
   const motLiveRef = useRef<LivePoengTilstand>({ struktur: null, styrker: null })
+
+  useEffect(() => {
+    visSporingRef.current = visSporing
+    if (!visSporing) {
+      tømSporingsLerret(egenSporingLerretRef.current)
+      tømSporingsLerret(motSporingLerretRef.current)
+    }
+  }, [visSporing])
 
   const egenRammerRef = useRef<RammeResultat[]>([])
   const egenLysRef = useRef<LysAnalyse[]>([])
@@ -360,6 +376,7 @@ function AktivtMoggernRom({
     motLiveRef.current = { struktur: null, styrker: null }
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMotLive(null)
+    if (!webrtc.fjernStrom) tømSporingsLerret(motSporingLerretRef.current)
   }, [webrtc.fjernStrom])
 
   // Always stop camera tracks & close MediaPipe trackers on unmount.
@@ -451,6 +468,7 @@ function AktivtMoggernRom({
     setEgenVeiledning(null)
     setEgenLive(null)
     egenLiveRef.current = { struktur: null, styrker: null }
+    tømSporingsLerret(egenSporingLerretRef.current)
     settKlar(false)
     if (meg) send("kamera", { id: meg, pa: false })
   }, [meg, send, settKlar])
@@ -498,9 +516,13 @@ function AktivtMoggernRom({
     }
   }, [status.fase, gjenstarMs, erVert, nyFase])
 
-  // ---- One analysis loop: live HUD rating in every phase, plus the official 10 s capture during "maling" ----
+  // ---- One adaptive rAF loop: smooth green tracking overlay (~25 fps), live HUD (~9 Hz), and official 10 s duel capture ----
   useEffect(() => {
-    if (!landmarkerKlar || status.fase === "resultat") return
+    if (!landmarkerKlar || status.fase === "resultat") {
+      tømSporingsLerret(egenSporingLerretRef.current)
+      tømSporingsLerret(motSporingLerretRef.current)
+      return
+    }
     const maler = status.fase === "maling"
     if (maler) {
       egenRammerRef.current = []
@@ -514,49 +536,96 @@ function AktivtMoggernRom({
     }
 
     const lerret = (lerretRef.current ??= document.createElement("canvas"))
-    const id = window.setInterval(
-      () => {
+    let rafId = 0
+    let avbrutt = false
+    let nesteAnalyseTid = 0
+    let sisteMaalingTid = 0
+    let sisteHudTid = 0
+
+    const steg = (naTid: number) => {
+      if (avbrutt) return
+      if (naTid >= nesteAnalyseTid) {
+        const t0 = performance.now()
+        const taOffisiell = maler && naTid - sisteMaalingTid >= MAALING_INTERVALL_MS
+        if (taOffisiell) sisteMaalingTid = naTid
+        const oppdaterHud = naTid - sisteHudTid >= HUD_INTERVALL_MS
+        if (oppdaterHud) sisteHudTid = naTid
+
         const egenSporer = egenSporerRef.current
         const egenVideo = egenVideoRef.current
+        const egenOverlay = egenSporingLerretRef.current
         if (egenSporer && egenVideo && lokalStromRef.current) {
           try {
-            const ut = egenSporer.analyser(egenVideo, lerret)
+            const ut = egenSporer.analyser(egenVideo, lerret, taOffisiell)
             if (ut) {
-              if (maler) {
+              if (egenOverlay) {
+                if (visSporingRef.current) {
+                  tegnAnsiktSporing(egenOverlay, egenVideo, ut.punkter, { speilet: true, gyldig: ut.ramme.gyldig })
+                } else {
+                  tømSporingsLerret(egenOverlay)
+                }
+              }
+              if (taOffisiell) {
                 egenRammerRef.current.push(ut.ramme)
-                egenLysRef.current.push(ut.lys)
+                if (ut.lys) egenLysRef.current.push(ut.lys)
                 if (ut.ramme.gyldig) setGyldigeEgen((n) => n + 1)
               }
-              setEgenVeiledning(ut.ramme.veiledning)
-              const live = oppdaterLivePoeng(egenLiveRef.current, ut.ramme)
-              if (live) setEgenLive(live)
+              const forsteEgen = egenLiveRef.current.struktur === null
+              if (oppdaterHud || forsteEgen) {
+                setEgenVeiledning(ut.ramme.veiledning)
+                const live = oppdaterLivePoeng(egenLiveRef.current, ut.ramme)
+                if (live) setEgenLive(live)
+              }
             }
           } catch {
             // Ignore single-frame inference hiccup.
           }
+        } else if (egenOverlay) {
+          tømSporingsLerret(egenOverlay)
         }
 
         const motSporer = motSporerRef.current
         const fjernVideo = fjernVideoRef.current
+        const motOverlay = motSporingLerretRef.current
         if (motSporer && fjernVideo && fjernVideo.srcObject) {
           try {
-            const ut = motSporer.analyser(fjernVideo, lerret)
+            const ut = motSporer.analyser(fjernVideo, lerret, taOffisiell)
             if (ut) {
-              if (maler) {
+              if (motOverlay) {
+                if (visSporingRef.current) {
+                  tegnAnsiktSporing(motOverlay, fjernVideo, ut.punkter, { speilet: false, gyldig: ut.ramme.gyldig })
+                } else {
+                  tømSporingsLerret(motOverlay)
+                }
+              }
+              if (taOffisiell) {
                 motRammerRef.current.push(ut.ramme)
-                motLysRef.current.push(ut.lys)
+                if (ut.lys) motLysRef.current.push(ut.lys)
                 if (ut.ramme.gyldig) setGyldigeMot((n) => n + 1)
               }
-              const live = oppdaterLivePoeng(motLiveRef.current, ut.ramme)
-              if (live) setMotLive(live)
+              const forsteMot = motLiveRef.current.struktur === null
+              if (oppdaterHud || forsteMot) {
+                const live = oppdaterLivePoeng(motLiveRef.current, ut.ramme)
+                if (live) setMotLive(live)
+              }
             }
           } catch {}
+        } else if (motOverlay) {
+          tømSporingsLerret(motOverlay)
         }
-      },
-      maler ? MAALING_INTERVALL_MS : LIVE_INTERVALL_MS,
-    )
 
-    return () => window.clearInterval(id)
+        const bruktMs = performance.now() - t0
+        nesteAnalyseTid = naTid + Math.max(SPORING_MIN_INTERVALL_MS, bruktMs * 1.5)
+      }
+
+      rafId = window.requestAnimationFrame(steg)
+    }
+
+    rafId = window.requestAnimationFrame(steg)
+    return () => {
+      avbrutt = true
+      window.cancelAnimationFrame(rafId)
+    }
   }, [landmarkerKlar, status.fase, status.runde])
 
   // ---- 10-second official measurement report ----
@@ -799,6 +868,11 @@ function AktivtMoggernRom({
               muted
               className={`absolute inset-0 h-full w-full -scale-x-100 object-cover transition-opacity duration-500 ${lokalStrom ? "opacity-100" : "opacity-0"}`}
             />
+            <canvas
+              ref={egenSporingLerretRef}
+              aria-hidden="true"
+              className={`pointer-events-none absolute inset-0 h-full w-full transition-opacity duration-300 ${lokalStrom && visSporing ? "opacity-100" : "opacity-0"}`}
+            />
 
             {!lokalStrom ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
@@ -861,14 +935,28 @@ function AktivtMoggernRom({
               ) : null}
               {lokalStrom ? (
                 <div className="flex items-center justify-between gap-2">
-                  <button
-                    type="button"
-                    onClick={skruAvKamera}
-                    className={`${GLASS} inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium hover:bg-[#111214]/85`}
-                  >
-                    <CameraOff className="h-3.5 w-3.5" aria-hidden="true" />
-                    Skru av kamera
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={skruAvKamera}
+                      className={`${GLASS} inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium hover:bg-[#111214]/85`}
+                    >
+                      <CameraOff className="h-3.5 w-3.5" aria-hidden="true" />
+                      <span className="max-sm:sr-only">Skru av kamera</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setVisSporing((v) => !v)}
+                      aria-pressed={visSporing}
+                      title={visSporing ? "Skjul grønne sporingslinjer" : "Vis grønne sporingslinjer"}
+                      className={`${GLASS} inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium hover:bg-[#111214]/85 ${
+                        visSporing ? "border-emerald-400/35 text-emerald-300" : "text-white/70"
+                      }`}
+                    >
+                      <ScanFace className="h-3.5 w-3.5" aria-hidden="true" />
+                      <span className="max-sm:sr-only">Sporing</span>
+                    </button>
+                  </div>
 
                   {status.fase === "lobby" && !erVert && landmarkerKlar ? (
                     <button
@@ -915,6 +1003,11 @@ function AktivtMoggernRom({
               playsInline
               muted
               className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${webrtc.fjernStrom ? "opacity-100" : "opacity-0"}`}
+            />
+            <canvas
+              ref={motSporingLerretRef}
+              aria-hidden="true"
+              className={`pointer-events-none absolute inset-0 h-full w-full transition-opacity duration-300 ${webrtc.fjernStrom && visSporing ? "opacity-100" : "opacity-0"}`}
             />
 
             {!webrtc.fjernStrom ? (
