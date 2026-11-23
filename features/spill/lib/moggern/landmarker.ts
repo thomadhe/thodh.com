@@ -4,7 +4,7 @@
 // Loaded ONLY inside a Moggern duel room (after login + the "Alt er tull" gate), in parallel with the camera.
 // Never sends video frames or landmarks to any server — everything runs locally in the browser.
 
-import type { FaceLandmarker } from "@mediapipe/tasks-vision"
+import type { FaceLandmarker, HandLandmarker } from "@mediapipe/tasks-vision"
 import { analyserRgbaLys, type LysAnalyse } from "./lys"
 import { vurderRamme, type Blendshapes, type Punkt3D, type RammeResultat } from "./poeng"
 
@@ -12,6 +12,8 @@ import { vurderRamme, type Blendshapes, type Punkt3D, type RammeResultat } from 
 const WASM_BASIS = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.3/wasm"
 const MODELL_URL =
   "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task"
+const HAND_MODELL_URL =
+  "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task"
 
 /** Consecutive lit video frames with zero detections before a GPU tracker self-heals to CPU. */
 const GPU_RESERVE_TERSKEL = 10
@@ -175,6 +177,96 @@ export async function opprettAnsiktSporer(): Promise<AnsiktSporer> {
       }
 
       return { ramme, lys, punkter }
+    },
+    lukk() {
+      if (lukket) return
+      lukket = true
+      try {
+        instans.close()
+      } catch {}
+    },
+  }
+}
+
+async function lagHandLandmarker(delegate: "GPU" | "CPU"): Promise<HandLandmarker> {
+  const { vision, fileset } = await hentVision()
+  return vision.HandLandmarker.createFromOptions(fileset, {
+    baseOptions: {
+      modelAssetPath: HAND_MODELL_URL,
+      delegate,
+    },
+    runningMode: "VIDEO",
+    numHands: 2,
+    minHandDetectionConfidence: 0.35,
+    minHandPresenceConfidence: 0.35,
+    minTrackingConfidence: 0.35,
+  })
+}
+
+export type HandSporer = {
+  /** Detects 21-point hand landmarks on the local video stream for the Rizzler Finisher pose. */
+  analyser: (video: HTMLVideoElement) => readonly (readonly Punkt3D[])[] | null
+  /** Releases WebGL/WASM resources when leaving the room. */
+  lukk: () => void
+}
+
+/**
+ * Creates a lazy VIDEO-mode MediaPipe Hand Landmarker tracker (GPU with seamless CPU fallback).
+ * Strictly optional: if it fails to load, Moggern continues normally without hand-finisher detection.
+ */
+export async function opprettHandSporer(): Promise<HandSporer> {
+  let delegate: "GPU" | "CPU" = "GPU"
+  let instans: HandLandmarker
+  try {
+    instans = await lagHandLandmarker("GPU")
+  } catch {
+    delegate = "CPU"
+    instans = await lagHandLandmarker("CPU")
+  }
+
+  let lukket = false
+  let bytterTilCpu = false
+  let sisteTs = 0
+
+  const byttTilCpu = () => {
+    if (lukket || delegate === "CPU" || bytterTilCpu) return
+    bytterTilCpu = true
+    void lagHandLandmarker("CPU")
+      .then((ny) => {
+        if (lukket) {
+          ny.close()
+          return
+        }
+        const gammel = instans
+        instans = ny
+        delegate = "CPU"
+        sisteTs = 0
+        try {
+          gammel.close()
+        } catch {}
+      })
+      .catch(() => {})
+      .finally(() => {
+        bytterTilCpu = false
+      })
+  }
+
+  return {
+    analyser(video) {
+      if (lukket) return null
+      if (video.readyState < 2 || video.paused || video.ended || video.videoWidth < 64 || video.videoHeight < 64) {
+        return null
+      }
+      const na = Math.round(performance.now())
+      const ts = na > sisteTs ? na : sisteTs + 1
+      sisteTs = ts
+      try {
+        const res = instans.detectForVideo(video, ts)
+        return res.landmarks?.length ? res.landmarks : null
+      } catch {
+        byttTilCpu()
+        return null
+      }
     },
     lukk() {
       if (lukket) return

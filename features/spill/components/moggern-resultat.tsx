@@ -153,6 +153,15 @@ function SpillerResultatKort({
                 Mog-uttrykk {formaterBonus(maaling.uttrykkBonus)}
               </span>
             ) : null}
+            {maaling && maaling.finisherBonus && maaling.finisherBonus > 0 ? (
+              <span className="inline-flex items-center gap-1 rounded-full border border-amber-300/40 bg-amber-300/20 px-2.5 py-1 text-xs font-bold text-amber-200 tabular-nums">
+                🤫 Rizzler-finisher {formaterBonus(maaling.finisherBonus)}
+              </span>
+            ) : maaling && maaling.finisherBonus && maaling.finisherBonus < 0 ? (
+              <span className="inline-flex items-center gap-1 rounded-full border border-rose-400/30 bg-rose-500/15 px-2.5 py-1 text-xs font-semibold text-rose-200 tabular-nums">
+                😂 Rizz failed {formaterBonus(maaling.finisherBonus)}
+              </span>
+            ) : null}
           </div>
           <p className="mt-2.5 break-words text-[13px] leading-5 text-neutral-700">{rang.linje}</p>
           {dom ? (
@@ -321,7 +330,13 @@ export function MoggernResultat({
     for (const s of utfall.spillere) {
       if (s.offisiell?.ok) {
         const rang = rangForPoeng(s.offisiell.total)
-        linjer.push(`${s.deltaker.navn}: ${formaterMoggernPoeng(s.offisiell.total)}/10 (${rang.tittel})`)
+        const finisherTag =
+          s.offisiell.finisherBonus && s.offisiell.finisherBonus > 0
+            ? " · 🤫 Rizzler-finisher"
+            : s.offisiell.finisherBonus && s.offisiell.finisherBonus < 0
+              ? " · 😂 Rizz failed"
+              : ""
+        linjer.push(`${s.deltaker.navn}: ${formaterMoggernPoeng(s.offisiell.total)}/10 (${rang.tittel})${finisherTag}`)
       }
     }
     if (stillingTekst) linjer.push(`Stilling i rommet: ${stillingTekst}`)
@@ -353,6 +368,7 @@ export function MoggernResultat({
             bildeUrl: bilder[s.deltaker.id] ?? null,
             uttrykkTekst: dom?.tekst ?? null,
             diss: td.diss,
+            finisherBonus: maaling.finisherBonus,
           }
         })
       await lastNedDuellKortPng({

@@ -113,6 +113,7 @@ export type DuellKortSpiller = {
   bildeUrl?: string | null
   uttrykkTekst?: string | null
   diss?: string | null
+  finisherBonus?: number
 }
 
 const RANG_HEX: Record<string, { bg: string; fg: string }> = {
@@ -303,6 +304,25 @@ export async function lastNedDuellKortPng(input: {
     ctx.restore()
     ctx.fillStyle = farge.fg
     ctx.fillText(rang.tittel, infoX + 16, pillY + 25)
+
+    // Optional Rizzler Finisher / Rizz failed pill right below rank badge
+    if (s.finisherBonus && s.finisherBonus !== 0) {
+      const erGull = s.finisherBonus > 0
+      const fTekst = erGull ? "🤫 Rizzler-finisher +0,4" : "😂 Rizz failed −0,3"
+      ctx.font = `700 14px ${font}`
+      const fW = Math.min(infoMaksW, ctx.measureText(fTekst).width + 22)
+      const fY = pillY + pillH + 8
+      ctx.save()
+      tegnAvrundetRekt(ctx, infoX, fY, fW, 28, 14)
+      ctx.fillStyle = erGull ? "rgba(252, 211, 77, 0.22)" : "rgba(244, 63, 94, 0.22)"
+      ctx.fill()
+      ctx.lineWidth = 1.2
+      ctx.strokeStyle = erGull ? "rgba(252, 211, 77, 0.65)" : "rgba(251, 113, 133, 0.55)"
+      ctx.stroke()
+      ctx.restore()
+      ctx.fillStyle = erGull ? "#fde68a" : "#fda4af"
+      ctx.fillText(fTekst, infoX + 11, fY + 19)
+    }
 
     // Bottom section of card: expression verdict + roast quote
     let tekstY = bildeY + bildeH + 34

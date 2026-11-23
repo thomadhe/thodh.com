@@ -5,17 +5,17 @@
 //
 // Pipeline per video frame:
 //   1. Extract head pose (yaw, pitch, roll) from MediaPipe's 4×4 facial transformation matrix (or geometric fallback).
-//   2. Reject non-frontal frames (|yaw| > 14°, |pitch| > 14°, |roll| > 18°) and frames where the face is too small/large.
-//   3. Convert normalized [0, 1] landmarks to pixel aspect-ratio space, compute eye centers & interpupillary distance (IPD).
-//   4. Rotate all landmarks around the eye midpoint by -roll so the eye line is horizontal, and divide by IPD.
-//      Because horizontal direction is canonicalized from the image's left/right eye, scores are invariant to mirroring.
-//   5. Compute craniofacial measurements (canthal tilt, PFR, 3D gonial angle, fWHR, ESR, thirds, φ mouth/nose …) and
+//   2. Gate out extreme angles (|yaw| > 30°, |pitch| > 26°, |roll| > 24°) and frames where the face is too small/large.
+//   3. Convert normalized [0, 1] landmarks to isotropic 3D pixel space and build an intrinsic 3D frontal basis
+//      from the eye vector (removing roll + yaw) and skull midline brow→subnasale (removing pitch), scaled by 3D IPD.
+//      Because the horizontal axis always runs subject-right → subject-left eye, scores are invariant to mirroring.
+//   4. Compute craniofacial measurements (canthal tilt, PFR, 3D gonial angle, fWHR, ESR, thirds, φ mouth/nose …) and
 //      score each against an anthropometric target range with an asymmetric Gaussian plateau → 7 sub-scores on 0–10.
-//   6. Combine sub-scores with fixed weights into a raw structural score, then map it through a population
+//   5. Combine sub-scores with fixed weights into a raw structural score, then map it through a population
 //      bell-curve calibration (normal CDF) so real faces genuinely spread across 0–10 instead of clustering at 6–7.
-//   7. Add live "mog-uttrykk" bonuses from MediaPipe's 52 face blendshapes (The Rock, jegerøyne, mewing …),
-//      exponentially smoothed across frames. Final total is clamped to [0, 10].
-//   8. Across the ~15 s duel, average valid frames with a 10% trimmed mean so single-frame jitter or blinks do not skew it.
+//   6. Add live "mog-uttrykk" bonuses from MediaPipe's 52 face blendshapes (The Rock, jegerøyne, mewing …)
+//      and optional Rizzler Finisher bonus/penalty. Final total is clamped to [0, 10].
+//   7. Across the ~15 s duel, average valid frames with a 10% trimmed mean so single-frame jitter or blinks do not skew it.
 
 export type Punkt3D = {
   x: number
@@ -105,10 +105,10 @@ export const DELPOENG_VEKTER: Record<DelpoengId, number> = {
   ansiktstredjedeler: 0.07,
 }
 
-/** Pose & framing gates for counting a frame as valid during the official duel. */
-export const MAKS_YAW_GRADER = 22
-export const MAKS_PITCH_GRADER = 21
-export const MAKS_ROLL_GRADER = 22
+/** Pose & framing gates for counting a frame as valid during the official duel (3D-compensated up to ~30°). */
+export const MAKS_YAW_GRADER = 30
+export const MAKS_PITCH_GRADER = 26
+export const MAKS_ROLL_GRADER = 24
 export const MIN_IPD_ANDEL = 0.055
 export const MAKS_IPD_ANDEL = 0.6
 /** Minimum valid frontal frames needed over the ~15 s capture window. */
@@ -575,13 +575,14 @@ export const LIVE_ALPHA_UTTRYKK = 0.24
 /**
  * Feeds one detected frame into the live HUD smoother and returns the smoothed score.
  * Structure moves slowly (stable rating); expressions react faster so posing is visibly rewarded.
- * Off-angle frames still update the live score (gently) so the HUD responds immediately on any webcam angle,
- * while official 10 s duel aggregation (`aggregerRammer`) still only counts `gyldig` frontal frames.
+ * Once initialized, extreme off-angle frames (> 30° yaw / > 26° pitch) hold the last valid structural score
+ * steady instead of pulling it down, while still allowing expressions to react immediately.
  */
 export function oppdaterLivePoeng(tilstand: LivePoengTilstand, ramme: RammeResultat): LivePoeng | null {
   if (ramme.veiledning === "ingen-ansikt" || typeof ramme.strukturPoeng !== "number") return null
-  const strukturAlpha = ramme.gyldig ? LIVE_ALPHA_STRUKTUR : LIVE_ALPHA_STRUKTUR * 0.45
-  tilstand.struktur = glattEksponentielt(tilstand.struktur, ramme.strukturPoeng, strukturAlpha)
+  if (tilstand.struktur === null || ramme.gyldig) {
+    tilstand.struktur = glattEksponentielt(tilstand.struktur, ramme.strukturPoeng, LIVE_ALPHA_STRUKTUR)
+  }
   const nyeStyrker = ramme.uttrykk?.styrker ?? tommeStyrker()
   tilstand.styrker = glattUttrykk(tilstand.styrker, nyeStyrker, LIVE_ALPHA_UTTRYKK)
   const bonus = bonusForStyrker(tilstand.styrker)
@@ -658,10 +659,10 @@ export function vinkelFraPunkter(punkter: readonly Punkt3D[], bredde = 1, hoyde 
   return { yaw: avrund(yaw, 1), pitch: avrund(pitch, 1), roll: avrund(roll, 1) }
 }
 
-function oyeSentrum(punkter: readonly Punkt3D[], side: "hoyre" | "venstre", bredde: number, hoyde: number): Punkt2D {
+function oyeSentrum3D(punkter: readonly Punkt3D[], side: "hoyre" | "venstre", bredde: number, hoyde: number): P3 {
   const irisIdx = side === "hoyre" ? PUNKTER.hoyreIris : PUNKTER.venstreIris
   const iris = punkter[irisIdx]
-  if (iris) return { x: iris.x * bredde, y: iris.y * hoyde }
+  if (iris) return { x: iris.x * bredde, y: iris.y * hoyde, z: (iris.z ?? 0) * bredde }
 
   const ytre = punkter[side === "hoyre" ? PUNKTER.hoyreOyeYtre : PUNKTER.venstreOyeYtre]
   const indre = punkter[side === "hoyre" ? PUNKTER.hoyreOyeIndre : PUNKTER.venstreOyeIndre]
@@ -670,13 +671,14 @@ function oyeSentrum(punkter: readonly Punkt3D[], side: "hoyre" | "venstre", bred
   return {
     x: ((ytre.x + indre.x + topp.x + bunn.x) / 4) * bredde,
     y: ((ytre.y + indre.y + topp.y + bunn.y) / 4) * hoyde,
+    z: (((ytre.z ?? 0) + (indre.z ?? 0) + (topp.z ?? 0) + (bunn.z ?? 0)) / 4) * bredde,
   }
 }
 
 /**
  * Evaluates a single video frame's Face Landmarker output.
- * Normalizes by IPD, corrects head roll, checks frontal pose, computes all 7 sub-scores,
- * calibrates the structural score and adds the mog-uttrykk bonus from blendshapes (if supplied).
+ * Builds a 3D frontal canonical basis from the eye vector + rigid brow→subnasale midline (undoing roll, yaw & pitch),
+ * normalizes by 3D IPD, checks pose gates, computes all 7 sub-scores, calibrates structure and adds mog-uttrykk bonus.
  */
 export function vurderRamme(
   punkter: readonly Punkt3D[] | null | undefined,
@@ -698,14 +700,19 @@ export function vurderRamme(
   const h = hoyde > 0 ? hoyde : 480
   const kortSide = Math.min(b, h)
 
-  const hoyreOye = oyeSentrum(punkter, "hoyre", b, h)
-  const venstreOye = oyeSentrum(punkter, "venstre", b, h)
-  const ipd = avstand2D(hoyreOye, venstreOye)
+  const hoyreOye = oyeSentrum3D(punkter, "hoyre", b, h)
+  const venstreOye = oyeSentrum3D(punkter, "venstre", b, h)
+  const oyeVek: P3 = {
+    x: venstreOye.x - hoyreOye.x,
+    y: venstreOye.y - hoyreOye.y,
+    z: venstreOye.z - hoyreOye.z,
+  }
+  const ipd = Math.hypot(oyeVek.x, oyeVek.y, oyeVek.z)
   const ipdAndel = avrund(ipd / kortSide, 3)
 
   const vinkel = matrise && matrise.length >= 16 ? vinkelFraMatrise(matrise) : vinkelFraPunkter(punkter, b, h)
 
-  // Always compute roll directly from the two eyes for canonical rotation (and check tilt gate).
+  // Always compute roll directly from the two eyes for the tilt gate.
   const speilet = hoyreOye.x > venstreOye.x
   const bildVenstre = speilet ? venstreOye : hoyreOye
   const bildHoyre = speilet ? hoyreOye : venstreOye
@@ -733,27 +740,63 @@ export function vurderRamme(
   }
   const gyldig = veiledning === "ok"
 
-  // Transform landmarks into roll-corrected, IPD-normalized canonical face coordinates:
-  // eye midpoint = (0, 0), eyes at (-0.5, 0) and (+0.5, 0), +y pointing down.
-  const midtX = (hoyreOye.x + venstreOye.x) / 2
-  const midtY = (hoyreOye.y + venstreOye.y) / 2
-  const cos = Math.cos(-oyeRollRad)
-  const sin = Math.sin(-oyeRollRad)
-  const xTegn = speilet ? -1 : 1
-
-  const norm = (idx: number): Punkt2D => {
-    const p = punkter[idx]
-    const dx = p.x * b - midtX
-    const dy = p.y * h - midtY
-    const rx = (dx * cos - dy * sin) / ipd
-    const ry = (dx * sin + dy * cos) / ipd
-    return { x: rx * xTegn, y: ry }
-  }
-
-  // Raw 3D pixel-space point (MediaPipe z shares the x scale). Angles in 3D are rotation/scale/mirror invariant.
+  // Raw 3D pixel-space point (MediaPipe z shares the x scale).
   const p3 = (idx: number): P3 => {
     const p = punkter[idx]
     return { x: p.x * b, y: p.y * h, z: (p.z ?? 0) * b }
+  }
+
+  // Intrinsic 3D frontal basis centered at the eye midpoint, scaled by 3D IPD:
+  //   - uX runs from subject's right eye (-0.5) to left eye (+0.5), removing roll + yaw and canonicalizing mirroring.
+  //   - uY0 is image-down (0, 1, 0) orthogonalized against uX.
+  //   - uY rotates uY0 toward the rigid skull midline (brow → subnasale) in the (uY0, uZ0) plane to undo pitch.
+  //   - When landmarks are planar (z = 0), this reduces bit-for-bit to exact 2D roll-corrected normalization.
+  const midt3D: P3 = {
+    x: (hoyreOye.x + venstreOye.x) / 2,
+    y: (hoyreOye.y + venstreOye.y) / 2,
+    z: (hoyreOye.z + venstreOye.z) / 2,
+  }
+  const uX: P3 = { x: oyeVek.x / ipd, y: oyeVek.y / ipd, z: oyeVek.z / ipd }
+
+  // Gram-Schmidt on (0, 1, 0) against uX
+  const y0x = -uX.y * uX.x
+  const y0y = 1 - uX.y * uX.y
+  const y0z = -uX.y * uX.z
+  const y0Len = Math.hypot(y0x, y0y, y0z)
+  const uY0: P3 = y0Len > 1e-6 ? { x: y0x / y0Len, y: y0y / y0Len, z: y0z / y0Len } : { x: 0, y: 1, z: 0 }
+  const uZ0: P3 = {
+    x: uX.y * uY0.z - uX.z * uY0.y,
+    y: uX.z * uY0.x - uX.x * uY0.z,
+    z: uX.x * uY0.y - uX.y * uY0.x,
+  }
+
+  const bryn3D = p3(PUNKTER.brynMidt)
+  const neseBunn3D = p3(PUNKTER.neseBunn)
+  const vMid: P3 = {
+    x: neseBunn3D.x - bryn3D.x,
+    y: neseBunn3D.y - bryn3D.y,
+    z: neseBunn3D.z - bryn3D.z,
+  }
+  const vy = vMid.x * uY0.x + vMid.y * uY0.y + vMid.z * uY0.z
+  const vz = vMid.x * uZ0.x + vMid.y * uZ0.y + vMid.z * uZ0.z
+  const pitchKompRad = vy > 1e-5 ? klem(Math.atan2(vz, vy), -0.62, 0.62) : 0
+  const cosP = Math.cos(pitchKompRad)
+  const sinP = Math.sin(pitchKompRad)
+  const uY: P3 = {
+    x: cosP * uY0.x + sinP * uZ0.x,
+    y: cosP * uY0.y + sinP * uZ0.y,
+    z: cosP * uY0.z + sinP * uZ0.z,
+  }
+
+  const norm = (idx: number): Punkt2D => {
+    const pt = p3(idx)
+    const dx = pt.x - midt3D.x
+    const dy = pt.y - midt3D.y
+    const dz = pt.z - midt3D.z
+    return {
+      x: (dx * uX.x + dy * uX.y + dz * uX.z) / ipd,
+      y: (dx * uY.x + dy * uY.y + dz * uY.z) / ipd,
+    }
   }
 
   const panne = norm(PUNKTER.panneTopp)
@@ -931,12 +974,13 @@ export function regnRaaPoeng(delpoeng: DelpoengKart): number {
 }
 
 /**
- * Final total score (0.0–10.0, 1 decimal): bell-curve calibrated weighted sub-scores plus expression bonus.
- * Deterministic from (delpoeng, bonus), so a received duel report can always be recomputed and verified.
+ * Final total score (0.0–10.0, 1 decimal): bell-curve calibrated weighted sub-scores plus expression & finisher bonus.
+ * Deterministic from (delpoeng, uttrykkBonus, finisherBonus), so a received duel report can always be recomputed.
  */
-export function regnTotal(delpoeng: DelpoengKart, uttrykkBonus = 0): number {
+export function regnTotal(delpoeng: DelpoengKart, uttrykkBonus = 0, finisherBonus = 0): number {
   const bonus = Number.isFinite(uttrykkBonus) ? klem(uttrykkBonus, MIN_UTTRYKK_BONUS, MAKS_UTTRYKK_BONUS) : 0
-  return avrund(klem(kalibrerPoeng(regnRaaPoeng(delpoeng)) + bonus, 0, 10), 1)
+  const finisher = Number.isFinite(finisherBonus) ? klem(finisherBonus, -0.5, 0.5) : 0
+  return avrund(klem(kalibrerPoeng(regnRaaPoeng(delpoeng)) + bonus + finisher, 0, 10), 1)
 }
 
 /** Trimmed mean: drops 10% from each tail when n >= 10 to ignore occasional blink/jitter outliers. */

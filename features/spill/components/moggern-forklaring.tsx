@@ -177,9 +177,10 @@ export function SlikRegnesDet({ aapenSomStandard = false }: { aapenSomStandard?:
           </p>
 
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <Boks tittel="1. Normalisering & vinkel">
-              Punktene roteres så øyelinjen blir vannrett, og skaleres etter pupillavstanden (IPD). Bare frontale bilder (|yaw| ≤ {MAKS_YAW_GRADER}°,
-              |pitch| ≤ {MAKS_PITCH_GRADER}°) teller, og duellen krever minst {MIN_GYLDIGE_RAMMER} gyldige bilder over 15 sekunder.
+            <Boks tittel="1. 3D-kompensering & vinkel">
+              Ansiktet rettes opp i 3D fra øyelinjen og midtlinjen (bryn → nese), og skaleres etter 3D-pupillavstanden (IPD). Det belønner naturlig
+              symmetri og lar deg bevege hodet fritt opp til |yaw| ≤ {MAKS_YAW_GRADER}°, |pitch| ≤ {MAKS_PITCH_GRADER}°. Minst{" "}
+              {MIN_GYLDIGE_RAMMER} gyldige bilder kreves over 15 sekunder.
             </Boks>
             <Boks tittel="2. Asymmetrisk platå per mål">
               Hvert mål (f.eks. 3D-kjevevinkel, PFR, fWHR, ESR) får 10 innenfor et målområde. Utenfor faller poenget som en Gauss-kurve — brattere på den
@@ -230,8 +231,14 @@ export function SlikRegnesDet({ aapenSomStandard = false }: { aapenSomStandard?:
               ))}
             </ul>
             <p className="mt-2 text-xs leading-5 text-neutral-500">
-              Et hvilende ansikt gir 0,0 i bonus. Totalen er kalibrert struktur + uttrykk, begrenset til 0–10.
+              Et hvilende ansikt gir 0,0 i bonus. Totalen er kalibrert struktur + uttrykk + eventuell Rizzler Finisher, begrenset til 0–10.
             </p>
+          </div>
+
+          <div className="break-words rounded-[20px] border border-amber-300/20 bg-amber-300/[0.06] p-4 text-xs leading-5 text-neutral-700">
+            <strong className="font-semibold text-amber-200">🤫 Rizzler Finisher (+0,4 / −0,3):</strong> Leder du i de siste 6 sekundene av duellen
+            (eller har ≥ 6,0 i solo-test), låses finisheren opp. Pek på eller stryk pekefingeren langs haka/kjevelinja i ~1,1 sekund uten å smile for
+            gull-effekt, bass-drop og +0,4 bonus. Knekk sammen i et smil midt i posen, og du får «Rizz failed!» (−0,3).
           </div>
 
           <div className="break-words rounded-[20px] border border-white/[0.06] bg-[#1f2124] p-4 text-xs leading-5 text-neutral-600">

@@ -78,7 +78,7 @@ export function tegnAnsiktSporing(
   lerret: HTMLCanvasElement,
   video: HTMLVideoElement,
   punkter: readonly Punkt3D[] | null,
-  opts: { speilet: boolean; gyldig?: boolean },
+  opts: { speilet: boolean; gyldig?: boolean; rizzlerGull?: boolean },
 ) {
   const visningBredde = lerret.clientWidth
   const visningHoyde = lerret.clientHeight
@@ -144,24 +144,29 @@ export function tegnAnsiktSporing(
     tegnLinje({ x: b.x + ux * 2, y: b.y + uy * 2 }, { x: b.x + ux * (2 + lengde), y: b.y + uy * (2 + lengde) })
   }
 
-  const linjeFarge = opts.gyldig === false ? "rgba(163, 230, 53, 0.52)" : "rgba(74, 222, 128, 0.58)"
-  const lysFarge = "rgba(190, 242, 100, 0.68)"
+  const gull = !!opts.rizzlerGull
+  const linjeFarge = gull
+    ? "rgba(250, 204, 21, 0.94)"
+    : opts.gyldig === false
+      ? "rgba(163, 230, 53, 0.52)"
+      : "rgba(74, 222, 128, 0.58)"
+  const lysFarge = gull ? "rgba(254, 240, 138, 0.92)" : "rgba(190, 242, 100, 0.68)"
 
   ctx.save()
   ctx.lineCap = "round"
   ctx.lineJoin = "round"
 
-  // 1. Hairline jawline trace with subtle glow
-  ctx.shadowColor = "rgba(74, 222, 128, 0.42)"
-  ctx.shadowBlur = 3
-  ctx.lineWidth = 1.2
+  // 1. Hairline jawline trace with subtle glow (turns glowing gold during Rizzler Finisher!)
+  ctx.shadowColor = gull ? "rgba(250, 204, 21, 0.85)" : "rgba(74, 222, 128, 0.42)"
+  ctx.shadowBlur = gull ? 12 : 3
+  ctx.lineWidth = gull ? 2.6 : 1.2
   ctx.strokeStyle = linjeFarge
   tegnSti(KJEVELINJE)
 
   // 2. Whisper-thin brow ridges
   ctx.shadowBlur = 0
   ctx.lineWidth = 0.9
-  ctx.strokeStyle = "rgba(74, 222, 128, 0.36)"
+  ctx.strokeStyle = gull ? "rgba(250, 204, 21, 0.52)" : "rgba(74, 222, 128, 0.36)"
   tegnSti(HOYRE_BRYN)
   tegnSti(VENSTRE_BRYN)
 
@@ -185,7 +190,7 @@ export function tegnAnsiktSporing(
 
   // 4. Subtle peripheral width caliper ticks (cheekbones + gonions + chin/forehead vertical ticks)
   ctx.lineWidth = 0.95
-  ctx.strokeStyle = "rgba(74, 222, 128, 0.48)"
+  ctx.strokeStyle = gull ? "rgba(250, 204, 21, 0.65)" : "rgba(74, 222, 128, 0.48)"
   tegnSideHake(p(PUNKTER.hoyreKinnben), p(PUNKTER.venstreKinnben), 7)
   tegnSideHake(p(PUNKTER.hoyreKjeveHjorne), p(PUNKTER.venstreKjeveHjorne), 6)
 
@@ -195,7 +200,7 @@ export function tegnAnsiktSporing(
   if (pannePt) tegnLinje({ x: pannePt.x, y: pannePt.y - 3 }, { x: pannePt.x, y: pannePt.y - 9 })
 
   // 5. Delicate micro-dots on key structural landmarks
-  ctx.fillStyle = "rgba(190, 242, 100, 0.55)"
+  ctx.fillStyle = gull ? "rgba(254, 240, 138, 0.72)" : "rgba(190, 242, 100, 0.55)"
   for (const idx of SMAA_PUNKTER) {
     const pt = p(idx)
     if (!pt) continue
@@ -209,7 +214,7 @@ export function tegnAnsiktSporing(
     const pt = p(idx)
     if (!pt) continue
     ctx.beginPath()
-    ctx.arc(pt.x, pt.y, 1.8, 0, Math.PI * 2)
+    ctx.arc(pt.x, pt.y, gull ? 2.6 : 1.8, 0, Math.PI * 2)
     ctx.fill()
   }
 

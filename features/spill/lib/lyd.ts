@@ -125,4 +125,24 @@ export const lyder = {
       tone(587.33, 0, 0.13, { type: "triangle", volum: 0.18 })
       tone(880, 0.11, 0.22, { type: "triangle", volum: 0.2 })
     }),
+  /** Dramatic sub-bass drop + golden shimmer chord for a landed Rizzler Finisher. */
+  rizzler: () =>
+    spill(() => {
+      tone(130, 0, 0.48, { type: "triangle", volum: 0.34, til: 44 })
+      tone(82, 0.02, 0.46, { type: "sine", volum: 0.3, til: 38 })
+      stoy(0, 0.09, 0.14, 180)
+      tone(523.25, 0.06, 0.22, { type: "triangle", volum: 0.16 })
+      tone(659.25, 0.12, 0.24, { type: "triangle", volum: 0.16 })
+      tone(783.99, 0.18, 0.28, { type: "triangle", volum: 0.18 })
+      tone(1046.5, 0.24, 0.38, { type: "sine", volum: 0.2 })
+      tone(1318.5, 0.3, 0.42, { type: "sine", volum: 0.15 })
+    }),
+  /** Comical falling trombone slide when someone cracks a smile during Rizzler Finisher. */
+  rizzFeil: () =>
+    spill(() => {
+      tone(311, 0, 0.18, { type: "sawtooth", volum: 0.14, til: 294 })
+      tone(277, 0.18, 0.18, { type: "sawtooth", volum: 0.14, til: 262 })
+      tone(247, 0.36, 0.34, { type: "sawtooth", volum: 0.15, til: 175 })
+      stoy(0.36, 0.08, 0.08, 320)
+    }),
 }

@@ -56,6 +56,13 @@ import {
   type Punkt3D,
 } from "../features/spill/lib/moggern/poeng"
 import { hentKameraStrom, hentMikrofonStrom, KAMERA_ONSKER, KAMERA_RESERVE, MIKROFON_ONSKER } from "../features/spill/lib/moggern/kamera"
+import {
+  erRizzlerPose,
+  lesFinisherBonus,
+  lesRizzlerHendelse,
+  RIZZLER_BONUS,
+  RIZZLER_FEIL_STRAFF,
+} from "../features/spill/lib/moggern/rizzler"
 import { kartleggPunktTilVisning } from "../features/spill/lib/moggern/sporing-tegner"
 import {
   DELPOENG_DISSER,
@@ -290,17 +297,17 @@ test("Moggern poeng: frontal-port og avstandssjekk avviser ugyldige bilder med t
   assert.equal(vurderRamme(lagSyntetiskAnsikt({ ipdPx: 25 }), lagRotasjonsMatrise(0, 0, 0), 640, 480).veiledning, "for-langt-unna")
   assert.equal(vurderRamme(lagSyntetiskAnsikt({ ipdPx: 300 }), lagRotasjonsMatrise(0, 0, 0), 640, 480).veiledning, "for-naerme")
 
-  // Yaw and pitch outside frontal window
-  const snudd = vurderRamme(ansikt, lagRotasjonsMatrise(24, 0, 0), 640, 480)
+  // Yaw and pitch outside 3D-compensated frontal window (30° yaw / 26° pitch)
+  const snudd = vurderRamme(ansikt, lagRotasjonsMatrise(32, 0, 0), 640, 480)
   assert.equal(snudd.gyldig, false)
   assert.equal(snudd.veiledning, "snu-rett")
 
-  const nikket = vurderRamme(ansikt, lagRotasjonsMatrise(0, -22, 0), 640, 480)
+  const nikket = vurderRamme(ansikt, lagRotasjonsMatrise(0, -28, 0), 640, 480)
   assert.equal(nikket.gyldig, false)
   assert.equal(nikket.veiledning, "snu-rett")
 
-  // Excessive head tilt
-  const vippet = vurderRamme(lagSyntetiskAnsikt({ rollGrader: 25 }), lagRotasjonsMatrise(0, 0, 25), 640, 480)
+  // Excessive head tilt (> 24°)
+  const vippet = vurderRamme(lagSyntetiskAnsikt({ rollGrader: 27 }), lagRotasjonsMatrise(0, 0, 27), 640, 480)
   assert.equal(vippet.gyldig, false)
   assert.equal(vippet.veiledning, "vipp-rett")
 
@@ -818,9 +825,9 @@ test("Moggern live-poeng og duell: eksponentiell glatting og bonus som må holde
   assert.equal(normalVinkel.gyldig, true)
   assert.equal(normalVinkel.veiledning, "ok")
 
-  // Off-angle detected face still feeds the live HUD immediately, while official duel aggregation ignores it
+  // Extreme off-angle detected face (> 30° yaw) still initializes the live HUD, while official duel aggregation ignores it
   const skraTilstand: LivePoengTilstand = { struktur: null, styrker: null }
-  const skraRamme = vurderRamme(ansikt, lagRotasjonsMatrise(26, 0, 0), 640, 480)
+  const skraRamme = vurderRamme(ansikt, lagRotasjonsMatrise(34, 0, 0), 640, 480)
   assert.equal(skraRamme.gyldig, false)
   assert.equal(skraRamme.veiledning, "snu-rett")
   assert.ok(oppdaterLivePoeng(skraTilstand, skraRamme) !== null)
@@ -977,4 +984,160 @@ test("Moggern 15s-oppgradering: uttrykkSnitt, uttrykkDom, rom-stilling og dagens
   const r4 = oppdaterDagensBesteVerdi(r3.verdi, 5.4, "solo", dag2)
   assert.equal(r4.nyRekord, true)
   assert.deepEqual(r4.verdi, { dato: dag2, poeng: 5.4, modus: "solo" })
+})
+
+test("Moggern 3D-kompensering: rotasjon i yaw, pitch og roll bevarer alle 7 delpoeng og speiling", () => {
+  const bredde = 640
+  const hoyde = 480
+  const roter3D = (punkter: readonly Punkt3D[], yaw: number, pitch: number, roll: number): Punkt3D[] => {
+    const m = lagRotasjonsMatrise(yaw, pitch, roll)
+    const cx = bredde / 2
+    const cy = hoyde * 0.44
+    return punkter.map((p) => {
+      const dx = p.x * bredde - cx
+      const dy = p.y * hoyde - cy
+      const dz = (p.z ?? 0) * bredde
+      // Column-major R * [dx, dy, dz]
+      const rx = m[0] * dx + m[4] * dy + m[8] * dz
+      const ry = m[1] * dx + m[5] * dy + m[9] * dz
+      const rz = m[2] * dx + m[6] * dy + m[10] * dz
+      return { x: (cx + rx) / bredde, y: (cy + ry) / hoyde, z: rz / bredde }
+    })
+  }
+
+  const rett = lagSyntetiskAnsikt({ bredde, hoyde })
+  const grunn = vurderRamme(rett, lagRotasjonsMatrise(0, 0, 0), bredde, hoyde)
+  assert.equal(grunn.gyldig, true)
+
+  // Simultaneous 3D head turn (yaw 22°, pitch -16°, roll 11°) inside the new 30°/26°/24° gate
+  const rotert = roter3D(rett, 22, -16, 11)
+  const res3D = vurderRamme(rotert, lagRotasjonsMatrise(22, -16, 11), bredde, hoyde)
+  assert.equal(res3D.gyldig, true)
+  assert.equal(res3D.veiledning, "ok")
+  assert.deepEqual(res3D.delpoeng, grunn.delpoeng)
+  assert.equal(res3D.total, grunn.total)
+
+  // Mirrored + rotated in 3D also recovers identical canonical scores
+  const speilet3D = roter3D(lagSyntetiskAnsikt({ bredde, hoyde, speilet: true }), -24, 18, -9)
+  const resSpeilet3D = vurderRamme(speilet3D, lagRotasjonsMatrise(-24, 18, -9), bredde, hoyde)
+  assert.equal(resSpeilet3D.gyldig, true)
+  assert.deepEqual(resSpeilet3D.delpoeng, grunn.delpoeng)
+  assert.equal(resSpeilet3D.total, grunn.total)
+
+  // Once live HUD is initialized, an extreme off-angle frame freezes structural score instead of tanking it
+  const tilstand: LivePoengTilstand = { struktur: null, styrker: null }
+  const start = oppdaterLivePoeng(tilstand, grunn)!
+  const ekstrem = vurderRamme(lagSyntetiskAnsikt({ asymX: 0.25 }), lagRotasjonsMatrise(38, 0, 0), bredde, hoyde)
+  assert.equal(ekstrem.gyldig, false)
+  const etterEkstrem = oppdaterLivePoeng(tilstand, ekstrem)!
+  assert.equal(etterEkstrem.strukturPoeng, start.strukturPoeng)
+})
+
+test("Moggern Rizzler Finisher: peke-på-hake-gest, åpen hånd avvises og finisherBonus verifiseres i rapport", () => {
+  const ansikt = lagSyntetiskAnsikt()
+  const hake = ansikt[PUNKTER.hake]
+
+  const lagHand = (opts: { pekeTipp: Punkt3D; aapenHand?: boolean }): Punkt3D[] => {
+    const hand: Punkt3D[] = Array.from({ length: 21 }, () => ({ x: hake.x, y: hake.y + 0.28, z: 0 }))
+    // Wrist below chin
+    hand[0] = { x: hake.x, y: hake.y + 0.3, z: 0 }
+    // Index finger pointing toward pekeTipp
+    hand[6] = { x: (hand[0].x + opts.pekeTipp.x) / 2, y: (hand[0].y + opts.pekeTipp.y) / 2, z: 0 }
+    hand[8] = opts.pekeTipp
+    // Middle/ring/pinky either curled near wrist or stretched out (open palm)
+    for (const tipIdx of [12, 16, 20]) {
+      hand[tipIdx] = opts.aapenHand
+        ? { x: opts.pekeTipp.x + 0.02, y: opts.pekeTipp.y, z: 0 }
+        : { x: hand[0].x + 0.02, y: hand[0].y - 0.08, z: 0 }
+    }
+    return hand
+  }
+
+  // Index finger pointing right at the chin -> active!
+  const treff = erRizzlerPose([lagHand({ pekeTipp: { x: hake.x + 0.01, y: hake.y - 0.01, z: 0 } })], ansikt, 640, 480)
+  assert.equal(treff.aktiv, true)
+  assert.ok(treff.avstandAndel !== null && treff.avstandAndel < 0.1)
+
+  // Open palm near chin -> rejected (prevents accidental wave triggers)
+  const aapen = erRizzlerPose([lagHand({ pekeTipp: hake, aapenHand: true })], ansikt, 640, 480)
+  assert.equal(aapen.aktiv, false)
+
+  // Index finger far away from the face -> rejected
+  const langtUnna = erRizzlerPose([lagHand({ pekeTipp: { x: 0.05, y: 0.05, z: 0 } })], ansikt, 640, 480)
+  assert.equal(langtUnna.aktiv, false)
+
+  // Strict finisherBonus & Realtime event parsing
+  assert.equal(lesFinisherBonus(undefined), 0)
+  assert.equal(lesFinisherBonus(0), 0)
+  assert.equal(lesFinisherBonus(RIZZLER_BONUS), RIZZLER_BONUS)
+  assert.equal(lesFinisherBonus(RIZZLER_FEIL_STRAFF), RIZZLER_FEIL_STRAFF)
+  assert.equal(lesFinisherBonus(0.9), null)
+  assert.equal(lesFinisherBonus(-1.0), null)
+
+  assert.deepEqual(lesRizzlerHendelse({ runde: 1, av: "spiller-1", type: "utlost", navn: "Ola" }), {
+    runde: 1,
+    av: "spiller-1",
+    type: "utlost",
+    navn: "Ola",
+  })
+  assert.equal(lesRizzlerHendelse({ runde: 1, av: "spiller-1", type: "jukse", navn: "Ola" }), null)
+
+  // Report parsing includes finisherBonus in recomputed total and rejects tampered bonuses
+  const delpoeng: DelpoengKart = {
+    symmetri: 7,
+    oyevinkel: 7,
+    kjevelinje: 7,
+    midtansikt: 7,
+    ansiktstredjedeler: 7,
+    oyeavstand: 7,
+    harmoni: 7,
+  }
+  const grunnMaaling: SpillerMaaling = {
+    ok: true,
+    total: 0,
+    delpoeng,
+    uttrykkBonus: 0.2,
+    finisherBonus: RIZZLER_BONUS,
+    lysStatus: "ok",
+    kvalitet: { antallRammer: 40, gyldigeRammer: 32, snittAbsYaw: 4, snittAbsPitch: 3, snittIpdAndel: 0.22, stabilitet: 0.2 },
+  }
+  const lest = lesMoggernRapport({ runde: 0, av: "a", egen: grunnMaaling, motstander: null })
+  assert.ok(lest?.egen)
+  assert.equal(lest.egen.finisherBonus, RIZZLER_BONUS)
+  assert.equal(lest.egen.total, regnTotal(delpoeng, 0.2, RIZZLER_BONUS))
+  assert.equal(
+    lesMoggernRapport({ runde: 0, av: "a", egen: { ...grunnMaaling, finisherBonus: 2.5 }, motstander: null }),
+    null,
+  )
+})
+
+test("Moggern kurerte disser: riktig utvalg og nedprioritering av ansiktstredjedeler", () => {
+  assert.equal(LYS_DISSER.overeksponert.length, 5)
+  assert.equal(LYS_DISSER.undereksponert.length, 3)
+  assert.equal(DELPOENG_DISSER.oyevinkel.length, 5)
+  assert.equal(DELPOENG_DISSER.symmetri.length, 3)
+  assert.equal(DELPOENG_DISSER.midtansikt.length, 2)
+  assert.equal(DELPOENG_DISSER.oyeavstand.length, 2)
+  assert.equal(DELPOENG_DISSER.harmoni.length, 1)
+  assert.ok(DELPOENG_DISSER.symmetri.includes("Picasso ringte — karakteren fra maleriet hans har rømt."))
+  assert.ok(DELPOENG_DISSER.oyeavstand.includes("Bruk solbriller du."))
+  assert.ok(DELPOENG_DISSER.kjevelinje.some((d) => d.includes("dårlig for moggen")))
+
+  // When ansiktstredjedeler is only slightly weakest (< 1.8 gap), pick the second-weakest sub-score instead
+  const littSvakTredjedeler: DelpoengKart = {
+    symmetri: 7.5,
+    oyevinkel: 7.2,
+    kjevelinje: 6.1,
+    midtansikt: 7.4,
+    ansiktstredjedeler: 5.5,
+    oyeavstand: 7.3,
+    harmoni: 7.1,
+  }
+  const td1 = lagTipsOgDiss({ delpoeng: littSvakTredjedeler, lysStatus: "ok", fro: "TEST:1" })
+  assert.ok(DELPOENG_DISSER.kjevelinje.includes(td1.diss), `forventet kjevelinje-diss, fikk: ${td1.diss}`)
+
+  // Only when ansiktstredjedeler is dramatically weakest (>= 1.8 gap) does it roast thirds
+  const veldigSvakTredjedeler: DelpoengKart = { ...littSvakTredjedeler, ansiktstredjedeler: 3.2 }
+  const td2 = lagTipsOgDiss({ delpoeng: veldigSvakTredjedeler, lysStatus: "ok", fro: "TEST:2" })
+  assert.ok(DELPOENG_DISSER.ansiktstredjedeler.includes(td2.diss), `forventet tredjedel-diss, fikk: ${td2.diss}`)
 })

@@ -277,12 +277,8 @@ export const LYS_DISSER: Record<Exclude<LysStatus, "ok">, readonly string[]> = {
     "Så utvasket bilde at kameraet trodde du var en hvit vegg. Trekk for gardina før neste runde.",
     "Du skinner så sterkt på kamera at man trenger solbriller for å duellere mot deg. Demp lyset ett hakk.",
     "Det lyset der er rein flashbang. Snu deg litt bort fra vinduet før neste runde!",
-    "Så mye motlys at du ser ut som du nettopp gikk inn i himmelen. Skru ned lampa litt!",
   ],
   undereksponert: [
-    "For mørkt, er du i bunker?",
-    "Har strømmen gått, eller duellerer du fra en kjeller uten vinduer?",
-    "Kameraet målte 80 % mørke og 20 % ren viljestyrke. Slå på én lampe til neste runde.",
     "Strømprisene kan umulig være så høye at du ikke har råd til én skrivebordslampe?",
     "Du sitter så mørkt at du ser ut som en opplåsbar karakter man ikke har råd til ennå.",
     "Batman ringte og spurte om han kan få tilbake hula si. Slå på taklampa før neste runde!",
@@ -295,8 +291,6 @@ export const DELPOENG_DISSER: Record<DelpoengId, readonly string[]> = {
     "Øynene peker nedover som mandag morgen i november. Prøv høyere kamera før du bestiller fly til Istanbul.",
     "Øyevinkelen skriker «trenger dobbel espresso». Løft linsa litt — eller kjøp en rull med teip.",
     "Øyekrokene henger så tungt at tyngdekraften burde betale husleie. Løft kameraet opp i øyehøyde!",
-    "Du ser ut som du har vært våken siden 2022. Slapp av i pannen og prøv jegerøyne neste runde.",
-    "Øynene peker rett mot gulvet som om du leter etter en tapt AirPod. Se rett inn i linsa!",
     "Øyevinkelen sa god natt midt på dagen. Kamera i øyehøyde og litt skarpere blikk neste runde!",
   ],
   kjevelinje: [
@@ -306,52 +300,30 @@ export const DELPOENG_DISSER: Record<DelpoengId, readonly string[]> = {
     "Kjevelinja var så myk at kameraet trodde du var en fersk hvetebolle. Skyv haka ørlite frem!",
     "Halsen og haka har slått seg sammen til én kommune. Rett ryggen og løft kameraet litt opp!",
     "Kjeven møtte ikke opp på jobb i dag. Én pakke Extra om dagen og haka litt frem neste runde!",
-    "Ingen skarpe kanter funnet — super trygt for småbarn, men dårlig for kjevescoren. Stram til!",
+    "Ingen skarpe kanter funnet — super trygt for småbarn, men dårlig for moggen. Stram til!",
   ],
   symmetri: [
-    "Venstre og høyre side møttes aldri i kalenderen. Ring Picasso, han savner stilen din.",
+    "Picasso ringte — karakteren fra maleriet hans har rømt.",
     "Symmetrien har to forskjellige postnumre. Slå på lyset forfra før kalkulatoren blir sjøsyk.",
-    "Høyre halvdel og venstre halvdel kjører hvert sitt soloprosjekt. Litt frontlys fikser halvparten!",
     "Ansiktet ditt ser ut som det ble satt sammen uten IKEA-bruksanvisning. Rett opp hodet og lyset!",
-    "Venstre side er på fest, høyre side vil hjem. Sitt rett foran linsa neste runde!",
-    "Vateret ga opp midt i målingen. Sidelys lurer kameraet hardt — snu deg rett mot lyset!",
-    "Speilbildet ditt ba om parterapi. Hold hodet helt rett og slutt å lene deg mot én skulder!",
   ],
   midtansikt: [
-    "Midtansiktet går over to tidssoner. Trekk deg litt bakover fra vidvinkelen!",
     "Lang vei fra øyne til overleppe — enten er det kameraet helt oppi nesa, eller så må vi ringe en arkitekt.",
-    "Midtansikt-varsel: hold kameraet på armlengdes avstand før du booker time i utlandet.",
     "Fra øyne til overleppe må man nesten betale bompenger underveis. Gå ett skritt bakover fra linsa!",
-    "Du sitter så nært vidvinkelen at ansiktet ditt ser ut som du titter gjennom et kikkehull i døra.",
-    "Kameraet ditt strakk midtansiktet som en dørspion. Hold telefonen på armlengdes avstand!",
-    "Midtansiktet fikk akkurat sin egen postrute. Trekk deg litt unna kameraet og rett opp vinkelen!",
   ],
   ansiktstredjedeler: [
-    "Tredjedelene ble fordelt som en skikkelig urettferdig pizzadeling.",
     "Panne, nese og hake krangler om kvadratmeterne. Ny sveis eller høyere kamera anbefales umiddelbart.",
     "Ansiktstredjedelene gikk ikke opp i 3-gangen. Pannelugg-sesongen starter i morgen.",
-    "Matematikklæreren din fikk vondt i sjela av brøkregningen i ansiktet ditt. Se rett frem, ikke ned!",
     "Én tredjedel forsynte seg dobbelt på buffeten og lot de to andre sulte. Løft kameraet opp!",
     "Tredjedelene ser ut som når noen deler en kake i mørket. Sitt rett foran linsa neste runde!",
     "Panna og haka fikk aldri samme budsjett. Hold kameraet i øyehøyde så blir fordelinga mye jevnere!",
   ],
   oyeavstand: [
-    "Øyeavstanden betyr at 3D-briller må spesialbestilles fra fabrikk.",
-    "Øynene sitter i hvert sitt fylke (eller på fanget til hverandre). Prøv å se rett i linsa!",
-    "Ansiktsfemtedelene fikk kalkulatoren til å svette. Rett opp blikket neste runde.",
     "Øynene dine har enten langdistanseforhold eller deler én liten hybel. Sitt litt lenger fra linsa!",
-    "Optikeren måtte ta en liten pause og finne fram skyvelæret. Hold hodet helt rett frem!",
-    "Selv en vanlig kikkert hadde bedt om spesialtilpasning her. Trekk deg litt unna vidvinkelen!",
-    "Solbriller fra bensinstasjonen passer visst aldri helt? Hold kameraet på armlengdes avstand!",
+    "Bruk solbriller du.",
   ],
   harmoni: [
-    "Harmoni-måleren ga opp og begynte å spille frijazz i stedet.",
-    "Proporsjonene kjører helt egen takt — maks sjarm, null geometri.",
-    "Kalkulatoren skjønner seg ikke på deg ennå. Rett ryggen og gi et iskaldt blikk i neste runde!",
-    "Det gyldne snitt sendte en høflig avslagsmelding. Bra du har sjarm!",
     "Leonardo da Vinci prøvde å tegne deg og endte opp med abstrakt kunst. Frontlys hjelper!",
-    "Ansiktet ditt er som et band der alle spiller i hver sin toneart — kult, men vanskelig å måle.",
-    "Geometri-appen ble så forvirret at den nesten lukket seg selv. Hold hodet rolig neste runde!",
   ],
 }
 
@@ -416,10 +388,15 @@ export function lagTipsOgDiss(input: {
     }
   }
 
-  const svakest = svakeste[0]
+  // Prefer more intuitive categories over abstract facial thirds unless facial thirds is clearly far weaker.
+  let dissKategori = svakeste[0]
+  if (dissKategori === "ansiktstredjedeler" && svakeste[1] && delpoeng[svakeste[1]] - delpoeng.ansiktstredjedeler < 1.8) {
+    dissKategori = svakeste[1]
+  }
+
   return {
     tips: tips.slice(0, 3),
-    diss: velgMedFro(DELPOENG_DISSER[svakest], `${fro}:diss:${svakest}`),
+    diss: velgMedFro(DELPOENG_DISSER[dissKategori], `${fro}:diss:${dissKategori}`),
     dissFraLys: false,
   }
 }

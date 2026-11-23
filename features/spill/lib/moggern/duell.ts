@@ -32,6 +32,7 @@ import {
   type KvalitetStats,
   type MogUttrykkId,
 } from "./poeng"
+import { lesFinisherBonus } from "./rizzler"
 
 export const MOGGERN_MAKS_SPILLERE = 2
 export const MOGGERN_MIN_SPILLERE = 2
@@ -54,6 +55,8 @@ export type SpillerMaaling = {
   delpoeng: DelpoengKart
   /** Smoothed mog-uttrykk bonus (score points) measured over the 15 s capture. */
   uttrykkBonus: number
+  /** Optional Rizzler Finisher bonus (+0.4) or smile-fail penalty (-0.3). */
+  finisherBonus?: number
   /** Trimmed-mean 0–1 strength per expression across the capture (optional for backwards compatibility). */
   uttrykkSnitt?: Partial<Record<MogUttrykkId, number>>
   lysStatus: LysStatus
@@ -188,15 +191,18 @@ export function lesSpillerMaaling(x: unknown): SpillerMaaling | null {
   const bonusRaa = x.uttrykkBonus === undefined ? 0 : x.uttrykkBonus
   if (!erTall(bonusRaa, MIN_UTTRYKK_BONUS - 1e-6, MAKS_UTTRYKK_BONUS + 1e-6)) return null
   const uttrykkBonus = Math.round(bonusRaa * 100) / 100
+  const finisherBonus = lesFinisherBonus(x.finisherBonus)
+  if (finisherBonus === null) return null
   const uttrykkSnitt = lesUttrykkSnitt(x.uttrykkSnitt)
   if (uttrykkSnitt === null) return null
-  // Recompute total deterministically from sub-scores + bonus so a tampered total cannot disagree with breakdown.
-  const total = x.ok ? regnTotal(delpoeng, uttrykkBonus) : 0
+  // Recompute total deterministically from sub-scores + bonuses so a tampered total cannot disagree with breakdown.
+  const total = x.ok ? regnTotal(delpoeng, uttrykkBonus, finisherBonus) : 0
   return {
     ok: x.ok,
     total,
     delpoeng,
     uttrykkBonus: x.ok ? uttrykkBonus : 0,
+    ...(x.ok && finisherBonus !== 0 ? { finisherBonus } : {}),
     ...(uttrykkSnitt && x.ok ? { uttrykkSnitt } : {}),
     lysStatus,
     kvalitet,
