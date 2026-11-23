@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useEffect, useState, type ReactNode } from "react"
 import { synkLokaleResultater } from "../lib/resultat-klient"
 import { VISNINGSNAVN_MAKS, VISNINGSNAVN_MIN, type ProfilInfo } from "../lib/sosial"
+import { useUtfordringerSynk } from "../lib/utfordring-varsel"
 import { spillskrift, visningsskrift } from "./skrift"
 import { useVisningsnavnSynk, VISNINGSNAVN_HENDELSE, VisningsnavnPille } from "./visningsnavn-pille"
 
@@ -24,6 +25,7 @@ export function SpillSosialNav({ aktiv }: { aktiv: AktivFane }) {
   const [innlogget, setInnlogget] = useState<boolean | null>(null)
   const [navn, setNavn] = useState<string | null>(null)
   useVisningsnavnSynk(setNavn)
+  useUtfordringerSynk((antall) => setVentende(antall))
 
   useEffect(() => {
     let aktivt = true

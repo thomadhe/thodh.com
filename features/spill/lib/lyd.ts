@@ -119,4 +119,10 @@ export const lyder = {
       tone(560, 0.1, 0.12, { volum: 0.22, til: 1120 })
       tone(700, 0.2, 0.22, { volum: 0.24, til: 1400 })
     }),
+  /** Crisp two-note chime for incoming friend duel challenges. */
+  varsel: () =>
+    spill(() => {
+      tone(587.33, 0, 0.13, { type: "triangle", volum: 0.18 })
+      tone(880, 0.11, 0.22, { type: "triangle", volum: 0.2 })
+    }),
 }

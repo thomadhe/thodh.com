@@ -73,3 +73,58 @@ export function useUtfordringVarsel(
     }
   }, [supabaseUrl, supabaseKey, brukerId])
 }
+
+export const UTFORDRINGER_OPPDATERT_HENDELSE = "thodh-utfordringer-oppdatert"
+const KANAL_NAVN = "thodh-utfordringer-synk"
+
+/** Broadcasts the latest pending incoming challenge count within this tab and across open tabs. */
+export function sendUtfordringerOppdatert(antallVentende: number, kilde = "globalt") {
+  if (typeof window === "undefined") return
+  window.dispatchEvent(new CustomEvent(UTFORDRINGER_OPPDATERT_HENDELSE, { detail: { antallVentende, kilde } }))
+  try {
+    if (typeof BroadcastChannel !== "undefined") {
+      const ch = new BroadcastChannel(KANAL_NAVN)
+      ch.postMessage({ antallVentende, kilde })
+      ch.close()
+    }
+  } catch {
+    // Ignore BroadcastChannel unavailability in restricted contexts.
+  }
+}
+
+/** Subscribes to live challenge-count updates dispatched by pop-ups, `/spill/dueller`, or other tabs. */
+export function useUtfordringerSynk(onOppdatert: (antallVentende: number, kilde: string) => void) {
+  const cbRef = useRef(onOppdatert)
+  useEffect(() => {
+    cbRef.current = onOppdatert
+  })
+
+  useEffect(() => {
+    const vedHendelse = (e: Event) => {
+      const detalj = (e as CustomEvent<{ antallVentende?: number; kilde?: string }>).detail
+      if (typeof detalj?.antallVentende === "number") {
+        cbRef.current(detalj.antallVentende, detalj.kilde ?? "globalt")
+      }
+    }
+    window.addEventListener(UTFORDRINGER_OPPDATERT_HENDELSE, vedHendelse)
+
+    let ch: BroadcastChannel | null = null
+    try {
+      if (typeof BroadcastChannel !== "undefined") {
+        ch = new BroadcastChannel(KANAL_NAVN)
+        ch.onmessage = (m: MessageEvent<{ antallVentende?: number; kilde?: string }>) => {
+          if (typeof m.data?.antallVentende === "number") {
+            cbRef.current(m.data.antallVentende, "annen-fane")
+          }
+        }
+      }
+    } catch {
+      ch = null
+    }
+
+    return () => {
+      window.removeEventListener(UTFORDRINGER_OPPDATERT_HENDELSE, vedHendelse)
+      ch?.close()
+    }
+  }, [])
+}

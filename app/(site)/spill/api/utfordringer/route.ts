@@ -62,8 +62,10 @@ export async function GET() {
     utloperKl: r.utloper_kl,
   }))
 
-  const innkommende = alle.filter((u) => u.mottakerId === innlogget.user.id)
-  const utgaende = alle.filter((u) => u.avsenderId === innlogget.user.id)
+  const na = Date.now()
+  const aktive = alle.filter((u) => u.status !== "venter" || new Date(u.utloperKl).getTime() > na)
+  const innkommende = aktive.filter((u) => u.mottakerId === innlogget.user.id)
+  const utgaende = aktive.filter((u) => u.avsenderId === innlogget.user.id)
   const antallVentende = innkommende.filter((u) => u.status === "venter").length
 
   return jsonPrivat({

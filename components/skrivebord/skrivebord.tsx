@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react"
 import { useAlleResultater } from "@/features/spill/lib/lagring"
 import type { SpillId } from "@/features/spill/lib/spill"
+import { useUtfordringerSynk } from "@/features/spill/lib/utfordring-varsel"
 import { CONTACT_EMAIL } from "@/lib/projects"
 import { Ikon, type IkonNavn } from "./ikoner"
 import { OmThodh, Papirkurv } from "./innhold"
@@ -330,6 +331,10 @@ export function Skrivebord() {
   const flate = useRef<HTMLDivElement>(null)
   const nesteZ = useRef(1)
 
+  useUtfordringerSynk((antall) => {
+    setVarsler((prev) => (prev.dueller === antall ? prev : { ...prev, dueller: antall }))
+  })
+
   useEffect(() => {
     let aktivt = true
     void Promise.all([
@@ -343,7 +348,7 @@ export function Skrivebord() {
       if (!aktivt) return
       const v = Array.isArray(vennerData?.foresporslerInn) ? vennerData.foresporslerInn.length : 0
       const d = typeof utfordringData?.antallVentende === "number" ? utfordringData.antallVentende : 0
-      if (v > 0 || d > 0) setVarsler({ venner: v, dueller: d })
+      setVarsler({ venner: v, dueller: d })
     })
     return () => {
       aktivt = false

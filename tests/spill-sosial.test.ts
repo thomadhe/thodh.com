@@ -15,6 +15,7 @@ import {
   duellRomLenke,
   erGyldigManed,
   erGyldigVennekode,
+  erIRom,
   flyttManed,
   formaterTavleDato,
   formaterTidSek,
@@ -28,6 +29,8 @@ import {
   TID_MAKS_SEK,
   TID_MIN_SEK,
   validerVisningsnavn,
+  velgSynligeUtfordringVarsler,
+  type DuellUtfordring,
 } from "../features/spill/lib/sosial"
 import { spill } from "../features/spill/lib/spill"
 import { safeNext } from "../lib/auth/validation"
@@ -318,4 +321,66 @@ test("daglig ledertavle og dagens seierherre kårer vinner per dag og per spill"
   assert.equal(mndRes.rader[1].visningsnavn, "Ada")
   assert.equal(mndRes.rader[1].poeng, 8)
   assert.equal(mndRes.rader[1].dagsseiere, 1)
+})
+
+test("utfordringsvarsler filtrerer ut utløpte, skjulte og nåværende rom", () => {
+  assert.equal(erIRom("/spill/moggern/BCDF", "BCDF"), true)
+  assert.equal(erIRom("/spill/67-stegern/duell/bcdf/", "BCDF"), true)
+  assert.equal(erIRom("/spill/moggern", "BCDF"), false)
+
+  const na = Date.parse("2026-11-23T12:00:00Z")
+  const lag = (del: Partial<DuellUtfordring> & { id: string; romkode: string }): DuellUtfordring => ({
+    avsenderId: "u1",
+    avsenderNavn: "Ada",
+    mottakerId: "u2",
+    mottakerNavn: "Bjørn",
+    spillId: "moggern",
+    modus: "runder",
+    status: "venter",
+    opprettetKl: "2026-11-23T11:55:00Z",
+    utloperKl: "2026-11-24T11:55:00Z",
+    ...del,
+  })
+
+  const innkommende = [
+    lag({ id: "aktiv-ny", romkode: "BCDF", opprettetKl: "2026-11-23T11:59:00Z" }),
+    lag({ id: "utlopt", romkode: "GHJK", utloperKl: "2026-11-23T11:00:00Z" }),
+    lag({ id: "skjult", romkode: "LMNP" }),
+    lag({ id: "i-rom", romkode: "QRST" }),
+    lag({ id: "aktiv-eldre", romkode: "VWXZ", opprettetKl: "2026-11-23T11:50:00Z" }),
+  ]
+  const utgaende = [
+    lag({ id: "godtatt-live", romkode: "BCHG", status: "godtatt", opprettetKl: "2026-11-23T11:58:00Z" }),
+    lag({ id: "godtatt-gammel", romkode: "JKLM", status: "godtatt", opprettetKl: "2026-11-23T11:40:00Z" }),
+  ]
+
+  // Skjult på /spill/dueller (selve innboksen)
+  assert.equal(
+    velgSynligeUtfordringVarsler({
+      pathname: "/spill/dueller",
+      innkommende,
+      utgaende,
+      godtatteVarselIder: new Set(["godtatt-live"]),
+      skjulteIder: new Set(),
+      naMs: na,
+    }).synlige.length,
+    0,
+  )
+
+  // På /spill/moggern/QRST: QRST, utløpt, skjult og ikke-live godtatt filtreres ut
+  const res = velgSynligeUtfordringVarsler({
+    pathname: "/spill/moggern/QRST",
+    innkommende,
+    utgaende,
+    godtatteVarselIder: new Set(["godtatt-live"]),
+    skjulteIder: new Set(["skjult"]),
+    naMs: na,
+    maks: 2,
+  })
+  assert.equal(res.synlige.length, 2)
+  assert.equal(res.skjulteFlere, 1)
+  assert.equal(res.synlige[0].type, "innkommende")
+  assert.equal(res.synlige[0].utfordring.id, "aktiv-ny")
+  assert.equal(res.synlige[1].type, "godtatt")
+  assert.equal(res.synlige[1].utfordring.id, "godtatt-live")
 })

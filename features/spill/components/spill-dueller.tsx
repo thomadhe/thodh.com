@@ -1,9 +1,9 @@
 "use client"
 
-import { ArrowRight, KeyRound, Plus, Swords, Users } from "lucide-react"
+import { ArrowRight, Bell, BellRing, KeyRound, Plus, Swords, Users } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react"
 import { erGyldigKode, lagKode, normaliserKode } from "../lib/duell/rom"
 import {
   DUELL_MODUS_VALG,
@@ -16,8 +16,29 @@ import {
   type DuellUtfordring,
   type VennOppforing,
 } from "../lib/sosial"
-import { sendUtfordringPing, useUtfordringVarsel } from "../lib/utfordring-varsel"
+import { sendUtfordringerOppdatert, sendUtfordringPing, useUtfordringerSynk, useUtfordringVarsel } from "../lib/utfordring-varsel"
 import { LoggInnKort } from "./spill-sosial-ramme"
+
+type VarselStatus = NotificationPermission | "stottes-ikke"
+const VARSEL_TILLATELSE_HENDELSE = "thodh-varsel-tillatelse"
+
+function abonnerVarselStatus(varsle: () => void) {
+  window.addEventListener(VARSEL_TILLATELSE_HENDELSE, varsle)
+  window.addEventListener("focus", varsle)
+  return () => {
+    window.removeEventListener(VARSEL_TILLATELSE_HENDELSE, varsle)
+    window.removeEventListener("focus", varsle)
+  }
+}
+
+function lesVarselStatus(): VarselStatus {
+  if (typeof window === "undefined" || typeof Notification === "undefined") return "stottes-ikke"
+  return Notification.permission
+}
+
+function useVarselStatus(): VarselStatus {
+  return useSyncExternalStore(abonnerVarselStatus, lesVarselStatus, () => "stottes-ikke")
+}
 
 export function SpillDueller({
   innlogget,
@@ -29,6 +50,7 @@ export function SpillDueller({
   supabaseNokkel: string
 }) {
   const router = useRouter()
+  const varselStatus = useVarselStatus()
 
   // Open room-by-code flow (works both logged out and logged in)
   const [kodeSpill, setKodeSpill] = useState<DuellSpillId>("67-stegern")
@@ -60,11 +82,14 @@ export function SpillDueller({
           brukerId?: string
           innkommende?: DuellUtfordring[]
           utgaende?: DuellUtfordring[]
+          antallVentende?: number
           melding?: string
         }
+        const inn = u.innkommende ?? []
         setBrukerId(u.brukerId ?? null)
-        setInnkommende(u.innkommende ?? [])
+        setInnkommende(inn)
         setUtgaende(u.utgaende ?? [])
+        if (typeof u.antallVentende === "number") sendUtfordringerOppdatert(u.antallVentende, "dueller")
         if (u.melding) setFeil(u.melding)
       }
       if (vSvar.ok) {
@@ -95,12 +120,14 @@ export function SpillDueller({
               brukerId?: string
               innkommende?: DuellUtfordring[]
               utgaende?: DuellUtfordring[]
+              antallVentende?: number
               melding?: string
             }
             if (!aktiv) return
             setBrukerId(u.brukerId ?? null)
             setInnkommende(u.innkommende ?? [])
             setUtgaende(u.utgaende ?? [])
+            if (typeof u.antallVentende === "number") sendUtfordringerOppdatert(u.antallVentende, "dueller")
             if (u.melding) setFeil(u.melding)
           }
           if (vSvar.ok) {
@@ -129,6 +156,20 @@ export function SpillDueller({
   useUtfordringVarsel(supabaseUrl, supabaseNokkel, brukerId, () => {
     void hentAlt()
   })
+
+  useUtfordringerSynk((_antall, kilde) => {
+    if (kilde !== "dueller") void hentAlt()
+  })
+
+  const beOmVarsler = async () => {
+    if (typeof Notification === "undefined") return
+    try {
+      await Notification.requestPermission()
+      window.dispatchEvent(new Event(VARSEL_TILLATELSE_HENDELSE))
+    } catch {
+      // Ignore permission errors in restricted browsers.
+    }
+  }
 
   const lagApenRom = () => {
     const k = lagKode()
@@ -187,6 +228,8 @@ export function SpillDueller({
     const motpartId = handling === "avbryt" ? u.mottakerId : u.avsenderId
     void sendUtfordringPing(supabaseUrl, supabaseNokkel, motpartId)
     if (handling === "godta" && d.lenke) {
+      const igjen = innkommende.filter((x) => x.id !== u.id && x.status === "venter").length
+      sendUtfordringerOppdatert(igjen, "dueller")
       router.push(d.lenke)
       return
     }
@@ -310,16 +353,37 @@ export function SpillDueller({
           <>
             {/* Pending & accepted inbox */}
             <section className="rounded-[28px] border border-white/[0.07] bg-[#26282c] p-5 sm:p-6">
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <h2 className="flex items-center gap-2 text-[1.05rem] font-semibold tracking-[-0.01em] text-neutral-50">
                   <Swords className="h-4 w-4 text-neutral-400" />
                   <span>Utfordringer</span>
                 </h2>
-                {ventendeInn.length > 0 ? (
-                  <span className="rounded-full bg-rose-500 px-2 py-0.5 font-mono text-[11px] font-bold text-white">
-                    {ventendeInn.length} ny{ventendeInn.length === 1 ? "" : "e"}
-                  </span>
-                ) : null}
+                <div className="flex items-center gap-2">
+                  {varselStatus === "default" ? (
+                    <button
+                      type="button"
+                      onClick={() => void beOmVarsler()}
+                      title="Få også varsler når thodh.com ligger i bakgrunnen"
+                      className="inline-flex h-7 items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-2.5 text-[11px] font-medium text-neutral-200 transition hover:border-white/30 hover:bg-white/[0.08]"
+                    >
+                      <Bell className="h-3 w-3 text-amber-300" aria-hidden="true" />
+                      <span>Bakgrunnsvarsler</span>
+                    </button>
+                  ) : varselStatus === "granted" ? (
+                    <span
+                      title="Nettleservarsler i bakgrunnen er på"
+                      className="inline-flex h-7 items-center gap-1 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2.5 text-[11px] font-medium text-emerald-300"
+                    >
+                      <BellRing className="h-3 w-3" aria-hidden="true" />
+                      <span>Varsler på</span>
+                    </span>
+                  ) : null}
+                  {ventendeInn.length > 0 ? (
+                    <span className="rounded-full bg-rose-500 px-2 py-0.5 font-mono text-[11px] font-bold text-white">
+                      {ventendeInn.length} ny{ventendeInn.length === 1 ? "" : "e"}
+                    </span>
+                  ) : null}
+                </div>
               </div>
 
               {feil ? <p className="mt-3 text-xs text-amber-300">{feil}</p> : null}

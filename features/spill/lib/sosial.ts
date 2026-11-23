@@ -361,3 +361,66 @@ export function duellSpillNavn(spillId: DuellSpillId, modus: DuellModus) {
 
 /** Opaque Realtime wakeup channel name (payload carries only a ping, never private data). */
 export const utfordringVarselKanal = (userId: string) => `spill-utfordring-varsel:${userId}`
+
+/** True when the user is already inside the duel room for `romkode`. */
+export function erIRom(pathname: string, romkode: string): boolean {
+  const ren = pathname.replace(/\/+$/, "").toUpperCase()
+  const kode = romkode.trim().toUpperCase()
+  return Boolean(kode) && (ren.endsWith(`/${kode}`) || ren.includes(`/${kode}/`))
+}
+
+export type UtfordringVarselKort = {
+  type: "innkommende" | "godtatt"
+  utfordring: DuellUtfordring
+}
+
+/**
+ * Selects which duel challenges should appear as floating pop-ups right now:
+ * - Hidden on `/spill/dueller` (already the full challenge inbox)
+ * - Excludes expired pending challenges, dismissed IDs, and rooms the user is already inside
+ * - Includes newly accepted outgoing challenges so the challenger gets notified too
+ */
+export function velgSynligeUtfordringVarsler({
+  pathname,
+  innkommende,
+  utgaende,
+  godtatteVarselIder,
+  skjulteIder,
+  naMs = Date.now(),
+  maks = 3,
+}: {
+  pathname: string
+  innkommende: readonly DuellUtfordring[]
+  utgaende: readonly DuellUtfordring[]
+  godtatteVarselIder: ReadonlySet<string>
+  skjulteIder: ReadonlySet<string>
+  naMs?: number
+  maks?: number
+}): { synlige: UtfordringVarselKort[]; skjulteFlere: number } {
+  const renSti = pathname.replace(/\/+$/, "")
+  if (renSti === "/spill/dueller") return { synlige: [], skjulteFlere: 0 }
+
+  const kort: UtfordringVarselKort[] = []
+
+  for (const u of innkommende) {
+    if (u.status !== "venter") continue
+    if (new Date(u.utloperKl).getTime() <= naMs) continue
+    if (skjulteIder.has(u.id)) continue
+    if (erIRom(renSti, u.romkode)) continue
+    kort.push({ type: "innkommende", utfordring: u })
+  }
+
+  for (const u of utgaende) {
+    if (u.status !== "godtatt") continue
+    if (!godtatteVarselIder.has(u.id)) continue
+    if (skjulteIder.has(`godtatt:${u.id}`)) continue
+    if (erIRom(renSti, u.romkode)) continue
+    kort.push({ type: "godtatt", utfordring: u })
+  }
+
+  kort.sort((a, b) => Date.parse(b.utfordring.opprettetKl) - Date.parse(a.utfordring.opprettetKl))
+  return {
+    synlige: kort.slice(0, maks),
+    skjulteFlere: Math.max(0, kort.length - maks),
+  }
+}
