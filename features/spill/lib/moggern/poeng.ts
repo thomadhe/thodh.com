@@ -105,12 +105,12 @@ export const DELPOENG_VEKTER: Record<DelpoengId, number> = {
   harmoni: 0.11,
 }
 
-/** Pose & framing gates for counting a frame as valid. */
-export const MAKS_YAW_GRADER = 14
-export const MAKS_PITCH_GRADER = 14
-export const MAKS_ROLL_GRADER = 18
-export const MIN_IPD_ANDEL = 0.08
-export const MAKS_IPD_ANDEL = 0.52
+/** Pose & framing gates for counting a frame as valid during the official duel. */
+export const MAKS_YAW_GRADER = 22
+export const MAKS_PITCH_GRADER = 21
+export const MAKS_ROLL_GRADER = 22
+export const MIN_IPD_ANDEL = 0.055
+export const MAKS_IPD_ANDEL = 0.6
 /** Minimum valid frontal frames needed over the ~10 s capture window. */
 export const MIN_GYLDIGE_RAMMER = 12
 
@@ -499,12 +499,15 @@ export const LIVE_ALPHA_STRUKTUR = 0.18
 export const LIVE_ALPHA_UTTRYKK = 0.35
 
 /**
- * Feeds one valid frame into the live HUD smoother and returns the smoothed score.
+ * Feeds one detected frame into the live HUD smoother and returns the smoothed score.
  * Structure moves slowly (stable rating); expressions react faster so posing is visibly rewarded.
+ * Off-angle frames still update the live score (gently) so the HUD responds immediately on any webcam angle,
+ * while official 10 s duel aggregation (`aggregerRammer`) still only counts `gyldig` frontal frames.
  */
 export function oppdaterLivePoeng(tilstand: LivePoengTilstand, ramme: RammeResultat): LivePoeng | null {
-  if (!ramme.gyldig || typeof ramme.strukturPoeng !== "number") return null
-  tilstand.struktur = glattEksponentielt(tilstand.struktur, ramme.strukturPoeng, LIVE_ALPHA_STRUKTUR)
+  if (ramme.veiledning === "ingen-ansikt" || typeof ramme.strukturPoeng !== "number") return null
+  const strukturAlpha = ramme.gyldig ? LIVE_ALPHA_STRUKTUR : LIVE_ALPHA_STRUKTUR * 0.45
+  tilstand.struktur = glattEksponentielt(tilstand.struktur, ramme.strukturPoeng, strukturAlpha)
   const nyeStyrker = ramme.uttrykk?.styrker ?? tommeStyrker()
   tilstand.styrker = glattUttrykk(tilstand.styrker, nyeStyrker, LIVE_ALPHA_UTTRYKK)
   const bonus = bonusForStyrker(tilstand.styrker)
@@ -640,18 +643,21 @@ export function vurderRamme(
     roll: Math.abs(oyeRollGrader) > Math.abs(vinkel.roll) ? oyeRollGrader : vinkel.roll,
   }
 
-  if (ipd < 1e-3 || ipdAndel < MIN_IPD_ANDEL) {
+  if (ipd < 1e-3) {
     return { gyldig: false, veiledning: "for-langt-unna", vinkel: effektivVinkel, ipdAndel }
   }
-  if (ipdAndel > MAKS_IPD_ANDEL) {
-    return { gyldig: false, veiledning: "for-naerme", vinkel: effektivVinkel, ipdAndel }
+
+  let veiledning: Veiledning = "ok"
+  if (ipdAndel < MIN_IPD_ANDEL) {
+    veiledning = "for-langt-unna"
+  } else if (ipdAndel > MAKS_IPD_ANDEL) {
+    veiledning = "for-naerme"
+  } else if (Math.abs(effektivVinkel.yaw) > MAKS_YAW_GRADER || Math.abs(effektivVinkel.pitch) > MAKS_PITCH_GRADER) {
+    veiledning = "snu-rett"
+  } else if (Math.abs(effektivVinkel.roll) > MAKS_ROLL_GRADER) {
+    veiledning = "vipp-rett"
   }
-  if (Math.abs(effektivVinkel.yaw) > MAKS_YAW_GRADER || Math.abs(effektivVinkel.pitch) > MAKS_PITCH_GRADER) {
-    return { gyldig: false, veiledning: "snu-rett", vinkel: effektivVinkel, ipdAndel }
-  }
-  if (Math.abs(effektivVinkel.roll) > MAKS_ROLL_GRADER) {
-    return { gyldig: false, veiledning: "vipp-rett", vinkel: effektivVinkel, ipdAndel }
-  }
+  const gyldig = veiledning === "ok"
 
   // Transform landmarks into roll-corrected, IPD-normalized canonical face coordinates:
   // eye midpoint = (0, 0), eyes at (-0.5, 0) and (+0.5, 0), +y pointing down.
@@ -816,8 +822,8 @@ export function vurderRamme(
   const uttrykk = regnMogUttrykk(blendshapes)
 
   return {
-    gyldig: true,
-    veiledning: "ok",
+    gyldig,
+    veiledning,
     vinkel: effektivVinkel,
     ipdAndel,
     delpoeng,

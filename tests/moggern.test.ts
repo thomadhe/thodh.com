@@ -728,8 +728,21 @@ test("Moggern live-poeng og duell: eksponentiell glatting og bonus som må holde
   assert.ok(siste.bonus > 0.85, `bonus=${siste.bonus}`)
   assert.ok(siste.total > forste.total)
   assert.ok(siste.total <= 10)
-  // Invalid frames never update the live score
+  // Missing-face frames never update the live score
   assert.equal(oppdaterLivePoeng(tilstand, vurderRamme(null)), null)
+
+  // Normal laptop/monitor webcam angle (e.g. 18° yaw, -18° pitch) counts as valid
+  const normalVinkel = vurderRamme(ansikt, lagRotasjonsMatrise(18, -18, 0), 640, 480)
+  assert.equal(normalVinkel.gyldig, true)
+  assert.equal(normalVinkel.veiledning, "ok")
+
+  // Off-angle detected face still feeds the live HUD immediately, while official duel aggregation ignores it
+  const skraTilstand: LivePoengTilstand = { struktur: null, styrker: null }
+  const skraRamme = vurderRamme(ansikt, lagRotasjonsMatrise(26, 0, 0), 640, 480)
+  assert.equal(skraRamme.gyldig, false)
+  assert.equal(skraRamme.veiledning, "snu-rett")
+  assert.ok(oppdaterLivePoeng(skraTilstand, skraRamme) !== null)
+  assert.equal(aggregerRammer(Array.from({ length: 20 }, () => skraRamme)).ok, false)
 
   // Duel aggregation: holding The Rock all 10 s earns the bonus; a 2-frame flash does not
   const holdt = aggregerRammer(Array.from({ length: 30 }, () => rock))

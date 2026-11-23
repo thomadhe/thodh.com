@@ -1,6 +1,5 @@
 "use client"
 
-import type { FaceLandmarker } from "@mediapipe/tasks-vision"
 import {
   Camera,
   CameraOff,
@@ -37,7 +36,7 @@ import {
   type SpillerMaaling,
   type WebRtcSignal,
 } from "../lib/moggern/duell"
-import { analyserVideoRamme, hentLandmarker } from "../lib/moggern/landmarker"
+import { opprettAnsiktSporer, type AnsiktSporer } from "../lib/moggern/landmarker"
 import { samleLysStatus, type LysAnalyse } from "../lib/moggern/lys"
 import {
   aggregerRammer,
@@ -64,14 +63,14 @@ const VEILEDNING_TEKST: Record<Veiledning, string> = {
   "ingen-ansikt": "Ingen ansikt i bildet — flytt deg inn i rammen",
   "for-langt-unna": "Kom litt nærmere kameraet",
   "for-naerme": "Gå et lite steg bakover",
-  "snu-rett": "Se rett inn i kameraet",
-  "vipp-rett": "Hold hodet rett",
+  "snu-rett": "Se litt rettere mot kameraet",
+  "vipp-rett": "Hold hodet litt rettere",
   ok: "Perfekt! Hold blikket rolig",
 }
 
-const MAALING_INTERVALL_MS = 160
+const MAALING_INTERVALL_MS = 140
 /** Live HUD rating outside the official measurement (lobby, countdown). */
-const LIVE_INTERVALL_MS = 200
+const LIVE_INTERVALL_MS = 120
 /** Expression strength from which a mog-uttrykk pill is shown. */
 const UTTRYKK_VIS_TERSKEL = 0.12
 
@@ -148,8 +147,8 @@ function LiveRating({ live, modell, aktiv }: { live: LivePoeng | null; modell: M
   if (!live) {
     return (
       <span className={`${GLASS} inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[11px] font-medium text-white/75`}>
-        <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
-        {modell === "laster" ? "Laster ansiktsmodell …" : "Finner ansiktet …"}
+        {modell === "laster" ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : null}
+        {modell === "laster" ? "Laster ansiktsmodell …" : "Vis ansiktet i kameraet"}
       </span>
     )
   }
@@ -302,7 +301,8 @@ function AktivtMoggernRom({
   const montertRef = useRef(true)
   /** Set when the player turns the camera off themselves, so auto-start never overrides that choice. */
   const manueltAvRef = useRef(false)
-  const landmarkerRef = useRef<FaceLandmarker | null>(null)
+  const egenSporerRef = useRef<AnsiktSporer | null>(null)
+  const motSporerRef = useRef<AnsiktSporer | null>(null)
   const egenVideoRef = useRef<HTMLVideoElement | null>(null)
   const fjernVideoRef = useRef<HTMLVideoElement | null>(null)
   const lerretRef = useRef<HTMLCanvasElement | null>(null)
@@ -354,26 +354,49 @@ function AktivtMoggernRom({
     if (!el) return
     el.srcObject = webrtc.fjernStrom
     if (webrtc.fjernStrom) void el.play().catch(() => {})
-    motLiveRef.current = { struktur: null, styrker: null }
-    setMotLive(null)
   }, [webrtc.fjernStrom, status.fase])
 
-  // Always stop camera tracks on unmount (and ignore a getUserMedia that resolves afterwards).
+  useEffect(() => {
+    motLiveRef.current = { struktur: null, styrker: null }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMotLive(null)
+  }, [webrtc.fjernStrom])
+
+  // Always stop camera tracks & close MediaPipe trackers on unmount.
   useEffect(() => {
     montertRef.current = true
     return () => {
       montertRef.current = false
       stoppStrom(lokalStromRef.current)
       lokalStromRef.current = null
+      egenSporerRef.current?.lukk()
+      egenSporerRef.current = null
+      motSporerRef.current?.lukk()
+      motSporerRef.current = null
     }
   }, [])
 
   const hentModell = useCallback(() => {
-    hentLandmarker()
-      .then((lm) => {
-        if (!montertRef.current) return
-        landmarkerRef.current = lm
+    opprettAnsiktSporer()
+      .then((egenSporer) => {
+        if (!montertRef.current) {
+          egenSporer.lukk()
+          return
+        }
+        egenSporerRef.current?.lukk()
+        egenSporerRef.current = egenSporer
         setModell("klar")
+        // Create the isolated VIDEO tracker for the opponent's stream in parallel (reuses cached WASM/model).
+        void opprettAnsiktSporer()
+          .then((motSporer) => {
+            if (!montertRef.current) {
+              motSporer.lukk()
+              return
+            }
+            motSporerRef.current?.lukk()
+            motSporerRef.current = motSporer
+          })
+          .catch(() => {})
       })
       .catch(() => {
         if (montertRef.current) setModell("feil")
@@ -493,13 +516,11 @@ function AktivtMoggernRom({
     const lerret = (lerretRef.current ??= document.createElement("canvas"))
     const id = window.setInterval(
       () => {
-        const lm = landmarkerRef.current
-        if (!lm) return
-
+        const egenSporer = egenSporerRef.current
         const egenVideo = egenVideoRef.current
-        if (egenVideo && lokalStromRef.current) {
+        if (egenSporer && egenVideo && lokalStromRef.current) {
           try {
-            const ut = analyserVideoRamme(lm, egenVideo, lerret)
+            const ut = egenSporer.analyser(egenVideo, lerret)
             if (ut) {
               if (maler) {
                 egenRammerRef.current.push(ut.ramme)
@@ -515,10 +536,11 @@ function AktivtMoggernRom({
           }
         }
 
+        const motSporer = motSporerRef.current
         const fjernVideo = fjernVideoRef.current
-        if (fjernVideo && fjernVideo.srcObject) {
+        if (motSporer && fjernVideo && fjernVideo.srcObject) {
           try {
-            const ut = analyserVideoRamme(lm, fjernVideo, lerret)
+            const ut = motSporer.analyser(fjernVideo, lerret)
             if (ut) {
               if (maler) {
                 motRammerRef.current.push(ut.ramme)
@@ -674,9 +696,9 @@ function AktivtMoggernRom({
       : "Trykk «Klar» når du sitter i godt lys og ser rett i kameraet."
 
   return (
-    <div className="flex w-full flex-col gap-3">
+    <div className="flex w-full flex-col gap-2">
       {/* Compact room bar: code, invite link, connection & always-reachable leave/block */}
-      <div className="mx-auto flex w-full max-w-[1800px] flex-wrap items-center justify-between gap-2">
+      <div className="flex w-full flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <span className="inline-flex h-9 items-center gap-2 rounded-full border border-white/[0.07] bg-[var(--spill-flate)] pr-1 pl-3.5">
             <span className="text-[11px] font-medium text-neutral-500">Rom</span>
@@ -722,14 +744,14 @@ function AktivtMoggernRom({
       </div>
 
       {forlattVarsel ? (
-        <div role="status" className="mx-auto w-full max-w-[1800px] rounded-2xl border border-amber-400/25 bg-amber-400/10 px-4 py-2.5 text-xs text-amber-100">
+        <div role="status" className="w-full rounded-2xl border border-amber-400/25 bg-amber-400/10 px-4 py-2.5 text-xs text-amber-100">
           {forlattVarsel}
         </div>
       ) : null}
 
       {/* Result reveal screen */}
       {status.fase === "resultat" ? (
-        <div className="mx-auto w-full max-w-4xl">
+        <div className="mx-auto w-full max-w-4xl pt-2">
           <MoggernResultat
             kode={kode}
             runde={status.runde}
@@ -746,14 +768,30 @@ function AktivtMoggernRom({
         </div>
       ) : null}
 
-      {/* Full-bleed 1v1 stage: the two faces get (almost) the whole viewport. Kept mounted outside the result. */}
+      {/* 1v1 stage: edge-to-edge full-viewport in lobby, and true 100vw × 100dvh fullscreen during countdown & duel. */}
       <section
         aria-label="Kameraduell"
-        className={`relative left-1/2 w-screen -translate-x-1/2 px-2 sm:px-3 ${status.fase === "resultat" ? "hidden" : ""}`}
+        className={
+          status.fase === "resultat"
+            ? "hidden"
+            : iDuell
+              ? "fixed inset-0 z-50 bg-[#0d0e10] p-0"
+              : "w-full"
+        }
       >
-        <div className="relative mx-auto grid h-[calc(100dvh-8.75rem)] min-h-[30rem] max-w-[1800px] grid-rows-2 gap-2 md:h-[min(88dvh,calc(100dvh-8rem))] md:grid-cols-2 md:grid-rows-1 md:gap-3">
+        <div
+          className={
+            iDuell
+              ? "relative grid h-full w-full grid-rows-2 gap-[2px] md:grid-cols-2 md:grid-rows-1"
+              : "relative grid h-[calc(100dvh-6.25rem)] min-h-[34rem] w-full grid-rows-2 gap-1.5 md:grid-cols-2 md:grid-rows-1 md:gap-2"
+          }
+        >
           {/* ---- Own camera tile ---- */}
-          <div className="relative min-h-0 overflow-hidden rounded-[26px] border border-white/[0.07] bg-[#0d0e10]">
+          <div
+            className={`relative min-h-0 overflow-hidden bg-[#0d0e10] ${
+              iDuell ? "rounded-none border-0" : "rounded-[22px] border border-white/[0.07]"
+            }`}
+          >
             <video
               ref={egenVideoRef}
               autoPlay
@@ -866,7 +904,11 @@ function AktivtMoggernRom({
           </div>
 
           {/* ---- Opponent tile ---- */}
-          <div className="relative min-h-0 overflow-hidden rounded-[26px] border border-white/[0.07] bg-[#0d0e10]">
+          <div
+            className={`relative min-h-0 overflow-hidden bg-[#0d0e10] ${
+              iDuell ? "rounded-none border-0" : "rounded-[22px] border border-white/[0.07]"
+            }`}
+          >
             <video
               ref={fjernVideoRef}
               autoPlay
@@ -945,6 +987,17 @@ function AktivtMoggernRom({
           </div>
 
           {/* ---- Duel overlays spanning both faces ---- */}
+          {iDuell ? (
+            <button
+              type="button"
+              onClick={blokkerOgForlat}
+              className={`${GLASS} absolute right-3 bottom-3 z-10 inline-flex h-9 items-center gap-1.5 rounded-full border-rose-400/30 px-3 text-xs font-semibold text-rose-200 transition hover:bg-rose-500/30`}
+            >
+              <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
+              Forlat
+            </button>
+          ) : null}
+
           {status.fase === "nedtelling" ? (
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
               <div className={`${GLASS} flex flex-col items-center rounded-[32px] px-8 py-5 shadow-[0_24px_64px_rgb(0_0_0/0.45)]`}>

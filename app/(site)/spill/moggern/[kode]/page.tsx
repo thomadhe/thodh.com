@@ -41,7 +41,7 @@ export default async function Page({ params }: PageProps<"/spill/moggern/[kode]"
   return (
     <SpillRamme
       spillId="moggern"
-      bred
+      fullbredde
       klasse={`${spillskrift.className} overflow-x-clip`}
       regler={
         <>

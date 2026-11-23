@@ -34,6 +34,7 @@ export function SpillRamme({
   children,
   regler,
   bred = false,
+  fullbredde = false,
   klasse = "",
 }: {
   spillId: SpillId | QuizId | DuellSpillId
@@ -45,6 +46,8 @@ export function SpillRamme({
   regler?: ReactNode
   /** Wider column for map games. */
   bred?: boolean
+  /** Edge-to-edge full-viewport layout for camera duels. */
+  fullbredde?: boolean
   /** Extra classes on the page root, for a game with its own look. */
   klasse?: string
 }) {
@@ -66,8 +69,12 @@ export function SpillRamme({
 
   return (
     <div className={`spill-mork ${visningsskrift.variable} min-h-dvh ${klasse}`}>
-      <div className={`mx-auto flex min-h-dvh w-full flex-col px-4 sm:px-6 ${bred ? "max-w-5xl" : "max-w-lg"}`}>
-        <header className="flex items-center gap-2 pt-4">
+      <div
+        className={`mx-auto flex min-h-dvh w-full flex-col ${
+          fullbredde ? "px-2 sm:px-3" : bred ? "max-w-5xl px-4 sm:px-6" : "max-w-lg px-4 sm:px-6"
+        }`}
+      >
+        <header className={`flex items-center gap-2 ${fullbredde ? "pt-2" : "pt-4"}`}>
           <Link href="/" className={ikonKnapp} aria-label="Til skrivebordet">
             <ArrowLeft className="h-4 w-4" />
           </Link>
@@ -128,7 +135,7 @@ export function SpillRamme({
           </div>
         ) : null}
 
-        <main className="flex flex-1 flex-col py-6">{children}</main>
+        <main className={`flex flex-1 flex-col ${fullbredde ? "py-2" : "py-6"}`}>{children}</main>
       </div>
     </div>
   )
