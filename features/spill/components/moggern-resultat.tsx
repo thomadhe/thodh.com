@@ -123,7 +123,7 @@ function SpillerResultatKort({
                     ? "Kunne ikke måle over video — viser egen måling"
                     : "For få frontale bilder til å beregne poeng"}
             </p>
-            {bildeUrl ? <p className="mt-0.5 text-[10px] text-neutral-500/80">Lokalt øyeblikksbilde · lagres aldri</p> : null}
+            {bildeUrl ? <p className="mt-0.5 text-[10px] text-neutral-500/80">Øyeblikksbilde · lagres aldri</p> : null}
           </div>
         </div>
 

@@ -229,6 +229,8 @@ function AktivtMoggernRom({
   const router = useRouter()
 
   const signalHandtererRef = useRef<(payload: unknown) => void>(() => {})
+  const motSendtBildeRef = useRef<{ runde: number; av: string; dataUrl: string } | null>(null)
+  const [peakBilder, setPeakBilder] = useState<Record<string, string | null>>({})
   const [motstanderKameraPa, setMotstanderKameraPa] = useState(false)
   const [forlattVarsel, setForlattVarsel] = useState<string | null>(null)
   const [mittNavn, setMittNavn] = useState(bruker.visningsnavn)
@@ -253,6 +255,24 @@ function AktivtMoggernRom({
           if (s.rapporter[rapport.av]) return s
           return { ...s, rapporter: { ...s.rapporter, [rapport.av]: rapport } }
         })
+      },
+      bilde: (payload: unknown, romCtx: Romkontekst<MoggernStatus>) => {
+        const p = payload as { runde?: unknown; av?: unknown; dataUrl?: unknown }
+        if (
+          typeof p?.runde !== "number" ||
+          typeof p?.av !== "string" ||
+          p.av === romCtx.meg ||
+          typeof p?.dataUrl !== "string" ||
+          !p.dataUrl.startsWith("data:image/jpeg;base64,") ||
+          p.dataUrl.length > 120_000
+        ) {
+          return
+        }
+        if (romCtx.status().runde !== p.runde) return
+        const av = p.av
+        const dataUrl = p.dataUrl
+        motSendtBildeRef.current = { runde: p.runde, av, dataUrl }
+        setPeakBilder((prev) => ({ ...prev, [av]: dataUrl }))
       },
       forlat: (payload: unknown, romCtx: Romkontekst<MoggernStatus>) => {
         const p = payload as { id?: unknown; navn?: unknown }
@@ -322,7 +342,6 @@ function AktivtMoggernRom({
   const [gyldigeMot, setGyldigeMot] = useState(0)
   const [visSporing, setVisSporing] = useState(true)
   const [na, setNa] = useState(() => serverNa())
-  const [peakBilder, setPeakBilder] = useState<Record<string, string | null>>({})
   const [dagensBeste, setDagensBeste] = useState<DagensBeste | null>(null)
   const [resultatRekord, setResultatRekord] = useState<{ poeng: number; nyRekord: boolean } | null>(null)
 
@@ -652,8 +671,10 @@ function AktivtMoggernRom({
       motPeakPoengRef.current = -1
       motPeakBildeRef.current = null
       motPeakTidRef.current = 0
+      motSendtBildeRef.current = null
       sendtRapportRundeRef.current = null
       // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPeakBilder({})
       setGyldigeEgen(0)
       setGyldigeMot(0)
     }
@@ -677,6 +698,13 @@ function AktivtMoggernRom({
         const egenSporer = egenSporerRef.current
         const egenVideo = egenVideoRef.current
         const egenOverlay = egenSporingLerretRef.current
+        if (taOffisiell && !egenPeakBildeRef.current && egenVideo && lokalStromRef.current) {
+          const fallback = fangVideoBilde(egenVideo, true)
+          if (fallback) {
+            egenPeakBildeRef.current = fallback
+            egenPeakTidRef.current = naTid
+          }
+        }
         if (egenSporer && egenVideo && lokalStromRef.current) {
           try {
             const ut = egenSporer.analyser(egenVideo, lerret, taOffisiell)
@@ -695,7 +723,7 @@ function AktivtMoggernRom({
                   setGyldigeEgen((n) => n + 1)
                   const p = ut.ramme.total ?? 0
                   if (
-                    !egenPeakBildeRef.current ||
+                    egenPeakPoengRef.current < 0 ||
                     (p > egenPeakPoengRef.current + 0.05 && naTid - egenPeakTidRef.current >= PEAK_BILDE_INTERVALL_MS)
                   ) {
                     const bilde = fangVideoBilde(egenVideo, true)
@@ -724,6 +752,13 @@ function AktivtMoggernRom({
         const motSporer = motSporerRef.current
         const fjernVideo = fjernVideoRef.current
         const motOverlay = motSporingLerretRef.current
+        if (!erSoloAktiv && taOffisiell && !motPeakBildeRef.current && fjernVideo && fjernVideo.srcObject) {
+          const fallback = fangVideoBilde(fjernVideo, false)
+          if (fallback) {
+            motPeakBildeRef.current = fallback
+            motPeakTidRef.current = naTid
+          }
+        }
         if (!erSoloAktiv && motSporer && fjernVideo && fjernVideo.srcObject) {
           try {
             const ut = motSporer.analyser(fjernVideo, lerret, taOffisiell)
@@ -742,7 +777,7 @@ function AktivtMoggernRom({
                   setGyldigeMot((n) => n + 1)
                   const p = ut.ramme.total ?? 0
                   if (
-                    !motPeakBildeRef.current ||
+                    motPeakPoengRef.current < 0 ||
                     (p > motPeakPoengRef.current + 0.05 && naTid - motPeakTidRef.current >= PEAK_BILDE_INTERVALL_MS)
                   ) {
                     const bilde = fangVideoBilde(fjernVideo, false)
@@ -809,6 +844,9 @@ function AktivtMoggernRom({
     if (ferdigSoloRundeRef.current === soloRunde) return
     ferdigSoloRundeRef.current = soloRunde
 
+    if (!egenPeakBildeRef.current && egenVideoRef.current) {
+      egenPeakBildeRef.current = fangVideoBilde(egenVideoRef.current, true)
+    }
     const maaling = byggSpillerMaaling(egenRammerRef.current, egenLysRef.current)
     setSoloMaaling(maaling)
     const id = meg ?? "solo"
@@ -823,11 +861,18 @@ function AktivtMoggernRom({
     setSoloFase("resultat")
   }, [erSoloAktiv, soloFase, gjenstarMs, soloRunde, byggSpillerMaaling, meg])
 
-  // Send 1v1 measurement report as soon as the 15 seconds finish.
+  // Send 1v1 measurement report + ephemeral Peak Mog portrait as soon as the 15 seconds finish.
   useEffect(() => {
     if (status.fase !== "maling" || !meg || gjenstarMs > 0) return
     if (sendtRapportRundeRef.current === status.runde) return
     sendtRapportRundeRef.current = status.runde
+
+    if (!egenPeakBildeRef.current && egenVideoRef.current) {
+      egenPeakBildeRef.current = fangVideoBilde(egenVideoRef.current, true)
+    }
+    if (!motPeakBildeRef.current && fjernVideoRef.current) {
+      motPeakBildeRef.current = fangVideoBilde(fjernVideoRef.current, false)
+    }
 
     const rapport = lagRapport()
     if (!rapport) return
@@ -836,9 +881,17 @@ function AktivtMoggernRom({
     )
     send("rapport", rapport as unknown as Record<string, unknown>)
 
+    const mittBilde = egenPeakBildeRef.current
+    if (mittBilde && mittBilde.length <= 120_000) {
+      send("bilde", { runde: status.runde, av: meg, dataUrl: mittBilde })
+    }
+
     // Re-send once after 1 s in case the first broadcast raced with phase change.
     const reprise = window.setTimeout(() => {
       send("rapport", rapport as unknown as Record<string, unknown>)
+      if (mittBilde && mittBilde.length <= 120_000) {
+        send("bilde", { runde: status.runde, av: meg, dataUrl: mittBilde })
+      }
     }, 1000)
     return () => window.clearTimeout(reprise)
   }, [status.fase, status.runde, meg, gjenstarMs, lagRapport, settStatus, send])
@@ -858,17 +911,22 @@ function AktivtMoggernRom({
     }
   }, [erVert, status.fase, status.deltakere, status.rapporter, status.faseStartTid, na, nyFase])
 
-  // Snapshot local Peak Mog portraits and update daily best score when a 1v1 round finishes.
+  // Snapshot Peak Mog portraits and update daily best score when a 1v1 round finishes.
   useEffect(() => {
     if (status.fase !== "resultat" || !meg) return
     if (lagretRekordRundeRef.current === status.runde) return
     lagretRekordRundeRef.current = status.runde
 
     const motDeltaker = status.deltakere.find((d) => d.id !== meg)
-    setPeakBilder({
-      [meg]: egenPeakBildeRef.current,
-      ...(motDeltaker ? { [motDeltaker.id]: motPeakBildeRef.current } : {}),
-    })
+    const sendtFraMot =
+      motDeltaker && motSendtBildeRef.current?.runde === status.runde && motSendtBildeRef.current.av === motDeltaker.id
+        ? motSendtBildeRef.current.dataUrl
+        : null
+    setPeakBilder((prev) => ({
+      ...prev,
+      [meg]: egenPeakBildeRef.current ?? prev[meg] ?? null,
+      ...(motDeltaker ? { [motDeltaker.id]: sendtFraMot ?? prev[motDeltaker.id] ?? motPeakBildeRef.current ?? null } : {}),
+    }))
 
     const utfall = regnDuellUtfall(status.deltakere, status.rapporter)
     const minRes = utfall.spillere.find((s) => s.deltaker.id === meg)
@@ -880,6 +938,18 @@ function AktivtMoggernRom({
       setResultatRekord(null)
     }
   }, [status.fase, status.runde, status.deltakere, status.rapporter, meg])
+
+  // Ensure the opponent receives our Peak Mog portrait even if the maling->resultat transition cleared the first retry.
+  useEffect(() => {
+    if (status.fase !== "resultat" || !meg) return
+    const mittBilde = egenPeakBildeRef.current
+    if (!mittBilde || mittBilde.length > 120_000) return
+    send("bilde", { runde: status.runde, av: meg, dataUrl: mittBilde })
+    const reprise = window.setTimeout(() => {
+      send("bilde", { runde: status.runde, av: meg, dataUrl: mittBilde })
+    }, 700)
+    return () => window.clearTimeout(reprise)
+  }, [status.fase, status.runde, meg, send])
 
   // ---- Start duel / solo / rematch actions ----
   const motstanderKlar = !!motstander && motstander.klar && motstander.runde === status.runde

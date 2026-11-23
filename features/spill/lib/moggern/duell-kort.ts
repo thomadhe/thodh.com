@@ -69,9 +69,9 @@ export function lagreDagensBeste(poeng: number, modus: "duell" | "solo"): { verd
 
 /**
  * Captures a crisp 4:5 portrait snapshot from a live HTMLVideoElement using object-cover cropping.
- * Returns a local JPEG data URL kept strictly in browser memory (never sent over the network).
+ * Kept strictly ephemeral in browser memory and optional 2-player room broadcast (never persisted).
  */
-export function fangVideoBilde(video: HTMLVideoElement, speilet: boolean, bredde = 400, hoyde = 500): string | null {
+export function fangVideoBilde(video: HTMLVideoElement, speilet: boolean, bredde = 280, hoyde = 350): string | null {
   if (typeof document === "undefined") return null
   const vw = video.videoWidth
   const vh = video.videoHeight
@@ -98,7 +98,9 @@ export function fangVideoBilde(video: HTMLVideoElement, speilet: boolean, bredde
   ctx.restore()
 
   try {
-    return lerret.toDataURL("image/jpeg", 0.84)
+    const bilde = lerret.toDataURL("image/jpeg", 0.74)
+    if (bilde.length <= 45_000) return bilde
+    return lerret.toDataURL("image/jpeg", 0.56)
   } catch {
     return null
   }
@@ -239,10 +241,12 @@ export async function lastNedDuellKortPng(input: {
     ctx.save()
     tegnAvrundetRekt(ctx, bildeX, bildeY, bildeW, bildeH, 20)
     ctx.clip()
-    if (img) {
-      const sk = Math.max(bildeW / img.width, bildeH / img.height)
-      const tw = img.width * sk
-      const th = img.height * sk
+    const iw = img ? img.naturalWidth || img.width : 0
+    const ih = img ? img.naturalHeight || img.height : 0
+    if (img && iw > 0 && ih > 0) {
+      const sk = Math.max(bildeW / iw, bildeH / ih)
+      const tw = iw * sk
+      const th = ih * sk
       ctx.drawImage(img, bildeX + (bildeW - tw) / 2, bildeY + (bildeH - th) / 2, tw, th)
     } else {
       ctx.fillStyle = "#24272c"
