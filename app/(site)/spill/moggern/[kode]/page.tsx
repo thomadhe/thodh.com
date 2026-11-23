@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { MoggernRom } from "@/features/spill/components/moggern-rom"
+import { spillskrift } from "@/features/spill/components/skrift"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
 import { erGyldigKode, normaliserKode } from "@/features/spill/lib/duell/rom"
 import { utledVisningsnavn } from "@/features/spill/lib/moggern/duell"
@@ -41,6 +42,7 @@ export default async function Page({ params }: PageProps<"/spill/moggern/[kode]"
     <SpillRamme
       spillId="moggern"
       bred
+      klasse={`${spillskrift.className} overflow-x-clip`}
       regler={
         <>
           <p>

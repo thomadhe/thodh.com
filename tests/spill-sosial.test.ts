@@ -213,3 +213,22 @@ test("SQL-migrasjonen har streng RLS og lekker ikke e-post", () => {
   assert.ok(!/for update\b[\s\S]{0,60}on public\.spill_resultater/i.test(sql), "spill_resultater skal være uforanderlig")
   assert.ok(!/for delete\b[\s\S]{0,60}on public\.spill_resultater/i.test(sql), "spill_resultater skal ikke kunne slettes")
 })
+
+test("visningsnavn: eierens ønskede navn godtas, og profil-API-et tar imot POST fra inline-redigering", () => {
+  for (const navn of ["thomasheesh", "tommogger", "Tom Mogger 67", "Ø·Å"]) {
+    const vurdert = validerVisningsnavn(navn)
+    assert.equal(vurdert.ok, true, navn)
+  }
+  assert.equal(validerVisningsnavn("tom.mogger@example.com").ok, false)
+  assert.equal(validerVisningsnavn("x".repeat(25)).ok, false)
+  assert.equal(validerVisningsnavn("xy").ok, true)
+
+  const rute = readFileSync("app/(site)/spill/api/profil/route.ts", "utf8")
+  assert.match(rute, /export async function PUT/)
+  assert.match(rute, /export const POST = PUT/)
+
+  // Camera policy: one site-wide header so App Router soft navigation into Moggern is never blocked
+  const konfig = readFileSync("next.config.ts", "utf8")
+  assert.match(konfig, /source: "\/:path\*"[\s\S]*camera=\(self\)/)
+  assert.doesNotMatch(konfig, /camera=\(\)/)
+})

@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { MoggernInngang } from "@/features/spill/components/moggern-inngang"
+import { spillskrift } from "@/features/spill/components/skrift"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
 import { utledVisningsnavn } from "@/features/spill/lib/moggern/duell"
 import { createClient } from "@/lib/supabase/server"
@@ -33,6 +34,7 @@ export default async function Page() {
     <SpillRamme
       spillId="moggern"
       bred
+      klasse={`${spillskrift.className} overflow-x-clip`}
       regler={
         <>
           <p>

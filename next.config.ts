@@ -18,18 +18,14 @@ const nextConfig: NextConfig = {
     ];
   },
   async headers() {
+    // One policy for every page. App Router soft navigation (<Link> from / or /spill to /spill/moggern) keeps the
+    // first document's Permissions-Policy, so an empty site-wide camera allowlist would silently block getUserMedia in Moggern.
+    // camera=(self) lets only thodh.com itself ask (never third-party iframes). The microphone is likewise limited to
+    // thodh.com itself: Otsjoba's speech input needs it, so microphone=() would break that page.
     return [
       {
         source: "/:path*",
-        headers: [{ key: "Permissions-Policy", value: "camera=()" }],
-      },
-      {
-        source: "/spill/moggern",
-        headers: [{ key: "Permissions-Policy", value: "camera=(self), microphone=()" }],
-      },
-      {
-        source: "/spill/moggern/:path*",
-        headers: [{ key: "Permissions-Policy", value: "camera=(self), microphone=()" }],
+        headers: [{ key: "Permissions-Policy", value: "camera=(self), microphone=(self)" }],
       },
     ];
   },

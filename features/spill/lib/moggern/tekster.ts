@@ -26,7 +26,7 @@ export const RANG_TITLER: readonly RangTittel[] = [
     minPoeng: 9.0,
     maksPoeng: 10.0,
     linje: "Kameraet knelte og ba om autograf. Ren statistisk anomalitet.",
-    farge: "bg-lime-400 text-neutral-950",
+    farge: "bg-lime-400 text-[#18191b]",
   },
   {
     id: "sheeshern",
@@ -34,7 +34,7 @@ export const RANG_TITLER: readonly RangTittel[] = [
     minPoeng: 8.0,
     maksPoeng: 8.9,
     linje: "Sheesh. Linsa måtte blunke to ganger for å sjekke om det var filter.",
-    farge: "bg-emerald-400 text-neutral-950",
+    farge: "bg-emerald-400 text-[#18191b]",
   },
   {
     id: "aura-farmer",
@@ -42,7 +42,7 @@ export const RANG_TITLER: readonly RangTittel[] = [
     minPoeng: 7.0,
     maksPoeng: 7.9,
     linje: "Høster aura uten å prøve engang. Solid kjeve-til-lys-forhold.",
-    farge: "bg-cyan-400 text-neutral-950",
+    farge: "bg-cyan-400 text-[#18191b]",
   },
   {
     id: "mid-mogger",
@@ -50,7 +50,7 @@ export const RANG_TITLER: readonly RangTittel[] = [
     minPoeng: 6.0,
     maksPoeng: 6.9,
     linje: "Over snittet i vennegjengen, men ikke si opp dagjobben helt ennå.",
-    farge: "bg-sky-400 text-neutral-950",
+    farge: "bg-sky-400 text-[#18191b]",
   },
   {
     id: "normie",
@@ -58,7 +58,7 @@ export const RANG_TITLER: readonly RangTittel[] = [
     minPoeng: 5.0,
     maksPoeng: 5.9,
     linje: "Trygg, klassisk, og akkurat midt på treet. Det finnes håp i godt lys.",
-    farge: "bg-amber-300 text-neutral-950",
+    farge: "bg-amber-300 text-[#18191b]",
   },
   {
     id: "venstredude",
@@ -66,7 +66,7 @@ export const RANG_TITLER: readonly RangTittel[] = [
     minPoeng: 4.0,
     maksPoeng: 4.9,
     linje: "Litt skjev vinkel eller litt sliten tirsdag? Vi skylder på webkameraet.",
-    farge: "bg-orange-400 text-neutral-950",
+    farge: "bg-orange-400 text-[#18191b]",
   },
   {
     id: "chopped",
@@ -74,7 +74,7 @@ export const RANG_TITLER: readonly RangTittel[] = [
     minPoeng: 3.0,
     maksPoeng: 3.9,
     linje: "Huff da. Kalkulatoren trenger et øyeblikk for seg selv etter denne runden.",
-    farge: "bg-rose-400 text-neutral-950",
+    farge: "bg-rose-400 text-[#18191b]",
   },
   {
     id: "bjeffern",

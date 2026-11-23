@@ -127,14 +127,14 @@ export function SpillHistorikk({ innlogget }: { innlogget: boolean }) {
           { navn: "Dager spilt", verdi: String(oppsummering.unikeDager) },
           { navn: "Ulike spill", verdi: String(oppsummering.unikeSpill) },
         ].map((k) => (
-          <div key={k.navn} className="rounded-2xl border border-white/[0.08] bg-[#232529] px-4 py-3.5 text-center">
+          <div key={k.navn} className="rounded-[28px] border border-white/[0.07] bg-[#26282c] px-4 py-3.5 text-center">
             <p className="font-mono text-2xl font-bold tabular-nums text-neutral-50">{k.verdi}</p>
             <p className="mt-1 text-xs text-neutral-400">{k.navn}</p>
           </div>
         ))}
       </section>
 
-      <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-[#232529] p-4">
+      <section className="flex flex-wrap items-center justify-between gap-3 rounded-[28px] border border-white/[0.07] bg-[#26282c] p-4 sm:p-5">
         <div className="flex flex-wrap items-center gap-2">
           <label className="sr-only" htmlFor="historikk-spill">
             Velg spill
@@ -143,7 +143,7 @@ export function SpillHistorikk({ innlogget }: { innlogget: boolean }) {
             id="historikk-spill"
             value={valgtSpill}
             onChange={(e) => setValgtSpill(e.target.value)}
-            className="h-9 rounded-xl border border-white/15 bg-[#18191b] px-3 text-sm text-neutral-100 outline-none focus:border-white/35"
+            className="h-9 rounded-full border border-white/15 bg-[#18191b] px-3 text-sm text-neutral-100 outline-none focus:border-white/35"
           >
             <option value="alle">Alle spill</option>
             {spill.map((s) => (
@@ -153,7 +153,7 @@ export function SpillHistorikk({ innlogget }: { innlogget: boolean }) {
             ))}
           </select>
 
-          <div className="flex items-center gap-1 rounded-xl border border-white/15 bg-[#18191b] px-1.5 py-1">
+          <div className="flex items-center gap-1 rounded-full border border-white/10 bg-[#18191b] px-1.5 py-1">
             {valgtManed === "alle" ? (
               <button
                 type="button"
@@ -168,7 +168,7 @@ export function SpillHistorikk({ innlogget }: { innlogget: boolean }) {
                   type="button"
                   disabled={valgtManed <= FORSTE_MANED}
                   onClick={() => setValgtManed((m) => flyttManed(m, -1))}
-                  className="rounded-lg p-1 text-neutral-300 hover:bg-white/10 disabled:opacity-30"
+                  className="rounded-full p-1 text-neutral-300 transition hover:bg-white/10 hover:text-white disabled:opacity-30"
                   aria-label="Forrige måned"
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -178,7 +178,7 @@ export function SpillHistorikk({ innlogget }: { innlogget: boolean }) {
                   type="button"
                   disabled={valgtManed >= denneManeden}
                   onClick={() => setValgtManed((m) => flyttManed(m, 1))}
-                  className="rounded-lg p-1 text-neutral-300 hover:bg-white/10 disabled:opacity-30"
+                  className="rounded-full p-1 text-neutral-300 transition hover:bg-white/10 hover:text-white disabled:opacity-30"
                   aria-label="Neste måned"
                 >
                   <ChevronRight className="h-4 w-4" />
@@ -186,7 +186,7 @@ export function SpillHistorikk({ innlogget }: { innlogget: boolean }) {
                 <button
                   type="button"
                   onClick={() => setValgtManed("alle")}
-                  className="ml-1 rounded-lg px-2 py-0.5 text-[11px] text-neutral-400 hover:bg-white/10 hover:text-white"
+                  className="ml-1 rounded-full px-2 py-0.5 text-[11px] text-neutral-400 hover:bg-white/10 hover:text-white"
                 >
                   Alle
                 </button>
@@ -199,7 +199,7 @@ export function SpillHistorikk({ innlogget }: { innlogget: boolean }) {
           type="button"
           onClick={synkNa}
           disabled={synker || !databaseKlar}
-          className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-white/15 bg-white/[0.04] px-3 text-xs font-medium text-neutral-200 transition hover:bg-white/[0.08] disabled:opacity-45"
+          className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3 text-xs font-medium text-neutral-200 transition hover:bg-white/[0.08] disabled:opacity-45"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${synker ? "animate-spin" : ""}`} />
           <span>Last opp lokale ({lokaltAntall})</span>
@@ -207,13 +207,13 @@ export function SpillHistorikk({ innlogget }: { innlogget: boolean }) {
       </section>
 
       {synkMelding ? (
-        <p className="rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-2.5 text-xs text-emerald-300">{synkMelding}</p>
+        <p className="rounded-2xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-2.5 text-xs text-emerald-300">{synkMelding}</p>
       ) : null}
       {feil ? (
-        <p className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs text-amber-200">{feil}</p>
+        <p className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs text-amber-200">{feil}</p>
       ) : null}
 
-      <section className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#232529]">
+      <section className="overflow-hidden rounded-[28px] border border-white/[0.07] bg-[#26282c]">
         {laster ? (
           <div className="p-8 text-center text-sm text-neutral-400">Henter historikk…</div>
         ) : rader.length === 0 ? (
@@ -224,7 +224,7 @@ export function SpillHistorikk({ innlogget }: { innlogget: boolean }) {
             </p>
             <Link
               href="/spill"
-              className="mt-4 inline-flex h-9 items-center rounded-xl bg-neutral-100 px-4 text-xs font-semibold text-[#18191b] hover:bg-white"
+              className="mt-4 inline-flex h-9 items-center rounded-full bg-neutral-100 px-4 text-xs font-semibold text-[#18191b] hover:bg-white"
             >
               Gå til dagens spill
             </Link>

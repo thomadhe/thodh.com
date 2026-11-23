@@ -102,3 +102,6 @@ export async function PUT(request: Request) {
   }
   return jsonPrivat({ melding: "Prøv igjen om et øyeblikk." }, 500)
 }
+
+/** Same as PUT: lets inline display-name editors save with a plain POST `{ visningsnavn }`. */
+export const POST = PUT

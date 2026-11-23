@@ -1,13 +1,21 @@
 // Deterministic, transparent 0–10 face-landmark scoring for Moggern (pure math-for-fun, zero scientific basis).
 //
+// Original TypeScript math, inspired by open-source 478-point MediaPipe Face Landmarker projects such as
+// LcccSky/facial-proportion-math (MIT) and DroneOps/MogOps. No trained weights or datasets are copied.
+//
 // Pipeline per video frame:
 //   1. Extract head pose (yaw, pitch, roll) from MediaPipe's 4×4 facial transformation matrix (or geometric fallback).
 //   2. Reject non-frontal frames (|yaw| > 14°, |pitch| > 14°, |roll| > 18°) and frames where the face is too small/large.
 //   3. Convert normalized [0, 1] landmarks to pixel aspect-ratio space, compute eye centers & interpupillary distance (IPD).
 //   4. Rotate all landmarks around the eye midpoint by -roll so the eye line is horizontal, and divide by IPD.
 //      Because horizontal direction is canonicalized from the image's left/right eye, scores are invariant to mirroring.
-//   5. Compute 7 sub-scores on 0–10 by distance from target proportion intervals, and combine with fixed weights.
-//   6. Across the ~10 s duel, average valid frames with a 10% trimmed mean so single-frame jitter or blinks do not skew it.
+//   5. Compute craniofacial measurements (canthal tilt, PFR, 3D gonial angle, fWHR, ESR, thirds, φ mouth/nose …) and
+//      score each against an anthropometric target range with an asymmetric Gaussian plateau → 7 sub-scores on 0–10.
+//   6. Combine sub-scores with fixed weights into a raw structural score, then map it through a population
+//      bell-curve calibration (normal CDF) so real faces genuinely spread across 0–10 instead of clustering at 6–7.
+//   7. Add live "mog-uttrykk" bonuses from MediaPipe's 52 face blendshapes (The Rock, jegerøyne, mewing …),
+//      exponentially smoothed across frames. Final total is clamped to [0, 10].
+//   8. Across the ~10 s duel, average valid frames with a 10% trimmed mean so single-frame jitter or blinks do not skew it.
 
 export type Punkt3D = {
   x: number
@@ -47,43 +55,43 @@ export const DELPOENG_LISTE: readonly DelpoengInfo[] = [
     id: "symmetri",
     navn: "Symmetri",
     vekt: 0.2,
-    kortForklaring: "Speilte punkter på venstre og høyre side rundt midtlinjen.",
+    kortForklaring: "16 speilte punktpar rundt midtlinjen, normalisert mot ansiktets bredde og høyde.",
   },
   {
     id: "kjevelinje",
     navn: "Kjevelinje",
     vekt: 0.17,
-    kortForklaring: "Kjevebredde mot kinnben og vinkelen langs kjevekonturen.",
+    kortForklaring: "Kjeve-/kinnbensbredde, ekte 3D-kjevevinkel (tragion → gonion → hake) og skarp kjevekontur.",
   },
   {
     id: "oyevinkel",
     navn: "Øyevinkel",
     vekt: 0.15,
-    kortForklaring: "Vinkelen fra indre til ytre øyekrok relativt til ansiktets horisont.",
+    kortForklaring: "Øyekrok-tilt i grader pluss øyeform (PFR = øyebredde / øyehøyde — mandelform slår runde øyne).",
   },
   {
     id: "midtansikt",
     navn: "Midtansikt",
     vekt: 0.13,
-    kortForklaring: "Forholdet mellom pupillavstand og avstanden fra øyne til overleppe.",
+    kortForklaring: "Pupillavstand mot øye-til-overleppe og fWHR (kinnbensbredde / bryn-til-overleppe).",
   },
   {
     id: "ansiktstredjedeler",
     navn: "Ansiktstredjedeler",
     vekt: 0.13,
-    kortForklaring: "Balanse mellom panne, nese og hake langs midtlinjen.",
+    kortForklaring: "Balanse mellom panne, nese og hake, pluss hake-til-filtrum-forholdet.",
   },
   {
     id: "oyeavstand",
     navn: "Øyeavstand",
     vekt: 0.11,
-    kortForklaring: "Avstand mellom øynene mot øyebredde og ansiktsbredde (femtedeler).",
+    kortForklaring: "ESR (pupillavstand / ansiktsbredde, ideelt ~0,45–0,47) og ansiktets femtedeler.",
   },
   {
     id: "harmoni",
     navn: "Harmoni",
     vekt: 0.11,
-    kortForklaring: "Helhetlig balanse mellom bredde/høyde, munn/nese og jevne delpoeng.",
+    kortForklaring: "Gyllent snitt munn/nese (φ ≈ 1,618), nese mot øyeavstand, leppeforhold og jevne delpoeng.",
   },
 ] as const
 
@@ -106,6 +114,17 @@ export const MAKS_IPD_ANDEL = 0.52
 /** Minimum valid frontal frames needed over the ~10 s capture window. */
 export const MIN_GYLDIGE_RAMMER = 12
 
+/**
+ * Population bell-curve calibration: raw structural score R (weighted 0–10) → 10 · Φ((R − μ) / σ).
+ * μ is where a typical webcam face lands on the raw scale, σ how spread real faces are around it.
+ * Average faces land around 5–6, weak proportions fall to 0–3, and only elite proportions break 9.
+ */
+export const KALIBRERING_SNITT = 6.8
+export const KALIBRERING_SPREDNING = 1.3
+
+/** Golden ratio φ used for the mouth-to-nose width target. */
+export const GYLDENT_SNITT = (1 + Math.sqrt(5)) / 2
+
 // Canonical MediaPipe Face Landmarker (468 / 478) indices.
 export const PUNKTER = {
   panneTopp: 10,
@@ -115,6 +134,8 @@ export const PUNKTER = {
   neseBunn: 2,
   overleppeTopp: 0,
   munnMidt: 13,
+  underleppeTopp: 14,
+  underleppeBunn: 17,
   hake: 152,
 
   // Subject's right side (image left on unmirrored camera)
@@ -123,10 +144,12 @@ export const PUNKTER = {
   hoyreOyeTopp: 159,
   hoyreOyeBunn: 145,
   hoyreIris: 468,
+  hoyreTragion: 127,
   hoyreKinnben: 234,
   hoyreKjeveOvre: 132,
   hoyreKjeveHjorne: 172,
   hoyreKjeveNedre: 136,
+  hoyreHakeKropp: 149,
   hoyreNeseVinge: 129,
   hoyreMunnvik: 61,
   hoyreBrynYtre: 70,
@@ -139,10 +162,12 @@ export const PUNKTER = {
   venstreOyeTopp: 386,
   venstreOyeBunn: 374,
   venstreIris: 473,
+  venstreTragion: 356,
   venstreKinnben: 454,
   venstreKjeveOvre: 361,
   venstreKjeveHjorne: 397,
   venstreKjeveNedre: 365,
+  venstreHakeKropp: 378,
   venstreNeseVinge: 358,
   venstreMunnvik: 291,
   venstreBrynYtre: 300,
@@ -159,16 +184,77 @@ export const SYMMETRI_PAR: readonly (readonly [number, number])[] = [
   [PUNKTER.hoyreBrynYtre, PUNKTER.venstreBrynYtre],
   [PUNKTER.hoyreBrynMidt, PUNKTER.venstreBrynMidt],
   [PUNKTER.hoyreBrynIndre, PUNKTER.venstreBrynIndre],
+  [PUNKTER.hoyreTragion, PUNKTER.venstreTragion],
   [PUNKTER.hoyreKinnben, PUNKTER.venstreKinnben],
   [PUNKTER.hoyreKjeveOvre, PUNKTER.venstreKjeveOvre],
   [PUNKTER.hoyreKjeveHjorne, PUNKTER.venstreKjeveHjorne],
   [PUNKTER.hoyreKjeveNedre, PUNKTER.venstreKjeveNedre],
+  [PUNKTER.hoyreHakeKropp, PUNKTER.venstreHakeKropp],
   [PUNKTER.hoyreNeseVinge, PUNKTER.venstreNeseVinge],
   [PUNKTER.hoyreMunnvik, PUNKTER.venstreMunnvik],
   [116, 345], // outer cheek
 ] as const
 
 export type Veiledning = "ingen-ansikt" | "for-langt-unna" | "for-naerme" | "snu-rett" | "vipp-rett" | "ok"
+
+// ---- Mog-uttrykk (blendshape expression bonuses) ----
+
+export type MogUttrykkId = "the-rock" | "jegeroyne" | "innsugde-kinn" | "mewing" | "smiler" | "oppblaste-kinn"
+
+export type MogUttrykkInfo = {
+  id: MogUttrykkId
+  navn: string
+  /** Max bonus (positive) or penalty (negative) at full strength. */
+  maks: number
+  /** Ramp start (signal where the bonus begins) and end (signal where it is maxed out). */
+  fra: number
+  til: number
+  forklaring: string
+}
+
+export const MOG_UTTRYKK: readonly MogUttrykkInfo[] = [
+  { id: "the-rock", navn: "The Rock", maks: 0.9, fra: 0.3, til: 0.65, forklaring: "Ett øyenbryn hevet, det andre rolig." },
+  { id: "jegeroyne", navn: "Jegerøyne", maks: 0.7, fra: 0.68, til: 0.9, forklaring: "Myse uten å blunke." },
+  { id: "innsugde-kinn", navn: "Innsugde kinn", maks: 0.65, fra: 0.68, til: 0.95, forklaring: "Blue steel: sug inn kinnene med lukket munn." },
+  { id: "mewing", navn: "Mewing", maks: 0.45, fra: 0.4, til: 0.7, forklaring: "Kjeven fram eller leppene presset sammen." },
+  { id: "smiler", navn: "Smiler", maks: -0.6, fra: 0.35, til: 0.8, forklaring: "Ekte moggere smiler ikke!" },
+  { id: "oppblaste-kinn", navn: "Oppblåste kinn", maks: -0.4, fra: 0.3, til: 0.7, forklaring: "Ballongkinn er ikke aura." },
+] as const
+
+export type MogUttrykkStyrker = Record<MogUttrykkId, number>
+
+export type MogUttrykkResultat = {
+  /** 0–1 strength per expression (0 = not doing it, 1 = maxed out). */
+  styrker: MogUttrykkStyrker
+  /** Sum of bonuses and penalties in score points. */
+  bonus: number
+}
+
+export const MAKS_UTTRYKK_BONUS = MOG_UTTRYKK.reduce((s, u) => s + Math.max(0, u.maks), 0)
+export const MIN_UTTRYKK_BONUS = MOG_UTTRYKK.reduce((s, u) => s + Math.min(0, u.maks), 0)
+
+/** Blendshape scores by MediaPipe category name (e.g. `browOuterUpLeft`). */
+export type Blendshapes = Readonly<Record<string, number>>
+
+export type AnsiktsMaal = {
+  /** Mean mirrored deviation normalized by face width/height. */
+  asymmetri: number
+  canthalTilt: number
+  pfr: number
+  kjeveForhold: number
+  gonialVinkel3D: number
+  kjeveKontur: number
+  midtansiktForhold: number
+  fwhr: number
+  tredjedelAvvik: number
+  hakeFiltrum: number
+  esr: number
+  oyeFemtedel: number
+  oyeAnsiktBredde: number
+  munnNese: number
+  neseOyeavstand: number
+  leppeForhold: number
+}
 
 export type RammeResultat = {
   gyldig: boolean
@@ -177,6 +263,14 @@ export type RammeResultat = {
   /** Interpupillary distance as a fraction of the shorter image edge. */
   ipdAndel: number
   delpoeng?: DelpoengKart
+  maal?: AnsiktsMaal
+  /** Weighted raw structural score before calibration (0–10). */
+  raaPoeng?: number
+  /** Calibrated structural score (0–10) without expression bonus. */
+  strukturPoeng?: number
+  /** Expression strengths & bonus (always 0 bonus when no blendshapes were supplied). */
+  uttrykk?: MogUttrykkResultat
+  /** Final 0–10 frame score = calibrated structure + expression bonus. */
   total?: number
 }
 
@@ -186,7 +280,7 @@ export type KvalitetStats = {
   snittAbsYaw: number
   snittAbsPitch: number
   snittIpdAndel: number
-  /** Score standard deviation across valid frames (lower = steadier pose). */
+  /** Raw structural score standard deviation across valid frames (lower = steadier pose). */
   stabilitet: number
 }
 
@@ -194,6 +288,8 @@ export type SamletMaaling = {
   ok: boolean
   total: number
   delpoeng: DelpoengKart
+  /** Smoothed, trimmed-mean expression bonus across the capture (score points). */
+  uttrykkBonus: number
   kvalitet: KvalitetStats
 }
 
@@ -207,7 +303,7 @@ const avrund = (n: number, desimaler = 1) => {
 const klem = (n: number, min: number, maks: number) => Math.max(min, Math.min(maks, n))
 
 /**
- * Smooth target-range scoring function returning 0.0–10.0.
+ * Smooth target-range scoring function returning 0.0–10.0 (legacy symmetric dome, kept for compatibility).
  * Inside [idealMin, idealMax], scores 9.2–10.0 (peaking at the midpoint).
  * Outside the range, falls off smoothly with Gaussian decay controlled by `spredning`.
  */
@@ -227,6 +323,202 @@ export function maalScore(verdi: number, idealMin: number, idealMax: number, spr
 }
 
 /**
+ * Asymmetric Gaussian plateau score (0.0–10.0).
+ * A flat 10 inside the anthropometric plateau [idealMin, idealMax]. Below it, the score decays as a Gaussian with
+ * σ = `sigmaLav`; above it with σ = `sigmaHoy`. One σ outside the plateau gives ≈ 6.1, two σ ≈ 1.4.
+ * Asymmetry lets e.g. round eyes be punished harder than slightly too-narrow almond eyes.
+ */
+export function asymPlateauScore(verdi: number, idealMin: number, idealMax: number, sigmaLav: number, sigmaHoy = sigmaLav): number {
+  if (!Number.isFinite(verdi) || sigmaLav <= 0 || sigmaHoy <= 0) return 0
+  if (verdi >= idealMin && verdi <= idealMax) return 10
+  const z = verdi < idealMin ? (idealMin - verdi) / sigmaLav : (verdi - idealMax) / sigmaHoy
+  return avrund(klem(10 * Math.exp(-0.5 * z * z), 0, 10), 2)
+}
+
+/** Error function (Abramowitz & Stegun 7.1.26, max error 1.5e-7). Deterministic across browsers. */
+function erf(x: number): number {
+  const tegn = x < 0 ? -1 : 1
+  const a = Math.abs(x)
+  const t = 1 / (1 + 0.3275911 * a)
+  const y = 1 - ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-a * a)
+  return tegn * y
+}
+
+/** Standard normal cumulative distribution Φ(z). */
+export function normalFordeling(z: number): number {
+  return 0.5 * (1 + erf(z / Math.SQRT2))
+}
+
+/**
+ * Population bell-curve calibration: maps the raw weighted structural score (0–10) to a 0–10 percentile-like score.
+ * Monotonic, so ranking between two faces never changes — it only stretches the crowded middle apart.
+ */
+export function kalibrerPoeng(raa: number, snitt = KALIBRERING_SNITT, spredning = KALIBRERING_SPREDNING): number {
+  if (!Number.isFinite(raa)) return 0
+  const z = (klem(raa, 0, 10) - snitt) / spredning
+  return klem(10 * normalFordeling(z), 0, 10)
+}
+
+// ---- Pure measurement helpers (exported for tests) ----
+
+type Punkt2D = { x: number; y: number }
+type P3 = { x: number; y: number; z: number }
+
+const avstand2D = (a: Punkt2D, b: Punkt2D) => Math.hypot(a.x - b.x, a.y - b.y)
+
+/** Interior angle in degrees at vertex `b` formed by segments b→a and b→c (2D). */
+function vinkelGrader(a: Punkt2D, b: Punkt2D, c: Punkt2D): number {
+  const v1x = a.x - b.x
+  const v1y = a.y - b.y
+  const v2x = c.x - b.x
+  const v2y = c.y - b.y
+  const l1 = Math.hypot(v1x, v1y)
+  const l2 = Math.hypot(v2x, v2y)
+  if (l1 < 1e-6 || l2 < 1e-6) return 180
+  const cos = klem((v1x * v2x + v1y * v2y) / (l1 * l2), -1, 1)
+  return Math.acos(cos) * RAD_TIL_GRADER
+}
+
+/**
+ * True 3D mandibular (gonial) angle in degrees at the gonion, between the ramus (gonion → tragion)
+ * and the mandibular body (gonion → chin body). Invariant to any 3D rotation, scale and mirroring.
+ */
+export function compute3DGonialAngle(tragion: Punkt3D, gonion: Punkt3D, hakeKropp: Punkt3D): number {
+  const v1 = { x: tragion.x - gonion.x, y: tragion.y - gonion.y, z: (tragion.z ?? 0) - (gonion.z ?? 0) }
+  const v2 = { x: hakeKropp.x - gonion.x, y: hakeKropp.y - gonion.y, z: (hakeKropp.z ?? 0) - (gonion.z ?? 0) }
+  const l1 = Math.hypot(v1.x, v1.y, v1.z)
+  const l2 = Math.hypot(v2.x, v2.y, v2.z)
+  if (l1 < 1e-9 || l2 < 1e-9) return 180
+  const cos = klem((v1.x * v2.x + v1.y * v2.y + v1.z * v2.z) / (l1 * l2), -1, 1)
+  return Math.acos(cos) * RAD_TIL_GRADER
+}
+
+/** Palpebral Fissure Ratio: eye width (canthus to canthus) / eye opening height (upper to lower lid). */
+export function beregnPFR(ytre: Punkt2D, indre: Punkt2D, topp: Punkt2D, bunn: Punkt2D): number {
+  const bredde = avstand2D(ytre, indre)
+  const hoyde = Math.max(1e-6, avstand2D(topp, bunn))
+  return bredde / hoyde
+}
+
+/** Facial width-to-height ratio: bizygomatic width / brow-to-upper-lip height. */
+export function beregnFWHR(bizygomatiskBredde: number, brynTilOverleppe: number): number {
+  return bizygomatiskBredde / Math.max(1e-6, brynTilOverleppe)
+}
+
+/** Eye Separation Ratio: interpupillary distance / bizygomatic (face) width. Ideal ≈ 0.45–0.47. */
+export function beregnESR(ipd: number, bizygomatiskBredde: number): number {
+  return ipd / Math.max(1e-6, bizygomatiskBredde)
+}
+
+// ---- Expressions from blendshapes ----
+
+/** Smooth 0–1 ramp: 0 below `fra`, 1 above `til`, smoothstep in between. */
+export function rampe(verdi: number, fra: number, til: number): number {
+  if (!Number.isFinite(verdi) || til <= fra) return 0
+  const t = klem((verdi - fra) / (til - fra), 0, 1)
+  return t * t * (3 - 2 * t)
+}
+
+const bs = (b: Blendshapes, navn: string) => {
+  const v = b[navn]
+  return typeof v === "number" && Number.isFinite(v) ? klem(v, 0, 1) : 0
+}
+
+/** Raw 0–1 trigger signal per expression, before the ramp. Gates (no blink, closed mouth) zero the signal. */
+export function uttrykkSignaler(b: Blendshapes): MogUttrykkStyrker {
+  const smil = (bs(b, "mouthSmileLeft") + bs(b, "mouthSmileRight")) / 2
+  const blunk = (bs(b, "eyeBlinkLeft") + bs(b, "eyeBlinkRight")) / 2
+  const myse = (bs(b, "eyeSquintLeft") + bs(b, "eyeSquintRight")) / 2
+  const press = (bs(b, "mouthPressLeft") + bs(b, "mouthPressRight")) / 2
+  return {
+    "the-rock": Math.abs(bs(b, "browOuterUpLeft") - bs(b, "browOuterUpRight")),
+    jegeroyne: blunk < 0.75 ? myse : 0,
+    "innsugde-kinn": bs(b, "jawOpen") < 0.3 && smil < 0.2 ? bs(b, "mouthPucker") : 0,
+    mewing: Math.max(2 * bs(b, "jawForward"), press),
+    smiler: smil,
+    "oppblaste-kinn": bs(b, "cheekPuff"),
+  }
+}
+
+const tommeStyrker = (): MogUttrykkStyrker => ({
+  "the-rock": 0,
+  jegeroyne: 0,
+  "innsugde-kinn": 0,
+  mewing: 0,
+  smiler: 0,
+  "oppblaste-kinn": 0,
+})
+
+/** Sums the bonus for given 0–1 expression strengths. */
+export function bonusForStyrker(styrker: MogUttrykkStyrker): number {
+  let sum = 0
+  for (const u of MOG_UTTRYKK) sum += klem(styrker[u.id] ?? 0, 0, 1) * u.maks
+  return avrund(klem(sum, MIN_UTTRYKK_BONUS, MAKS_UTTRYKK_BONUS), 3)
+}
+
+/**
+ * Turns MediaPipe's 52 blendshapes into mog-uttrykk strengths and a score bonus.
+ * A resting face earns ~0.0 because every ramp starts well above resting blendshape levels.
+ */
+export function regnMogUttrykk(b: Blendshapes | null | undefined): MogUttrykkResultat {
+  if (!b) return { styrker: tommeStyrker(), bonus: 0 }
+  const signaler = uttrykkSignaler(b)
+  const styrker = tommeStyrker()
+  for (const u of MOG_UTTRYKK) styrker[u.id] = avrund(rampe(signaler[u.id], u.fra, u.til), 3)
+  return { styrker, bonus: bonusForStyrker(styrker) }
+}
+
+/** One exponential smoothing step: alpha = weight of the new sample (0–1). First sample passes through. */
+export function glattEksponentielt(forrige: number | null, ny: number, alpha: number): number {
+  if (forrige === null || !Number.isFinite(forrige)) return ny
+  const a = klem(alpha, 0, 1)
+  return forrige + a * (ny - forrige)
+}
+
+/** Exponentially smooths expression strengths frame to frame (so the bonus does not flicker). */
+export function glattUttrykk(forrige: MogUttrykkStyrker | null, ny: MogUttrykkStyrker, alpha: number): MogUttrykkStyrker {
+  const ut = tommeStyrker()
+  for (const u of MOG_UTTRYKK) ut[u.id] = glattEksponentielt(forrige ? forrige[u.id] : null, ny[u.id], alpha)
+  return ut
+}
+
+/** Live HUD smoothing state for one face. */
+export type LivePoengTilstand = {
+  struktur: number | null
+  styrker: MogUttrykkStyrker | null
+}
+
+export type LivePoeng = {
+  total: number
+  strukturPoeng: number
+  bonus: number
+  styrker: MogUttrykkStyrker
+}
+
+export const LIVE_ALPHA_STRUKTUR = 0.18
+export const LIVE_ALPHA_UTTRYKK = 0.35
+
+/**
+ * Feeds one valid frame into the live HUD smoother and returns the smoothed score.
+ * Structure moves slowly (stable rating); expressions react faster so posing is visibly rewarded.
+ */
+export function oppdaterLivePoeng(tilstand: LivePoengTilstand, ramme: RammeResultat): LivePoeng | null {
+  if (!ramme.gyldig || typeof ramme.strukturPoeng !== "number") return null
+  tilstand.struktur = glattEksponentielt(tilstand.struktur, ramme.strukturPoeng, LIVE_ALPHA_STRUKTUR)
+  const nyeStyrker = ramme.uttrykk?.styrker ?? tommeStyrker()
+  tilstand.styrker = glattUttrykk(tilstand.styrker, nyeStyrker, LIVE_ALPHA_UTTRYKK)
+  const bonus = bonusForStyrker(tilstand.styrker)
+  return {
+    total: avrund(klem(tilstand.struktur + bonus, 0, 10), 1),
+    strukturPoeng: avrund(tilstand.struktur, 1),
+    bonus: avrund(bonus, 2),
+    styrker: tilstand.styrker,
+  }
+}
+
+// ---- Head pose ----
+
+/**
  * Extracts yaw, pitch, and roll in degrees from a MediaPipe 4×4 facial transformation matrix.
  * MediaPipe's Matrix stores 16 floats in column-major order (OpenGL convention), where
  * R[row][col] = m[col * 4 + row]. For row-major matrices (where translation sits at m[3], m[7], m[11]),
@@ -235,7 +527,6 @@ export function maalScore(verdi: number, idealMin: number, idealMax: number, spr
 export function vinkelFraMatrise(matrise: ArrayLike<number>): HodeVinkel {
   if (matrise.length < 16) return { yaw: 0, pitch: 0, roll: 0 }
 
-  // Detect whether translation is in the last column (row-major: m[3], m[7], m[11]) or last row (column-major: m[12], m[13], m[14]).
   const kolonneTransl = Math.abs(matrise[12]) + Math.abs(matrise[13]) + Math.abs(matrise[14])
   const radTransl = Math.abs(matrise[3]) + Math.abs(matrise[7]) + Math.abs(matrise[11])
   const erRadMajor = radTransl > kolonneTransl + 1e-3
@@ -248,7 +539,6 @@ export function vinkelFraMatrise(matrise: ArrayLike<number>): HodeVinkel {
   const r12 = r(1, 2)
   const r22 = r(2, 2)
 
-  // Decompose rotation into yaw (Y), pitch (X), roll (Z) around frontal identity matrix.
   const yaw = Math.atan2(r02, r22) * RAD_TIL_GRADER
   const pitch = Math.atan2(-r12, Math.hypot(r02, r22)) * RAD_TIL_GRADER
   const roll = Math.atan2(r10, r00) * RAD_TIL_GRADER
@@ -260,9 +550,7 @@ export function vinkelFraMatrise(matrise: ArrayLike<number>): HodeVinkel {
   }
 }
 
-/**
- * Geometric fallback for estimating yaw, pitch, and roll when no transformation matrix is supplied.
- */
+/** Geometric fallback for estimating yaw, pitch, and roll when no transformation matrix is supplied. */
 export function vinkelFraPunkter(punkter: readonly Punkt3D[], bredde = 1, hoyde = 1): HodeVinkel {
   const rYtre = punkter[PUNKTER.hoyreOyeYtre]
   const lYtre = punkter[PUNKTER.venstreOyeYtre]
@@ -288,27 +576,9 @@ export function vinkelFraPunkter(punkter: readonly Punkt3D[], bredde = 1, hoyde 
   const oyeMidtY = (venstre.y + hoyre.y) / 2
   const ansiktHoyde = Math.max(1e-6, (hake.y - panne.y) * hoyde)
   const neseRel = (nese.y * hoyde - oyeMidtY) / ansiktHoyde
-  // Neutral nose tip sits ~0.23 of total face height below the eye line.
   const pitch = klem((neseRel - 0.23) * 90, -45, 45)
 
   return { yaw: avrund(yaw, 1), pitch: avrund(pitch, 1), roll: avrund(roll, 1) }
-}
-
-type Punkt2D = { x: number; y: number }
-
-const avstand2D = (a: Punkt2D, b: Punkt2D) => Math.hypot(a.x - b.x, a.y - b.y)
-
-/** Interior angle in degrees at vertex `b` formed by segments b→a and b→c. */
-function vinkelGrader(a: Punkt2D, b: Punkt2D, c: Punkt2D): number {
-  const v1x = a.x - b.x
-  const v1y = a.y - b.y
-  const v2x = c.x - b.x
-  const v2y = c.y - b.y
-  const l1 = Math.hypot(v1x, v1y)
-  const l2 = Math.hypot(v2x, v2y)
-  if (l1 < 1e-6 || l2 < 1e-6) return 180
-  const cos = klem((v1x * v2x + v1y * v2y) / (l1 * l2), -1, 1)
-  return Math.acos(cos) * RAD_TIL_GRADER
 }
 
 function oyeSentrum(punkter: readonly Punkt3D[], side: "hoyre" | "venstre", bredde: number, hoyde: number): Punkt2D {
@@ -328,13 +598,15 @@ function oyeSentrum(punkter: readonly Punkt3D[], side: "hoyre" | "venstre", bred
 
 /**
  * Evaluates a single video frame's Face Landmarker output.
- * Normalizes by IPD, corrects head roll, checks frontal pose, and computes all 7 sub-scores.
+ * Normalizes by IPD, corrects head roll, checks frontal pose, computes all 7 sub-scores,
+ * calibrates the structural score and adds the mog-uttrykk bonus from blendshapes (if supplied).
  */
 export function vurderRamme(
   punkter: readonly Punkt3D[] | null | undefined,
   matrise?: ArrayLike<number> | null,
   bredde = 640,
   hoyde = 480,
+  blendshapes?: Blendshapes | null,
 ): RammeResultat {
   if (!punkter || punkter.length < 468) {
     return {
@@ -398,95 +670,118 @@ export function vurderRamme(
     return { x: rx * xTegn, y: ry }
   }
 
-  // 1. SYMMETRI: average mirrored deviation across 14 canonical left/right landmark pairs.
+  // Raw 3D pixel-space point (MediaPipe z shares the x scale). Angles in 3D are rotation/scale/mirror invariant.
+  const p3 = (idx: number): P3 => {
+    const p = punkter[idx]
+    return { x: p.x * b, y: p.y * h, z: (p.z ?? 0) * b }
+  }
+
+  const panne = norm(PUNKTER.panneTopp)
+  const bryn = norm(PUNKTER.brynMidt)
+  const neseBunn = norm(PUNKTER.neseBunn)
+  const overleppe = norm(PUNKTER.overleppeTopp)
+  const hake = norm(PUNKTER.hake)
+  const rKinn = norm(PUNKTER.hoyreKinnben)
+  const lKinn = norm(PUNKTER.venstreKinnben)
+  const kinnBredde = Math.max(1e-5, avstand2D(rKinn, lKinn))
+  const totalHoyde = Math.max(1e-5, hake.y - panne.y)
+
+  // 1. SYMMETRI: mirrored deviation across 16 left/right pairs, x normalized by face width and y by face height.
   let symSum = 0
   for (const [rIdx, lIdx] of SYMMETRI_PAR) {
     const rP = norm(rIdx)
     const lP = norm(lIdx)
     // Perfect mirror across x = 0 means rP.x === -lP.x and rP.y === lP.y.
-    symSum += Math.hypot(rP.x + lP.x, rP.y - lP.y)
+    symSum += Math.hypot((rP.x + lP.x) / kinnBredde, (rP.y - lP.y) / totalHoyde)
   }
-  const snittAsym = symSum / SYMMETRI_PAR.length
-  const symmetri = maalScore(snittAsym, 0, 0.038, 0.095)
+  const asymmetri = symSum / SYMMETRI_PAR.length
+  const symmetri = asymPlateauScore(asymmetri, 0, 0.01, 0.016)
 
-  // 2. ØYEVINKEL (Canthal tilt): angle from inner corner to outer corner relative to face horizontal.
-  // Positive when outer corner sits higher (smaller y) than inner corner.
+  // 2. ØYEVINKEL: canthal tilt (degrees, positive = outer corner higher) + Palpebral Fissure Ratio.
   const rIndre = norm(PUNKTER.hoyreOyeIndre)
   const rYtre = norm(PUNKTER.hoyreOyeYtre)
   const lIndre = norm(PUNKTER.venstreOyeIndre)
   const lYtre = norm(PUNKTER.venstreOyeYtre)
+  const rTopp = norm(PUNKTER.hoyreOyeTopp)
+  const rBunn = norm(PUNKTER.hoyreOyeBunn)
+  const lTopp = norm(PUNKTER.venstreOyeTopp)
+  const lBunn = norm(PUNKTER.venstreOyeBunn)
 
   const tiltHoyre = Math.atan2(rIndre.y - rYtre.y, Math.max(1e-5, Math.abs(rYtre.x - rIndre.x))) * RAD_TIL_GRADER
   const tiltVenstre = Math.atan2(lIndre.y - lYtre.y, Math.max(1e-5, Math.abs(lYtre.x - lIndre.x))) * RAD_TIL_GRADER
-  const snittTilt = (tiltHoyre + tiltVenstre) / 2
-  const oyevinkel = maalScore(snittTilt, 3.0, 7.5, 6.2)
+  const canthalTilt = (tiltHoyre + tiltVenstre) / 2
+  const pfr = (beregnPFR(rYtre, rIndre, rTopp, rBunn) + beregnPFR(lYtre, lIndre, lTopp, lBunn)) / 2
 
-  // 3. KJEVELINJE: bigonial/bizygomatic ratio + gonial contour sharpness.
-  const rKinn = norm(PUNKTER.hoyreKinnben)
-  const lKinn = norm(PUNKTER.venstreKinnben)
+  const tiltPoeng = asymPlateauScore(canthalTilt, 3.0, 8.0, 4.5, 6)
+  // Hunter/almond eyes (PFR ≈ 2.9–3.7) reward; round eyes (low PFR) fall off fastest.
+  const pfrPoeng = asymPlateauScore(pfr, 2.9, 3.7, 0.4, 0.9)
+  const oyevinkel = 0.6 * tiltPoeng + 0.4 * pfrPoeng
+
+  // 3. KJEVELINJE: bigonial/bizygomatic width ratio + 3D gonial angle + 2D jaw contour sharpness.
   const rKjeve = norm(PUNKTER.hoyreKjeveHjorne)
   const lKjeve = norm(PUNKTER.venstreKjeveHjorne)
   const rOvre = norm(PUNKTER.hoyreKjeveOvre)
   const lOvre = norm(PUNKTER.venstreKjeveOvre)
-  const hake = norm(PUNKTER.hake)
+  const kjeveForhold = avstand2D(rKjeve, lKjeve) / kinnBredde
 
-  const kinnBredde = Math.max(1e-5, avstand2D(rKinn, lKinn))
-  const kjeveBredde = avstand2D(rKjeve, lKjeve)
-  const kjeveForhold = kjeveBredde / kinnBredde
+  const gonialVinkel3D =
+    (compute3DGonialAngle(p3(PUNKTER.hoyreTragion), p3(PUNKTER.hoyreKjeveHjorne), p3(PUNKTER.hoyreHakeKropp)) +
+      compute3DGonialAngle(p3(PUNKTER.venstreTragion), p3(PUNKTER.venstreKjeveHjorne), p3(PUNKTER.venstreHakeKropp))) /
+    2
+  const kjeveKontur = (vinkelGrader(rOvre, rKjeve, hake) + vinkelGrader(lOvre, lKjeve, hake)) / 2
 
-  const kjeveVinkelH = vinkelGrader(rOvre, rKjeve, hake)
-  const kjeveVinkelV = vinkelGrader(lOvre, lKjeve, hake)
-  const snittKjeveVinkel = (kjeveVinkelH + kjeveVinkelV) / 2
+  const kjeveRatioPoeng = asymPlateauScore(kjeveForhold, 0.76, 0.88, 0.09, 0.12)
+  // Sharper (smaller) angles are punished less than soft, obtuse jaws.
+  const gonialPoeng = asymPlateauScore(gonialVinkel3D, 118, 136, 14, 11)
+  const konturPoeng = asymPlateauScore(kjeveKontur, 120, 138, 16, 12)
+  const kjevelinje = 0.4 * kjeveRatioPoeng + 0.35 * gonialPoeng + 0.25 * konturPoeng
 
-  const kjeveRatioPoeng = maalScore(kjeveForhold, 0.76, 0.86, 0.13)
-  const kjeveVinkelPoeng = maalScore(snittKjeveVinkel, 122, 136, 17)
-  const kjevelinje = avrund(0.55 * kjeveRatioPoeng + 0.45 * kjeveVinkelPoeng, 2)
+  // 4. MIDTANSIKT: IPD / eye-line-to-upper-lip ratio + fWHR.
+  const midtansiktForhold = 1 / Math.max(1e-5, overleppe.y)
+  const fwhr = beregnFWHR(kinnBredde, overleppe.y - bryn.y)
+  const midtForholdPoeng = asymPlateauScore(midtansiktForhold, 0.94, 1.1, 0.12, 0.16)
+  const fwhrPoeng = asymPlateauScore(fwhr, 1.72, 2.05, 0.2, 0.3)
+  const midtansikt = 0.55 * midtForholdPoeng + 0.45 * fwhrPoeng
 
-  // 4. MIDTANSIKT: IPD / distance from eye line (y = 0) to upper lip.
-  const overleppe = norm(PUNKTER.overleppeTopp)
-  const oyeTilLeppe = Math.max(1e-5, overleppe.y)
-  const midtansiktForhold = 1 / oyeTilLeppe
-  const midtansikt = maalScore(midtansiktForhold, 0.94, 1.08, 0.21)
-
-  // 5. ANSIKTSTREDJEDELER: forehead (10->9), nose (9->2), lower face (2->152) shares.
-  const panne = norm(PUNKTER.panneTopp)
-  const bryn = norm(PUNKTER.brynMidt)
-  const neseBunn = norm(PUNKTER.neseBunn)
-  const totalHoyde = Math.max(1e-5, hake.y - panne.y)
+  // 5. ANSIKTSTREDJEDELER: forehead (10→9), nose (9→2), lower face (2→152) shares + chin-to-philtrum ratio.
   const t1 = Math.max(0, bryn.y - panne.y) / totalHoyde
   const t2 = Math.max(0, neseBunn.y - bryn.y) / totalHoyde
   const t3 = Math.max(0, hake.y - neseBunn.y) / totalHoyde
   // Target shares calibrated for MediaPipe's forehead landmark 10 (slightly below hairline).
   const tredjedelAvvik = (Math.abs(t1 - 0.29) + Math.abs(t2 - 0.35) + Math.abs(t3 - 0.36)) / 3
-  const ansiktstredjedeler = maalScore(tredjedelAvvik, 0, 0.022, 0.055)
+  const filtrum = Math.max(1e-5, overleppe.y - neseBunn.y)
+  const hakeFiltrum = Math.max(0, hake.y - norm(PUNKTER.underleppeBunn).y) / filtrum
+  const tredjedelPoeng = asymPlateauScore(tredjedelAvvik, 0, 0.02, 0.03)
+  const hakeFiltrumPoeng = asymPlateauScore(hakeFiltrum, 2.0, 2.6, 0.5, 0.8)
+  const ansiktstredjedeler = 0.65 * tredjedelPoeng + 0.35 * hakeFiltrumPoeng
 
-  // 6. ØYEAVSTAND (Facial fifths): intercanthal / eye width + eye width / face width.
+  // 6. ØYEAVSTAND: Eye Separation Ratio + facial fifths (intercanthal ≈ eye width ≈ 1/5 face width).
+  const esr = beregnESR(1, kinnBredde) // IPD is 1 in canonical coordinates.
   const indreAvstand = Math.abs(lIndre.x - rIndre.x)
-  const breddeH = avstand2D(rYtre, rIndre)
-  const breddeV = avstand2D(lYtre, lIndre)
-  const snittOyeBredde = Math.max(1e-5, (breddeH + breddeV) / 2)
-  const oyeFemtedelIndre = indreAvstand / snittOyeBredde
-  const oyeFemtedelBredde = snittOyeBredde / kinnBredde
+  const snittOyeBredde = Math.max(1e-5, (avstand2D(rYtre, rIndre) + avstand2D(lYtre, lIndre)) / 2)
+  const oyeFemtedel = indreAvstand / snittOyeBredde
+  const oyeAnsiktBredde = snittOyeBredde / kinnBredde
+  const esrPoeng = asymPlateauScore(esr, 0.44, 0.48, 0.03, 0.03)
+  const femtedelPoeng = asymPlateauScore(oyeFemtedel, 0.94, 1.14, 0.18, 0.22)
+  const breddePoeng = asymPlateauScore(oyeAnsiktBredde, 0.19, 0.235, 0.03, 0.035)
+  const oyeavstand = 0.4 * esrPoeng + 0.35 * femtedelPoeng + 0.25 * breddePoeng
 
-  const oyeAvstand1 = maalScore(oyeFemtedelIndre, 0.94, 1.12, 0.27)
-  const oyeAvstand2 = maalScore(oyeFemtedelBredde, 0.19, 0.23, 0.048)
-  const oyeavstand = avrund(0.55 * oyeAvstand1 + 0.45 * oyeAvstand2, 2)
-
-  // 7. HARMONI: fWHR + mouth-to-nose width + consistency across the 6 structural scores.
-  const fwhrHoyde = Math.max(1e-5, overleppe.y - bryn.y)
-  const fwhr = kinnBredde / fwhrHoyde
+  // 7. HARMONI: golden-ratio mouth/nose width, nose/intercanthal ratio, lower/upper lip ratio + sub-score balance.
   const neseBredde = Math.max(1e-5, avstand2D(norm(PUNKTER.hoyreNeseVinge), norm(PUNKTER.venstreNeseVinge)))
-  const munnBredde = avstand2D(norm(PUNKTER.hoyreMunnvik), norm(PUNKTER.venstreMunnvik))
-  const munnNeseForhold = munnBredde / neseBredde
+  const munnNese = avstand2D(norm(PUNKTER.hoyreMunnvik), norm(PUNKTER.venstreMunnvik)) / neseBredde
+  const neseOyeavstand = neseBredde / Math.max(1e-5, indreAvstand)
+  const overleppeHoyde = Math.max(1e-5, norm(PUNKTER.munnMidt).y - overleppe.y)
+  const underleppeHoyde = Math.max(0, norm(PUNKTER.underleppeBunn).y - norm(PUNKTER.underleppeTopp).y)
+  const leppeForhold = underleppeHoyde / overleppeHoyde
 
-  const fwhrPoeng = maalScore(fwhr, 1.72, 2.0, 0.32)
-  const munnNesePoeng = maalScore(munnNeseForhold, 1.38, 1.66, 0.34)
+  const gyldenPoeng = asymPlateauScore(munnNese, GYLDENT_SNITT - 0.13, GYLDENT_SNITT + 0.06, 0.22, 0.28)
+  const neseOyePoeng = asymPlateauScore(neseOyeavstand, 0.95, 1.25, 0.18, 0.22)
+  const leppePoeng = asymPlateauScore(leppeForhold, 1.35, 1.9, 0.35, 0.5)
   const seksDelpoeng = [symmetri, oyevinkel, kjevelinje, midtansikt, ansiktstredjedeler, oyeavstand]
   const snittSeks = seksDelpoeng.reduce((a, x) => a + x, 0) / seksDelpoeng.length
   const spredningSeks = Math.sqrt(seksDelpoeng.reduce((a, x) => a + (x - snittSeks) ** 2, 0) / seksDelpoeng.length)
-  const balansePoeng = maalScore(spredningSeks, 0, 1.1, 2.2)
-
-  const harmoni = avrund(0.4 * fwhrPoeng + 0.35 * munnNesePoeng + 0.25 * balansePoeng, 2)
+  const balansePoeng = asymPlateauScore(spredningSeks, 0, 1.0, 1.8)
+  const harmoni = 0.3 * gyldenPoeng + 0.2 * neseOyePoeng + 0.2 * leppePoeng + 0.3 * balansePoeng
 
   const delpoeng: DelpoengKart = {
     symmetri: avrund(symmetri, 1),
@@ -498,7 +793,27 @@ export function vurderRamme(
     harmoni: avrund(harmoni, 1),
   }
 
-  const total = regnTotal(delpoeng)
+  const maal: AnsiktsMaal = {
+    asymmetri: avrund(asymmetri, 4),
+    canthalTilt: avrund(canthalTilt, 2),
+    pfr: avrund(pfr, 3),
+    kjeveForhold: avrund(kjeveForhold, 3),
+    gonialVinkel3D: avrund(gonialVinkel3D, 1),
+    kjeveKontur: avrund(kjeveKontur, 1),
+    midtansiktForhold: avrund(midtansiktForhold, 3),
+    fwhr: avrund(fwhr, 3),
+    tredjedelAvvik: avrund(tredjedelAvvik, 4),
+    hakeFiltrum: avrund(hakeFiltrum, 3),
+    esr: avrund(esr, 3),
+    oyeFemtedel: avrund(oyeFemtedel, 3),
+    oyeAnsiktBredde: avrund(oyeAnsiktBredde, 3),
+    munnNese: avrund(munnNese, 3),
+    neseOyeavstand: avrund(neseOyeavstand, 3),
+    leppeForhold: avrund(leppeForhold, 3),
+  }
+
+  const raaPoeng = regnRaaPoeng(delpoeng)
+  const uttrykk = regnMogUttrykk(blendshapes)
 
   return {
     gyldig: true,
@@ -506,17 +821,30 @@ export function vurderRamme(
     vinkel: effektivVinkel,
     ipdAndel,
     delpoeng,
-    total,
+    maal,
+    raaPoeng,
+    strukturPoeng: avrund(kalibrerPoeng(raaPoeng), 2),
+    uttrykk,
+    total: regnTotal(delpoeng, uttrykk.bonus),
   }
 }
 
-/** Weighted total score (0.0–10.0) from the 7 sub-scores. */
-export function regnTotal(delpoeng: DelpoengKart): number {
+/** Weighted raw structural score (0.0–10.0, 2 decimals) from the 7 sub-scores, before calibration. */
+export function regnRaaPoeng(delpoeng: DelpoengKart): number {
   let sum = 0
   for (const info of DELPOENG_LISTE) {
     sum += klem(delpoeng[info.id], 0, 10) * info.vekt
   }
-  return avrund(klem(sum, 0, 10), 1)
+  return avrund(klem(sum, 0, 10), 2)
+}
+
+/**
+ * Final total score (0.0–10.0, 1 decimal): bell-curve calibrated weighted sub-scores plus expression bonus.
+ * Deterministic from (delpoeng, bonus), so a received duel report can always be recomputed and verified.
+ */
+export function regnTotal(delpoeng: DelpoengKart, uttrykkBonus = 0): number {
+  const bonus = Number.isFinite(uttrykkBonus) ? klem(uttrykkBonus, MIN_UTTRYKK_BONUS, MAKS_UTTRYKK_BONUS) : 0
+  return avrund(klem(kalibrerPoeng(regnRaaPoeng(delpoeng)) + bonus, 0, 10), 1)
 }
 
 /** Trimmed mean: drops 10% from each tail when n >= 10 to ignore occasional blink/jitter outliers. */
@@ -529,23 +857,35 @@ export function trimmetSnitt(verdier: readonly number[]): number {
   return sum / utsnitt.length
 }
 
+const tomtKart = (): DelpoengKart => ({
+  symmetri: 0,
+  oyevinkel: 0,
+  kjevelinje: 0,
+  midtansikt: 0,
+  ansiktstredjedeler: 0,
+  oyeavstand: 0,
+  harmoni: 0,
+})
+
 /**
  * Aggregates all evaluated frames from a ~10 s duel capture into a final deterministic score.
  * Requires at least `minGyldige` frontal frames (default MIN_GYLDIGE_RAMMER).
+ * Expression strengths are exponentially smoothed frame to frame, then trimmed-mean averaged,
+ * so you have to HOLD a mogging expression for most of the 10 seconds to earn its bonus.
  */
 export function aggregerRammer(rammer: readonly RammeResultat[], minGyldige = MIN_GYLDIGE_RAMMER): SamletMaaling {
-  const gyldige = rammer.filter((r): r is RammeResultat & { delpoeng: DelpoengKart; total: number } => r.gyldig && !!r.delpoeng && typeof r.total === "number")
+  const gyldige = rammer.filter(
+    (r): r is RammeResultat & { delpoeng: DelpoengKart; total: number } => r.gyldig && !!r.delpoeng && typeof r.total === "number",
+  )
   const medAnsikt = rammer.filter((r) => r.veiledning !== "ingen-ansikt")
 
   const snittAbsYaw = medAnsikt.length ? avrund(medAnsikt.reduce((a, r) => a + Math.abs(r.vinkel.yaw), 0) / medAnsikt.length, 1) : 0
   const snittAbsPitch = medAnsikt.length ? avrund(medAnsikt.reduce((a, r) => a + Math.abs(r.vinkel.pitch), 0) / medAnsikt.length, 1) : 0
   const snittIpdAndel = medAnsikt.length ? avrund(medAnsikt.reduce((a, r) => a + r.ipdAndel, 0) / medAnsikt.length, 3) : 0
 
-  const totaler = gyldige.map((r) => r.total)
-  const snittTotal = totaler.length ? totaler.reduce((a, x) => a + x, 0) / totaler.length : 0
-  const stabilitet = totaler.length
-    ? avrund(Math.sqrt(totaler.reduce((a, x) => a + (x - snittTotal) ** 2, 0) / totaler.length), 2)
-    : 0
+  const raa = gyldige.map((r) => (typeof r.raaPoeng === "number" ? r.raaPoeng : regnRaaPoeng(r.delpoeng)))
+  const snittRaa = raa.length ? raa.reduce((a, x) => a + x, 0) / raa.length : 0
+  const stabilitet = raa.length ? avrund(klem(Math.sqrt(raa.reduce((a, x) => a + (x - snittRaa) ** 2, 0) / raa.length), 0, 10), 2) : 0
 
   const kvalitet: KvalitetStats = {
     antallRammer: rammer.length,
@@ -557,20 +897,7 @@ export function aggregerRammer(rammer: readonly RammeResultat[], minGyldige = MI
   }
 
   if (gyldige.length < minGyldige) {
-    return {
-      ok: false,
-      total: 0,
-      delpoeng: {
-        symmetri: 0,
-        oyevinkel: 0,
-        kjevelinje: 0,
-        midtansikt: 0,
-        ansiktstredjedeler: 0,
-        oyeavstand: 0,
-        harmoni: 0,
-      },
-      kvalitet,
-    }
+    return { ok: false, total: 0, delpoeng: tomtKart(), uttrykkBonus: 0, kvalitet }
   }
 
   const delpoeng = {} as DelpoengKart
@@ -578,22 +905,35 @@ export function aggregerRammer(rammer: readonly RammeResultat[], minGyldige = MI
     delpoeng[info.id] = avrund(trimmetSnitt(gyldige.map((r) => r.delpoeng[info.id])), 1)
   }
 
+  let glatt: MogUttrykkStyrker | null = null
+  const bonuser: number[] = []
+  for (const r of gyldige) {
+    glatt = glattUttrykk(glatt, r.uttrykk?.styrker ?? tommeStyrker(), LIVE_ALPHA_UTTRYKK)
+    bonuser.push(bonusForStyrker(glatt))
+  }
+  const uttrykkBonus = avrund(trimmetSnitt(bonuser), 2)
+
   return {
     ok: true,
-    total: regnTotal(delpoeng),
+    total: regnTotal(delpoeng, uttrykkBonus),
     delpoeng,
+    uttrykkBonus,
     kvalitet,
   }
 }
 
 /** Returns the sub-score ids sorted from weakest to strongest (deterministic tie-break by DELPOENG_LISTE order). */
 export function svakesteDelpoeng(delpoeng: DelpoengKart): DelpoengId[] {
-  return [...DELPOENG_LISTE]
-    .sort((a, b) => delpoeng[a.id] - delpoeng[b.id])
-    .map((d) => d.id)
+  return [...DELPOENG_LISTE].sort((a, b) => delpoeng[a.id] - delpoeng[b.id]).map((d) => d.id)
 }
 
 /** Formats a 0–10 score with Norwegian decimal comma (e.g. "7,4"). */
 export function formaterMoggernPoeng(poeng: number): string {
   return poeng.toFixed(1).replace(".", ",")
+}
+
+/** Formats a signed bonus with Norwegian decimal comma (e.g. "+0,9", "−0,4"). */
+export function formaterBonus(bonus: number): string {
+  const tekst = Math.abs(bonus).toFixed(1).replace(".", ",")
+  return bonus < 0 ? `−${tekst}` : `+${tekst}`
 }

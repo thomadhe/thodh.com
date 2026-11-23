@@ -126,10 +126,10 @@ export function SpillLedertavle({ innlogget }: { innlogget: boolean }) {
               type="button"
               onClick={() => velgSpill(id)}
               aria-pressed={valgt}
-              className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition ${
+              className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition ${
                 valgt
                   ? "border-white/30 bg-neutral-100 text-[#18191b]"
-                  : "border-white/10 bg-[#232529] text-neutral-300 hover:border-white/25 hover:text-white"
+                  : "border-white/10 bg-[#26282c] text-neutral-300 hover:border-white/25 hover:text-white"
               }`}
             >
               {info?.navn ?? id}
@@ -139,13 +139,13 @@ export function SpillLedertavle({ innlogget }: { innlogget: boolean }) {
       </section>
 
       {/* Scope, month switcher, and metric tabs */}
-      <section className="flex flex-col gap-3 rounded-2xl border border-white/[0.08] bg-[#232529] p-4">
+      <section className="flex flex-col gap-3 rounded-[28px] border border-white/[0.07] bg-[#26282c] p-4 sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="inline-flex rounded-xl border border-white/10 bg-[#18191b] p-1">
+          <div className="inline-flex rounded-full border border-white/10 bg-[#18191b] p-1">
             <button
               type="button"
               onClick={() => setOmfang("global")}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+              className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
                 omfang === "global" ? "bg-neutral-100 text-[#18191b]" : "text-neutral-300 hover:text-white"
               }`}
             >
@@ -155,7 +155,7 @@ export function SpillLedertavle({ innlogget }: { innlogget: boolean }) {
             <button
               type="button"
               onClick={() => setOmfang("venner")}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+              className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
                 omfang === "venner" ? "bg-neutral-100 text-[#18191b]" : "text-neutral-300 hover:text-white"
               }`}
             >
@@ -164,12 +164,12 @@ export function SpillLedertavle({ innlogget }: { innlogget: boolean }) {
             </button>
           </div>
 
-          <div className="flex items-center gap-1 rounded-xl border border-white/10 bg-[#18191b] px-1.5 py-1">
+          <div className="flex items-center gap-1 rounded-full border border-white/10 bg-[#18191b] px-1.5 py-1">
             <button
               type="button"
               disabled={maned <= FORSTE_MANED}
               onClick={() => setManed((m) => flyttManed(m, -1))}
-              className="rounded-lg p-1.5 text-neutral-300 hover:bg-white/10 disabled:opacity-30"
+              className="rounded-full p-1.5 text-neutral-300 transition hover:bg-white/10 hover:text-white disabled:opacity-30"
               aria-label="Forrige måned"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -179,7 +179,7 @@ export function SpillLedertavle({ innlogget }: { innlogget: boolean }) {
               type="button"
               disabled={maned >= denneManeden}
               onClick={() => setManed((m) => flyttManed(m, 1))}
-              className="rounded-lg p-1.5 text-neutral-300 hover:bg-white/10 disabled:opacity-30"
+              className="rounded-full p-1.5 text-neutral-300 transition hover:bg-white/10 hover:text-white disabled:opacity-30"
               aria-label="Neste måned"
             >
               <ChevronRight className="h-4 w-4" />
@@ -197,7 +197,7 @@ export function SpillLedertavle({ innlogget }: { innlogget: boolean }) {
                 role="tab"
                 aria-selected={valgt}
                 onClick={() => setMetrikk(m)}
-                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
                   valgt ? "bg-white/15 text-white" : "text-neutral-400 hover:bg-white/[0.06] hover:text-neutral-200"
                 }`}
               >
@@ -209,10 +209,10 @@ export function SpillLedertavle({ innlogget }: { innlogget: boolean }) {
       </section>
 
       {feil ? (
-        <p className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs text-amber-200">{feil}</p>
+        <p className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs text-amber-200">{feil}</p>
       ) : null}
 
-      <section className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#232529]">
+      <section className="overflow-hidden rounded-[28px] border border-white/[0.07] bg-[#26282c]">
         {laster ? (
           <div className="p-8 text-center text-sm text-neutral-400">Henter ledertavle…</div>
         ) : rader.length === 0 ? (
@@ -228,14 +228,14 @@ export function SpillLedertavle({ innlogget }: { innlogget: boolean }) {
             <div className="mt-4 flex justify-center gap-2">
               <Link
                 href={spillEtterId(spillId)?.href ?? "/spill"}
-                className="inline-flex h-9 items-center rounded-xl bg-neutral-100 px-4 text-xs font-semibold text-[#18191b] hover:bg-white"
+                className="inline-flex h-9 items-center rounded-full bg-neutral-100 px-4 text-xs font-semibold text-[#18191b] hover:bg-white"
               >
                 Spill {spillEtterId(spillId)?.navn}
               </Link>
               {omfang === "venner" ? (
                 <Link
                   href="/spill/venner"
-                  className="inline-flex h-9 items-center rounded-xl border border-white/15 px-4 text-xs font-medium text-neutral-200 hover:bg-white/10"
+                  className="inline-flex h-9 items-center rounded-full border border-white/15 px-4 text-xs font-medium text-neutral-200 hover:bg-white/10"
                 >
                   Legg til venner
                 </Link>
