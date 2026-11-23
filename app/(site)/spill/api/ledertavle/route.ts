@@ -39,7 +39,7 @@ export async function GET(request: Request) {
       p_spill_id: spillParam,
       p_fra: fra,
       p_til: til,
-      p_kun_venner: omfang === "venner",
+      p_omfang: omfang,
     }),
     innlogget.supabase.from("spill_profiler").select("visningsnavn").eq("user_id", innlogget.user.id).maybeSingle(),
   ])

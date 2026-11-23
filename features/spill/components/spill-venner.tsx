@@ -107,14 +107,15 @@ export function SpillVenner({
   }, [innlogget])
 
   if (!innlogget) {
-    const neste = startKode ? "/spill/venner" : "/spill/venner"
+    const renKode = startKode ? normaliserVennekode(startKode).slice(0, 6) : ""
+    const neste = renKode.length === 6 ? `/spill/venner?kode=${renKode}` : "/spill/venner"
     return (
       <LoggInnKort
         neste={neste}
         tittel="Logg inn for å legge til venner"
         tekst={
-          startKode
-            ? `Logg inn for å legge til vennen din med kode ${normaliserVennekode(startKode).slice(0, 6)}, se venne-ledertavlen og utfordre til duell.`
+          renKode
+            ? `Logg inn for å legge til vennen din med kode ${renKode}, se venne-ledertavlen og utfordre til duell.`
             : "Del vennekoden din for å sammenligne månedens resultater og utfordre hverandre til dueller i 6/7-stegern, Gjetteløs og Moggern."
         }
       />

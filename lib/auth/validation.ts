@@ -21,9 +21,10 @@ const nesteSider: unknown[] = [
   "/spill/moggern",
 ];
 const moggernRom = /^\/spill\/moggern\/[BCDFGHJKLMNPQRSTVWXZ]{4}$/;
+const venneInvitasjon = /^\/spill\/venner\?kode=[BCDFGHJKLMNPQRSTVWXZ23456789]{6}$/;
 
 export function safeNext(value: unknown): string {
-  if (typeof value === "string" && (nesteSider.includes(value) || moggernRom.test(value))) {
+  if (typeof value === "string" && (nesteSider.includes(value) || moggernRom.test(value) || venneInvitasjon.test(value))) {
     return value;
   }
   return "/otsjoba";

@@ -83,7 +83,7 @@ export async function POST(request: Request) {
   const { supabase, user } = innlogget
   const { data: egenProfil, error: profilFeil } = await supabase
     .from("spill_profiler")
-    .select("visningsnavn")
+    .select("visningsnavn, vennekode")
     .eq("user_id", user.id)
     .maybeSingle()
 
@@ -94,16 +94,22 @@ export async function POST(request: Request) {
   if (!egenProfil?.visningsnavn) {
     return jsonPrivat({ melding: "Velg et visningsnavn først før du legger til venner." }, 400)
   }
+  if (egenProfil.vennekode === kode) {
+    return jsonPrivat({ melding: "Det er din egen vennekode." }, 400)
+  }
 
   const { data: funnet, error: finnFeil } = await supabase.rpc("spill_finn_profil_ved_kode", { p_kode: kode })
-  if (finnFeil) return jsonPrivat({ melding: "Klarte ikke å slå opp vennekoden." }, 500)
-  const maal = Array.isArray(funnet) ? (funnet[0] as { bruker_id: string; visningsnavn: string } | undefined) : undefined
-  if (!maal) return jsonPrivat({ melding: "Fant ingen spiller med den vennekoden." }, 404)
-  if (maal.bruker_id === user.id) return jsonPrivat({ melding: "Det er din egen vennekode." }, 400)
+  if (finnFeil) {
+    if (erDatabaseMangel(finnFeil)) return jsonPrivat({ melding: DB_IKKE_KLAR_MELDING }, 503)
+    return jsonPrivat({ melding: "Klarte ikke å slå opp vennekoden." }, 500)
+  }
+  const maal = Array.isArray(funnet) ? (funnet[0] as { user_id?: string; visningsnavn: string } | undefined) : undefined
+  if (!maal?.user_id) return jsonPrivat({ melding: "Fant ingen spiller med den vennekoden." }, 404)
+  if (maal.user_id === user.id) return jsonPrivat({ melding: "Det er din egen vennekode." }, 400)
 
   const { error: insertFeil } = await supabase.from("spill_vennskap").insert({
     avsender_id: user.id,
-    mottaker_id: maal.bruker_id,
+    mottaker_id: maal.user_id,
     status: "venter",
   })
 

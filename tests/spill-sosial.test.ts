@@ -197,9 +197,18 @@ test("ledertavle-aggregering verifiserer signaturer, rangerer og håndterer delt
 })
 
 test("safeNext godtar nye spillsider og avviser åpne viderekoblinger", () => {
-  for (const sti of ["/spill", "/spill/historikk", "/spill/ledertavle", "/spill/venner", "/spill/dueller"]) {
+  for (const sti of [
+    "/spill",
+    "/spill/historikk",
+    "/spill/ledertavle",
+    "/spill/venner",
+    "/spill/venner?kode=K7P3MX",
+    "/spill/dueller",
+  ]) {
     assert.equal(safeNext(sti), sti)
   }
+  assert.equal(safeNext("/spill/venner?kode=AEIOU2"), "/otsjoba")
+  assert.equal(safeNext("/spill/venner?kode=K7P3MX&ond=1"), "/otsjoba")
   assert.equal(safeNext("//ond.example"), "/otsjoba")
   assert.equal(safeNext("/spill/ukjent"), "/otsjoba")
 })
@@ -212,6 +221,17 @@ test("SQL-migrasjonen har streng RLS og lekker ikke e-post", () => {
   assert.ok(!/\bemail\b/i.test(sql), "migrasjonen skal ikke referere til e-post")
   assert.ok(!/for update\b[\s\S]{0,60}on public\.spill_resultater/i.test(sql), "spill_resultater skal være uforanderlig")
   assert.ok(!/for delete\b[\s\S]{0,60}on public\.spill_resultater/i.test(sql), "spill_resultater skal ikke kunne slettes")
+
+  // API-ruter skal matche eksakte kolonne- og parameternavn i Supabase-RPC-ene
+  const vennerRute = readFileSync("app/(site)/spill/api/venner/route.ts", "utf8")
+  assert.match(sql, /create function public\.spill_finn_profil_ved_kode\(p_kode text\)\s+returns table \(user_id uuid, visningsnavn text\)/)
+  assert.match(vennerRute, /mottaker_id:\s*maal\.user_id/)
+  assert.doesNotMatch(vennerRute, /maal\.bruker_id/)
+
+  const ledertavleRute = readFileSync("app/(site)/spill/api/ledertavle/route.ts", "utf8")
+  assert.match(sql, /create function public\.spill_ledertavle_rader\([\s\S]{0,120}p_omfang text/)
+  assert.match(ledertavleRute, /p_omfang:\s*omfang/)
+  assert.doesNotMatch(ledertavleRute, /p_kun_venner/)
 })
 
 test("visningsnavn: eierens ønskede navn godtas, og profil-API-et tar imot POST fra inline-redigering", () => {
