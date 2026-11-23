@@ -26,15 +26,17 @@ import {
   DELPOENG_LISTE,
   MAKS_UTTRYKK_BONUS,
   MIN_UTTRYKK_BONUS,
+  MOG_UTTRYKK,
   regnTotal,
   type DelpoengKart,
   type KvalitetStats,
+  type MogUttrykkId,
 } from "./poeng"
 
 export const MOGGERN_MAKS_SPILLERE = 2
 export const MOGGERN_MIN_SPILLERE = 2
 export const NEDTELLING_MS = 3200
-export const MALING_MS = 10_000
+export const MALING_MS = 15_000
 /** Minimum difference between self-score and opponent-measured score to highlight a disagreement. */
 export const AVVIK_TERSKEL = 1.2
 
@@ -50,8 +52,10 @@ export type SpillerMaaling = {
   ok: boolean
   total: number
   delpoeng: DelpoengKart
-  /** Smoothed mog-uttrykk bonus (score points) measured over the 10 s capture. */
+  /** Smoothed mog-uttrykk bonus (score points) measured over the 15 s capture. */
   uttrykkBonus: number
+  /** Trimmed-mean 0–1 strength per expression across the capture (optional for backwards compatibility). */
+  uttrykkSnitt?: Partial<Record<MogUttrykkId, number>>
   lysStatus: LysStatus
   kvalitet: KvalitetStats
 }
@@ -71,9 +75,11 @@ export type MoggernStatus = GrunnStatus & {
   faseStartTid: number
   /** Reports indexed by reporter player id (`av`). */
   rapporter: Record<string, MoggernRapport>
+  /** Running room win tally across rematches, indexed by player id. */
+  stilling: Record<string, number>
 }
 
-export function moggernStart(runde = 0): MoggernStatus {
+export function moggernStart(runde = 0, stilling: Record<string, number> = {}): MoggernStatus {
   return {
     runde,
     v: 0,
@@ -81,6 +87,7 @@ export function moggernStart(runde = 0): MoggernStatus {
     deltakere: [],
     faseStartTid: 0,
     rapporter: {},
+    stilling: { ...stilling },
   }
 }
 
@@ -105,6 +112,34 @@ export function moggernTaImot(lokal: MoggernStatus, ny: MoggernStatus): MoggernS
 }
 
 // ---- Strict parsers for Realtime broadcast payloads ----
+
+const GYLDIGE_UTTRYKK_IDER = new Set<string>(MOG_UTTRYKK.map((u) => u.id))
+
+function lesUttrykkSnitt(x: unknown): Partial<Record<MogUttrykkId, number>> | undefined | null {
+  if (x === undefined || x === null) return undefined
+  if (!erObjekt(x)) return null
+  const ut: Partial<Record<MogUttrykkId, number>> = {}
+  for (const [k, v] of Object.entries(x)) {
+    if (!GYLDIGE_UTTRYKK_IDER.has(k)) continue
+    if (!erTall(v, 0, 1)) return null
+    const avrundet = Math.round(v * 100) / 100
+    if (avrundet >= 0.01) ut[k as MogUttrykkId] = avrundet
+  }
+  return ut
+}
+
+function lesStilling(x: unknown): Record<string, number> | null {
+  if (x === undefined || x === null) return {}
+  if (!erObjekt(x)) return null
+  const oppf = Object.entries(x)
+  if (oppf.length > 8) return null
+  const ut: Record<string, number> = {}
+  for (const [k, v] of oppf) {
+    if (!erTekst(k, 40) || !k || !erHeltall(v, 0, 999)) return null
+    ut[k] = v
+  }
+  return ut
+}
 
 function lesLysStatus(x: unknown): LysStatus | null {
   return x === "ok" || x === "overeksponert" || x === "undereksponert" ? x : null
@@ -153,9 +188,19 @@ export function lesSpillerMaaling(x: unknown): SpillerMaaling | null {
   const bonusRaa = x.uttrykkBonus === undefined ? 0 : x.uttrykkBonus
   if (!erTall(bonusRaa, MIN_UTTRYKK_BONUS - 1e-6, MAKS_UTTRYKK_BONUS + 1e-6)) return null
   const uttrykkBonus = Math.round(bonusRaa * 100) / 100
+  const uttrykkSnitt = lesUttrykkSnitt(x.uttrykkSnitt)
+  if (uttrykkSnitt === null) return null
   // Recompute total deterministically from sub-scores + bonus so a tampered total cannot disagree with breakdown.
   const total = x.ok ? regnTotal(delpoeng, uttrykkBonus) : 0
-  return { ok: x.ok, total, delpoeng, uttrykkBonus: x.ok ? uttrykkBonus : 0, lysStatus, kvalitet }
+  return {
+    ok: x.ok,
+    total,
+    delpoeng,
+    uttrykkBonus: x.ok ? uttrykkBonus : 0,
+    ...(uttrykkSnitt && x.ok ? { uttrykkSnitt } : {}),
+    lysStatus,
+    kvalitet,
+  }
 }
 
 export function lesMoggernRapport(x: unknown): MoggernRapport | null {
@@ -184,7 +229,8 @@ export function lesMoggernStatus(x: unknown): MoggernStatus | null {
   if (fase !== "lobby" && fase !== "nedtelling" && fase !== "maling" && fase !== "resultat") return null
   if (!erHeltall(faseStartTid, 0, 1e15)) return null
   const deltakere = lesMoggernDeltakere(x.deltakere)
-  if (!deltakere || !erObjekt(rapporter)) return null
+  const stilling = lesStilling(x.stilling)
+  if (!deltakere || !erObjekt(rapporter) || !stilling) return null
   if (fase !== "lobby" && deltakere.length !== MOGGERN_MAKS_SPILLERE) return null
 
   const gyldigeRapporter: Record<string, MoggernRapport> = {}
@@ -202,6 +248,7 @@ export function lesMoggernStatus(x: unknown): MoggernStatus | null {
     deltakere,
     faseStartTid,
     rapporter: gyldigeRapporter,
+    stilling,
   }
 }
 
@@ -317,6 +364,12 @@ export function regnDuellUtfall(deltakere: readonly MoggernDeltaker[], rapporter
     uavgjort: false,
     beggeHarResultat: true,
   }
+}
+
+/** Increments the winning player's room series tally by 1 (leaves ties/incomplete rounds unchanged). */
+export function oppdaterStilling(stilling: Record<string, number>, utfall: DuellUtfall): Record<string, number> {
+  if (!utfall.vinnerId) return stilling
+  return { ...stilling, [utfall.vinnerId]: (stilling[utfall.vinnerId] ?? 0) + 1 }
 }
 
 /**

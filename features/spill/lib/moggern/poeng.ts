@@ -15,7 +15,7 @@
 //      bell-curve calibration (normal CDF) so real faces genuinely spread across 0–10 instead of clustering at 6–7.
 //   7. Add live "mog-uttrykk" bonuses from MediaPipe's 52 face blendshapes (The Rock, jegerøyne, mewing …),
 //      exponentially smoothed across frames. Final total is clamped to [0, 10].
-//   8. Across the ~10 s duel, average valid frames with a 10% trimmed mean so single-frame jitter or blinks do not skew it.
+//   8. Across the ~15 s duel, average valid frames with a 10% trimmed mean so single-frame jitter or blinks do not skew it.
 
 export type Punkt3D = {
   x: number
@@ -111,7 +111,7 @@ export const MAKS_PITCH_GRADER = 21
 export const MAKS_ROLL_GRADER = 22
 export const MIN_IPD_ANDEL = 0.055
 export const MAKS_IPD_ANDEL = 0.6
-/** Minimum valid frontal frames needed over the ~10 s capture window. */
+/** Minimum valid frontal frames needed over the ~15 s capture window. */
 export const MIN_GYLDIGE_RAMMER = 12
 
 /**
@@ -307,6 +307,8 @@ export type SamletMaaling = {
   delpoeng: DelpoengKart
   /** Smoothed, trimmed-mean expression bonus across the capture (score points). */
   uttrykkBonus: number
+  /** Smoothed, trimmed-mean 0–1 strength per expression across the capture (for verdict callouts). */
+  uttrykkSnitt: MogUttrykkStyrker
   kvalitet: KvalitetStats
 }
 
@@ -958,10 +960,10 @@ const tomtKart = (): DelpoengKart => ({
 })
 
 /**
- * Aggregates all evaluated frames from a ~10 s duel capture into a final deterministic score.
+ * Aggregates all evaluated frames from a ~15 s duel capture into a final deterministic score.
  * Requires at least `minGyldige` frontal frames (default MIN_GYLDIGE_RAMMER).
  * Expression strengths are exponentially smoothed frame to frame, then trimmed-mean averaged,
- * so you have to HOLD a mogging expression for most of the 10 seconds to earn its bonus.
+ * so you have to HOLD a mogging expression for most of the 15 seconds to earn its bonus.
  */
 export function aggregerRammer(rammer: readonly RammeResultat[], minGyldige = MIN_GYLDIGE_RAMMER): SamletMaaling {
   const gyldige = rammer.filter(
@@ -987,7 +989,7 @@ export function aggregerRammer(rammer: readonly RammeResultat[], minGyldige = MI
   }
 
   if (gyldige.length < minGyldige) {
-    return { ok: false, total: 0, delpoeng: tomtKart(), uttrykkBonus: 0, kvalitet }
+    return { ok: false, total: 0, delpoeng: tomtKart(), uttrykkBonus: 0, uttrykkSnitt: tommeStyrker(), kvalitet }
   }
 
   const delpoeng = {} as DelpoengKart
@@ -997,17 +999,37 @@ export function aggregerRammer(rammer: readonly RammeResultat[], minGyldige = MI
 
   let glatt: MogUttrykkStyrker | null = null
   const bonuser: number[] = []
+  const styrkeSerier: Record<MogUttrykkId, number[]> = {
+    "the-rock": [],
+    jegeroyne: [],
+    "innsugde-kinn": [],
+    mewing: [],
+    smiler: [],
+    "oppblaste-kinn": [],
+    "munn-puster": [],
+    grimase: [],
+    bytteoyne: [],
+    "sur-geip": [],
+  }
   for (const r of gyldige) {
     glatt = glattUttrykk(glatt, r.uttrykk?.styrker ?? tommeStyrker(), LIVE_ALPHA_UTTRYKK)
     bonuser.push(bonusForStyrker(glatt))
+    for (const u of MOG_UTTRYKK) {
+      styrkeSerier[u.id].push(glatt[u.id])
+    }
   }
   const uttrykkBonus = avrund(trimmetSnitt(bonuser), 2)
+  const uttrykkSnitt = tommeStyrker()
+  for (const u of MOG_UTTRYKK) {
+    uttrykkSnitt[u.id] = avrund(trimmetSnitt(styrkeSerier[u.id]), 2)
+  }
 
   return {
     ok: true,
     total: regnTotal(delpoeng, uttrykkBonus),
     delpoeng,
     uttrykkBonus,
+    uttrykkSnitt,
     kvalitet,
   }
 }

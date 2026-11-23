@@ -2,7 +2,15 @@
 // for Moggern. Selection is 100% deterministic from a duel seed so both players see the exact same lines.
 
 import type { LysStatus } from "./lys"
-import { formaterMoggernPoeng, svakesteDelpoeng, type DelpoengId, type DelpoengKart, type KvalitetStats } from "./poeng"
+import {
+  formaterMoggernPoeng,
+  MOG_UTTRYKK,
+  svakesteDelpoeng,
+  type DelpoengId,
+  type DelpoengKart,
+  type KvalitetStats,
+  type MogUttrykkId,
+} from "./poeng"
 
 export type RangTittel = {
   id: string
@@ -164,7 +172,7 @@ const PRAKTISKE_TIPS_PER_DELPOENG: Record<DelpoengId, readonly string[]> = {
   ],
   harmoni: [
     "Kombiner rett holdning, frontlys og kamera i øyehøyde — det løfter alle delpoengene samtidig.",
-    "Gi et lite, avslappet smil og hold deg rolig i de 10 sekundene så målingen blir stabil.",
+    "Hold et avslappet uttrykk og sitt rolig gjennom de 15 sekundene så målingen blir stabil.",
     "En enkel hudpleierutine, vann og nok søvn gir friskere ansikt og bedre dagsform på kamera.",
   ],
 }
@@ -180,8 +188,85 @@ const KVALITET_TIPS = {
   undereksponert: "Slå på en lampe foran deg eller snu deg mot et vindu — kameraet trenger frontlys for å måle riktig.",
   forLangtUnna: "Fyll mer av bildet neste gang — sitt omtrent én armlengde fra kameraet.",
   forNaerme: "Sitt litt lenger unna kameraet (armlengde) så vidvinkelen ikke forvrenger proporsjonene.",
-  ustabil: "Hold hodet helt rolig og se rett i linsa gjennom alle 10 sekundene for jevnere måling.",
+  ustabil: "Hold hodet helt rolig og se rett i linsa gjennom alle 15 sekundene for jevnere måling.",
 } as const
+
+// ---- Expression verdict summary ----
+
+export type UttrykkDom = {
+  id: MogUttrykkId
+  navn: string
+  tekst: string
+  positiv: boolean
+}
+
+const UTTRYKK_DOM_TEKSTER: Record<MogUttrykkId, { sterk: string; middels: string }> = {
+  "the-rock": {
+    sterk: "Kjørte «The Rock»-brynet gjennom nesten hele runden.",
+    middels: "Dro fram et stødig «The Rock»-bryn underveis.",
+  },
+  jegeroyne: {
+    sterk: "Holdt Jegerøyne store deler av runden — iskald fokus.",
+    middels: "Fikk inn gode Jegerøyne-sekunder underveis.",
+  },
+  "innsugde-kinn": {
+    sterk: "Full Blue Steel med innsugde kinn hele veien.",
+    middels: "Lirket inn litt Blue Steel-kinn for ekstra poeng.",
+  },
+  mewing: {
+    sterk: "Mewet hardt og disiplinert gjennom hele målingen.",
+    middels: "Holdt kjeven stram med solid mewing-innsats.",
+  },
+  smiler: {
+    sterk: "Klarte ikke la være å glise — kostet dyrebare mog-poeng!",
+    middels: "Snek inn et smil underveis som trakk ned litt.",
+  },
+  "oppblaste-kinn": {
+    sterk: "Kjørte ballongkinn store deler av runden.",
+    middels: "Blåste opp kinnene underveis og myket opp kjevelinja.",
+  },
+  "munn-puster": {
+    sterk: "Hadde åpen munn gjennom store deler av runden — anti-mewing!",
+    middels: "Slapp kjeven litt åpen underveis, noe som kostet poeng.",
+  },
+  grimase: {
+    sterk: "Leverte ren grimase-sabotasje gjennom nesten hele runden.",
+    middels: "Rynket nesa eller dro en grimase som dro snittet ned.",
+  },
+  bytteoyne: {
+    sterk: "Kjørte kuleøyne og panikk-aura store deler av runden.",
+    middels: "Sperret opp øynene litt for mye underveis.",
+  },
+  "sur-geip": {
+    sterk: "Holdt sur geip gjennom store deler av målingen.",
+    middels: "Dro på seg en liten sur geip som kostet poeng.",
+  },
+}
+
+/**
+ * Summarizes the dominant facial expression held during a 15 s round (or null if the player stayed mostly neutral).
+ * Picks the expression with the biggest weighted impact among those held above 0.18 trimmed-mean strength.
+ */
+export function uttrykkDom(uttrykkSnitt?: Partial<Record<MogUttrykkId, number>> | null): UttrykkDom | null {
+  if (!uttrykkSnitt) return null
+  let best: { info: (typeof MOG_UTTRYKK)[number]; styrke: number; effekt: number } | null = null
+  for (const u of MOG_UTTRYKK) {
+    const styrke = uttrykkSnitt[u.id] ?? 0
+    if (styrke < 0.18) continue
+    const effekt = Math.abs(styrke * u.maks)
+    if (!best || effekt > best.effekt) {
+      best = { info: u, styrke, effekt }
+    }
+  }
+  if (!best) return null
+  const t = UTTRYKK_DOM_TEKSTER[best.info.id]
+  return {
+    id: best.info.id,
+    navn: best.info.navn,
+    tekst: best.styrke >= 0.48 ? t.sterk : t.middels,
+    positiv: best.info.maks > 0,
+  }
+}
 
 // ---- Over-the-top playful roasts ("disser") ----
 

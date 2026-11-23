@@ -7,15 +7,18 @@ import {
   lesMoggernRapport,
   lesMoggernStatus,
   lesSignal,
+  MALING_MS,
   MOGGERN_MAKS_SPILLERE,
   moggernStart,
   moggernTaImot,
+  oppdaterStilling,
   regnDuellUtfall,
   utledVisningsnavn,
   velgMoggernDeltakere,
   type MoggernRapport,
   type SpillerMaaling,
 } from "../features/spill/lib/moggern/duell"
+import { lesDagensBesteFraTekst, oppdaterDagensBesteVerdi } from "../features/spill/lib/moggern/duell-kort"
 import { byggIceKonfig, STANDARD_STUN } from "../features/spill/lib/moggern/ice"
 import { analyserLuminans, analyserRgbaLys, samleLysStatus } from "../features/spill/lib/moggern/lys"
 import {
@@ -52,13 +55,14 @@ import {
   type LivePoengTilstand,
   type Punkt3D,
 } from "../features/spill/lib/moggern/poeng"
-import { hentKameraStrom, KAMERA_ONSKER, KAMERA_RESERVE } from "../features/spill/lib/moggern/kamera"
+import { hentKameraStrom, hentMikrofonStrom, KAMERA_ONSKER, KAMERA_RESERVE, MIKROFON_ONSKER } from "../features/spill/lib/moggern/kamera"
 import { kartleggPunktTilVisning } from "../features/spill/lib/moggern/sporing-tegner"
 import {
   DELPOENG_DISSER,
   lagTipsOgDiss,
   LYS_DISSER,
   rangForPoeng,
+  uttrykkDom,
   vinnerLinje,
 } from "../features/spill/lib/moggern/tekster"
 
@@ -872,4 +876,91 @@ test("Moggern kamera: prøver selfie-ønsker først og faller tilbake til video:
   )
   assert.equal(antall, 1)
   await assert.rejects(hentKameraStrom(null))
+
+  // Camera switcher passes exact deviceId first and falls back on OverconstrainedError
+  const byttKall: MediaStreamConstraints[] = []
+  await hentKameraStrom(async (c) => {
+    byttKall.push(c)
+    return strom
+  }, "cam-2")
+  assert.deepEqual(byttKall, [{ video: { deviceId: { exact: "cam-2" }, width: { ideal: 640 }, height: { ideal: 480 } }, audio: false }])
+
+  // Opt-in microphone requests audio-only constraints with echo cancellation
+  const mikKall: MediaStreamConstraints[] = []
+  const mik = await hentMikrofonStrom(async (c) => {
+    mikKall.push(c)
+    return strom
+  })
+  assert.equal(mik, strom)
+  assert.deepEqual(mikKall, [MIKROFON_ONSKER])
+})
+
+test("Moggern 15s-oppgradering: uttrykkSnitt, uttrykkDom, rom-stilling og dagens beste", () => {
+  assert.equal(MALING_MS, 15_000)
+
+  // uttrykkSnitt aggregates dominant expression cleanly and drives uttrykkDom
+  const matrise = lagRotasjonsMatrise(0, 0, 0)
+  const ansikt = lagSyntetiskAnsikt()
+  const jegerRamme = vurderRamme(ansikt, matrise, 640, 480, { eyeSquintLeft: 0.9, eyeSquintRight: 0.88 })
+  const samlet = aggregerRammer(Array.from({ length: 24 }, () => jegerRamme))
+  assert.equal(samlet.ok, true)
+  assert.ok(samlet.uttrykkSnitt.jegeroyne >= 0.8, `jegeroyne=${samlet.uttrykkSnitt.jegeroyne}`)
+  const domPos = uttrykkDom(samlet.uttrykkSnitt)
+  assert.ok(domPos && domPos.id === "jegeroyne" && domPos.positiv === true)
+  assert.match(domPos.tekst, /Jegerøyne/)
+
+  const smilDom = uttrykkDom({ smiler: 0.72 })
+  assert.ok(smilDom && smilDom.id === "smiler" && smilDom.positiv === false)
+  assert.match(smilDom.tekst, /glise/)
+  assert.equal(uttrykkDom({ jegeroyne: 0.1 }), null)
+  assert.equal(uttrykkDom(null), null)
+
+  // uttrykkSnitt survives report serialization and rejects out-of-range values
+  const baseMaaling: SpillerMaaling = {
+    ok: true,
+    total: 7.5,
+    delpoeng: { symmetri: 8, oyevinkel: 8, kjevelinje: 8, midtansikt: 8, ansiktstredjedeler: 8, oyeavstand: 8, harmoni: 8 },
+    uttrykkBonus: 0.4,
+    uttrykkSnitt: { jegeroyne: 0.82, smiler: 0 },
+    lysStatus: "ok",
+    kvalitet: { antallRammer: 40, gyldigeRammer: 32, snittAbsYaw: 2, snittAbsPitch: 2, snittIpdAndel: 0.24, stabilitet: 0.2 },
+  }
+  const lest = lesMoggernRapport({ runde: 0, av: "a", egen: baseMaaling, motstander: null })
+  assert.ok(lest?.egen?.uttrykkSnitt)
+  assert.equal(lest.egen.uttrykkSnitt.jegeroyne, 0.82)
+  assert.equal(lest.egen.uttrykkSnitt.smiler, undefined)
+  assert.equal(lesMoggernRapport({ runde: 0, av: "a", egen: { ...baseMaaling, uttrykkSnitt: { jegeroyne: 5 } }, motstander: null }), null)
+
+  // Running room series tally increments winner, preserves across rematches, and parses cleanly
+  const s0 = moggernStart(0)
+  assert.deepEqual(s0.stilling, {})
+  const st1 = oppdaterStilling(s0.stilling, { spillere: [], vinnerId: "a", uavgjort: false, beggeHarResultat: true })
+  const st2 = oppdaterStilling(st1, { spillere: [], vinnerId: "a", uavgjort: false, beggeHarResultat: true })
+  const st3 = oppdaterStilling(st2, { spillere: [], vinnerId: null, uavgjort: true, beggeHarResultat: true })
+  assert.deepEqual(st3, { a: 2 })
+  const nesteRunde = moggernStart(1, st3)
+  assert.deepEqual(nesteRunde.stilling, { a: 2 })
+  assert.deepEqual(lesMoggernStatus(nesteRunde)?.stilling, { a: 2 })
+  // Backwards compatibility when older status has no stilling field
+  const { stilling: _utenStilling, ...gammelStatus } = s0
+  void _utenStilling
+  assert.deepEqual(lesMoggernStatus(gammelStatus)?.stilling, {})
+
+  // Daily best score helper keeps highest per Oslo date and resets next day
+  const dag1 = "2026-11-23"
+  const dag2 = "2026-11-24"
+  const r1 = oppdaterDagensBesteVerdi(null, 6.8, "solo", dag1)
+  assert.equal(r1.nyRekord, true)
+  assert.deepEqual(r1.verdi, { dato: dag1, poeng: 6.8, modus: "solo" })
+  const r2 = oppdaterDagensBesteVerdi(r1.verdi, 6.2, "duell", dag1)
+  assert.equal(r2.nyRekord, false)
+  assert.equal(r2.verdi.poeng, 6.8)
+  const r3 = oppdaterDagensBesteVerdi(r2.verdi, 8.1, "duell", dag1)
+  assert.equal(r3.nyRekord, true)
+  assert.deepEqual(r3.verdi, { dato: dag1, poeng: 8.1, modus: "duell" })
+  assert.deepEqual(lesDagensBesteFraTekst(JSON.stringify(r3.verdi), dag1), r3.verdi)
+  assert.equal(lesDagensBesteFraTekst(JSON.stringify(r3.verdi), dag2), null)
+  const r4 = oppdaterDagensBesteVerdi(r3.verdi, 5.4, "solo", dag2)
+  assert.equal(r4.nyRekord, true)
+  assert.deepEqual(r4.verdi, { dato: dag2, poeng: 5.4, modus: "solo" })
 })

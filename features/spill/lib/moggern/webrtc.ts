@@ -1,8 +1,8 @@
 "use client"
 
-// Peer-to-peer WebRTC video helper for Moggern.
-// Video flows directly between the two browsers; only tiny SDP/ICE signalling messages travel
-// over the room's Supabase Realtime broadcast channel. No audio is requested, and nothing is recorded.
+// Peer-to-peer WebRTC video (+ optional opt-in mic audio) helper for Moggern.
+// Media flows directly between the two browsers; only tiny SDP/ICE signalling messages travel
+// over the room's Supabase Realtime broadcast channel. Nothing is recorded.
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { lesSignal, type WebRtcSignal } from "./duell"
@@ -10,35 +10,54 @@ import { STANDARD_STUN, type IceKonfig } from "./ice"
 
 export type VideoTilkobling = "av" | "kobler" | "tilkoblet" | "feil"
 
-export { hentKameraStrom, kameraFeilTekst, KAMERA_ONSKER, KAMERA_RESERVE, stoppStrom } from "./kamera"
+export {
+  hentKameraStrom,
+  hentMikrofonStrom,
+  kameraFeilTekst,
+  KAMERA_ONSKER,
+  KAMERA_RESERVE,
+  listKameraer,
+  mikrofonFeilTekst,
+  stoppStrom,
+} from "./kamera"
+
+const ICE_HENT_TIMEOUT_MS = 2000
 
 /**
  * Manages the P2P RTCPeerConnection for one 1v1 Moggern room using the polite-peer pattern.
+ * Waits for STUN/TURN config before opening the connection so TURN servers are never missed on startup.
  * Pass `mottaSignal` into the Realtime channel's "signal" broadcast handler.
  */
 export function useMoggernWebRtc({
   meg,
   motstanderId,
   lokalStrom,
+  lydStrom = null,
   sendSignal,
   aktiv,
 }: {
   meg: string | null
   motstanderId: string | null
   lokalStrom: MediaStream | null
+  /** Optional opt-in local microphone stream (null when muted/off). */
+  lydStrom?: MediaStream | null
   sendSignal: (signal: WebRtcSignal) => void
   /** True only when the user is logged in, has accepted the disclaimer, and is in the active 2-player pair. */
   aktiv: boolean
 }) {
   const [fjernStrom, setFjernStrom] = useState<MediaStream | null>(null)
+  const [fjernLydStrom, setFjernLydStrom] = useState<MediaStream | null>(null)
   const [status, setStatus] = useState<VideoTilkobling>("av")
   const [feil, setFeil] = useState<string | null>(null)
   const [harTurn, setHarTurn] = useState(false)
+  const [iceKlar, setIceKlar] = useState(false)
 
   const pcRef = useRef<RTCPeerConnection | null>(null)
   const iceKonfigRef = useRef<IceKonfig>({ iceServers: [...STANDARD_STUN], harTurn: false })
   const senderRef = useRef<RTCRtpSender | null>(null)
+  const lydSenderRef = useRef<RTCRtpSender | null>(null)
   const lokalStromRef = useRef<MediaStream | null>(lokalStrom)
+  const lydStromRef = useRef<MediaStream | null>(lydStrom)
   const sendSignalRef = useRef(sendSignal)
   const venterIceRef = useRef<RTCIceCandidateInit[]>([])
   const lagerTilbudRef = useRef(false)
@@ -46,23 +65,44 @@ export function useMoggernWebRtc({
 
   useEffect(() => {
     lokalStromRef.current = lokalStrom
+    lydStromRef.current = lydStrom
     sendSignalRef.current = sendSignal
   })
 
-  // Fetch STUN + optional TURN configuration from our server route once.
+  // Fetch STUN + optional TURN configuration before opening the RTCPeerConnection (with 2 s safety fallback).
   useEffect(() => {
-    if (!aktiv) return
+    if (!aktiv) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIceKlar(false)
+      return
+    }
     let avbrutt = false
+    let ferdig = false
+    const markerKlar = () => {
+      if (avbrutt || ferdig) return
+      ferdig = true
+      setIceKlar(true)
+    }
+    const tidsfrist = window.setTimeout(markerKlar, ICE_HENT_TIMEOUT_MS)
+
     void fetch("/spill/api/moggern/ice", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((data: IceKonfig | null) => {
-        if (avbrutt || !data || !Array.isArray(data.iceServers)) return
-        iceKonfigRef.current = data
-        setHarTurn(!!data.harTurn)
+        if (avbrutt) return
+        if (data && Array.isArray(data.iceServers)) {
+          iceKonfigRef.current = data
+          setHarTurn(!!data.harTurn)
+        }
       })
       .catch(() => {})
+      .finally(() => {
+        window.clearTimeout(tidsfrist)
+        markerKlar()
+      })
+
     return () => {
       avbrutt = true
+      window.clearTimeout(tidsfrist)
     }
   }, [aktiv])
 
@@ -79,16 +119,18 @@ export function useMoggernWebRtc({
       pcRef.current = null
     }
     senderRef.current = null
+    lydSenderRef.current = null
     venterIceRef.current = []
     lagerTilbudRef.current = false
     ignorerTilbudRef.current = false
     setFjernStrom(null)
+    setFjernLydStrom(null)
     setStatus("av")
   }, [])
 
-  // Create/maintain RTCPeerConnection when both peers are in the room and ready to connect.
+  // Create/maintain RTCPeerConnection once ICE config is ready and both peers are in the room.
   useEffect(() => {
-    if (!aktiv || !meg || !motstanderId) {
+    if (!aktiv || !iceKlar || !meg || !motstanderId) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       lukkForbindelse()
       return
@@ -106,29 +148,49 @@ export function useMoggernWebRtc({
     setStatus("kobler")
     setFeil(null)
 
-    const fjern = new MediaStream()
+    const fjernVideo = new MediaStream()
+    const fjernLyd = new MediaStream()
 
-    // Always add a video transceiver so negotiation works even before the local camera is turned on.
-    const spor = lokalStromRef.current?.getVideoTracks()[0] ?? null
-    const transceiver = pc.addTransceiver("video", { direction: "sendrecv" })
-    senderRef.current = transceiver.sender
-    if (spor) {
-      void transceiver.sender.replaceTrack(spor).catch(() => {})
+    // Always add video + audio transceivers upfront so toggling camera/mic uses replaceTrack without renegotiation.
+    const videoSpor = lokalStromRef.current?.getVideoTracks()[0] ?? null
+    const videoTransceiver = pc.addTransceiver("video", { direction: "sendrecv" })
+    senderRef.current = videoTransceiver.sender
+    if (videoSpor) {
+      void videoTransceiver.sender.replaceTrack(videoSpor).catch(() => {})
+    }
+
+    const lydSpor = lydStromRef.current?.getAudioTracks()[0] ?? null
+    const lydTransceiver = pc.addTransceiver("audio", { direction: "sendrecv" })
+    lydSenderRef.current = lydTransceiver.sender
+    if (lydSpor) {
+      void lydTransceiver.sender.replaceTrack(lydSpor).catch(() => {})
     }
 
     pc.ontrack = (e) => {
-      for (const s of e.streams) {
-        for (const t of s.getVideoTracks()) {
-          if (!fjern.getTrackById(t.id)) fjern.addTrack(t)
+      if (e.track.kind === "video") {
+        for (const s of e.streams) {
+          for (const t of s.getVideoTracks()) {
+            if (!fjernVideo.getTrackById(t.id)) fjernVideo.addTrack(t)
+          }
         }
-      }
-      if (e.track.kind === "video" && !fjern.getTrackById(e.track.id)) {
-        fjern.addTrack(e.track)
-      }
-      setFjernStrom(new MediaStream(fjern.getVideoTracks()))
-      e.track.onended = () => {
-        fjern.removeTrack(e.track)
-        setFjernStrom(fjern.getVideoTracks().length ? new MediaStream(fjern.getVideoTracks()) : null)
+        if (!fjernVideo.getTrackById(e.track.id)) fjernVideo.addTrack(e.track)
+        setFjernStrom(new MediaStream(fjernVideo.getVideoTracks()))
+        e.track.onended = () => {
+          fjernVideo.removeTrack(e.track)
+          setFjernStrom(fjernVideo.getVideoTracks().length ? new MediaStream(fjernVideo.getVideoTracks()) : null)
+        }
+      } else if (e.track.kind === "audio") {
+        for (const s of e.streams) {
+          for (const t of s.getAudioTracks()) {
+            if (!fjernLyd.getTrackById(t.id)) fjernLyd.addTrack(t)
+          }
+        }
+        if (!fjernLyd.getTrackById(e.track.id)) fjernLyd.addTrack(e.track)
+        setFjernLydStrom(new MediaStream(fjernLyd.getAudioTracks()))
+        e.track.onended = () => {
+          fjernLyd.removeTrack(e.track)
+          setFjernLydStrom(fjernLyd.getAudioTracks().length ? new MediaStream(fjernLyd.getAudioTracks()) : null)
+        }
       }
     }
 
@@ -201,15 +263,23 @@ export function useMoggernWebRtc({
       window.clearTimeout(startTimer)
       lukkForbindelse()
     }
-  }, [aktiv, meg, motstanderId, lukkForbindelse])
+  }, [aktiv, iceKlar, meg, motstanderId, lukkForbindelse])
 
-  // Swap outgoing video track cleanly whenever the local camera is toggled on or off.
+  // Swap outgoing video track cleanly whenever the local camera is switched or toggled.
   useEffect(() => {
     const sender = senderRef.current
     if (!sender) return
     const spor = lokalStrom?.getVideoTracks()[0] ?? null
     void sender.replaceTrack(spor).catch(() => {})
   }, [lokalStrom])
+
+  // Swap outgoing audio track cleanly whenever the local mic is toggled on or off.
+  useEffect(() => {
+    const sender = lydSenderRef.current
+    if (!sender) return
+    const spor = lydStrom?.getAudioTracks()[0] ?? null
+    void sender.replaceTrack(spor).catch(() => {})
+  }, [lydStrom])
 
   const mottaSignal = useCallback(
     (payload: unknown) => {
@@ -302,6 +372,7 @@ export function useMoggernWebRtc({
 
   return {
     fjernStrom,
+    fjernLydStrom,
     status,
     feil,
     harTurn,

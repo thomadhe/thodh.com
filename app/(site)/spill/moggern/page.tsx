@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "Moggern",
-  description: "1v1 kameraduell for venner: 10 sekunders måling i nettleseren, 7 delpoeng, titler og tullete disser.",
+  description: "1v1 kameraduell for venner: 15 sekunders måling i nettleseren, 7 delpoeng, titler og tullete disser.",
 }
 
 export default async function Page() {

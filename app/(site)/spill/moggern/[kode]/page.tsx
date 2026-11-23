@@ -46,7 +46,7 @@ export default async function Page({ params }: PageProps<"/spill/moggern/[kode]"
       regler={
         <>
           <p>
-            1v1 kameraduell kun for venner (maks 2 spillere per rom). Begge slår på kameraet, trykker klar, og ser rett inn i linsa under 10 sekunders
+            1v1 kameraduell kun for venner (maks 2 spillere per rom). Begge slår på kameraet, trykker klar, og ser rett inn i linsa under 15 sekunders
             måling.
           </p>
           <p>

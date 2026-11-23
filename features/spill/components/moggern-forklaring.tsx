@@ -179,7 +179,7 @@ export function SlikRegnesDet({ aapenSomStandard = false }: { aapenSomStandard?:
           <div className="grid gap-2 sm:grid-cols-2">
             <Boks tittel="1. Normalisering & vinkel">
               Punktene roteres så øyelinjen blir vannrett, og skaleres etter pupillavstanden (IPD). Bare frontale bilder (|yaw| ≤ {MAKS_YAW_GRADER}°,
-              |pitch| ≤ {MAKS_PITCH_GRADER}°) teller, og duellen krever minst {MIN_GYLDIGE_RAMMER} gyldige bilder over 10 sekunder.
+              |pitch| ≤ {MAKS_PITCH_GRADER}°) teller, og duellen krever minst {MIN_GYLDIGE_RAMMER} gyldige bilder over 15 sekunder.
             </Boks>
             <Boks tittel="2. Asymmetrisk platå per mål">
               Hvert mål (f.eks. 3D-kjevevinkel, PFR, fWHR, ESR) får 10 innenfor et målområde. Utenfor faller poenget som en Gauss-kurve — brattere på den
