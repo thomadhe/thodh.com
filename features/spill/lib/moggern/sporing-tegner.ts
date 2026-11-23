@@ -78,7 +78,17 @@ export function tegnAnsiktSporing(
   lerret: HTMLCanvasElement,
   kilde: HTMLVideoElement | HTMLCanvasElement,
   punkter: readonly Punkt3D[] | null,
-  opts: { speilet: boolean; gyldig?: boolean; rizzlerGull?: boolean },
+  opts: {
+    speilet: boolean
+    gyldig?: boolean
+    rizzlerGull?: boolean
+    /** When true, highlights the chin/jawline/lip target zone so the player sees exactly where to point. */
+    rizzlerMal?: boolean
+    /** Live index fingertip landmark [0, 1] from HandLandmarker to show where the camera sees the finger. */
+    pekeTipp?: Punkt3D | null
+    /** Whether to draw the standard biometric face lines (defaults to true). */
+    visGrunnlinjer?: boolean
+  },
 ) {
   const visningBredde = lerret.clientWidth
   const visningHoyde = lerret.clientHeight
@@ -144,6 +154,7 @@ export function tegnAnsiktSporing(
   }
 
   const gull = !!opts.rizzlerGull
+  const visGrunn = opts.visGrunnlinjer !== false
   const linjeFarge = gull
     ? "rgba(250, 204, 21, 0.94)"
     : opts.gyldig === false
@@ -155,66 +166,130 @@ export function tegnAnsiktSporing(
   ctx.lineCap = "round"
   ctx.lineJoin = "round"
 
-  // 1. Hairline jawline trace with subtle glow (turns glowing gold during Rizzler Finisher!)
-  ctx.shadowColor = gull ? "rgba(250, 204, 21, 0.85)" : "rgba(74, 222, 128, 0.42)"
-  ctx.shadowBlur = gull ? 12 : 3
-  ctx.lineWidth = gull ? 2.6 : 1.2
-  ctx.strokeStyle = linjeFarge
-  tegnSti(KJEVELINJE)
-
-  // 2. Whisper-thin brow ridges
-  ctx.shadowBlur = 0
-  ctx.lineWidth = 0.9
-  ctx.strokeStyle = gull ? "rgba(250, 204, 21, 0.52)" : "rgba(74, 222, 128, 0.36)"
-  tegnSti(HOYRE_BRYN)
-  tegnSti(VENSTRE_BRYN)
-
-  // 3. Outward-only canthal-tilt wings (starts OUTSIDE the outer eye corner so the eyes stay 100% clear)
-  ctx.lineWidth = 1.05
-  ctx.strokeStyle = lysFarge
-  for (const [indreIdx, ytreIdx] of [
-    [PUNKTER.hoyreOyeIndre, PUNKTER.hoyreOyeYtre],
-    [PUNKTER.venstreOyeIndre, PUNKTER.venstreOyeYtre],
-  ] as const) {
-    const indre = p(indreIdx)
-    const ytre = p(ytreIdx)
-    if (!indre || !ytre) continue
-    const dx = ytre.x - indre.x
-    const dy = ytre.y - indre.y
-    tegnLinje(
-      { x: ytre.x + dx * 0.12, y: ytre.y + dy * 0.12 },
-      { x: ytre.x + dx * 0.44, y: ytre.y + dy * 0.44 },
-    )
-  }
-
-  // 4. Subtle peripheral width caliper ticks (cheekbones + gonions + chin/forehead vertical ticks)
-  ctx.lineWidth = 0.95
-  ctx.strokeStyle = gull ? "rgba(250, 204, 21, 0.65)" : "rgba(74, 222, 128, 0.48)"
-  tegnSideHake(p(PUNKTER.hoyreKinnben), p(PUNKTER.venstreKinnben), 7)
-  tegnSideHake(p(PUNKTER.hoyreKjeveHjorne), p(PUNKTER.venstreKjeveHjorne), 6)
-
   const hakePt = p(PUNKTER.hake)
   const pannePt = p(PUNKTER.panneTopp)
-  if (hakePt) tegnLinje({ x: hakePt.x, y: hakePt.y + 3 }, { x: hakePt.x, y: hakePt.y + 9 })
-  if (pannePt) tegnLinje({ x: pannePt.x, y: pannePt.y - 3 }, { x: pannePt.x, y: pannePt.y - 9 })
 
-  // 5. Delicate micro-dots on key structural landmarks
-  ctx.fillStyle = gull ? "rgba(254, 240, 138, 0.72)" : "rgba(190, 242, 100, 0.55)"
-  for (const idx of SMAA_PUNKTER) {
-    const pt = p(idx)
-    if (!pt) continue
-    ctx.beginPath()
-    ctx.arc(pt.x, pt.y, 1.25, 0, Math.PI * 2)
-    ctx.fill()
+  if (visGrunn) {
+    // 1. Hairline jawline trace with subtle glow (turns glowing gold during Rizzler Finisher!)
+    ctx.shadowColor = gull ? "rgba(250, 204, 21, 0.85)" : "rgba(74, 222, 128, 0.42)"
+    ctx.shadowBlur = gull ? 12 : 3
+    ctx.lineWidth = gull ? 2.6 : 1.2
+    ctx.strokeStyle = linjeFarge
+    tegnSti(KJEVELINJE)
+
+    // 2. Whisper-thin brow ridges
+    ctx.shadowBlur = 0
+    ctx.lineWidth = 0.9
+    ctx.strokeStyle = gull ? "rgba(250, 204, 21, 0.52)" : "rgba(74, 222, 128, 0.36)"
+    tegnSti(HOYRE_BRYN)
+    tegnSti(VENSTRE_BRYN)
+
+    // 3. Outward-only canthal-tilt wings (starts OUTSIDE the outer eye corner so the eyes stay 100% clear)
+    ctx.lineWidth = 1.05
+    ctx.strokeStyle = lysFarge
+    for (const [indreIdx, ytreIdx] of [
+      [PUNKTER.hoyreOyeIndre, PUNKTER.hoyreOyeYtre],
+      [PUNKTER.venstreOyeIndre, PUNKTER.venstreOyeYtre],
+    ] as const) {
+      const indre = p(indreIdx)
+      const ytre = p(ytreIdx)
+      if (!indre || !ytre) continue
+      const dx = ytre.x - indre.x
+      const dy = ytre.y - indre.y
+      tegnLinje(
+        { x: ytre.x + dx * 0.12, y: ytre.y + dy * 0.12 },
+        { x: ytre.x + dx * 0.44, y: ytre.y + dy * 0.44 },
+      )
+    }
+
+    // 4. Subtle peripheral width caliper ticks (cheekbones + gonions + chin/forehead vertical ticks)
+    ctx.lineWidth = 0.95
+    ctx.strokeStyle = gull ? "rgba(250, 204, 21, 0.65)" : "rgba(74, 222, 128, 0.48)"
+    tegnSideHake(p(PUNKTER.hoyreKinnben), p(PUNKTER.venstreKinnben), 7)
+    tegnSideHake(p(PUNKTER.hoyreKjeveHjorne), p(PUNKTER.venstreKjeveHjorne), 6)
+
+    if (hakePt) tegnLinje({ x: hakePt.x, y: hakePt.y + 3 }, { x: hakePt.x, y: hakePt.y + 9 })
+    if (pannePt) tegnLinje({ x: pannePt.x, y: pannePt.y - 3 }, { x: pannePt.x, y: pannePt.y - 9 })
+
+    // 5. Delicate micro-dots on key structural landmarks
+    ctx.fillStyle = gull ? "rgba(254, 240, 138, 0.72)" : "rgba(190, 242, 100, 0.55)"
+    for (const idx of SMAA_PUNKTER) {
+      const pt = p(idx)
+      if (!pt) continue
+      ctx.beginPath()
+      ctx.arc(pt.x, pt.y, 1.25, 0, Math.PI * 2)
+      ctx.fill()
+    }
+
+    ctx.fillStyle = lysFarge
+    for (const idx of HOVED_PUNKTER) {
+      const pt = p(idx)
+      if (!pt) continue
+      ctx.beginPath()
+      ctx.arc(pt.x, pt.y, gull ? 2.6 : 1.8, 0, Math.PI * 2)
+      ctx.fill()
+    }
   }
 
-  ctx.fillStyle = lysFarge
-  for (const idx of HOVED_PUNKTER) {
-    const pt = p(idx)
-    if (!pt) continue
+  // 6. Visual Rizzler target guide: pulsing golden chin/jawline target + live fingertip tracker
+  if (opts.rizzlerMal && hakePt) {
+    const puls = 0.5 + 0.5 * Math.sin(performance.now() / 220)
+    const munnPt = p(PUNKTER.munnMidt)
+
+    // Glowing golden dashed highlight along the jawline target arc
+    ctx.save()
+    ctx.strokeStyle = gull ? "rgba(250, 204, 21, 0.95)" : `rgba(250, 204, 21, ${(0.55 + puls * 0.35).toFixed(2)})`
+    ctx.shadowColor = "rgba(250, 204, 21, 0.85)"
+    ctx.shadowBlur = gull ? 14 : 8
+    ctx.lineWidth = gull ? 3 : 2.2
+    if (!gull) ctx.setLineDash([5, 5])
+    tegnSti(KJEVELINJE)
+    ctx.restore()
+
+    // Target bullseye ring on the chin (and subtle secondary ring on the lips for 🤫)
+    const r = gull ? 13 : 11 + puls * 5
+    ctx.save()
     ctx.beginPath()
-    ctx.arc(pt.x, pt.y, gull ? 2.6 : 1.8, 0, Math.PI * 2)
+    ctx.arc(hakePt.x, hakePt.y, r, 0, Math.PI * 2)
+    ctx.fillStyle = gull ? "rgba(250, 204, 21, 0.28)" : "rgba(250, 204, 21, 0.14)"
     ctx.fill()
+    ctx.lineWidth = 2
+    ctx.strokeStyle = gull ? "rgba(254, 240, 138, 0.95)" : "rgba(250, 204, 21, 0.85)"
+    ctx.stroke()
+
+    if (munnPt && !gull) {
+      ctx.beginPath()
+      ctx.arc(munnPt.x, munnPt.y, 7 + puls * 2.5, 0, Math.PI * 2)
+      ctx.lineWidth = 1.4
+      ctx.setLineDash([3, 3])
+      ctx.strokeStyle = "rgba(254, 240, 138, 0.65)"
+      ctx.stroke()
+    }
+    ctx.restore()
+
+    // Live index fingertip marker so the player immediately sees where the camera detects their finger
+    if (opts.pekeTipp) {
+      const tipp = kartleggPunktTilVisning(opts.pekeTipp, vw, vh, visningBredde, visningHoyde, opts.speilet)
+      ctx.save()
+      if (!gull) {
+        ctx.beginPath()
+        ctx.setLineDash([4, 4])
+        ctx.moveTo(tipp.x, tipp.y)
+        ctx.lineTo(hakePt.x, hakePt.y)
+        ctx.lineWidth = 1.5
+        ctx.strokeStyle = "rgba(254, 240, 138, 0.55)"
+        ctx.stroke()
+        ctx.setLineDash([])
+      }
+      ctx.beginPath()
+      ctx.arc(tipp.x, tipp.y, gull ? 9 : 8, 0, Math.PI * 2)
+      ctx.fillStyle = gull ? "rgba(250, 204, 21, 0.9)" : "rgba(34, 211, 238, 0.85)"
+      ctx.fill()
+      ctx.lineWidth = 2.2
+      ctx.strokeStyle = "#ffffff"
+      ctx.stroke()
+      ctx.restore()
+    }
   }
 
   ctx.restore()

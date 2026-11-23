@@ -66,6 +66,7 @@ import {
   type LivePoeng,
   type LivePoengTilstand,
   type MogUttrykkStyrker,
+  type Punkt3D,
   type RammeResultat,
   type Veiledning,
 } from "../lib/moggern/poeng"
@@ -73,11 +74,15 @@ import {
   erRizzlerPose,
   lesRizzlerHendelse,
   RIZZLER_BONUS,
+  RIZZLER_EKSTRATID_MS,
   RIZZLER_FEIL_STRAFF,
+  RIZZLER_FORVARSEL_MS,
   RIZZLER_GLIPP_MS,
   RIZZLER_HOLD_MS,
   RIZZLER_SMIL_TERSKEL,
+  RIZZLER_SOLO_MIN_POENG,
   RIZZLER_VINDU_MS,
+  type RizzlerPoseStatus,
 } from "../lib/moggern/rizzler"
 import { tegnAnsiktSporing, tømSporingsLerret } from "../lib/moggern/sporing-tegner"
 import { rangForPoeng } from "../lib/moggern/tekster"
@@ -257,6 +262,8 @@ function AktivtMoggernRom({
   const visBannerRef = useRef<(type: "utlost" | "feilet", avMeg: boolean, navn: string) => void>(() => {})
   const motFinisherStatusRef = useRef<"inaktiv" | "utlost" | "feilet">("inaktiv")
   const motFinisherBonusRef = useRef<number>(0)
+  const motPoengLastRef = useRef<boolean>(false)
+  const [motFinisherLader, setMotFinisherLader] = useState(false)
   const [peakBilder, setPeakBilder] = useState<Record<string, string | null>>({})
   const [motstanderKameraPa, setMotstanderKameraPa] = useState(false)
   const [relayAktiv, setRelayAktiv] = useState(false)
@@ -334,6 +341,13 @@ function AktivtMoggernRom({
       finisher: (payload: unknown, romCtx: Romkontekst<MoggernStatus>) => {
         const h = lesRizzlerHendelse(payload)
         if (!h || h.av === romCtx.meg || romCtx.status().runde !== h.runde) return
+        if (h.type === "start") {
+          motPoengLastRef.current = true
+          setMotFinisherLader(true)
+          return
+        }
+        motPoengLastRef.current = true
+        setMotFinisherLader(false)
         if (motFinisherStatusRef.current !== "inaktiv") return
         motFinisherStatusRef.current = h.type
         motFinisherBonusRef.current = h.type === "utlost" ? RIZZLER_BONUS : RIZZLER_FEIL_STRAFF
@@ -444,6 +458,8 @@ function AktivtMoggernRom({
     id: number
   } | null>(null)
   const [lobbyRizzler, setLobbyRizzler] = useState(false)
+  const [egenPoengLast, setEgenPoengLast] = useState(false)
+  const [rizzlerPoseStatus, setRizzlerPoseStatus] = useState<RizzlerPoseStatus>("ingen-hand")
 
   // Solo-test (15 s) state inside the room lobby
   const [soloFase, setSoloFase] = useState<SoloFase>(null)
@@ -489,15 +505,18 @@ function AktivtMoggernRom({
 
   const egenFinisherStatusRef = useRef<"inaktiv" | "utlost" | "feilet">("inaktiv")
   const egenFinisherBonusRef = useRef<number>(0)
+  const egenPoengLastRef = useRef<boolean>(false)
   const finisherLadeStartRef = useRef<number | null>(null)
   const sisteRizzlerSettRef = useRef<number>(0)
   const finisherSmilPaRadRef = useRef<number>(0)
-  const finisherUtlostTidRef = useRef<number>(0)
   const gyldigeEgenRef = useRef<number>(0)
+  const gyldigeMotRef = useRef<number>(0)
+  const rizzlerPoseStatusRef = useRef<RizzlerPoseStatus>("ingen-hand")
+  const rizzlerTippRef = useRef<Punkt3D | null>(null)
   const lobbyRizzlerRef = useRef<boolean>(false)
   const kanBrukeFinisherRef = useRef<boolean>(false)
   const mittNavnRef = useRef(mittNavn)
-  const sendFinisherRef = useRef<(type: "utlost" | "feilet") => void>(() => {})
+  const sendFinisherRef = useRef<(type: "start" | "utlost" | "feilet") => void>(() => {})
   const bannerTimerRef = useRef<number | null>(null)
 
   useEffect(() => {
@@ -677,14 +696,16 @@ function AktivtMoggernRom({
   }, [mittNavn])
 
   useEffect(() => {
-    sendFinisherRef.current = (type: "utlost" | "feilet") => {
+    sendFinisherRef.current = (type: "start" | "utlost" | "feilet") => {
       if (erSoloAktiv || !meg) return
       const payload = { runde: status.runde, av: meg, type, navn: mittNavnRef.current || "Spiller" }
       send("finisher", payload)
-      // Re-send once shortly after in case the round ends right as the finisher lands.
-      window.setTimeout(() => {
-        send("finisher", payload)
-      }, 350)
+      if (type !== "start") {
+        // Re-send once shortly after in case the round ends right as the finisher lands.
+        window.setTimeout(() => {
+          send("finisher", payload)
+        }, 350)
+      }
     }
   }, [erSoloAktiv, meg, status.runde, send])
 
@@ -859,9 +880,27 @@ function AktivtMoggernRom({
     return 0
   }, [aktivFase, aktivStartTid, na])
 
-  // Keep Rizzler Finisher eligibility synced for the rAF loop (unlocked for everyone in the final 7 s — both leading & comeback!).
+  // Rizzler Finisher unlocks at 13 s elapsed (final 2 s) when qualified: leading in 1v1 or >= 6.0 in Solo-test.
+  // Between 10 s and 13 s elapsed we show a heads-up countdown so the player has time to get their finger ready.
+  const kvalifisertForFinisher = erSoloAktiv
+    ? (egenLive?.total ?? 0) >= RIZZLER_SOLO_MIN_POENG
+    : !!egenLive && !!motLive && egenLive.total - motLive.total >= 0.1
+  const iFinisherForvarsel =
+    aktivFase === "maling" &&
+    egenFinisherStatus === "inaktiv" &&
+    !egenPoengLast &&
+    kvalifisertForFinisher &&
+    gjenstarMs > RIZZLER_VINDU_MS &&
+    gjenstarMs <= RIZZLER_FORVARSEL_MS
   const iFinisherVindu = aktivFase === "maling" && gjenstarMs > 0 && gjenstarMs <= RIZZLER_VINDU_MS
-  const kanBrukeFinisher = iFinisherVindu && egenFinisherStatus === "inaktiv"
+  const kanBrukeFinisher = iFinisherVindu && egenFinisherStatus === "inaktiv" && (kvalifisertForFinisher || egenPoengLast)
+  // If the player started charging right before 15 s, allow up to RIZZLER_EKSTRATID_MS to complete the hold.
+  const rizzlerEkstraTidAktiv =
+    aktivFase === "maling" &&
+    gjenstarMs <= 0 &&
+    egenFinisherStatus === "inaktiv" &&
+    finisherFremdrift > 0 &&
+    na < aktivStartTid + MALING_MS + RIZZLER_EKSTRATID_MS
 
   useEffect(() => {
     kanBrukeFinisherRef.current = kanBrukeFinisher
@@ -915,17 +954,24 @@ function AktivtMoggernRom({
       motFinisherStatusRef.current = "inaktiv"
       egenFinisherBonusRef.current = 0
       motFinisherBonusRef.current = 0
+      egenPoengLastRef.current = false
+      motPoengLastRef.current = false
       finisherLadeStartRef.current = null
       sisteRizzlerSettRef.current = 0
       finisherSmilPaRadRef.current = 0
-      finisherUtlostTidRef.current = 0
       gyldigeEgenRef.current = 0
+      gyldigeMotRef.current = 0
+      rizzlerPoseStatusRef.current = "ingen-hand"
+      rizzlerTippRef.current = null
       lobbyRizzlerRef.current = false
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setPeakBilder({})
       setGyldigeEgen(0)
       setGyldigeMot(0)
       setEgenFinisherStatus("inaktiv")
+      setEgenPoengLast(false)
+      setMotFinisherLader(false)
+      setRizzlerPoseStatus("ingen-hand")
       setFinisherFremdrift(0)
       setFinisherBanner(null)
       setLobbyRizzler(false)
@@ -962,23 +1008,27 @@ function AktivtMoggernRom({
           try {
             const ut = egenSporer.analyser(egenVideo, lerret, taOffisiell)
             if (ut) {
-              // Optional Rizzler Finisher hand tracking (runs in lobby preview or when unlocked in final 7 s).
+              // Rizzler Finisher hand tracking (runs in lobby practice or once unlocked at 13 s).
               const handSporer = handSporerRef.current
+              const rizzlerAktivtVindu =
+                maler &&
+                egenFinisherStatusRef.current === "inaktiv" &&
+                (kanBrukeFinisherRef.current || finisherLadeStartRef.current !== null)
               const skalSjekkeHand =
                 !!handSporer &&
                 !!ut.punkter &&
                 ut.punkter.length >= 468 &&
-                (iLobby
-                  ? naTid - sisteHandTid >= 140
-                  : maler &&
-                    egenFinisherStatusRef.current === "inaktiv" &&
-                    (kanBrukeFinisherRef.current || finisherLadeStartRef.current !== null) &&
-                    naTid - sisteHandTid >= 75)
+                (iLobby ? naTid - sisteHandTid >= 140 : rizzlerAktivtVindu && naTid - sisteHandTid >= 75)
 
               if (skalSjekkeHand && handSporer && ut.punkter) {
                 sisteHandTid = naTid
                 const hender = handSporer.analyser(egenVideo)
                 const pose = erRizzlerPose(hender, ut.punkter, egenVideo.videoWidth, egenVideo.videoHeight)
+                rizzlerTippRef.current = pose.pekeTipp
+                if (rizzlerPoseStatusRef.current !== pose.status) {
+                  rizzlerPoseStatusRef.current = pose.status
+                  setRizzlerPoseStatus(pose.status)
+                }
                 if (iLobby) {
                   if (lobbyRizzlerRef.current !== pose.aktiv) {
                     lobbyRizzlerRef.current = pose.aktiv
@@ -991,6 +1041,12 @@ function AktivtMoggernRom({
                     if (finisherLadeStartRef.current === null) {
                       finisherLadeStartRef.current = naTid
                       finisherSmilPaRadRef.current = 0
+                      // Lock the player's base score as soon as they commit to the Rizzler Finisher.
+                      if (!egenPoengLastRef.current) {
+                        egenPoengLastRef.current = true
+                        setEgenPoengLast(true)
+                        sendFinisherRef.current("start")
+                      }
                     }
                     if (smil >= RIZZLER_SMIL_TERSKEL) {
                       finisherSmilPaRadRef.current += 1
@@ -1015,7 +1071,6 @@ function AktivtMoggernRom({
                         egenFinisherBonusRef.current = RIZZLER_BONUS
                         finisherLadeStartRef.current = null
                         finisherSmilPaRadRef.current = 0
-                        finisherUtlostTidRef.current = naTid
                         setEgenFinisherStatus("utlost")
                         setFinisherFremdrift(1)
                         lyder.rizzler()
@@ -1035,6 +1090,8 @@ function AktivtMoggernRom({
                     setFinisherFremdrift(0)
                   }
                 }
+              } else if (!iLobby && !rizzlerAktivtVindu && rizzlerTippRef.current !== null) {
+                rizzlerTippRef.current = null
               }
 
               const egenGull =
@@ -1042,24 +1099,27 @@ function AktivtMoggernRom({
                 finisherLadeStartRef.current !== null ||
                 (iLobby && lobbyRizzlerRef.current)
 
-              // Protect score from chin/jaw hand occlusion while charging or right after landing the Rizzler Finisher.
-              const handPaAnsikt =
-                maler &&
-                (finisherLadeStartRef.current !== null ||
-                  (finisherUtlostTidRef.current > 0 && naTid - finisherUtlostTidRef.current < 1100))
+              // Show the golden chin/jawline target ring whenever the Rizzler window is open (or when practicing with a hand in lobby).
+              const visRizzlerMal = rizzlerAktivtVindu || (iLobby && (rizzlerTippRef.current !== null || lobbyRizzlerRef.current))
+
+              // Once the player begins the Rizzler, their base score stays locked for the rest of the round (leaving only +0.2 / -0.3).
+              const poengErLast = maler && egenPoengLastRef.current
 
               if (egenOverlay) {
-                if (visSporingRef.current) {
+                if (visSporingRef.current || visRizzlerMal) {
                   tegnAnsiktSporing(egenOverlay, egenVideo, ut.punkter, {
                     speilet: true,
                     gyldig: ut.ramme.gyldig,
                     rizzlerGull: egenGull,
+                    rizzlerMal: visRizzlerMal,
+                    pekeTipp: visRizzlerMal ? rizzlerTippRef.current : null,
+                    visGrunnlinjer: visSporingRef.current,
                   })
                 } else {
                   tømSporingsLerret(egenOverlay)
                 }
               }
-              if (taOffisiell && !(handPaAnsikt && gyldigeEgenRef.current >= MIN_GYLDIGE_RAMMER)) {
+              if (taOffisiell && !(poengErLast && gyldigeEgenRef.current >= MIN_GYLDIGE_RAMMER)) {
                 egenRammerRef.current.push(ut.ramme)
                 if (ut.lys) egenLysRef.current.push(ut.lys)
                 if (ut.ramme.gyldig) {
@@ -1080,7 +1140,7 @@ function AktivtMoggernRom({
                 }
               }
               const forsteEgen = egenLiveRef.current.struktur === null
-              if ((oppdaterHud || forsteEgen) && (!handPaAnsikt || forsteEgen)) {
+              if ((oppdaterHud || forsteEgen) && (!poengErLast || forsteEgen)) {
                 setEgenVeiledning(ut.ramme.veiledning)
                 const live = oppdaterLivePoeng(egenLiveRef.current, ut.ramme)
                 if (live) setEgenLive(live)
@@ -1102,6 +1162,7 @@ function AktivtMoggernRom({
         const fjernKilde = brukerDirekte ? fjernVideo : brukerRelay ? fjernRelay : null
         const nyRelayRamme = brukerRelay && relayRammeNrRef.current !== sisteAnalysertRelayNrRef.current
         const taMotOffisiell = maler && (brukerRelay ? nyRelayRamme : taOffisiell)
+        const motPoengErLast = maler && motPoengLastRef.current
 
         if (!erSoloAktiv && taMotOffisiell && !motPeakBildeRef.current && fjernKilde) {
           const fallback = fangVideoBilde(fjernKilde, false)
@@ -1120,17 +1181,18 @@ function AktivtMoggernRom({
                   tegnAnsiktSporing(motOverlay, fjernKilde, ut.punkter, {
                     speilet: false,
                     gyldig: ut.ramme.gyldig,
-                    rizzlerGull: motFinisherStatusRef.current === "utlost",
+                    rizzlerGull: motFinisherStatusRef.current === "utlost" || motPoengLastRef.current,
                   })
                 } else {
                   tømSporingsLerret(motOverlay)
                 }
               }
-              if (taMotOffisiell) {
+              if (taMotOffisiell && !(motPoengErLast && gyldigeMotRef.current >= MIN_GYLDIGE_RAMMER)) {
                 motRammerRef.current.push(ut.ramme)
                 if (ut.lys) motLysRef.current.push(ut.lys)
                 if (ut.ramme.gyldig) {
-                  setGyldigeMot((n) => n + 1)
+                  gyldigeMotRef.current += 1
+                  setGyldigeMot(gyldigeMotRef.current)
                   const p = ut.ramme.total ?? 0
                   if (
                     motPeakPoengRef.current < 0 ||
@@ -1146,7 +1208,7 @@ function AktivtMoggernRom({
                 }
               }
               const forsteMot = motLiveRef.current.struktur === null
-              if (oppdaterHud || forsteMot || brukerRelay) {
+              if ((oppdaterHud || forsteMot || brukerRelay) && (!motPoengErLast || forsteMot)) {
                 const live = oppdaterLivePoeng(motLiveRef.current, ut.ramme)
                 if (live) setMotLive(live)
               }
@@ -1200,9 +1262,9 @@ function AktivtMoggernRom({
     }
   }, [meg, status.runde, byggSpillerMaaling])
 
-  // Finish Solo-test as soon as its 15 seconds finish.
+  // Finish Solo-test as soon as its 15 seconds finish (waiting briefly if a Rizzler Finisher is mid-charge).
   useEffect(() => {
-    if (!erSoloAktiv || soloFase !== "maling" || gjenstarMs > 0) return
+    if (!erSoloAktiv || soloFase !== "maling" || gjenstarMs > 0 || rizzlerEkstraTidAktiv) return
     if (ferdigSoloRundeRef.current === soloRunde) return
     ferdigSoloRundeRef.current = soloRunde
 
@@ -1221,11 +1283,16 @@ function AktivtMoggernRom({
       setResultatRekord(null)
     }
     setSoloFase("resultat")
-  }, [erSoloAktiv, soloFase, gjenstarMs, soloRunde, byggSpillerMaaling, meg])
+  }, [erSoloAktiv, soloFase, gjenstarMs, rizzlerEkstraTidAktiv, soloRunde, byggSpillerMaaling, meg])
 
-  // Send 1v1 measurement report + ephemeral Peak Mog portrait as soon as the 15 seconds finish.
+  // Send 1v1 measurement report + ephemeral Peak Mog portrait once 15 s finish (waiting briefly if either player is mid-Rizzler).
+  const venterPaMotRizzler =
+    status.fase === "maling" &&
+    gjenstarMs <= 0 &&
+    motFinisherLader &&
+    na < status.faseStartTid + MALING_MS + RIZZLER_EKSTRATID_MS
   useEffect(() => {
-    if (status.fase !== "maling" || !meg || gjenstarMs > 0) return
+    if (status.fase !== "maling" || !meg || gjenstarMs > 0 || rizzlerEkstraTidAktiv || venterPaMotRizzler) return
     if (sendtRapportRundeRef.current === status.runde) return
     sendtRapportRundeRef.current = status.runde
 
@@ -1263,13 +1330,13 @@ function AktivtMoggernRom({
       }
     }, 1000)
     return () => window.clearTimeout(reprise)
-  }, [status.fase, status.runde, meg, gjenstarMs, lagRapport, settStatus, send])
+  }, [status.fase, status.runde, meg, gjenstarMs, rizzlerEkstraTidAktiv, venterPaMotRizzler, lagRapport, settStatus, send])
 
-  // Host transitions from "maling" to "resultat" once both reports are in (or after 4.5 s timeout) and updates room series tally.
+  // Host transitions from "maling" to "resultat" once both reports are in (or after timeout) and updates room series tally.
   useEffect(() => {
     if (!erVert || status.fase !== "maling") return
     const alleHarSendt = status.deltakere.length === MOGGERN_MAKS_SPILLERE && status.deltakere.every((d) => !!status.rapporter[d.id])
-    const utlopt = na >= status.faseStartTid + MALING_MS + 4500
+    const utlopt = na >= status.faseStartTid + MALING_MS + RIZZLER_EKSTRATID_MS + 4000
 
     if (alleHarSendt || utlopt) {
       nyFase((s) => {
@@ -1589,7 +1656,11 @@ function AktivtMoggernRom({
             <canvas
               ref={egenSporingLerretRef}
               aria-hidden="true"
-              className={`pointer-events-none absolute inset-0 h-full w-full transition-opacity duration-300 ${lokalStrom && visSporing ? "opacity-100" : "opacity-0"}`}
+              className={`pointer-events-none absolute inset-0 h-full w-full transition-opacity duration-300 ${
+                lokalStrom && (visSporing || kanBrukeFinisher || finisherFremdrift > 0 || (status.fase === "lobby" && !iDuell && lobbyRizzler))
+                  ? "opacity-100"
+                  : "opacity-0"
+              }`}
             />
 
             {!lokalStrom ? (
@@ -1634,11 +1705,16 @@ function AktivtMoggernRom({
                 <LiveRating live={egenLive} modell={modell} aktiv={!!lokalStrom && modell !== "feil"} />
                 {aktivFase === "maling" && egenFinisherStatus === "utlost" ? (
                   <span className="mel-pop inline-flex h-7 items-center gap-1 rounded-full bg-amber-300 px-2.5 text-[11px] font-bold text-[#18191b] shadow-[0_0_20px_rgb(250_204_21/0.55)] tabular-nums">
-                    🤫 Rizzler {formaterBonus(RIZZLER_BONUS)}
+                    🤫 Rizzler {formaterBonus(RIZZLER_BONUS)} · låst
                   </span>
                 ) : aktivFase === "maling" && egenFinisherStatus === "feilet" ? (
                   <span className="mel-pop inline-flex h-7 items-center gap-1 rounded-full bg-rose-500/90 px-2.5 text-[11px] font-bold text-white tabular-nums">
                     😂 Rizz failed {formaterBonus(RIZZLER_FEIL_STRAFF)}
+                  </span>
+                ) : aktivFase === "maling" && egenPoengLast ? (
+                  <span className="mel-pop inline-flex h-7 items-center gap-1 rounded-full border border-amber-300/50 bg-[#111214]/85 px-2.5 text-[11px] font-semibold text-amber-200 backdrop-blur-md">
+                    <Lock className="h-3 w-3 shrink-0 text-amber-300" aria-hidden="true" />
+                    Poeng låst
                   </span>
                 ) : null}
                 {modell === "feil" && lokalStrom ? (
@@ -1658,15 +1734,29 @@ function AktivtMoggernRom({
             <div className="absolute inset-x-2.5 bottom-2.5 flex flex-col gap-2 sm:inset-x-3.5 sm:bottom-3.5">
               {lokalStrom && !iDuell && status.fase === "lobby" && lobbyRizzler ? (
                 <span className="mel-pop inline-flex h-7 self-start items-center gap-1.5 rounded-full bg-amber-300/95 px-3 text-[11px] font-bold text-[#18191b] shadow-[0_0_24px_rgb(250_204_21/0.45)]">
-                  🤫 Rizzler-pose oppdaget!
+                  🤫 Rizzler-pose treffer! (Klar ved 13 s)
+                </span>
+              ) : null}
+              {lokalStrom && iFinisherForvarsel ? (
+                <span className="mel-pop inline-flex h-7 self-start items-center gap-1.5 rounded-full border border-amber-300/40 bg-[#111214]/85 px-3 text-[11px] font-semibold text-amber-200 backdrop-blur-md tabular-nums">
+                  🤫 Rizzler om {Math.max(1, Math.ceil((gjenstarMs - RIZZLER_VINDU_MS) / 1000))} s — pekefinger klar
                 </span>
               ) : null}
               {lokalStrom && aktivFase === "maling" && egenFinisherStatus === "inaktiv" && (kanBrukeFinisher || finisherFremdrift > 0) ? (
-                <div className="mel-pop flex max-w-xs flex-col gap-1.5 self-start rounded-2xl border border-amber-300/50 bg-[#111214]/85 px-3 py-2 text-amber-200 shadow-[0_0_28px_rgb(250_204_21/0.35)] backdrop-blur-md">
+                <div className="mel-pop flex max-w-xs flex-col gap-1.5 self-start rounded-2xl border border-amber-300/50 bg-[#111214]/88 px-3 py-2 text-amber-200 shadow-[0_0_28px_rgb(250_204_21/0.35)] backdrop-blur-md">
                   <p className="text-[11px] leading-4 font-bold tracking-tight text-amber-300">
                     {finisherFremdrift > 0
-                      ? "🤫 Lader Rizzler Finisher … IKKE SMIL!"
-                      : "🤫 RIZZLER FINISHER KLAR — pek på haka/kjevelinja eller 🤫!"}
+                      ? "🤫 Lader Rizzler … IKKE SMIL!"
+                      : rizzlerPoseStatus === "aapen-hand"
+                        ? "☝️ Knytt de andre fingrene — kun pekefinger!"
+                        : rizzlerPoseStatus === "for-langt-unna"
+                          ? "👉 Flytt pekefingeren til gullringen på haka!"
+                          : "🤫 RIZZLER KLAR — pek på gullringen på haka!"}
+                  </p>
+                  <p className="text-[10px] leading-3.5 text-white/70">
+                    {finisherFremdrift > 0
+                      ? `Poeng låst 🔒 — hold rolig for ${formaterBonus(RIZZLER_BONUS)} boost`
+                      : `Knytt hånda, 1 pekefinger på haka/leppa · låser poeng + sjanse på ${formaterBonus(RIZZLER_BONUS)}`}
                   </p>
                   <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/15">
                     <div
@@ -2035,7 +2125,7 @@ function AktivtMoggernRom({
         <p className="mx-auto max-w-xl px-2 text-center text-[13px] leading-5 text-neutral-500">
           {erVert ? lobbyHint : gjesteHint}
           {lokalStrom && landmarkerKlar
-            ? " Live-poenget reagerer når du poserer — og leder du i siste 6 s kan du dra Rizzler Finisher (pek på haka/kjevelinja uten å smile)."
+            ? " Live-poenget reagerer når du poserer — kvalifiserer du ved 13 s dukker gullringen opp på haka for Rizzler Finisher (+0,2, låser poengene). Prøv gjerne posen her i lobbyen først!"
             : ""}
         </p>
       ) : null}

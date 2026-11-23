@@ -4,7 +4,7 @@
 //   3. Local "Dagens beste score" tracker (keyed by Oslo date in localStorage).
 
 import { iDagOslo } from "../dag"
-import { formaterMoggernPoeng } from "./poeng"
+import { formaterBonus, formaterMoggernPoeng } from "./poeng"
 import { rangForPoeng } from "./tekster"
 
 export type DagensBeste = {
@@ -412,7 +412,9 @@ export async function lagDuellKortBlob(input: DuellKortInput): Promise<Blob | nu
     // Optional Rizzler Finisher / Rizz failed pill
     if (s.finisherBonus && s.finisherBonus !== 0) {
       const erGull = s.finisherBonus > 0
-      const fTekst = erGull ? "🤫 Rizzler +0,4" : "😂 Rizz failed −0,3"
+      const fTekst = erGull
+        ? `🤫 Rizzler ${formaterBonus(s.finisherBonus)}`
+        : `😂 Rizz failed ${formaterBonus(s.finisherBonus)}`
       ctx.font = `700 14px ${font}`
       const fW = Math.min(infoMaksW, ctx.measureText(fTekst).width + 22)
       const fY = pillY + pillH + 10

@@ -236,10 +236,11 @@ export function SlikRegnesDet({ aapenSomStandard = false }: { aapenSomStandard?:
           </div>
 
           <div className="break-words rounded-[20px] border border-amber-300/20 bg-amber-300/[0.06] p-4 text-xs leading-5 text-neutral-700">
-            <strong className="font-semibold text-amber-200">🤫 Rizzler Finisher (+0,4 / −0,3):</strong> I de siste 7 sekundene av hver runde (både
-            duell og solo-test, uansett poengsum) låses finisheren opp. Pek på haka/kjevelinja eller hold 🤫-finger ved leppa i ~0,65 sek uten å
-            smile for gull-effekt, bass-drop og +0,4 bonus — ansiktspoengene fryses mens hånda er ved ansiktet. Knekk sammen i et smil midt i
-            posen, og du får «Rizz failed!» (−0,3).
+            <strong className="font-semibold text-amber-200">🤫 Rizzler Finisher (+0,2 / −0,3):</strong> Leder du i 1v1 (eller har ≥ 6,0 i solo-test)
+            når klokka når <strong className="font-semibold text-neutral-950">13 sekunder</strong>, dukker det opp en gullring på haka di. Knytt de
+            andre fingrene og hold pekefingeren på gullringen på haka/kjevelinja (eller 🤫 mot leppa) i ~1 sek uten å smile. Så fort du starter
+            finisheren <strong className="font-semibold text-neutral-950">låses grunnsummen din</strong> — holder du maska får du +0,2 boost på toppen,
+            men smiler du midt i posen blir det «Rizz failed!» (−0,3). Du kan øve på posen rett i lobbyen først!
           </div>
 
           <div className="break-words rounded-[20px] border border-white/[0.06] bg-[#1f2124] p-4 text-xs leading-5 text-neutral-600">

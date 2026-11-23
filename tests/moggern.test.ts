@@ -67,6 +67,7 @@ import {
   lesRizzlerHendelse,
   RIZZLER_BONUS,
   RIZZLER_FEIL_STRAFF,
+  RIZZLER_VINDU_MS,
 } from "../features/spill/lib/moggern/rizzler"
 import { kartleggPunktTilVisning } from "../features/spill/lib/moggern/sporing-tegner"
 import {
@@ -1059,9 +1060,15 @@ test("Moggern Rizzler Finisher: peke-på-hake-gest, åpen hånd avvises og finis
     return hand
   }
 
+  // Rizzler Finisher unlocks at 13 s elapsed (2 s remaining) and awards +0.2 boost
+  assert.equal(RIZZLER_BONUS, 0.2)
+  assert.equal(MALING_MS - RIZZLER_VINDU_MS, 13_000)
+
   // Index finger pointing right at the chin -> active!
   const treff = erRizzlerPose([lagHand({ pekeTipp: { x: hake.x + 0.01, y: hake.y - 0.01, z: 0 } })], ansikt, 640, 480)
   assert.equal(treff.aktiv, true)
+  assert.equal(treff.status, "aktiv")
+  assert.ok(treff.pekeTipp !== null)
   assert.ok(treff.avstandAndel !== null && treff.avstandAndel < 0.1)
 
   // Two-finger jawline trace (index + middle extended, ring + pinky curled) -> active!
@@ -1075,22 +1082,31 @@ test("Moggern Rizzler Finisher: peke-på-hake-gest, åpen hånd avvises og finis
   shush3D[6] = { x: munn.x, y: munn.y + 0.02, z: -0.05 }
   assert.equal(erRizzlerPose([shush3D], ansikt, 640, 480).aktiv, true)
 
-  // Open palm near chin -> rejected (prevents accidental wave triggers)
+  // Open palm near chin -> rejected with actionable status so HUD tells user to curl other fingers
   const aapen = erRizzlerPose([lagHand({ pekeTipp: hake, aapenHand: true })], ansikt, 640, 480)
   assert.equal(aapen.aktiv, false)
+  assert.equal(aapen.status, "aapen-hand")
 
-  // Index finger far away from the face -> rejected
+  // Index finger far away from the face -> rejected with "for-langt-unna" + fingertip for live guide
   const langtUnna = erRizzlerPose([lagHand({ pekeTipp: { x: 0.05, y: 0.05, z: 0 } })], ansikt, 640, 480)
   assert.equal(langtUnna.aktiv, false)
+  assert.equal(langtUnna.status, "for-langt-unna")
+  assert.ok(langtUnna.pekeTipp !== null)
 
   // Strict finisherBonus & Realtime event parsing
   assert.equal(lesFinisherBonus(undefined), 0)
   assert.equal(lesFinisherBonus(0), 0)
   assert.equal(lesFinisherBonus(RIZZLER_BONUS), RIZZLER_BONUS)
   assert.equal(lesFinisherBonus(RIZZLER_FEIL_STRAFF), RIZZLER_FEIL_STRAFF)
-  assert.equal(lesFinisherBonus(0.9), null)
+  assert.equal(lesFinisherBonus(0.4), null)
   assert.equal(lesFinisherBonus(-1.0), null)
 
+  assert.deepEqual(lesRizzlerHendelse({ runde: 1, av: "spiller-1", type: "start", navn: "Ola" }), {
+    runde: 1,
+    av: "spiller-1",
+    type: "start",
+    navn: "Ola",
+  })
   assert.deepEqual(lesRizzlerHendelse({ runde: 1, av: "spiller-1", type: "utlost", navn: "Ola" }), {
     runde: 1,
     av: "spiller-1",
