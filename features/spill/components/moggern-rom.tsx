@@ -420,19 +420,19 @@ function AktivtMoggernRom({
   const iDuell = aktivFase === "nedtelling" || aktivFase === "maling"
   const visResultat = aktivFase === "resultat"
 
-  // Attach streams to the (always mounted) <video> and <audio> elements.
+  // Attach streams to the (always mounted) <video> and <audio> elements without re-binding on every phase change.
   useEffect(() => {
     const el = egenVideoRef.current
     if (!el) return
-    el.srcObject = lokalStrom
-    if (lokalStrom) void el.play().catch(() => {})
+    if (el.srcObject !== lokalStrom) el.srcObject = lokalStrom
+    if (lokalStrom && el.paused) void el.play().catch(() => {})
   }, [lokalStrom, aktivFase])
 
   useEffect(() => {
     const el = fjernVideoRef.current
     if (!el) return
-    el.srcObject = webrtc.fjernStrom
-    if (webrtc.fjernStrom) void el.play().catch(() => {})
+    if (el.srcObject !== webrtc.fjernStrom) el.srcObject = webrtc.fjernStrom
+    if (webrtc.fjernStrom && el.paused) void el.play().catch(() => {})
   }, [webrtc.fjernStrom, aktivFase])
 
   useEffect(() => {
@@ -1007,13 +1007,13 @@ function AktivtMoggernRom({
       : "Trykk «Klar» når du sitter i godt lys og ser rett i kameraet."
 
   return (
-    <div className="flex w-full flex-col gap-2">
+    <div className="flex w-full min-w-0 flex-col gap-2">
       {/* Hidden audio element for optional remote P2P microphone audio */}
       <audio ref={fjernLydRef} autoPlay playsInline className="hidden" />
 
       {/* Compact room bar: code, invite link, connection, series score, daily best & always-reachable leave/block */}
-      <div className="flex w-full flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="flex w-full min-w-0 flex-wrap items-center justify-between gap-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
           <span className="inline-flex h-9 items-center gap-2 rounded-full border border-white/[0.07] bg-[var(--spill-flate)] pr-1 pl-3.5">
             <span className="text-[11px] font-medium text-neutral-500">Rom</span>
             <span className="text-[15px] font-semibold tracking-[0.18em] text-neutral-950 tabular-nums">{kode}</span>
@@ -1046,8 +1046,8 @@ function AktivtMoggernRom({
             )}
           </span>
           {romStillingTekst ? (
-            <span className="inline-flex h-9 items-center gap-1.5 rounded-full border border-lime-300/20 bg-lime-300/[0.08] px-3 text-[11px] font-semibold text-lime-200 tabular-nums">
-              {romStillingTekst}
+            <span className="inline-flex h-9 max-w-full items-center gap-1.5 rounded-full border border-lime-300/20 bg-lime-300/[0.08] px-3 text-[11px] font-semibold text-lime-200 tabular-nums">
+              <span className="truncate">{romStillingTekst}</span>
             </span>
           ) : null}
           {dagensBeste ? (
@@ -1064,7 +1064,7 @@ function AktivtMoggernRom({
         <button
           type="button"
           onClick={blokkerOgForlat}
-          className="inline-flex h-9 items-center gap-1.5 rounded-full border border-rose-400/25 bg-rose-500/10 px-3.5 text-xs font-semibold text-rose-300 transition hover:bg-rose-500/20"
+          className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-rose-400/25 bg-rose-500/10 px-3.5 text-xs font-semibold text-rose-300 transition hover:bg-rose-500/20"
         >
           <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
           Blokker / forlat
@@ -1085,7 +1085,7 @@ function AktivtMoggernRom({
 
       {/* Result reveal screen (both 1v1 and Solo-test) */}
       {visResultat ? (
-        <div className="mx-auto w-full max-w-4xl pt-2">
+        <div className="mx-auto w-full min-w-0 max-w-4xl pt-2">
           <MoggernResultat
             kode={kode}
             runde={erSoloAktiv ? soloRunde : status.runde}
@@ -1312,6 +1312,12 @@ function AktivtMoggernRom({
               autoPlay
               playsInline
               muted
+              onLoadedMetadata={(e) => {
+                if (e.currentTarget.paused) void e.currentTarget.play().catch(() => {})
+              }}
+              onCanPlay={(e) => {
+                if (e.currentTarget.paused) void e.currentTarget.play().catch(() => {})
+              }}
               className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${webrtc.fjernStrom ? "opacity-100" : "opacity-0"}`}
             />
             <canvas
@@ -1389,7 +1395,7 @@ function AktivtMoggernRom({
                         Slå på lyd
                       </button>
                     ) : null}
-                    {webrtc.status === "feil" ? (
+                    {webrtc.status === "feil" || (!webrtc.fjernStrom && motstanderKameraPa) ? (
                       <button
                         type="button"
                         onClick={webrtc.koblePaaNytt}
@@ -1491,7 +1497,7 @@ function AktivtMoggernRom({
       ) : null}
 
       {!iDuell ? (
-        <div className="mx-auto w-full max-w-4xl pt-2">
+        <div className="mx-auto w-full min-w-0 max-w-4xl pt-2">
           <SlikRegnesDet />
         </div>
       ) : null}

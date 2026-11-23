@@ -141,9 +141,9 @@ export function TullSkjerm({ onGodkjenn }: { onGodkjenn: () => void }) {
 
 function Boks({ tittel, children }: { tittel: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-[20px] border border-white/[0.06] bg-[#1f2124] p-4">
+    <div className="min-w-0 rounded-[20px] border border-white/[0.06] bg-[#1f2124] p-3.5 sm:p-4">
       <p className="text-xs font-semibold text-lime-300">{tittel}</p>
-      <div className="mt-1.5 text-xs leading-5 text-neutral-700">{children}</div>
+      <div className="mt-1.5 break-words text-xs leading-5 text-neutral-700">{children}</div>
     </div>
   )
 }
@@ -152,31 +152,31 @@ function Boks({ tittel, children }: { tittel: string; children: React.ReactNode 
 export function SlikRegnesDet({ aapenSomStandard = false }: { aapenSomStandard?: boolean }) {
   const [aapen, setAapen] = useState(aapenSomStandard)
   return (
-    <section className={`${MFLATE} p-5 sm:p-6`}>
+    <section className={`${MFLATE} min-w-0 overflow-hidden p-4 sm:p-6`}>
       <button
         type="button"
         onClick={() => setAapen((v) => !v)}
         aria-expanded={aapen}
-        className="flex w-full items-center justify-between gap-3 text-left"
+        className="flex w-full min-w-0 items-center justify-between gap-3 text-left"
       >
-        <span className="flex items-center gap-2.5">
-          <Eye className="h-4 w-4 text-lime-300" aria-hidden="true" />
+        <span className="flex min-w-0 flex-wrap items-center gap-2">
+          <Eye className="h-4 w-4 shrink-0 text-lime-300" aria-hidden="true" />
           <span className="text-[17px] font-semibold tracking-[-0.02em] text-neutral-950">Slik regnes det</span>
           <span className="rounded-full bg-white/[0.06] px-2.5 py-0.5 text-[11px] font-medium text-neutral-500">Matte for gøy</span>
         </span>
-        {aapen ? <ChevronUp className="h-4 w-4 text-neutral-500" /> : <ChevronDown className="h-4 w-4 text-neutral-500" />}
+        {aapen ? <ChevronUp className="h-4 w-4 shrink-0 text-neutral-500" /> : <ChevronDown className="h-4 w-4 shrink-0 text-neutral-500" />}
       </button>
 
       {aapen ? (
         <div className="mt-5 space-y-5 border-t border-white/[0.07] pt-5 text-sm leading-6 text-neutral-700">
-          <p>
+          <p className="break-words">
             Alt skjer lokalt i nettleseren med <strong className="font-semibold text-neutral-950">MediaPipe Face Landmarker</strong> (Apache-2.0): 478
             ansiktspunkter i 3D pluss 52 ansiktsuttrykk («blendshapes») fra samme modell. Matten er egenskrevet, inspirert av åpne GitHub-prosjekter
             som facial-proportion-math (MIT) og MogOps. Dette er ren geometri-lek uten vitenskapelig grunnlag — lys, kamerahøyde og avstand påvirker
             poengene kraftig.
           </p>
 
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Boks tittel="1. Normalisering & vinkel">
               Punktene roteres så øyelinjen blir vannrett, og skaleres etter pupillavstanden (IPD). Bare frontale bilder (|yaw| ≤ {MAKS_YAW_GRADER}°,
               |pitch| ≤ {MAKS_PITCH_GRADER}°) teller, og duellen krever minst {MIN_GYLDIGE_RAMMER} gyldige bilder over 15 sekunder.
@@ -198,10 +198,10 @@ export function SlikRegnesDet({ aapenSomStandard = false }: { aapenSomStandard?:
 
           <div>
             <p className="mb-2 text-xs font-medium text-neutral-500">De 7 delpoengene (0–10)</p>
-            <ul className="grid gap-1.5 sm:grid-cols-2">
+            <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
               {DELPOENG_LISTE.map((d) => (
-                <li key={d.id} className="flex items-start justify-between gap-3 rounded-[18px] bg-white/[0.03] px-3.5 py-2.5 text-xs">
-                  <div>
+                <li key={d.id} className="flex min-w-0 items-start justify-between gap-3 rounded-[18px] bg-white/[0.03] px-3.5 py-2.5 text-xs">
+                  <div className="min-w-0 flex-1 break-words">
                     <span className="font-semibold text-neutral-950">{d.navn}</span>
                     <p className="mt-0.5 leading-5 text-neutral-600">{d.kortForklaring}</p>
                   </div>
@@ -215,10 +215,10 @@ export function SlikRegnesDet({ aapenSomStandard = false }: { aapenSomStandard?:
             <p className="mb-2 text-xs font-medium text-neutral-500">
               Mog-uttrykk (live, glattet over bildene — må holdes gjennom målingen) · maks {formaterBonus(MAKS_UTTRYKK_BONUS)}
             </p>
-            <ul className="grid gap-1.5 sm:grid-cols-2">
+            <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
               {MOG_UTTRYKK.map((u) => (
-                <li key={u.id} className="flex items-center justify-between gap-3 rounded-[18px] bg-white/[0.03] px-3.5 py-2.5 text-xs">
-                  <div>
+                <li key={u.id} className="flex min-w-0 items-center justify-between gap-3 rounded-[18px] bg-white/[0.03] px-3.5 py-2.5 text-xs">
+                  <div className="min-w-0 flex-1 break-words">
                     <span className="font-semibold text-neutral-950">{u.navn}</span>
                     <p className="mt-0.5 leading-5 text-neutral-600">{u.forklaring}</p>
                   </div>
@@ -234,7 +234,7 @@ export function SlikRegnesDet({ aapenSomStandard = false }: { aapenSomStandard?:
             </p>
           </div>
 
-          <div className="rounded-[20px] border border-white/[0.06] bg-[#1f2124] p-4 text-xs leading-5 text-neutral-600">
+          <div className="break-words rounded-[20px] border border-white/[0.06] bg-[#1f2124] p-4 text-xs leading-5 text-neutral-600">
             <strong className="font-semibold text-neutral-900">Lyssjekk uten hudfarge:</strong> En egen gråtone-lyssjekk sjekker bare om bildet er
             kraftig overeksponert eller altfor mørkt (for morsomme lystips/disser). Den ser aldri på hudfarge og påvirker aldri poengsummen.
           </div>
@@ -243,11 +243,11 @@ export function SlikRegnesDet({ aapenSomStandard = false }: { aapenSomStandard?:
             <p className="mb-2 text-xs font-medium text-neutral-500">Rangtitler</p>
             <div className="flex flex-wrap gap-1.5">
               {RANG_TITLER.map((r) => (
-                <span key={r.id} className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.05] py-1 pr-3 pl-1 text-xs text-neutral-800">
-                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold tabular-nums ${r.farge}`}>
+                <span key={r.id} className="inline-flex max-w-full items-center gap-1.5 rounded-full bg-white/[0.05] py-1 pr-3 pl-1 text-xs text-neutral-800">
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold tabular-nums ${r.farge}`}>
                     {r.minPoeng === 9 ? "9+" : `${r.minPoeng.toFixed(0)}–${r.maksPoeng.toFixed(1).replace(".", ",")}`}
                   </span>
-                  <span className="font-semibold text-neutral-950">{r.tittel}</span>
+                  <span className="truncate font-semibold text-neutral-950">{r.tittel}</span>
                 </span>
               ))}
             </div>

@@ -135,7 +135,7 @@ export function SpillRamme({
           </div>
         ) : null}
 
-        <main className={`flex flex-1 flex-col ${fullbredde ? "py-2" : "py-6"}`}>{children}</main>
+        <main className={`flex min-w-0 flex-1 flex-col ${fullbredde ? "py-2" : "py-6"}`}>{children}</main>
       </div>
     </div>
   )

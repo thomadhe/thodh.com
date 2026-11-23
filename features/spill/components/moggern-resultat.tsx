@@ -90,14 +90,14 @@ function SpillerResultatKort({
 
   return (
     <section
-      className={`${MFLATE} mel-inn flex flex-col gap-5 p-5 sm:p-6 ${
+      className={`${MFLATE} mel-inn flex min-w-0 flex-col gap-4 overflow-hidden p-4 sm:gap-5 sm:p-6 ${
         erVinner ? "!border-lime-300/35 shadow-[0_0_40px_rgb(190_242_100/0.10)]" : ""
       }`}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3.5">
+      <div className="flex min-w-0 items-start justify-between gap-2.5 sm:gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3.5">
           {bildeUrl ? (
-            <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/12 bg-[#111214] shadow-[0_6px_18px_rgb(0_0_0/0.35)]">
+            <div className="relative h-16 w-14 shrink-0 overflow-hidden rounded-2xl border border-white/12 bg-[#111214] shadow-[0_6px_18px_rgb(0_0_0/0.35)] sm:h-20 sm:w-16">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={bildeUrl} alt={`Peak Mog for ${res.deltaker.navn}`} className="h-full w-full object-cover" />
               <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-1 pt-2 pb-0.5 text-center text-[9px] font-semibold tracking-wide text-lime-200">
@@ -106,15 +106,15 @@ function SpillerResultatKort({
             </div>
           ) : null}
 
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
+          <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
               {erVinner ? <Crown className="h-4 w-4 shrink-0 text-lime-300" aria-hidden="true" /> : null}
-              <h3 className="truncate text-xl font-semibold tracking-[-0.03em] text-neutral-950">
+              <h3 className="truncate text-lg font-semibold tracking-[-0.03em] text-neutral-950 sm:text-xl">
                 {res.deltaker.navn}
                 {erMeg && !solo ? <span className="ml-1.5 text-xs font-normal tracking-normal text-neutral-500">(deg)</span> : null}
               </h3>
             </div>
-            <p className="mt-1 text-xs text-neutral-500 tabular-nums">
+            <p className="mt-1 break-words text-[11px] leading-4 text-neutral-500 tabular-nums sm:text-xs">
               {solo
                 ? "15 sekunders solo-test · kun i din nettleser"
                 : res.kilde === "motstander"
@@ -129,7 +129,7 @@ function SpillerResultatKort({
 
         {maaling?.ok ? (
           <div className="shrink-0 text-right">
-            <p className="text-[3.25rem] leading-[0.9] font-semibold tracking-[-0.05em] text-neutral-950 tabular-nums">
+            <p className="text-[2.35rem] leading-[0.9] font-semibold tracking-[-0.05em] text-neutral-950 tabular-nums sm:text-[3.25rem]">
               {formaterMoggernPoeng(vistPoeng)}
             </p>
             <p className="mt-1 text-[11px] font-medium text-neutral-500">av 10</p>
@@ -138,11 +138,11 @@ function SpillerResultatKort({
       </div>
 
       {rang ? (
-        <div className="mel-pop rounded-[22px] border border-white/[0.06] bg-[#1f2124] p-4">
+        <div className="mel-pop min-w-0 rounded-[20px] border border-white/[0.06] bg-[#1f2124] p-3.5 sm:rounded-[22px] sm:p-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold tracking-[-0.01em] ${rang.farge}`}>
-              <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-              {rang.tittel}
+            <span className={`inline-flex max-w-full items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold tracking-[-0.01em] ${rang.farge}`}>
+              <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span className="truncate">{rang.tittel}</span>
             </span>
             {maaling && maaling.uttrykkBonus !== 0 ? (
               <span
@@ -154,10 +154,10 @@ function SpillerResultatKort({
               </span>
             ) : null}
           </div>
-          <p className="mt-2.5 text-[13px] leading-5 text-neutral-700">{rang.linje}</p>
+          <p className="mt-2.5 break-words text-[13px] leading-5 text-neutral-700">{rang.linje}</p>
           {dom ? (
             <p
-              className={`mt-2.5 rounded-xl border px-3 py-2 text-xs leading-5 font-medium ${
+              className={`mt-2.5 break-words rounded-xl border px-3 py-2 text-xs leading-5 font-medium ${
                 dom.positiv
                   ? "border-lime-300/20 bg-lime-300/[0.08] text-lime-200"
                   : "border-rose-400/20 bg-rose-500/[0.08] text-rose-200"
@@ -168,15 +168,15 @@ function SpillerResultatKort({
           ) : null}
         </div>
       ) : (
-        <div className="rounded-[22px] border border-amber-400/25 bg-amber-400/10 p-4 text-xs leading-5 text-amber-100">
+        <div className="break-words rounded-[20px] border border-amber-400/25 bg-amber-400/10 p-3.5 text-xs leading-5 text-amber-100 sm:rounded-[22px] sm:p-4">
           Fikk bare {maaling?.kvalitet.gyldigeRammer ?? 0} gyldige frontale bilder. Se rett inn i kameraet i godt lys neste runde!
         </div>
       )}
 
       {!solo && res.stortAvvik && res.motstanderMaaling?.ok && res.egenMaaling?.ok ? (
-        <div className="flex items-start gap-2.5 rounded-[22px] border border-amber-400/30 bg-amber-400/10 p-4 text-xs leading-5 text-amber-100">
+        <div className="flex min-w-0 items-start gap-2.5 rounded-[20px] border border-amber-400/30 bg-amber-400/10 p-3.5 text-xs leading-5 text-amber-100 sm:rounded-[22px] sm:p-4">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" aria-hidden="true" />
-          <div>
+          <div className="min-w-0 flex-1 break-words">
             <p className="font-semibold">Uenighet mellom nettleserne ({formaterMoggernPoeng(res.avvik)} poeng forskjell)</p>
             <p className="mt-0.5 text-amber-200/85">
               {motstanderNavn} målte <strong>{formaterMoggernPoeng(res.motstanderMaaling.total)}</strong> · Du målte deg selv til{" "}
@@ -187,7 +187,7 @@ function SpillerResultatKort({
       ) : null}
 
       {maaling?.ok ? (
-        <div className="space-y-2">
+        <div className="min-w-0 space-y-2">
           <p className="text-xs font-medium text-neutral-500">7 delpoeng</p>
           <ul className="space-y-1.5">
             {DELPOENG_LISTE.map((d) => {
@@ -197,9 +197,9 @@ function SpillerResultatKort({
                 p >= 8 ? "bg-lime-300" : p >= 6 ? "bg-cyan-400" : p >= 4.5 ? "bg-amber-300" : "bg-rose-400"
               return (
                 <li key={d.id} className="space-y-0.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-neutral-700">{d.navn}</span>
-                    <span className="font-semibold text-neutral-950 tabular-nums">{formaterMoggernPoeng(p)}</span>
+                  <div className="flex items-center justify-between gap-2 text-xs">
+                    <span className="truncate text-neutral-700">{d.navn}</span>
+                    <span className="shrink-0 font-semibold text-neutral-950 tabular-nums">{formaterMoggernPoeng(p)}</span>
                   </div>
                   <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/[0.07]">
                     <div className={`h-full rounded-full transition-all duration-700 ${barFarge}`} style={{ width: `${bredde}%` }} />
@@ -212,25 +212,25 @@ function SpillerResultatKort({
       ) : null}
 
       {tipsOgDiss ? (
-        <div className="mt-auto space-y-2.5 border-t border-white/[0.07] pt-4">
-          <div className="rounded-[22px] border border-rose-400/20 bg-rose-500/10 p-4">
+        <div className="mt-auto min-w-0 space-y-2.5 border-t border-white/[0.07] pt-4">
+          <div className="min-w-0 rounded-[20px] border border-rose-400/20 bg-rose-500/10 p-3.5 sm:rounded-[22px] sm:p-4">
             <p className="flex items-center gap-1.5 text-xs font-semibold text-rose-300">
-              <Flame className="h-3.5 w-3.5" aria-hidden="true" />
+              <Flame className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
               {tipsOgDiss.dissFraLys ? "Dagens lys-diss" : "Dagens diss"}
             </p>
-            <p className="mt-1.5 text-[15px] leading-6 font-medium text-neutral-950">«{tipsOgDiss.diss}»</p>
+            <p className="mt-1.5 break-words text-sm leading-6 font-medium text-neutral-950 sm:text-[15px]">«{tipsOgDiss.diss}»</p>
           </div>
 
-          <div className="rounded-[22px] border border-white/[0.06] bg-[#1f2124] p-4">
+          <div className="min-w-0 rounded-[20px] border border-white/[0.06] bg-[#1f2124] p-3.5 sm:rounded-[22px] sm:p-4">
             <p className="flex items-center gap-1.5 text-xs font-semibold text-lime-300">
-              <Lightbulb className="h-3.5 w-3.5" aria-hidden="true" />
+              <Lightbulb className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
               Slik mogger du mer
             </p>
             <ul className="mt-2 space-y-1.5 text-xs leading-5 text-neutral-700">
               {tipsOgDiss.tips.map((t, i) => (
-                <li key={i} className="flex gap-2">
-                  <span className="text-lime-300">•</span>
-                  <span>{t}</span>
+                <li key={i} className="flex min-w-0 gap-2">
+                  <span className="shrink-0 text-lime-300">•</span>
+                  <span className="min-w-0 break-words">{t}</span>
                 </li>
               ))}
             </ul>
@@ -369,65 +369,72 @@ export function MoggernResultat({
   }, [kanLasteNedKort, lasterKort, utfall, fro, solo, bilder, hovedLinje, kode, runde, stillingTekst])
 
   return (
-    <section className="flex flex-col gap-5" aria-live="polite">
+    <section className="flex w-full min-w-0 flex-col gap-4 sm:gap-5" aria-live="polite">
       <div
-        className={`${MFLATE} mel-inn bg-[radial-gradient(120%_90%_at_50%_0%,rgb(190_242_100/0.13),transparent_70%),var(--spill-flate)] px-6 py-8 text-center sm:py-10`}
+        className={`${MFLATE} mel-inn min-w-0 overflow-hidden bg-[radial-gradient(120%_90%_at_50%_0%,rgb(190_242_100/0.13),transparent_70%),var(--spill-flate)] px-4 py-6 text-center sm:px-6 sm:py-10`}
       >
         <div className="flex flex-wrap items-center justify-center gap-2">
           <p className="text-xs font-medium text-lime-300 tabular-nums">
             {solo ? "Solo-test · 15 sekunder" : `Resultat · Runde ${runde + 1}`}
           </p>
           {stillingTekst ? (
-            <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.05] px-2.5 py-0.5 text-[11px] font-semibold text-neutral-800 tabular-nums">
-              {stillingTekst}
+            <span className="inline-flex max-w-full items-center gap-1 rounded-full border border-white/10 bg-white/[0.05] px-2.5 py-0.5 text-[11px] font-semibold text-neutral-800 tabular-nums">
+              <span className="truncate">{stillingTekst}</span>
             </span>
           ) : null}
           {dagensBeste ? (
             <span
-              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold tabular-nums ${
+              className={`inline-flex max-w-full items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold tabular-nums ${
                 dagensBeste.nyRekord
                   ? "bg-lime-300 text-[#18191b]"
                   : "border border-white/10 bg-white/[0.05] text-neutral-700"
               }`}
             >
-              <Trophy className="h-3 w-3" aria-hidden="true" />
-              {dagensBeste.nyRekord
-                ? `Ny dagsrekord: ${formaterMoggernPoeng(dagensBeste.poeng)}`
-                : `Dagens beste: ${formaterMoggernPoeng(dagensBeste.poeng)}`}
+              <Trophy className="h-3 w-3 shrink-0" aria-hidden="true" />
+              <span className="truncate">
+                {dagensBeste.nyRekord
+                  ? `Ny dagsrekord: ${formaterMoggernPoeng(dagensBeste.poeng)}`
+                  : `Dagens beste: ${formaterMoggernPoeng(dagensBeste.poeng)}`}
+              </span>
             </span>
           ) : null}
         </div>
 
-        <h2 className="mx-auto mt-2.5 max-w-2xl text-[1.75rem] leading-[1.1] font-semibold tracking-[-0.035em] text-neutral-950 sm:text-[2.6rem]">
+        <h2 className="mx-auto mt-2.5 max-w-2xl break-words text-[1.45rem] leading-[1.15] font-semibold tracking-[-0.035em] text-neutral-950 sm:text-[2.6rem]">
           {hovedLinje}
         </h2>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:mt-6 sm:gap-2.5">
           {solo ? (
             <>
-              <button type="button" onClick={onOmkamp} className={MKNAPP}>
-                <RotateCcw className="h-4 w-4" aria-hidden="true" />
+              <button type="button" onClick={onOmkamp} className={`${MKNAPP} max-w-full px-5 sm:px-6`}>
+                <RotateCcw className="h-4 w-4 shrink-0" aria-hidden="true" />
                 Prøv igjen (15 s)
               </button>
               {onTilbakeTilRom ? (
-                <button type="button" onClick={onTilbakeTilRom} className={MKNAPP_SEKUNDAR}>
-                  <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                <button type="button" onClick={onTilbakeTilRom} className={`${MKNAPP_SEKUNDAR} max-w-full px-4 sm:px-5`}>
+                  <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
                   Tilbake til rommet
                 </button>
               ) : null}
             </>
           ) : erVert ? (
-            <button type="button" onClick={onOmkamp} className={MKNAPP}>
-              <RotateCcw className="h-4 w-4" aria-hidden="true" />
+            <button type="button" onClick={onOmkamp} className={`${MKNAPP} max-w-full px-5 sm:px-6`}>
+              <RotateCcw className="h-4 w-4 shrink-0" aria-hidden="true" />
               Omkamp
             </button>
           ) : (
-            <span className="inline-flex h-11 items-center rounded-full border border-white/[0.07] bg-white/[0.03] px-5 text-xs text-neutral-600">
+            <span className="inline-flex min-h-11 max-w-full items-center justify-center rounded-full border border-white/[0.07] bg-white/[0.03] px-4 py-2 text-center text-xs leading-4 text-neutral-600">
               Venter på at verten starter omkamp …
             </span>
           )}
           {kanLasteNedKort ? (
-            <button type="button" onClick={() => void lastNedKort()} disabled={lasterKort} className={MKNAPP_SEKUNDAR}>
-              {lasterKort ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Download className="h-4 w-4" aria-hidden="true" />}
+            <button
+              type="button"
+              onClick={() => void lastNedKort()}
+              disabled={lasterKort}
+              className={`${MKNAPP_SEKUNDAR} max-w-full px-4 sm:px-5`}
+            >
+              {lasterKort ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden="true" /> : <Download className="h-4 w-4 shrink-0" aria-hidden="true" />}
               {solo ? "Last ned kort (PNG)" : "Last ned duellkort"}
             </button>
           ) : null}
@@ -435,7 +442,7 @@ export function MoggernResultat({
         </div>
       </div>
 
-      <div className={solo ? "mx-auto w-full max-w-xl" : "grid gap-4 md:grid-cols-2"}>
+      <div className={solo ? "mx-auto w-full min-w-0 max-w-xl" : "grid w-full min-w-0 grid-cols-1 gap-4 md:grid-cols-2"}>
         {utfall.spillere.map((s) => {
           const mot = utfall.spillere.find((x) => x.deltaker.id !== s.deltaker.id)
           return (
@@ -453,7 +460,7 @@ export function MoggernResultat({
         })}
       </div>
 
-      <p className="text-center text-xs leading-5 text-neutral-500">{ANSVARSFRASKRIVELSE_PAAMINNELSE}</p>
+      <p className="break-words px-2 text-center text-xs leading-5 text-neutral-500">{ANSVARSFRASKRIVELSE_PAAMINNELSE}</p>
     </section>
   )
 }
