@@ -10,53 +10,7 @@ import { STANDARD_STUN, type IceKonfig } from "./ice"
 
 export type VideoTilkobling = "av" | "kobler" | "tilkoblet" | "feil"
 
-export function kameraFeilTekst(err: unknown): string {
-  const navn = err instanceof DOMException || err instanceof Error ? err.name : ""
-  if (navn === "NotAllowedError" || navn === "PermissionDeniedError" || navn === "SecurityError") {
-    return "Kameratilgang ble avslått. Tillat kamera i nettleseren og prøv igjen."
-  }
-  if (navn === "NotFoundError" || navn === "DevicesNotFoundError") {
-    return "Fant ikke noe kamera på denne enheten."
-  }
-  if (navn === "NotReadableError" || navn === "TrackStartError") {
-    return "Kameraet er opptatt i en annen app eller fane. Lukk den og prøv igjen."
-  }
-  if (navn === "OverconstrainedError") {
-    return "Kameraet støttet ikke ønsket oppløsning. Prøv igjen."
-  }
-  return "Kunne ikke starte kameraet. Sjekk at nettleseren har tilgang og prøv på nytt."
-}
-
-export async function hentKameraStrom(): Promise<MediaStream> {
-  if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
-    throw new Error("Nettleseren støtter ikke kamera (krever HTTPS).")
-  }
-  try {
-    return await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: "user",
-        width: { ideal: 640 },
-        height: { ideal: 480 },
-        frameRate: { ideal: 24, max: 30 },
-      },
-      audio: false,
-    })
-  } catch (err) {
-    if (err instanceof DOMException && err.name === "OverconstrainedError") {
-      return await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-    }
-    throw err
-  }
-}
-
-export function stoppStrom(strom: MediaStream | null) {
-  if (!strom) return
-  for (const spor of strom.getTracks()) {
-    try {
-      spor.stop()
-    } catch {}
-  }
-}
+export { hentKameraStrom, kameraFeilTekst, KAMERA_ONSKER, KAMERA_RESERVE, stoppStrom } from "./kamera"
 
 /**
  * Manages the P2P RTCPeerConnection for one 1v1 Moggern room using the polite-peer pattern.

@@ -1,12 +1,12 @@
 "use client"
 
 // Lazy-loaded MediaPipe Face Landmarker runner for Moggern.
-// Loaded ONLY when the player actively opens Moggern and turns on the camera.
+// Loaded ONLY inside a Moggern duel room (after login + the "Alt er tull" gate), in parallel with the camera.
 // Never sends video frames or landmarks to any server — everything runs locally in the browser.
 
 import type { FaceLandmarker } from "@mediapipe/tasks-vision"
 import { analyserRgbaLys, type LysAnalyse } from "./lys"
-import { vurderRamme, type RammeResultat } from "./poeng"
+import { vurderRamme, type Blendshapes, type RammeResultat } from "./poeng"
 
 // Pinned to the installed @mediapipe/tasks-vision version so JS glue and WASM always match.
 const WASM_BASIS = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.3/wasm"
@@ -28,7 +28,8 @@ async function lagLandmarker(delegate: "GPU" | "CPU"): Promise<FaceLandmarker> {
     minFaceDetectionConfidence: 0.5,
     minFacePresenceConfidence: 0.5,
     minTrackingConfidence: 0.5,
-    outputFaceBlendshapes: false,
+    // Same face_landmarker.task model: blendshapes come for free (no extra download) and power mog-uttrykk.
+    outputFaceBlendshapes: true,
     outputFacialTransformationMatrixes: true,
   })
 }
@@ -80,7 +81,14 @@ export function analyserVideoRamme(
   const resultat = landmarker.detect(lerret)
   const punkter = resultat.faceLandmarks?.[0] ?? null
   const matrise = resultat.facialTransformationMatrixes?.[0]?.data ?? null
-  const ramme = vurderRamme(punkter, matrise, bredde, hoyde)
+  const kategorier = resultat.faceBlendshapes?.[0]?.categories
+  let blendshapes: Blendshapes | null = null
+  if (kategorier?.length) {
+    const kart: Record<string, number> = {}
+    for (const k of kategorier) kart[k.categoryName] = k.score
+    blendshapes = kart
+  }
+  const ramme = vurderRamme(punkter, matrise, bredde, hoyde, blendshapes)
 
   // Sample grayscale luminance across the frame (step 4 pixels for speed; never inspects colour/skin tone).
   const bildeData = ctx.getImageData(0, 0, bredde, hoyde)

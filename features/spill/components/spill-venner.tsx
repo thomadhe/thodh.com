@@ -217,10 +217,10 @@ export function SpillVenner({
   return (
     <div className="flex flex-col gap-5">
       {/* Own display name & friend code */}
-      <section className="rounded-2xl border border-white/[0.08] bg-[#232529] p-5">
+      <section className="rounded-[28px] border border-white/[0.07] bg-[#26282c] p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h2 className="text-base font-semibold text-neutral-50">Din spillprofil</h2>
+            <h2 className="text-[1.05rem] font-semibold tracking-[-0.01em] text-neutral-50">Din spillprofil</h2>
             <p className="mt-0.5 text-xs text-neutral-400">
               Visningsnavnet brukes på ledertavler og i vennelister. E-posten din vises aldri.
             </p>
@@ -229,7 +229,7 @@ export function SpillVenner({
             <button
               type="button"
               onClick={kopierInvitasjonslenke}
-              className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-white/15 bg-white/[0.04] px-3 text-xs font-medium text-neutral-200 transition hover:bg-white/[0.08]"
+              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3 text-xs font-medium text-neutral-200 transition hover:bg-white/[0.08]"
             >
               {kopiertLenke ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Link2 className="h-3.5 w-3.5" />}
               <span>{kopiertLenke ? "Lenke kopiert!" : "Kopier invitasjonslenke"}</span>
@@ -242,8 +242,8 @@ export function SpillVenner({
       </section>
 
       {/* Add friend by code */}
-      <section className="rounded-2xl border border-white/[0.08] bg-[#232529] p-5">
-        <h2 className="flex items-center gap-2 text-base font-semibold text-neutral-50">
+      <section className="rounded-[28px] border border-white/[0.07] bg-[#26282c] p-5 sm:p-6">
+        <h2 className="flex items-center gap-2 text-[1.05rem] font-semibold tracking-[-0.01em] text-neutral-50">
           <UserPlus className="h-4 w-4 text-neutral-400" />
           Legg til venn
         </h2>
@@ -262,12 +262,12 @@ export function SpillVenner({
             autoCapitalize="characters"
             spellCheck={false}
             aria-label="Vennekode"
-            className="h-10 w-44 rounded-xl border border-white/15 bg-black/25 px-3.5 font-mono text-sm tracking-widest text-neutral-100 uppercase outline-none placeholder:font-sans placeholder:tracking-normal placeholder:text-neutral-500 focus:border-white/40"
+            className="h-10 w-44 rounded-full border border-white/15 bg-black/25 px-3.5 font-mono text-sm tracking-widest text-neutral-100 uppercase outline-none placeholder:font-sans placeholder:tracking-normal placeholder:text-neutral-500 focus:border-white/40"
           />
           <button
             type="submit"
             disabled={sender || kodeInput.length < 6 || !profil?.visningsnavn}
-            className="inline-flex h-10 items-center justify-center rounded-xl bg-neutral-100 px-4 text-sm font-semibold text-[#18191b] transition hover:bg-white disabled:opacity-45"
+            className="inline-flex h-10 items-center justify-center rounded-full bg-neutral-100 px-4 text-sm font-semibold text-[#18191b] transition hover:bg-white disabled:opacity-45"
           >
             {sender ? "Sender…" : "Send forespørsel"}
           </button>
@@ -281,8 +281,8 @@ export function SpillVenner({
 
       {/* Incoming friend requests */}
       {inn.length > 0 ? (
-        <section className="rounded-2xl border border-amber-500/30 bg-[#232529] p-5">
-          <h2 className="text-base font-semibold text-neutral-50">Venneforespørsler ({inn.length})</h2>
+        <section className="rounded-[28px] border border-amber-500/30 bg-[#26282c] p-5 sm:p-6">
+          <h2 className="text-[1.05rem] font-semibold tracking-[-0.01em] text-neutral-50">Venneforespørsler ({inn.length})</h2>
           <ul className="mt-3 divide-y divide-white/[0.06]">
             {inn.map((f) => (
               <li key={f.vennskapId} className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
@@ -291,14 +291,14 @@ export function SpillVenner({
                   <button
                     type="button"
                     onClick={() => void godta(f.vennskapId)}
-                    className="inline-flex h-8 items-center rounded-lg bg-emerald-500 px-3 text-xs font-semibold text-neutral-950 hover:bg-emerald-400"
+                    className="inline-flex h-8 items-center rounded-full bg-emerald-500 px-3 text-xs font-semibold text-neutral-950 hover:bg-emerald-400"
                   >
                     Godta
                   </button>
                   <button
                     type="button"
                     onClick={() => void fjern(f.vennskapId)}
-                    className="inline-flex h-8 items-center rounded-lg border border-white/15 px-3 text-xs font-medium text-neutral-300 hover:bg-white/10"
+                    className="inline-flex h-8 items-center rounded-full border border-white/15 px-3 text-xs font-medium text-neutral-300 hover:bg-white/10"
                   >
                     Avslå
                   </button>
@@ -310,8 +310,8 @@ export function SpillVenner({
       ) : null}
 
       {/* Friends list */}
-      <section className="rounded-2xl border border-white/[0.08] bg-[#232529] p-5">
-        <h2 className="text-base font-semibold text-neutral-50">Venner ({venner.length})</h2>
+      <section className="rounded-[28px] border border-white/[0.07] bg-[#26282c] p-5 sm:p-6">
+        <h2 className="text-[1.05rem] font-semibold tracking-[-0.01em] text-neutral-50">Venner ({venner.length})</h2>
         {laster ? (
           <p className="mt-4 text-sm text-neutral-400">Henter venner…</p>
         ) : venner.length === 0 ? (
@@ -331,7 +331,7 @@ export function SpillVenner({
                       <button
                         type="button"
                         onClick={() => setUtfordreId(apen ? null : v.brukerId)}
-                        className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-neutral-100 px-3 text-xs font-semibold text-[#18191b] transition hover:bg-white"
+                        className="inline-flex h-8 items-center gap-1.5 rounded-full bg-neutral-100 px-3 text-xs font-semibold text-[#18191b] transition hover:bg-white"
                       >
                         <Swords className="h-3.5 w-3.5" />
                         <span>Utfordre</span>
@@ -341,14 +341,14 @@ export function SpillVenner({
                           <button
                             type="button"
                             onClick={() => void fjern(v.vennskapId)}
-                            className="inline-flex h-8 items-center rounded-lg bg-rose-500 px-2.5 text-xs font-semibold text-white hover:bg-rose-400"
+                            className="inline-flex h-8 items-center rounded-full bg-rose-500 px-2.5 text-xs font-semibold text-white hover:bg-rose-400"
                           >
                             Fjern
                           </button>
                           <button
                             type="button"
                             onClick={() => setBekreftFjern(null)}
-                            className="inline-flex h-8 items-center rounded-lg border border-white/15 px-2.5 text-xs text-neutral-300 hover:bg-white/10"
+                            className="inline-flex h-8 items-center rounded-full border border-white/15 px-2.5 text-xs text-neutral-300 hover:bg-white/10"
                           >
                             Avbryt
                           </button>
@@ -357,7 +357,7 @@ export function SpillVenner({
                         <button
                           type="button"
                           onClick={() => setBekreftFjern(v.vennskapId)}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-neutral-400 transition hover:border-rose-500/40 hover:text-rose-400"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-neutral-400 transition hover:border-rose-500/40 hover:text-rose-400"
                           aria-label={`Fjern ${v.visningsnavn}`}
                           title="Fjern venn"
                         >
@@ -368,7 +368,7 @@ export function SpillVenner({
                   </div>
 
                   {apen ? (
-                    <div className="mt-3 rounded-xl border border-white/10 bg-[#18191b] p-3.5">
+                    <div className="mt-3 rounded-2xl border border-white/10 bg-[#18191b] p-3.5">
                       <p className="text-xs font-medium text-neutral-300">Velg spill for duell mot {v.visningsnavn}:</p>
                       <div className="mt-2 flex flex-wrap gap-2">
                         {DUELL_SPILL.map((s) => (
@@ -379,7 +379,7 @@ export function SpillVenner({
                               setUtfordreSpill(s)
                               if (s !== "67-stegern") setUtfordreModus("runder")
                             }}
-                            className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition ${
+                            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                               utfordreSpill === s
                                 ? "border-white/30 bg-neutral-100 text-[#18191b]"
                                 : "border-white/10 text-neutral-300 hover:bg-white/5"
@@ -396,7 +396,7 @@ export function SpillVenner({
                               key={m.id}
                               type="button"
                               onClick={() => setUtfordreModus(m.id)}
-                              className={`rounded-lg border px-3 py-1.5 text-left text-xs transition ${
+                              className={`rounded-2xl border px-3 py-1.5 text-left text-xs transition ${
                                 utfordreModus === m.id
                                   ? "border-amber-400/50 bg-amber-400/15 text-amber-100"
                                   : "border-white/10 text-neutral-400 hover:bg-white/5"
@@ -412,7 +412,7 @@ export function SpillVenner({
                           type="button"
                           disabled={utfordrerOpptatt}
                           onClick={() => void sendUtfordring(v.brukerId)}
-                          className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-emerald-400 px-4 text-xs font-semibold text-neutral-950 transition hover:bg-emerald-300 disabled:opacity-50"
+                          className="inline-flex h-9 items-center gap-1.5 rounded-full bg-emerald-400 px-4 text-xs font-semibold text-neutral-950 transition hover:bg-emerald-300 disabled:opacity-50"
                         >
                           {utfordrerOpptatt
                             ? "Lager rom…"
@@ -421,7 +421,7 @@ export function SpillVenner({
                         <button
                           type="button"
                           onClick={() => setUtfordreId(null)}
-                          className="inline-flex h-9 items-center rounded-xl px-3 text-xs text-neutral-400 hover:text-white"
+                          className="inline-flex h-9 items-center rounded-full px-3 text-xs text-neutral-400 hover:text-white"
                         >
                           Lukk
                         </button>
@@ -437,7 +437,7 @@ export function SpillVenner({
 
       {/* Outgoing friend requests */}
       {ut.length > 0 ? (
-        <section className="rounded-2xl border border-white/[0.08] bg-[#232529] p-5">
+        <section className="rounded-[28px] border border-white/[0.07] bg-[#26282c] p-5 sm:p-6">
           <h2 className="text-sm font-semibold text-neutral-300">Sendte forespørsler ({ut.length})</h2>
           <ul className="mt-2 divide-y divide-white/[0.06]">
             {ut.map((f) => (

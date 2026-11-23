@@ -41,16 +41,24 @@ import { analyserVideoRamme, hentLandmarker } from "../lib/moggern/landmarker"
 import { samleLysStatus, type LysAnalyse } from "../lib/moggern/lys"
 import {
   aggregerRammer,
+  formaterBonus,
+  formaterMoggernPoeng,
   MIN_GYLDIGE_RAMMER,
+  MOG_UTTRYKK,
+  oppdaterLivePoeng,
+  type LivePoeng,
+  type LivePoengTilstand,
+  type MogUttrykkStyrker,
   type RammeResultat,
   type Veiledning,
 } from "../lib/moggern/poeng"
+import { rangForPoeng } from "../lib/moggern/tekster"
 import { hentKameraStrom, kameraFeilTekst, stoppStrom, useMoggernWebRtc } from "../lib/moggern/webrtc"
 import { useDuellrom, type Romkontekst } from "./duell/bruk-duellrom"
-import { SlikRegnesDet, TullSkjerm, useHarGodkjentTull } from "./moggern-forklaring"
+import { MFLATE, MKNAPP, MKNAPP_SEKUNDAR, SlikRegnesDet, TullSkjerm, useHarGodkjentTull } from "./moggern-forklaring"
 import type { MoggernBruker } from "./moggern-inngang"
 import { MoggernResultat } from "./moggern-resultat"
-import { Knapp, Kort } from "./spill-ramme"
+import { useVisningsnavnSynk, VisningsnavnPille } from "./visningsnavn-pille"
 
 const VEILEDNING_TEKST: Record<Veiledning, string> = {
   "ingen-ansikt": "Ingen ansikt i bildet — flytt deg inn i rammen",
@@ -62,7 +70,15 @@ const VEILEDNING_TEKST: Record<Veiledning, string> = {
 }
 
 const MAALING_INTERVALL_MS = 160
-const FORHANDSVISNING_INTERVALL_MS = 380
+/** Live HUD rating outside the official measurement (lobby, countdown). */
+const LIVE_INTERVALL_MS = 200
+/** Expression strength from which a mog-uttrykk pill is shown. */
+const UTTRYKK_VIS_TERSKEL = 0.12
+
+/** Dark glass used by every floating HUD element over the videos (explicit colours: unaffected by .spill-mork). */
+const GLASS = "border border-white/10 bg-[#111214]/65 text-white backdrop-blur-md"
+
+type ModellStatus = "laster" | "klar" | "feil"
 
 export function MoggernRom({
   kode,
@@ -80,11 +96,7 @@ export function MoggernRom({
   const harGodkjent = godkjent || lokalGodkjent
 
   if (!lastet) {
-    return (
-      <div className="mx-auto w-full max-w-xl py-12 text-center font-mono text-xs text-neutral-500">
-        Laster rom {kode} …
-      </div>
-    )
+    return <div className="mx-auto w-full max-w-xl py-12 text-center text-xs text-neutral-500 tabular-nums">Laster rom {kode} …</div>
   }
 
   if (!harGodkjent) {
@@ -98,44 +110,87 @@ export function MoggernRom({
   if (!bruker) {
     const neste = encodeURIComponent(`/spill/moggern/${kode}`)
     return (
-      <div className="mx-auto flex w-full max-w-xl flex-col gap-5">
-        <Kort className="border-white/10 p-6 sm:p-8">
-          <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-400/20 text-amber-300">
+      <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
+        <section className={`${MFLATE} p-6 sm:p-8`}>
+          <div className="flex items-center gap-3.5">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/[0.06] text-amber-300">
               <Lock className="h-5 w-5" aria-hidden="true" />
             </span>
             <div>
-              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">Rom {kode}</p>
-              <h2 className="font-[family-name:var(--font-visning)] text-2xl font-extrabold text-neutral-950">
-                Logg inn for å slå på kameraet
-              </h2>
+              <p className="text-xs font-medium text-neutral-500 tabular-nums">Rom {kode}</p>
+              <h2 className="text-[1.6rem] leading-tight font-semibold tracking-[-0.03em] text-neutral-950">Logg inn for å slå på kameraet</h2>
             </div>
           </div>
-          <p className="mt-4 text-sm leading-6 text-neutral-700">
+          <p className="mt-4 text-[15px] leading-6 text-neutral-700">
             Moggern krever innlogging for å bruke kameraet, slik at bare kjente brukere kan delta i kameraduellen. Når du har logget inn, kommer du
-            rett tilbake til rom <strong className="font-mono text-neutral-950">{kode}</strong>.
+            rett tilbake til rom <strong className="font-semibold tracking-[0.12em] text-neutral-950">{kode}</strong>.
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              href={`/logg-inn?neste=${neste}`}
-              className="inline-flex h-11 items-center justify-center rounded-full bg-lime-400 px-6 text-sm font-bold text-neutral-950 transition hover:bg-lime-300"
-            >
+          <div className="mt-6 flex flex-wrap gap-2.5">
+            <Link href={`/logg-inn?neste=${neste}`} className={MKNAPP}>
               Logg inn og bli med
             </Link>
-            <Link
-              href={`/registrer?neste=${neste}`}
-              className="inline-flex h-11 items-center justify-center rounded-full border border-white/15 px-5 text-sm font-medium text-neutral-900 transition hover:bg-white/10"
-            >
+            <Link href={`/registrer?neste=${neste}`} className={MKNAPP_SEKUNDAR}>
               Opprett konto
             </Link>
           </div>
-        </Kort>
+        </section>
         <SlikRegnesDet />
       </div>
     )
   }
 
   return <AktivtMoggernRom kode={kode} bruker={bruker} supabaseUrl={supabaseUrl} supabaseNokkel={supabaseNokkel} />
+}
+
+/** Live score + rank title badge floating over a video tile. */
+function LiveRating({ live, modell, aktiv }: { live: LivePoeng | null; modell: ModellStatus; aktiv: boolean }) {
+  if (!aktiv) return null
+  if (!live) {
+    return (
+      <span className={`${GLASS} inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[11px] font-medium text-white/75`}>
+        <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+        {modell === "laster" ? "Laster ansiktsmodell …" : "Finner ansiktet …"}
+      </span>
+    )
+  }
+  const rang = rangForPoeng(live.total)
+  return (
+    <div
+      className={`${GLASS} flex items-center gap-2 rounded-[18px] py-1 pr-3 pl-1 shadow-[0_8px_24px_rgb(0_0_0/0.25)]`}
+      aria-live="off"
+      title={`Struktur ${formaterMoggernPoeng(live.strukturPoeng)} · uttrykk ${formaterBonus(live.bonus)}`}
+    >
+      <span className={`rounded-[14px] px-2.5 py-1 text-xs font-semibold tracking-[-0.01em] sm:text-[13px] ${rang.farge}`}>{rang.tittel}</span>
+      <span className="text-[1.65rem] leading-none font-semibold tracking-[-0.04em] tabular-nums sm:text-[2rem]">
+        {formaterMoggernPoeng(live.total)}
+      </span>
+    </div>
+  )
+}
+
+/** Compact pills for active mog-uttrykk with their live bonus/penalty. */
+function UttrykkPiller({ styrker }: { styrker: MogUttrykkStyrker | null }) {
+  if (!styrker) return null
+  const aktive = MOG_UTTRYKK.filter((u) => (styrker[u.id] ?? 0) >= UTTRYKK_VIS_TERSKEL)
+  if (!aktive.length) return null
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {aktive.map((u) => {
+        const verdi = (styrker[u.id] ?? 0) * u.maks
+        return (
+          <span
+            key={u.id}
+            className={`mel-pop inline-flex h-7 items-center gap-1 rounded-full px-2.5 text-[11px] font-semibold backdrop-blur-md tabular-nums ${
+              u.maks > 0 ? "bg-lime-300/90 text-[#18191b]" : "bg-rose-500/85 text-white"
+            }`}
+          >
+            {u.navn}
+            <span className="opacity-70">{formaterBonus(verdi)}</span>
+          </span>
+        )
+      })}
+    </div>
+  )
 }
 
 function AktivtMoggernRom({
@@ -154,6 +209,8 @@ function AktivtMoggernRom({
   const signalHandtererRef = useRef<(payload: unknown) => void>(() => {})
   const [motstanderKameraPa, setMotstanderKameraPa] = useState(false)
   const [forlattVarsel, setForlattVarsel] = useState<string | null>(null)
+  const [mittNavn, setMittNavn] = useState(bruker.visningsnavn)
+  useVisningsnavnSynk(setMittNavn)
 
   const hendelser = useMemo(
     () => ({
@@ -205,10 +262,10 @@ function AktivtMoggernRom({
 
   const { status, settStatus, send, meg, erVert, tilkobling, iRommet, klar, settKlar, nyFase, spillIgjen, settNavn } = rom
 
-  // Always present the authenticated account's display name in the duel room.
+  // Always present the account's (possibly just edited) display name in the duel room presence.
   useEffect(() => {
-    settNavn(bruker.visningsnavn)
-  }, [bruker.visningsnavn, settNavn])
+    settNavn(mittNavn)
+  }, [mittNavn, settNavn])
 
   const aktiveSpillere = useMemo(() => iRommet.slice(0, MOGGERN_MAKS_SPILLERE), [iRommet])
   const erDeltaker = !!meg && aktiveSpillere.some((s) => s.id === meg)
@@ -226,23 +283,31 @@ function AktivtMoggernRom({
     }
   }, [motstanderId])
 
-  // ---- Local camera & lazy MediaPipe Face Landmarker ----
+  // ---- Local camera (independent) & lazy MediaPipe Face Landmarker (loads in the background) ----
   const [lokalStrom, setLokalStrom] = useState<MediaStream | null>(null)
   const [starterKamera, setStarterKamera] = useState(false)
   const [kameraFeil, setKameraFeil] = useState<string | null>(null)
-  const [landmarkerKlar, setLandmarkerKlar] = useState(false)
-  const [landmarkerFeil, setLandmarkerFeil] = useState<string | null>(null)
+  const [modell, setModell] = useState<ModellStatus>("laster")
   const [kopiert, setKopiert] = useState(false)
   const [egenVeiledning, setEgenVeiledning] = useState<Veiledning | null>(null)
+  const [egenLive, setEgenLive] = useState<LivePoeng | null>(null)
+  const [motLive, setMotLive] = useState<LivePoeng | null>(null)
   const [gyldigeEgen, setGyldigeEgen] = useState(0)
   const [gyldigeMot, setGyldigeMot] = useState(0)
   const [na, setNa] = useState(() => serverNa())
+  const landmarkerKlar = modell === "klar"
 
   const lokalStromRef = useRef<MediaStream | null>(null)
+  const starterRef = useRef(false)
+  const montertRef = useRef(true)
+  /** Set when the player turns the camera off themselves, so auto-start never overrides that choice. */
+  const manueltAvRef = useRef(false)
   const landmarkerRef = useRef<FaceLandmarker | null>(null)
   const egenVideoRef = useRef<HTMLVideoElement | null>(null)
   const fjernVideoRef = useRef<HTMLVideoElement | null>(null)
   const lerretRef = useRef<HTMLCanvasElement | null>(null)
+  const egenLiveRef = useRef<LivePoengTilstand>({ struktur: null, styrker: null })
+  const motLiveRef = useRef<LivePoengTilstand>({ struktur: null, styrker: null })
 
   const egenRammerRef = useRef<RammeResultat[]>([])
   const egenLysRef = useRef<LysAnalyse[]>([])
@@ -276,7 +341,7 @@ function AktivtMoggernRom({
     send("kamera", { id: meg, pa: !!lokalStrom })
   }, [meg, tilkobling, lokalStrom, motstanderId, send])
 
-  // Attach streams to <video> elements.
+  // Attach streams to the (always mounted) <video> elements.
   useEffect(() => {
     const el = egenVideoRef.current
     if (!el) return
@@ -289,70 +354,93 @@ function AktivtMoggernRom({
     if (!el) return
     el.srcObject = webrtc.fjernStrom
     if (webrtc.fjernStrom) void el.play().catch(() => {})
+    motLiveRef.current = { struktur: null, styrker: null }
+    setMotLive(null)
   }, [webrtc.fjernStrom, status.fase])
 
-  // Always stop camera tracks on unmount.
+  // Always stop camera tracks on unmount (and ignore a getUserMedia that resolves afterwards).
   useEffect(() => {
+    montertRef.current = true
     return () => {
+      montertRef.current = false
       stoppStrom(lokalStromRef.current)
       lokalStromRef.current = null
     }
   }, [])
 
+  const hentModell = useCallback(() => {
+    hentLandmarker()
+      .then((lm) => {
+        if (!montertRef.current) return
+        landmarkerRef.current = lm
+        setModell("klar")
+      })
+      .catch(() => {
+        if (montertRef.current) setModell("feil")
+      })
+  }, [])
+
+  // Preload the face model as soon as the room opens; the camera never waits for it.
+  useEffect(() => {
+    hentModell()
+  }, [hentModell])
+
+  const lastModell = useCallback(() => {
+    setModell("laster")
+    hentModell()
+  }, [hentModell])
+
   const skruPaKamera = useCallback(async () => {
-    if (starterKamera || lokalStromRef.current) return
+    if (starterRef.current || lokalStromRef.current) return
+    starterRef.current = true
+    manueltAvRef.current = false
     setStarterKamera(true)
     setKameraFeil(null)
-    setLandmarkerFeil(null)
-    let nyStrom: MediaStream | null = null
-    let modellFeilet = false
     try {
-      const [strom, lm] = await Promise.all([
-        hentKameraStrom().then((s) => {
-          nyStrom = s
-          return s
-        }),
-        hentLandmarker().catch((err) => {
-          modellFeilet = true
-          setLandmarkerFeil("Klarte ikke å laste ansiktsmodellen (MediaPipe). Sjekk internett og prøv igjen.")
-          throw err
-        }),
-      ])
+      const strom = await hentKameraStrom()
+      if (!montertRef.current || lokalStromRef.current) {
+        stoppStrom(strom)
+        return
+      }
       lokalStromRef.current = strom
-      landmarkerRef.current = lm
+      egenLiveRef.current = { struktur: null, styrker: null }
       setLokalStrom(strom)
-      setLandmarkerKlar(true)
       lyder.velg()
     } catch (err) {
-      if (!modellFeilet) {
-        setKameraFeil(kameraFeilTekst(err))
-      }
-      stoppStrom(nyStrom)
-      stoppStrom(lokalStromRef.current)
-      lokalStromRef.current = null
-      setLokalStrom(null)
+      if (montertRef.current) setKameraFeil(kameraFeilTekst(err))
     } finally {
-      setStarterKamera(false)
+      starterRef.current = false
+      if (montertRef.current) setStarterKamera(false)
     }
-  }, [starterKamera])
+  }, [])
+
+  // Auto-start: logged in + "Alt er tull" accepted (this component only renders then) → camera on right away.
+  useEffect(() => {
+    if (erFullt || manueltAvRef.current) return
+    void skruPaKamera()
+  }, [erFullt, skruPaKamera])
 
   const skruAvKamera = useCallback(() => {
+    manueltAvRef.current = true
     stoppStrom(lokalStromRef.current)
     lokalStromRef.current = null
     setLokalStrom(null)
     setEgenVeiledning(null)
+    setEgenLive(null)
+    egenLiveRef.current = { struktur: null, styrker: null }
     settKlar(false)
     if (meg) send("kamera", { id: meg, pa: false })
   }, [meg, send, settKlar])
 
   const blokkerOgForlat = useCallback(() => {
+    manueltAvRef.current = true
     stoppStrom(lokalStromRef.current)
     lokalStromRef.current = null
     setLokalStrom(null)
     webrtc.lukkForbindelse()
-    if (meg) send("forlat", { id: meg, navn: bruker.visningsnavn })
+    if (meg) send("forlat", { id: meg, navn: mittNavn })
     router.push("/spill/moggern")
-  }, [bruker.visningsnavn, meg, router, send, webrtc])
+  }, [mittNavn, meg, router, send, webrtc])
 
   // ---- Countdown & measurement clock ----
   useEffect(() => {
@@ -387,25 +475,69 @@ function AktivtMoggernRom({
     }
   }, [status.fase, gjenstarMs, erVert, nyFase])
 
-  // Live preview framing guidance during lobby & countdown (own camera only).
+  // ---- One analysis loop: live HUD rating in every phase, plus the official 10 s capture during "maling" ----
   useEffect(() => {
-    if ((status.fase !== "lobby" && status.fase !== "nedtelling") || !lokalStrom || !landmarkerKlar) return
-    const lerret = (lerretRef.current ??= document.createElement("canvas"))
-    const id = window.setInterval(() => {
-      const lm = landmarkerRef.current
-      const video = egenVideoRef.current
-      if (!lm || !video) return
-      try {
-        const ut = analyserVideoRamme(lm, video, lerret)
-        if (ut) setEgenVeiledning(ut.ramme.veiledning)
-      } catch {
-        // Ignore single-frame inference hiccup.
-      }
-    }, FORHANDSVISNING_INTERVALL_MS)
-    return () => window.clearInterval(id)
-  }, [status.fase, lokalStrom, landmarkerKlar])
+    if (!landmarkerKlar || status.fase === "resultat") return
+    const maler = status.fase === "maling"
+    if (maler) {
+      egenRammerRef.current = []
+      egenLysRef.current = []
+      motRammerRef.current = []
+      motLysRef.current = []
+      sendtRapportRundeRef.current = null
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setGyldigeEgen(0)
+      setGyldigeMot(0)
+    }
 
-  // ---- 10-second live dual-face measurement ----
+    const lerret = (lerretRef.current ??= document.createElement("canvas"))
+    const id = window.setInterval(
+      () => {
+        const lm = landmarkerRef.current
+        if (!lm) return
+
+        const egenVideo = egenVideoRef.current
+        if (egenVideo && lokalStromRef.current) {
+          try {
+            const ut = analyserVideoRamme(lm, egenVideo, lerret)
+            if (ut) {
+              if (maler) {
+                egenRammerRef.current.push(ut.ramme)
+                egenLysRef.current.push(ut.lys)
+                if (ut.ramme.gyldig) setGyldigeEgen((n) => n + 1)
+              }
+              setEgenVeiledning(ut.ramme.veiledning)
+              const live = oppdaterLivePoeng(egenLiveRef.current, ut.ramme)
+              if (live) setEgenLive(live)
+            }
+          } catch {
+            // Ignore single-frame inference hiccup.
+          }
+        }
+
+        const fjernVideo = fjernVideoRef.current
+        if (fjernVideo && fjernVideo.srcObject) {
+          try {
+            const ut = analyserVideoRamme(lm, fjernVideo, lerret)
+            if (ut) {
+              if (maler) {
+                motRammerRef.current.push(ut.ramme)
+                motLysRef.current.push(ut.lys)
+                if (ut.ramme.gyldig) setGyldigeMot((n) => n + 1)
+              }
+              const live = oppdaterLivePoeng(motLiveRef.current, ut.ramme)
+              if (live) setMotLive(live)
+            }
+          } catch {}
+        }
+      },
+      maler ? MAALING_INTERVALL_MS : LIVE_INTERVALL_MS,
+    )
+
+    return () => window.clearInterval(id)
+  }, [landmarkerKlar, status.fase, status.runde])
+
+  // ---- 10-second official measurement report ----
   const lagRapport = useCallback((): MoggernRapport | null => {
     if (!meg) return null
     const bygg = (rammer: RammeResultat[], lys: LysAnalyse[]): SpillerMaaling => {
@@ -414,6 +546,7 @@ function AktivtMoggernRom({
         ok: samlet.ok,
         total: samlet.total,
         delpoeng: samlet.delpoeng,
+        uttrykkBonus: samlet.uttrykkBonus,
         lysStatus: samleLysStatus(lys),
         kvalitet: samlet.kvalitet,
       }
@@ -426,51 +559,6 @@ function AktivtMoggernRom({
     }
   }, [meg, status.runde])
 
-  useEffect(() => {
-    if (status.fase !== "maling") return
-    egenRammerRef.current = []
-    egenLysRef.current = []
-    motRammerRef.current = []
-    motLysRef.current = []
-    sendtRapportRundeRef.current = null
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setGyldigeEgen(0)
-    setGyldigeMot(0)
-
-    const lerret = (lerretRef.current ??= document.createElement("canvas"))
-    const id = window.setInterval(() => {
-      const lm = landmarkerRef.current
-      if (!lm) return
-
-      const egenVideo = egenVideoRef.current
-      if (egenVideo) {
-        try {
-          const ut = analyserVideoRamme(lm, egenVideo, lerret)
-          if (ut) {
-            egenRammerRef.current.push(ut.ramme)
-            egenLysRef.current.push(ut.lys)
-            setEgenVeiledning(ut.ramme.veiledning)
-            if (ut.ramme.gyldig) setGyldigeEgen((n) => n + 1)
-          }
-        } catch {}
-      }
-
-      const fjernVideo = fjernVideoRef.current
-      if (fjernVideo) {
-        try {
-          const ut = analyserVideoRamme(lm, fjernVideo, lerret)
-          if (ut) {
-            motRammerRef.current.push(ut.ramme)
-            motLysRef.current.push(ut.lys)
-            if (ut.ramme.gyldig) setGyldigeMot((n) => n + 1)
-          }
-        } catch {}
-      }
-    }, MAALING_INTERVALL_MS)
-
-    return () => window.clearInterval(id)
-  }, [status.fase, status.runde])
-
   // Send measurement report as soon as the 10 seconds finish.
   useEffect(() => {
     if (status.fase !== "maling" || !meg || gjenstarMs > 0) return
@@ -480,9 +568,7 @@ function AktivtMoggernRom({
     const rapport = lagRapport()
     if (!rapport) return
     settStatus((s) =>
-      s.runde === rapport.runde && !s.rapporter[rapport.av]
-        ? { ...s, rapporter: { ...s.rapporter, [rapport.av]: rapport } }
-        : s,
+      s.runde === rapport.runde && !s.rapporter[rapport.av] ? { ...s, rapporter: { ...s.rapporter, [rapport.av]: rapport } } : s,
     )
     send("rapport", rapport as unknown as Record<string, unknown>)
 
@@ -496,9 +582,7 @@ function AktivtMoggernRom({
   // Host transitions from "maling" to "resultat" once both reports are in (or after 4.5 s timeout).
   useEffect(() => {
     if (!erVert || status.fase !== "maling") return
-    const alleHarSendt =
-      status.deltakere.length === MOGGERN_MAKS_SPILLERE &&
-      status.deltakere.every((d) => !!status.rapporter[d.id])
+    const alleHarSendt = status.deltakere.length === MOGGERN_MAKS_SPILLERE && status.deltakere.every((d) => !!status.rapporter[d.id])
     const utlopt = na >= status.faseStartTid + MALING_MS + 4500
 
     if (alleHarSendt || utlopt) {
@@ -548,29 +632,21 @@ function AktivtMoggernRom({
   if (erFullt) {
     return (
       <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
-        <Kort className="border-white/10 p-6 text-center">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-rose-400">Rom {kode} er fullt</p>
-          <h2 className="mt-2 font-[family-name:var(--font-visning)] text-2xl font-extrabold text-neutral-950">
-            Maks 2 spillere per duell
-          </h2>
-          <p className="mt-3 text-sm leading-6 text-neutral-700">
+        <section className={`${MFLATE} p-6 text-center sm:p-8`}>
+          <p className="text-xs font-medium text-rose-300">Rom {kode} er fullt</p>
+          <h2 className="mt-2 text-[1.6rem] font-semibold tracking-[-0.03em] text-neutral-950">Maks 2 spillere per duell</h2>
+          <p className="mt-3 text-[15px] leading-6 text-neutral-700">
             Det er allerede to venner i dette rommet. Lag ditt eget rom for å starte en ny 1v1-duell.
           </p>
-          <div className="mt-5 flex justify-center gap-3">
-            <Knapp
-              onClick={() => router.push(`/spill/moggern/${lagKode()}`)}
-              className="!bg-lime-400 !font-bold !text-neutral-950 hover:!bg-lime-300"
-            >
+          <div className="mt-6 flex justify-center gap-2.5">
+            <button type="button" onClick={() => router.push(`/spill/moggern/${lagKode()}`)} className={MKNAPP}>
               Lag nytt rom
-            </Knapp>
-            <Link
-              href="/spill/moggern"
-              className="inline-flex h-11 items-center justify-center rounded-full border border-white/15 px-5 text-sm font-medium text-neutral-900 hover:bg-white/10"
-            >
+            </button>
+            <Link href="/spill/moggern" className={MKNAPP_SEKUNDAR}>
               Tilbake
             </Link>
           </div>
-        </Kort>
+        </section>
       </div>
     )
   }
@@ -578,324 +654,345 @@ function AktivtMoggernRom({
   const nedtellingTall = Math.max(1, Math.min(3, Math.ceil(gjenstarMs / 1000)))
   const maalingSek = (gjenstarMs / 1000).toFixed(1).replace(".", ",")
   const maalingFremdrift = Math.min(100, Math.max(0, ((MALING_MS - gjenstarMs) / MALING_MS) * 100))
+  const iDuell = status.fase === "nedtelling" || status.fase === "maling"
+  const motNavn = motstander?.navn || "Motstanderen"
 
   const lobbyHint = !lokalStrom
-    ? "Slå på kameraet ditt først for å gjøre deg klar."
+    ? "Slå på kameraet ditt for å gjøre deg klar."
     : !motstander
       ? "Del lenken eller koden med én venn for å starte."
       : !motstanderHarVideo
-        ? `Venter på at ${motstander.navn || "motstanderen"} slår på kameraet.`
+        ? `Venter på at ${motNavn} slår på kameraet.`
         : !motstanderKlar
-          ? `Venter på at ${motstander.navn || "motstanderen"} trykker «Klar».`
+          ? `Venter på at ${motNavn} trykker «Klar».`
           : "Begge er klare — trykk Start for 3-2-1 og 10 sekunders måling!"
 
-  return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-5">
-      {/* Top room bar: room code, invite link, auth badge & quick leave/block */}
-      <Kort className="flex flex-wrap items-center justify-between gap-3 border-white/10 px-4 py-3 sm:px-5">
-        <div className="flex items-center gap-3">
-          <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500">Romkode (1v1)</p>
-            <p className="font-mono text-2xl leading-none font-bold tracking-[0.2em] text-lime-400">{kode}</p>
-          </div>
-          <button
-            type="button"
-            onClick={kopierLenke}
-            className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3.5 text-xs font-medium text-neutral-900 transition hover:bg-white/10"
-          >
-            {kopiert ? <Check className="h-3.5 w-3.5 text-lime-400" /> : <Copy className="h-3.5 w-3.5" />}
-            {kopiert ? "Kopiert!" : "Kopier lenke"}
-          </button>
-        </div>
+  const gjesteHint = !lokalStrom
+    ? "Slå på kameraet ditt og trykk «Klar til duell»."
+    : klar
+      ? `Du er klar! Venter på at ${motstander?.navn || "verten"} starter.`
+      : "Trykk «Klar» når du sitter i godt lys og ser rett i kameraet."
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-black/25 px-3 py-1 font-mono text-[11px] text-neutral-700">
-            <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
-            {bruker.visningsnavn}
+  return (
+    <div className="flex w-full flex-col gap-3">
+      {/* Compact room bar: code, invite link, connection & always-reachable leave/block */}
+      <div className="mx-auto flex w-full max-w-[1800px] flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex h-9 items-center gap-2 rounded-full border border-white/[0.07] bg-[var(--spill-flate)] pr-1 pl-3.5">
+            <span className="text-[11px] font-medium text-neutral-500">Rom</span>
+            <span className="text-[15px] font-semibold tracking-[0.18em] text-neutral-950 tabular-nums">{kode}</span>
+            <button
+              type="button"
+              onClick={kopierLenke}
+              aria-label="Kopier invitasjonslenke"
+              className="inline-flex h-7 items-center gap-1 rounded-full bg-white/[0.06] px-2.5 text-[11px] font-medium text-neutral-800 transition hover:bg-white/[0.12]"
+            >
+              {kopiert ? <Check className="h-3.5 w-3.5 text-lime-400" /> : <Copy className="h-3.5 w-3.5" />}
+              <span className="max-sm:sr-only">{kopiert ? "Kopiert!" : "Kopier lenke"}</span>
+            </button>
           </span>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-black/25 px-3 py-1 font-mono text-[11px] text-neutral-700">
+          <span className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/[0.07] bg-[var(--spill-flate)] px-3 text-[11px] font-medium text-neutral-600 tabular-nums">
             {tilkobling === "klar" ? (
               <>
                 <Wifi className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
-                {aktiveSpillere.length}/2 i rommet
+                {aktiveSpillere.length}/2
               </>
             ) : tilkobling === "feil" ? (
               <>
                 <WifiOff className="h-3.5 w-3.5 text-rose-400" aria-hidden="true" />
-                Tilkoblingsfeil
+                Feil
               </>
             ) : (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin text-neutral-500" aria-hidden="true" />
-                Kobler til …
+                Kobler …
               </>
             )}
           </span>
-          <button
-            type="button"
-            onClick={blokkerOgForlat}
-            className="inline-flex h-9 items-center gap-1.5 rounded-full border border-rose-400/30 bg-rose-500/10 px-3.5 text-xs font-semibold text-rose-300 transition hover:bg-rose-500/20"
-          >
-            <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
-            Blokker / forlat
-          </button>
         </div>
-      </Kort>
+
+        <button
+          type="button"
+          onClick={blokkerOgForlat}
+          className="inline-flex h-9 items-center gap-1.5 rounded-full border border-rose-400/25 bg-rose-500/10 px-3.5 text-xs font-semibold text-rose-300 transition hover:bg-rose-500/20"
+        >
+          <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
+          Blokker / forlat
+        </button>
+      </div>
 
       {forlattVarsel ? (
-        <div role="status" className="rounded-2xl border border-amber-400/25 bg-amber-400/10 px-4 py-3 text-xs text-amber-100">
+        <div role="status" className="mx-auto w-full max-w-[1800px] rounded-2xl border border-amber-400/25 bg-amber-400/10 px-4 py-2.5 text-xs text-amber-100">
           {forlattVarsel}
         </div>
       ) : null}
 
       {/* Result reveal screen */}
       {status.fase === "resultat" ? (
-        <MoggernResultat
-          kode={kode}
-          runde={status.runde}
-          deltakere={status.deltakere}
-          rapporter={status.rapporter}
-          meg={meg}
-          erVert={erVert}
-          onOmkamp={() => {
-            lyder.velg()
-            settKlar(false)
-            spillIgjen()
-          }}
-        />
+        <div className="mx-auto w-full max-w-4xl">
+          <MoggernResultat
+            kode={kode}
+            runde={status.runde}
+            deltakere={status.deltakere}
+            rapporter={status.rapporter}
+            meg={meg}
+            erVert={erVert}
+            onOmkamp={() => {
+              lyder.velg()
+              settKlar(false)
+              spillIgjen()
+            }}
+          />
+        </div>
       ) : null}
 
-      {/* Live 1v1 camera stage (kept mounted during lobby, countdown & measurement; hidden only if needed) */}
-      {status.fase !== "resultat" ? (
-        <section className="flex flex-col gap-4">
-          {/* Countdown or measurement progress banner */}
-          {status.fase === "nedtelling" ? (
-            <Kort className="border-lime-400/40 bg-lime-400/10 p-4 text-center">
-              <p className="font-mono text-xs uppercase tracking-[0.2em] text-lime-300">Se rett inn i kameraet!</p>
-              <p className="mel-pop mt-1 font-[family-name:var(--font-visning)] text-6xl leading-none font-black tabular-nums text-lime-400">
-                {nedtellingTall}
-              </p>
-            </Kort>
-          ) : null}
+      {/* Full-bleed 1v1 stage: the two faces get (almost) the whole viewport. Kept mounted outside the result. */}
+      <section
+        aria-label="Kameraduell"
+        className={`relative left-1/2 w-screen -translate-x-1/2 px-2 sm:px-3 ${status.fase === "resultat" ? "hidden" : ""}`}
+      >
+        <div className="relative mx-auto grid h-[calc(100dvh-8.75rem)] min-h-[30rem] max-w-[1800px] grid-rows-2 gap-2 md:h-[min(88dvh,calc(100dvh-8rem))] md:grid-cols-2 md:grid-rows-1 md:gap-3">
+          {/* ---- Own camera tile ---- */}
+          <div className="relative min-h-0 overflow-hidden rounded-[26px] border border-white/[0.07] bg-[#0d0e10]">
+            <video
+              ref={egenVideoRef}
+              autoPlay
+              playsInline
+              muted
+              className={`absolute inset-0 h-full w-full -scale-x-100 object-cover transition-opacity duration-500 ${lokalStrom ? "opacity-100" : "opacity-0"}`}
+            />
 
-          {status.fase === "maling" ? (
-            <Kort className="border-lime-400/35 p-4">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="font-[family-name:var(--font-visning)] text-lg font-extrabold text-neutral-950">
-                  {gjenstarMs > 0 ? "Måler — se rett inn i kameraet!" : "Beregner resultat …"}
-                </p>
-                <span className="font-mono text-lg font-bold tabular-nums text-lime-400">{maalingSek} s</span>
-              </div>
-              <div className="mt-2.5 h-2.5 w-full overflow-hidden rounded-full bg-white/10">
-                <div
-                  className="h-full rounded-full bg-lime-400 transition-[width] duration-100"
-                  style={{ width: `${maalingFremdrift}%` }}
-                />
-              </div>
-              <div className="mt-2 flex flex-wrap items-center justify-between gap-2 font-mono text-[11px] text-neutral-600">
-                <span>
-                  Dine gyldige bilder: <strong className="text-neutral-950">{gyldigeEgen}</strong> (minst {MIN_GYLDIGE_RAMMER})
+            {!lokalStrom ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.06] text-white/60">
+                  {starterKamera ? <Loader2 className="h-5 w-5 animate-spin" /> : <CameraOff className="h-5 w-5" aria-hidden="true" />}
                 </span>
-                <span>
-                  Motstander målt: <strong className="text-neutral-950">{gyldigeMot}</strong> bilder
-                </span>
-              </div>
-            </Kort>
-          ) : null}
-
-          {/* Side-by-side 1v1 camera feeds */}
-          <div className="grid gap-4 md:grid-cols-2">
-            {/* Local player video card */}
-            <Kort className="overflow-hidden border-white/10 p-3">
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-black/50">
-                {lokalStrom ? (
-                  <video
-                    ref={egenVideoRef}
-                    autoPlay
-                    playsInline
-                    muted
-                    className="h-full w-full -scale-x-100 object-cover"
-                  />
+                <p className="text-[15px] font-medium text-white">{starterKamera ? "Starter kameraet …" : "Kameraet ditt er av"}</p>
+                {!starterKamera ? (
+                  <button type="button" onClick={() => void skruPaKamera()} className={MKNAPP}>
+                    <Camera className="h-4 w-4" />
+                    Slå på kamera
+                  </button>
                 ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-6 text-center">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 text-neutral-500">
-                      <CameraOff className="h-6 w-6" aria-hidden="true" />
-                    </span>
-                    <p className="text-sm font-medium text-neutral-800">Kameraet ditt er av</p>
-                    <p className="max-w-xs text-xs leading-5 text-neutral-500">
-                      Ingenting sendes eller måles før du selv trykker på knappen under.
-                    </p>
-                  </div>
+                  <p className="max-w-xs text-xs leading-5 text-white/50">Svar «Tillat» hvis nettleseren spør om kameraet.</p>
                 )}
-
-                {/* Top-left name badge */}
-                <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-black/65 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                  {erVert ? <Crown className="h-3.5 w-3.5 text-amber-300" aria-hidden="true" /> : null}
-                  <span>{bruker.visningsnavn} (deg)</span>
-                </div>
-
-                {/* Live pose guidance pill */}
-                {lokalStrom && egenVeiledning ? (
-                  <div
-                    className={`absolute inset-x-3 bottom-3 rounded-xl px-3 py-1.5 text-center text-xs font-semibold backdrop-blur-sm ${
-                      egenVeiledning === "ok"
-                        ? "bg-emerald-500/80 text-neutral-950"
-                        : "bg-black/75 text-amber-200"
-                    }`}
-                  >
-                    {VEILEDNING_TEKST[egenVeiledning]}
-                  </div>
-                ) : null}
+                {kameraFeil ? <p className="max-w-sm text-xs leading-5 text-rose-300">{kameraFeil}</p> : null}
+                <p className="max-w-xs text-[11px] leading-4 text-white/35">Videoen går bare direkte til vennen din. Ingenting lagres.</p>
               </div>
+            ) : null}
 
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-                {!lokalStrom ? (
-                  <Knapp
-                    onClick={() => void skruPaKamera()}
-                    disabled={starterKamera}
-                    className="!h-10 !bg-lime-400 !px-4 !text-xs !font-bold !text-neutral-950 hover:!bg-lime-300"
-                  >
-                    {starterKamera ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
-                    {starterKamera ? "Starter kamera & modell …" : "Slå på kamera"}
-                  </Knapp>
-                ) : (
-                  <Knapp variant="sekundar" onClick={skruAvKamera} className="!h-10 !px-4 !text-xs">
-                    <CameraOff className="h-4 w-4" />
-                    Skru av kamera
-                  </Knapp>
-                )}
+            {/* Soft edge gradients keep HUD text readable without boxing the face */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#0d0e10]/55 to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#0d0e10]/70 to-transparent" />
 
-                {status.fase === "lobby" && !erVert && lokalStrom && landmarkerKlar ? (
-                  <Knapp
-                    onClick={() => {
-                      lyder.velg()
-                      settKlar(!klar)
-                    }}
-                    className={`!h-10 !px-4 !text-xs !font-bold ${
-                      klar ? "!bg-emerald-400 !text-neutral-950 hover:!bg-emerald-300" : "!bg-neutral-950 !text-neutral-50"
-                    }`}
-                  >
-                    <UserCheck className="h-4 w-4" />
-                    {klar ? "Klar ✓ (trykk for å angre)" : "Klar til duell"}
-                  </Knapp>
-                ) : null}
-              </div>
-
-              {kameraFeil ? <p className="mt-2 text-xs text-rose-400">{kameraFeil}</p> : null}
-              {landmarkerFeil ? <p className="mt-2 text-xs text-rose-400">{landmarkerFeil}</p> : null}
-            </Kort>
-
-            {/* Opponent video card */}
-            <Kort className="overflow-hidden border-white/10 p-3">
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-black/50">
-                {webrtc.fjernStrom ? (
-                  <video
-                    ref={fjernVideoRef}
-                    autoPlay
-                    playsInline
-                    muted
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-6 text-center">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 text-neutral-500">
-                      {motstander ? <Loader2 className="h-5 w-5 animate-spin" /> : <Camera className="h-6 w-6" />}
-                    </span>
-                    <p className="text-sm font-medium text-neutral-800">
-                      {!motstander
-                        ? "Venter på motstander …"
-                        : motstanderKameraPa
-                          ? `Kobler video til ${motstander.navn || "motstanderen"} …`
-                          : `${motstander.navn || "Motstanderen"} har kameraet av`}
-                    </p>
-                    <p className="max-w-xs text-xs leading-5 text-neutral-500">
-                      {!motstander
-                        ? `Send romkoden ${kode} eller lenken over til én venn.`
-                        : "Videoen går direkte mellom nettleserne deres (peer-to-peer)."}
-                    </p>
-                  </div>
-                )}
-
-                <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-black/65 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                  {motstander && !erVert ? <Crown className="h-3.5 w-3.5 text-amber-300" aria-hidden="true" /> : null}
-                  <span>{motstander ? motstander.navn || "Motstander" : "Ledig plass"}</span>
-                </div>
-
-                {motstander ? (
-                  <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-black/65 px-2.5 py-1 font-mono text-[10px] text-neutral-200 backdrop-blur-sm">
-                    <span
-                      className={`h-2 w-2 rounded-full ${
-                        webrtc.status === "tilkoblet"
-                          ? "bg-emerald-400"
-                          : webrtc.status === "feil"
-                            ? "bg-rose-400"
-                            : "bg-amber-300"
-                      }`}
-                    />
-                    {webrtc.status === "tilkoblet" ? "P2P live" : webrtc.status === "feil" ? "Video-feil" : "Kobler…"}
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="mt-3 flex min-h-10 flex-wrap items-center justify-between gap-2 text-xs text-neutral-600">
-                <span>
-                  {!motstander
-                    ? "Ingen motstander i rommet ennå."
-                    : motstanderKlar
-                      ? `${motstander.navn || "Motstanderen"} er klar ✓`
-                      : erVert
-                        ? `Venter på at ${motstander.navn || "motstanderen"} blir klar`
-                        : `${motstander.navn || "Verten"} starter duellen`}
-                </span>
-                {webrtc.status === "feil" && motstander ? (
+            {/* Top HUD: editable name pill · live rating */}
+            <div className="absolute inset-x-2.5 top-2.5 flex items-start justify-between gap-2 sm:inset-x-3.5 sm:top-3.5">
+              <VisningsnavnPille
+                navn={mittNavn}
+                onEndret={setMittNavn}
+                etikett="(deg)"
+                ikon={
+                  erVert ? (
+                    <Crown className="h-3.5 w-3.5 shrink-0 text-amber-300" aria-label="Vert" />
+                  ) : (
+                    <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-400" aria-hidden="true" />
+                  )
+                }
+                className="max-w-[55%]"
+              />
+              <div className="flex flex-col items-end gap-1.5">
+                <LiveRating live={egenLive} modell={modell} aktiv={!!lokalStrom && modell !== "feil"} />
+                {modell === "feil" && lokalStrom ? (
                   <button
                     type="button"
-                    onClick={webrtc.koblePaaNytt}
-                    className="inline-flex items-center gap-1 rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-neutral-900 hover:bg-white/10"
+                    onClick={lastModell}
+                    className={`${GLASS} inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[11px] font-medium text-amber-200 hover:bg-[#111214]/85`}
                   >
-                    <RefreshCw className="h-3.5 w-3.5" />
-                    Koble til på nytt
+                    <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
+                    Ansiktsmodellen feilet · prøv igjen
                   </button>
                 ) : null}
               </div>
+            </div>
 
-              {webrtc.feil ? <p className="mt-2 text-xs text-rose-400">{webrtc.feil}</p> : null}
-            </Kort>
+            {/* Bottom HUD: mog-uttrykk pills, pose guidance, camera toggle & ready */}
+            <div className="absolute inset-x-2.5 bottom-2.5 flex flex-col gap-2 sm:inset-x-3.5 sm:bottom-3.5">
+              {lokalStrom ? <UttrykkPiller styrker={egenLive?.styrker ?? null} /> : null}
+              {lokalStrom && egenVeiledning && egenVeiledning !== "ok" ? (
+                <p className={`${GLASS} self-start rounded-full px-3 py-1.5 text-[11px] font-medium text-amber-100`}>{VEILEDNING_TEKST[egenVeiledning]}</p>
+              ) : null}
+              {lokalStrom ? (
+                <div className="flex items-center justify-between gap-2">
+                  <button
+                    type="button"
+                    onClick={skruAvKamera}
+                    className={`${GLASS} inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium hover:bg-[#111214]/85`}
+                  >
+                    <CameraOff className="h-3.5 w-3.5" aria-hidden="true" />
+                    Skru av kamera
+                  </button>
+
+                  {status.fase === "lobby" && !erVert && landmarkerKlar ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        lyder.velg()
+                        settKlar(!klar)
+                      }}
+                      aria-pressed={klar}
+                      className={`inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-xs font-semibold transition active:scale-[0.98] ${
+                        klar ? "bg-emerald-400 text-[#18191b] hover:bg-emerald-300" : "bg-[#f4f4f5] text-[#18191b] hover:bg-white"
+                      }`}
+                    >
+                      <UserCheck className="h-3.5 w-3.5" aria-hidden="true" />
+                      {klar ? "Klar ✓" : "Klar til duell"}
+                    </button>
+                  ) : null}
+                  {status.fase === "lobby" && erVert ? (
+                    <button
+                      type="button"
+                      onClick={startDuell}
+                      disabled={!kanStarteDuell}
+                      title={kanStarteDuell ? undefined : lobbyHint}
+                      className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[#f4f4f5] px-4 text-xs font-semibold text-[#18191b] transition hover:bg-white active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      <Play className="h-3.5 w-3.5" aria-hidden="true" />
+                      Start duell (10 s)
+                    </button>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
           </div>
 
-          {/* Lobby action bar */}
-          {status.fase === "lobby" ? (
-            <Kort className="flex flex-col items-start justify-between gap-3 border-white/10 p-4 sm:flex-row sm:items-center sm:p-5">
-              <div className="space-y-1">
-                <p className="text-sm font-semibold text-neutral-950">
-                  {erVert ? "Du er vert for duellen" : "Klar for 10 sekunders måling?"}
+          {/* ---- Opponent tile ---- */}
+          <div className="relative min-h-0 overflow-hidden rounded-[26px] border border-white/[0.07] bg-[#0d0e10]">
+            <video
+              ref={fjernVideoRef}
+              autoPlay
+              playsInline
+              muted
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${webrtc.fjernStrom ? "opacity-100" : "opacity-0"}`}
+            />
+
+            {!webrtc.fjernStrom ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.06] text-white/60">
+                  {motstander ? <Loader2 className="h-5 w-5 animate-spin" /> : <Camera className="h-5 w-5" aria-hidden="true" />}
+                </span>
+                <p className="text-[15px] font-medium text-white">
+                  {!motstander ? "Venter på motstander …" : motstanderKameraPa ? `Kobler video til ${motNavn} …` : `${motNavn} har kameraet av`}
                 </p>
-                <p className="text-xs leading-5 text-neutral-600">
-                  {erVert
-                    ? lobbyHint
-                    : !lokalStrom
-                      ? "Slå på kameraet ditt og trykk «Klar til duell»."
-                      : klar
-                        ? `Du er klar! Venter på at ${motstander?.navn || "verten"} starter.`
-                        : "Trykk «Klar til duell» når du sitter i godt lys og ser rett i kameraet."}
+                {!motstander ? (
+                  <>
+                    <p className="text-[2.4rem] leading-none font-semibold tracking-[0.22em] text-white tabular-nums">{kode}</p>
+                    <button type="button" onClick={kopierLenke} className={MKNAPP_SEKUNDAR}>
+                      {kopiert ? <Check className="h-4 w-4 text-lime-400" /> : <Copy className="h-4 w-4" />}
+                      {kopiert ? "Kopiert!" : "Kopier invitasjonslenke"}
+                    </button>
+                  </>
+                ) : null}
+                <p className="max-w-xs text-xs leading-5 text-white/45">
+                  {!motstander ? "Send romkoden eller lenken til én venn." : "Videoen går direkte mellom nettleserne deres (peer-to-peer)."}
                 </p>
               </div>
-              {erVert ? (
-                <Knapp
-                  onClick={startDuell}
-                  disabled={!kanStarteDuell}
-                  className="w-full shrink-0 !bg-lime-400 !font-bold !text-neutral-950 hover:!bg-lime-300 disabled:!bg-neutral-300 disabled:!text-neutral-600 sm:w-auto"
-                >
-                  <Play className="h-4 w-4" aria-hidden="true" />
-                  Start duell (10 s)
-                </Knapp>
+            ) : null}
+
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#0d0e10]/55 to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#0d0e10]/70 to-transparent" />
+
+            <div className="absolute inset-x-2.5 top-2.5 flex items-start justify-between gap-2 sm:inset-x-3.5 sm:top-3.5">
+              <span className={`${GLASS} inline-flex h-8 max-w-[55%] items-center gap-1.5 rounded-full px-3 text-xs font-medium`}>
+                {motstander && !erVert ? <Crown className="h-3.5 w-3.5 shrink-0 text-amber-300" aria-label="Vert" /> : null}
+                <span className="truncate">{motstander ? motNavn : "Ledig plass"}</span>
+                {motstander ? (
+                  <span
+                    aria-label={webrtc.status === "tilkoblet" ? "Video tilkoblet" : webrtc.status === "feil" ? "Videofeil" : "Kobler video"}
+                    className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                      webrtc.status === "tilkoblet" ? "bg-emerald-400" : webrtc.status === "feil" ? "bg-rose-400" : "bg-amber-300"
+                    }`}
+                  />
+                ) : null}
+              </span>
+              <LiveRating live={motLive} modell={modell} aktiv={!!webrtc.fjernStrom && modell !== "feil"} />
+            </div>
+
+            <div className="absolute inset-x-2.5 bottom-2.5 flex flex-col gap-2 sm:inset-x-3.5 sm:bottom-3.5">
+              {webrtc.fjernStrom ? <UttrykkPiller styrker={motLive?.styrker ?? null} /> : null}
+              {motstander ? (
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  {status.fase === "lobby" ? (
+                    <span className={`${GLASS} rounded-full px-3 py-1.5 text-[11px] font-medium text-white/80`}>
+                      {motstanderKlar ? `${motNavn} er klar ✓` : erVert ? `Venter på at ${motNavn} blir klar` : `${motNavn} starter duellen`}
+                    </span>
+                  ) : (
+                    <span />
+                  )}
+                  {webrtc.status === "feil" ? (
+                    <button
+                      type="button"
+                      onClick={webrtc.koblePaaNytt}
+                      className={`${GLASS} inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[11px] font-medium hover:bg-[#111214]/85`}
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" />
+                      Koble til på nytt
+                    </button>
+                  ) : null}
+                </div>
               ) : null}
-            </Kort>
+              {webrtc.feil && motstander ? <p className={`${GLASS} rounded-2xl px-3 py-2 text-[11px] leading-4 text-rose-200`}>{webrtc.feil}</p> : null}
+            </div>
+          </div>
+
+          {/* ---- Duel overlays spanning both faces ---- */}
+          {status.fase === "nedtelling" ? (
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+              <div className={`${GLASS} flex flex-col items-center rounded-[32px] px-8 py-5 shadow-[0_24px_64px_rgb(0_0_0/0.45)]`}>
+                <p className="text-xs font-medium text-white/70">Se rett inn i kameraet</p>
+                <p key={nedtellingTall} className="mel-pop text-[5.5rem] leading-none font-semibold tracking-[-0.05em] text-lime-300 tabular-nums">
+                  {nedtellingTall}
+                </p>
+              </div>
+            </div>
           ) : null}
-        </section>
+
+          {status.fase === "maling" ? (
+            <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-center px-3 pt-14 sm:pt-3">
+              <div className={`${GLASS} flex w-full max-w-sm flex-col gap-1.5 rounded-[20px] px-3.5 py-2.5 shadow-[0_12px_32px_rgb(0_0_0/0.35)]`}>
+                <div className="flex items-center justify-between gap-3 text-xs font-medium">
+                  <span>{gjenstarMs > 0 ? "Måler — hold blikket!" : "Beregner resultat …"}</span>
+                  <span className="text-sm font-semibold text-lime-300 tabular-nums">{maalingSek} s</span>
+                </div>
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/15">
+                  <div className="h-full rounded-full bg-lime-300 transition-[width] duration-100" style={{ width: `${maalingFremdrift}%` }} />
+                </div>
+                <div className="flex justify-between text-[10px] text-white/55 tabular-nums">
+                  <span>
+                    Deg: {gyldigeEgen}/{MIN_GYLDIGE_RAMMER}+
+                  </span>
+                  <span>
+                    {motNavn}: {gyldigeMot}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </section>
+
+      {/* Lobby hint + secondary chrome below the fold so the faces dominate */}
+      {status.fase === "lobby" ? (
+        <p className="mx-auto max-w-xl px-2 text-center text-[13px] leading-5 text-neutral-500">
+          {erVert ? lobbyHint : gjesteHint}
+          {lokalStrom && landmarkerKlar ? " Live-poenget reagerer når du poserer: hev ett øyenbryn, myse, mew — men ikke smil." : ""}
+        </p>
       ) : null}
 
-      <SlikRegnesDet />
+      {!iDuell ? (
+        <div className="mx-auto w-full max-w-4xl pt-2">
+          <SlikRegnesDet />
+        </div>
+      ) : null}
     </div>
   )
 }
