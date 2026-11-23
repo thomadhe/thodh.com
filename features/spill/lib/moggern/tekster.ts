@@ -320,7 +320,7 @@ export const DELPOENG_DISSER: Record<DelpoengId, readonly string[]> = {
   ],
   oyeavstand: [
     "Øynene dine har enten langdistanseforhold eller deler én liten hybel. Sitt litt lenger fra linsa!",
-    "Bruk solbriller du.",
+    "Den øyeavstanden … bruk solbriller du.",
   ],
   harmoni: [
     "Leonardo da Vinci prøvde å tegne deg og endte opp med abstrakt kunst. Frontlys hjelper!",

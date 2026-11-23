@@ -1121,7 +1121,7 @@ test("Moggern kurerte disser: riktig utvalg og nedprioritering av ansiktstredjed
   assert.equal(DELPOENG_DISSER.oyeavstand.length, 2)
   assert.equal(DELPOENG_DISSER.harmoni.length, 1)
   assert.ok(DELPOENG_DISSER.symmetri.includes("Picasso ringte — karakteren fra maleriet hans har rømt."))
-  assert.ok(DELPOENG_DISSER.oyeavstand.includes("Bruk solbriller du."))
+  assert.ok(DELPOENG_DISSER.oyeavstand.includes("Den øyeavstanden … bruk solbriller du."))
   assert.ok(DELPOENG_DISSER.kjevelinje.some((d) => d.includes("dårlig for moggen")))
 
   // When ansiktstredjedeler is only slightly weakest (< 1.8 gap), pick the second-weakest sub-score instead
