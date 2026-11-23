@@ -1,42 +1,33 @@
-// Biometric green face-tracking overlay renderer for Moggern.
-// Projects MediaPipe's 478 normalized [0, 1] landmarks onto an <canvas> layered over an `object-cover` <video>,
+// Minimal biometric green face-tracking overlay renderer for Moggern.
+// Projects MediaPipe's 478 normalized [0, 1] landmarks onto a <canvas> layered over an `object-cover` <video>,
 // accounting for cropping, devicePixelRatio, and horizontal selfie mirroring.
+// Intentionally ultra-clean and peripheral so the entire face — especially the eyes — stays unobstructed.
 
 import { PUNKTER, type Punkt3D } from "./poeng"
-
-// Canonical MediaPipe Face Landmarker contours.
-const ANSIKT_OVAL = [
-  10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136,
-  172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109,
-] as const
 
 const KJEVELINJE = [
   127, 234, 93, 132, 58, 172, 136, 150, 149, 176, 148, 152, 377, 400, 378, 379, 365, 397, 288, 361, 323, 454, 356,
 ] as const
 
-const HOYRE_OYE = [33, 246, 161, 160, 159, 158, 157, 173, 133, 155, 154, 153, 145, 144, 163, 7] as const
-const VENSTRE_OYE = [263, 466, 388, 387, 386, 385, 384, 398, 362, 382, 381, 380, 374, 373, 390, 249] as const
-
 const HOYRE_BRYN = [70, 63, 105, 66, 107] as const
 const VENSTRE_BRYN = [300, 293, 334, 296, 336] as const
 
-const NESERYGG = [168, 6, 197, 195, 5, 4, 1, 2] as const
-const MUNN_YTRE = [61, 185, 40, 39, 37, 0, 267, 269, 270, 409, 291, 375, 321, 405, 314, 17, 84, 181, 91, 146] as const
-
-const KNUTEPUNKTER = [
-  PUNKTER.panneTopp,
-  PUNKTER.brynMidt,
-  PUNKTER.neseTipp,
-  PUNKTER.neseBunn,
+const HOVED_PUNKTER = [
+  PUNKTER.hoyreKjeveHjorne,
+  PUNKTER.venstreKjeveHjorne,
   PUNKTER.hake,
+] as const
+
+const SMAA_PUNKTER = [
   PUNKTER.hoyreOyeYtre,
   PUNKTER.hoyreOyeIndre,
   PUNKTER.venstreOyeYtre,
   PUNKTER.venstreOyeIndre,
   PUNKTER.hoyreKinnben,
   PUNKTER.venstreKinnben,
-  PUNKTER.hoyreKjeveHjorne,
-  PUNKTER.venstreKjeveHjorne,
+  PUNKTER.neseTipp,
+  PUNKTER.hoyreNeseVinge,
+  PUNKTER.venstreNeseVinge,
   PUNKTER.hoyreMunnvik,
   PUNKTER.venstreMunnvik,
 ] as const
@@ -79,10 +70,9 @@ export function tømSporingsLerret(lerret: HTMLCanvasElement | null) {
 }
 
 /**
- * Draws glowing green biometric tracking lines over a video tile:
- * face oval, sharp jawline + gonial markers, cheekbone & jaw width calipers,
- * eye contours + canthal tilt vectors + iris rings, brow ridges, nose bridge, lips,
- * and facial-thirds symmetry axis.
+ * Draws a sleek, unobtrusive green biometric reticle over a video tile:
+ * hairline jawline trace, delicate brow ridges, outward-only canthal-tilt wings (keeping the eyes
+ * completely clear), peripheral cheekbone/jaw width ticks, and tiny landmark points.
  */
 export function tegnAnsiktSporing(
   lerret: HTMLCanvasElement,
@@ -117,7 +107,7 @@ export function tegnAnsiktSporing(
     return kartleggPunktTilVisning(pt, vw, vh, visningBredde, visningHoyde, opts.speilet)
   }
 
-  const tegnSti = (indekser: readonly number[], lukk = false) => {
+  const tegnSti = (indekser: readonly number[]) => {
     let startet = false
     ctx.beginPath()
     for (const idx of indekser) {
@@ -130,10 +120,7 @@ export function tegnAnsiktSporing(
         ctx.lineTo(pt.x, pt.y)
       }
     }
-    if (startet) {
-      if (lukk) ctx.closePath()
-      ctx.stroke()
-    }
+    if (startet) ctx.stroke()
   }
 
   const tegnLinje = (a: VisningsPunkt | null, b: VisningsPunkt | null) => {
@@ -144,66 +131,42 @@ export function tegnAnsiktSporing(
     ctx.stroke()
   }
 
-  const hovedFarge = opts.gyldig === false ? "#a3e635" : "#4ade80"
-  const lysFarge = "#bef264"
+  // Draws a small outward-pointing caliper tick on the left/right periphery of the face.
+  const tegnSideHake = (a: VisningsPunkt | null, b: VisningsPunkt | null, lengde = 7) => {
+    if (!a || !b) return
+    const dx = b.x - a.x
+    const dy = b.y - a.y
+    const dist = Math.hypot(dx, dy)
+    if (dist < 1) return
+    const ux = dx / dist
+    const uy = dy / dist
+    tegnLinje({ x: a.x - ux * 2, y: a.y - uy * 2 }, { x: a.x - ux * (2 + lengde), y: a.y - uy * (2 + lengde) })
+    tegnLinje({ x: b.x + ux * 2, y: b.y + uy * 2 }, { x: b.x + ux * (2 + lengde), y: b.y + uy * (2 + lengde) })
+  }
+
+  const linjeFarge = opts.gyldig === false ? "rgba(163, 230, 53, 0.52)" : "rgba(74, 222, 128, 0.58)"
+  const lysFarge = "rgba(190, 242, 100, 0.68)"
 
   ctx.save()
   ctx.lineCap = "round"
   ctx.lineJoin = "round"
 
-  // 1. Subtle biometric reference calipers (symmetry centerline, cheekbone width, jaw width, facial thirds ticks)
-  ctx.setLineDash([4, 4])
-  ctx.lineWidth = 1
+  // 1. Hairline jawline trace with subtle glow
+  ctx.shadowColor = "rgba(74, 222, 128, 0.42)"
+  ctx.shadowBlur = 3
+  ctx.lineWidth = 1.2
+  ctx.strokeStyle = linjeFarge
+  tegnSti(KJEVELINJE)
+
+  // 2. Whisper-thin brow ridges
+  ctx.shadowBlur = 0
+  ctx.lineWidth = 0.9
   ctx.strokeStyle = "rgba(74, 222, 128, 0.36)"
-  tegnSti([PUNKTER.panneTopp, PUNKTER.brynMidt, PUNKTER.neseRot, PUNKTER.neseTipp, PUNKTER.neseBunn, PUNKTER.overleppeTopp, PUNKTER.hake])
-  tegnLinje(p(PUNKTER.hoyreKinnben), p(PUNKTER.venstreKinnben))
-  tegnLinje(p(PUNKTER.hoyreKjeveHjorne), p(PUNKTER.venstreKjeveHjorne))
-  tegnLinje(p(PUNKTER.hoyreNeseVinge), p(PUNKTER.venstreNeseVinge))
+  tegnSti(HOYRE_BRYN)
+  tegnSti(VENSTRE_BRYN)
 
-  // Horizontal tick marks along the symmetry axis for the facial thirds (forehead, brow, nose base, chin)
-  for (const idx of [PUNKTER.panneTopp, PUNKTER.brynMidt, PUNKTER.neseBunn, PUNKTER.hake]) {
-    const pt = p(idx)
-    if (!pt) continue
-    ctx.setLineDash([])
-    ctx.lineWidth = 1.25
-    ctx.strokeStyle = "rgba(190, 242, 100, 0.55)"
-    ctx.beginPath()
-    ctx.moveTo(pt.x - 10, pt.y)
-    ctx.lineTo(pt.x + 10, pt.y)
-    ctx.stroke()
-  }
-
-  // 2. Soft face oval silhouette
-  ctx.setLineDash([])
-  ctx.lineWidth = 1.25
-  ctx.strokeStyle = "rgba(74, 222, 128, 0.38)"
-  tegnSti(ANSIKT_OVAL, true)
-
-  // 3. Glow pass for primary tracked anatomy (jawline, eyes, brows, nose, mouth)
-  ctx.shadowColor = "rgba(74, 222, 128, 0.7)"
-  ctx.shadowBlur = 8
-
-  // Highlighted jawline contour
-  ctx.lineWidth = 2.2
-  ctx.strokeStyle = hovedFarge
-  tegnSti(KJEVELINJE, false)
-
-  // Eye contours & brow ridges
-  ctx.lineWidth = 1.6
-  ctx.strokeStyle = hovedFarge
-  tegnSti(HOYRE_OYE, true)
-  tegnSti(VENSTRE_OYE, true)
-  tegnSti(HOYRE_BRYN, false)
-  tegnSti(VENSTRE_BRYN, false)
-
-  // Nose bridge & outer lip contour
-  ctx.lineWidth = 1.4
-  ctx.strokeStyle = "rgba(74, 222, 128, 0.85)"
-  tegnSti(NESERYGG, false)
-  tegnSti(MUNN_YTRE, true)
-
-  // 4. Canthal tilt vectors (inner → outer eye corner, extended slightly outward) + iris rings
-  ctx.lineWidth = 1.5
+  // 3. Outward-only canthal-tilt wings (starts OUTSIDE the outer eye corner so the eyes stay 100% clear)
+  ctx.lineWidth = 1.05
   ctx.strokeStyle = lysFarge
   for (const [indreIdx, ytreIdx] of [
     [PUNKTER.hoyreOyeIndre, PUNKTER.hoyreOyeYtre],
@@ -214,36 +177,39 @@ export function tegnAnsiktSporing(
     if (!indre || !ytre) continue
     const dx = ytre.x - indre.x
     const dy = ytre.y - indre.y
-    tegnLinje(indre, { x: ytre.x + dx * 0.28, y: ytre.y + dy * 0.28 })
+    tegnLinje(
+      { x: ytre.x + dx * 0.12, y: ytre.y + dy * 0.12 },
+      { x: ytre.x + dx * 0.44, y: ytre.y + dy * 0.44 },
+    )
   }
 
-  // Subtle IPD line + iris target rings
-  const rIris = p(PUNKTER.hoyreIris)
-  const lIris = p(PUNKTER.venstreIris)
-  if (rIris && lIris) {
-    ctx.setLineDash([2, 3])
-    ctx.lineWidth = 1
-    ctx.strokeStyle = "rgba(190, 242, 100, 0.55)"
-    tegnLinje(rIris, lIris)
-    ctx.setLineDash([])
-    ctx.lineWidth = 1.5
-    ctx.strokeStyle = lysFarge
-    for (const iris of [rIris, lIris]) {
-      ctx.beginPath()
-      ctx.arc(iris.x, iris.y, 4.5, 0, Math.PI * 2)
-      ctx.stroke()
-    }
-  }
+  // 4. Subtle peripheral width caliper ticks (cheekbones + gonions + chin/forehead vertical ticks)
+  ctx.lineWidth = 0.95
+  ctx.strokeStyle = "rgba(74, 222, 128, 0.48)"
+  tegnSideHake(p(PUNKTER.hoyreKinnben), p(PUNKTER.venstreKinnben), 7)
+  tegnSideHake(p(PUNKTER.hoyreKjeveHjorne), p(PUNKTER.venstreKjeveHjorne), 6)
 
-  // 5. Crisp glowing nodes on key landmarks (gonions, cheekbones, corners, chin)
-  ctx.shadowBlur = 6
-  ctx.fillStyle = lysFarge
-  for (const idx of KNUTEPUNKTER) {
+  const hakePt = p(PUNKTER.hake)
+  const pannePt = p(PUNKTER.panneTopp)
+  if (hakePt) tegnLinje({ x: hakePt.x, y: hakePt.y + 3 }, { x: hakePt.x, y: hakePt.y + 9 })
+  if (pannePt) tegnLinje({ x: pannePt.x, y: pannePt.y - 3 }, { x: pannePt.x, y: pannePt.y - 9 })
+
+  // 5. Delicate micro-dots on key structural landmarks
+  ctx.fillStyle = "rgba(190, 242, 100, 0.55)"
+  for (const idx of SMAA_PUNKTER) {
     const pt = p(idx)
     if (!pt) continue
-    const erGonion = idx === PUNKTER.hoyreKjeveHjorne || idx === PUNKTER.venstreKjeveHjorne || idx === PUNKTER.hake
     ctx.beginPath()
-    ctx.arc(pt.x, pt.y, erGonion ? 3.2 : 2.1, 0, Math.PI * 2)
+    ctx.arc(pt.x, pt.y, 1.25, 0, Math.PI * 2)
+    ctx.fill()
+  }
+
+  ctx.fillStyle = lysFarge
+  for (const idx of HOVED_PUNKTER) {
+    const pt = p(idx)
+    if (!pt) continue
+    ctx.beginPath()
+    ctx.arc(pt.x, pt.y, 1.8, 0, Math.PI * 2)
     ctx.fill()
   }
 

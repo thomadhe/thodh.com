@@ -52,57 +52,57 @@ export type DelpoengInfo = {
 
 export const DELPOENG_LISTE: readonly DelpoengInfo[] = [
   {
+    id: "kjevelinje",
+    navn: "Kjevelinje",
+    vekt: 0.22,
+    kortForklaring: "Kjeve-/kinnbensbredde, ekte 3D-kjevevinkel (tragion → gonion → hake) og skarp kjevekontur.",
+  },
+  {
     id: "symmetri",
     navn: "Symmetri",
     vekt: 0.2,
-    kortForklaring: "16 speilte punktpar rundt midtlinjen, normalisert mot ansiktets bredde og høyde.",
-  },
-  {
-    id: "kjevelinje",
-    navn: "Kjevelinje",
-    vekt: 0.17,
-    kortForklaring: "Kjeve-/kinnbensbredde, ekte 3D-kjevevinkel (tragion → gonion → hake) og skarp kjevekontur.",
+    kortForklaring: "16 speilte punktpar rundt midtlinjen — vektet tyngst på øyne, kinnben og kjeve.",
   },
   {
     id: "oyevinkel",
     navn: "Øyevinkel",
-    vekt: 0.15,
+    vekt: 0.18,
     kortForklaring: "Øyekrok-tilt i grader pluss øyeform (PFR = øyebredde / øyehøyde — mandelform slår runde øyne).",
   },
   {
     id: "midtansikt",
     navn: "Midtansikt",
-    vekt: 0.13,
+    vekt: 0.14,
     kortForklaring: "Pupillavstand mot øye-til-overleppe og fWHR (kinnbensbredde / bryn-til-overleppe).",
-  },
-  {
-    id: "ansiktstredjedeler",
-    navn: "Ansiktstredjedeler",
-    vekt: 0.13,
-    kortForklaring: "Balanse mellom panne, nese og hake, pluss hake-til-filtrum-forholdet.",
   },
   {
     id: "oyeavstand",
     navn: "Øyeavstand",
-    vekt: 0.11,
+    vekt: 0.1,
     kortForklaring: "ESR (pupillavstand / ansiktsbredde, ideelt ~0,45–0,47) og ansiktets femtedeler.",
   },
   {
     id: "harmoni",
     navn: "Harmoni",
-    vekt: 0.11,
+    vekt: 0.09,
     kortForklaring: "Gyllent snitt munn/nese (φ ≈ 1,618), nese mot øyeavstand, leppeforhold og jevne delpoeng.",
+  },
+  {
+    id: "ansiktstredjedeler",
+    navn: "Ansiktstredjedeler",
+    vekt: 0.07,
+    kortForklaring: "Balanse mellom midtansikt, hake og filtrum — robust mot caps og pannelugg.",
   },
 ] as const
 
 export const DELPOENG_VEKTER: Record<DelpoengId, number> = {
+  kjevelinje: 0.22,
   symmetri: 0.2,
-  kjevelinje: 0.17,
-  oyevinkel: 0.15,
-  midtansikt: 0.13,
-  ansiktstredjedeler: 0.13,
-  oyeavstand: 0.11,
-  harmoni: 0.11,
+  oyevinkel: 0.18,
+  midtansikt: 0.14,
+  oyeavstand: 0.1,
+  harmoni: 0.09,
+  ansiktstredjedeler: 0.07,
 }
 
 /** Pose & framing gates for counting a frame as valid during the official duel. */
@@ -116,12 +116,12 @@ export const MIN_GYLDIGE_RAMMER = 12
 
 /**
  * Population bell-curve calibration: raw structural score R (weighted 0–10) → 10 · Φ((R − μ) / σ).
- * MediaPipe's regularized 3D face mesh naturally averages ~7.8–8.3 raw on a typical neutral webcam face,
- * so μ = 7.9, σ = 0.95 puts neutral faces around 5–7 (Normie/Mid-mogger/Aura-farmer), weak proportions
- * down to Bjeffern/Chopped, and reserves Gigamogger (9+) for genuinely sharp geometry + clean mogging form.
+ * MediaPipe's regularized 3D face mesh naturally averages ~7.9 raw on a typical neutral webcam face,
+ * so μ = 7.9, σ = 0.90 centers a neutral normie face cleanly at 5.0 while rewarding natural bone structure
+ * (jawline, eye area, cheekbones, symmetry) up into 7.5–9.3 without requiring gimmicky poses.
  */
 export const KALIBRERING_SNITT = 7.9
-export const KALIBRERING_SPREDNING = 0.95
+export const KALIBRERING_SPREDNING = 0.9
 
 /** Golden ratio φ used for the mouth-to-nose width target. */
 export const GYLDENT_SNITT = (1 + Math.sqrt(5)) / 2
@@ -198,7 +198,7 @@ export const SYMMETRI_PAR: readonly (readonly [number, number])[] = [
 
 export type Veiledning = "ingen-ansikt" | "for-langt-unna" | "for-naerme" | "snu-rett" | "vipp-rett" | "ok"
 
-// ---- Mog-uttrykk (blendshape expression bonuses & anti-mog grimase penalties) ----
+// ---- Mog-uttrykk (blendshape expression bonuses & gradual anti-mog grimase penalties) ----
 
 export type MogUttrykkId =
   | "the-rock"
@@ -215,25 +215,25 @@ export type MogUttrykkId =
 export type MogUttrykkInfo = {
   id: MogUttrykkId
   navn: string
-  /** Max bonus (positive) or penalty (negative) at full strength. */
+  /** Individual raw weight (positive = bonus, negative = penalty) before diminishing-returns curve. */
   maks: number
-  /** Ramp start (signal where the bonus begins) and end (signal where it is maxed out). */
+  /** Ramp start (signal where the effect begins) and end (signal where it is maxed out). */
   fra: number
   til: number
   forklaring: string
 }
 
 export const MOG_UTTRYKK: readonly MogUttrykkInfo[] = [
-  { id: "the-rock", navn: "The Rock", maks: 0.8, fra: 0.28, til: 0.62, forklaring: "Ett øyenbryn hevet, det andre rolig." },
-  { id: "jegeroyne", navn: "Jegerøyne", maks: 0.65, fra: 0.4, til: 0.74, forklaring: "Stram myse uten å blunke eller lage grimase." },
-  { id: "innsugde-kinn", navn: "Innsugde kinn", maks: 0.55, fra: 0.44, til: 0.8, forklaring: "Blue steel: sug inn kinnene med lukket munn." },
-  { id: "mewing", navn: "Mewing", maks: 0.45, fra: 0.36, til: 0.68, forklaring: "Kjeven fram eller leppene stramt lukket." },
-  { id: "smiler", navn: "Smiler", maks: -1.4, fra: 0.28, til: 0.72, forklaring: "Ekte moggere gliser ikke i kameraet!" },
-  { id: "oppblaste-kinn", navn: "Ballongkinn", maks: -2.0, fra: 0.2, til: 0.58, forklaring: "Oppblåste kinn dreper kjevelinja." },
-  { id: "munn-puster", navn: "Munn-puster", maks: -2.8, fra: 0.16, til: 0.55, forklaring: "Lukk munnen — åpen kjeve er anti-mewing." },
-  { id: "grimase", navn: "Grimase", maks: -3.2, fra: 0.22, til: 0.62, forklaring: "Skjev munn, rynket nese eller rar grimase straffes hardt." },
-  { id: "bytteoyne", navn: "Bytteøyne", maks: -2.2, fra: 0.24, til: 0.62, forklaring: "Kuleøyne eller hevede innerbryn gir panikk-aura." },
-  { id: "sur-geip", navn: "Sur geip", maks: -1.8, fra: 0.26, til: 0.66, forklaring: "Nedovermunn og sur geip koster dyrt." },
+  { id: "the-rock", navn: "The Rock", maks: 0.55, fra: 0.28, til: 0.62, forklaring: "Ett øyenbryn hevet, det andre rolig." },
+  { id: "jegeroyne", navn: "Jegerøyne", maks: 0.45, fra: 0.4, til: 0.74, forklaring: "Stram myse uten å blunke eller lage grimase." },
+  { id: "innsugde-kinn", navn: "Innsugde kinn", maks: 0.4, fra: 0.44, til: 0.8, forklaring: "Blue steel: sug inn kinnene med lukket munn." },
+  { id: "mewing", navn: "Mewing", maks: 0.35, fra: 0.36, til: 0.68, forklaring: "Kjeven fram eller leppene stramt lukket." },
+  { id: "smiler", navn: "Smiler", maks: -0.9, fra: 0.28, til: 0.72, forklaring: "Ekte moggere gliser ikke i kameraet!" },
+  { id: "oppblaste-kinn", navn: "Ballongkinn", maks: -1.3, fra: 0.22, til: 0.6, forklaring: "Oppblåste kinn myker opp kjevelinja." },
+  { id: "munn-puster", navn: "Munn-puster", maks: -1.6, fra: 0.18, til: 0.58, forklaring: "Lukk munnen — åpen kjeve er anti-mewing." },
+  { id: "grimase", navn: "Grimase", maks: -1.9, fra: 0.24, til: 0.64, forklaring: "Skjev munn, rynket nese eller rar grimase trekker ned." },
+  { id: "bytteoyne", navn: "Bytteøyne", maks: -1.3, fra: 0.26, til: 0.64, forklaring: "Kuleøyne gir panikk-aura." },
+  { id: "sur-geip", navn: "Sur geip", maks: -1.1, fra: 0.28, til: 0.68, forklaring: "Nedovermunn og sur geip koster poeng." },
 ] as const
 
 export type MogUttrykkStyrker = Record<MogUttrykkId, number>
@@ -241,12 +241,14 @@ export type MogUttrykkStyrker = Record<MogUttrykkId, number>
 export type MogUttrykkResultat = {
   /** 0–1 strength per expression (0 = not doing it, 1 = maxed out). */
   styrker: MogUttrykkStyrker
-  /** Sum of bonuses and penalties in score points. */
+  /** Smoothly bounded net expression bonus/penalty in score points. */
   bonus: number
 }
 
-export const MAKS_UTTRYKK_BONUS = MOG_UTTRYKK.reduce((s, u) => s + Math.max(0, u.maks), 0)
-export const MIN_UTTRYKK_BONUS = MOG_UTTRYKK.reduce((s, u) => s + Math.min(0, u.maks), 0)
+/** Soft cap on positive expression bonuses so natural bone structure stays primary. */
+export const MAKS_UTTRYKK_BONUS = 1.4
+/** Soft cap on stacked grimace penalties so scores drop gradually instead of slamming instantly to 0.0. */
+export const MIN_UTTRYKK_BONUS = -4.2
 
 /** Blendshape scores by MediaPipe category name (e.g. `browOuterUpLeft`). */
 export type Blendshapes = Readonly<Record<string, number>>
@@ -452,7 +454,8 @@ export function uttrykkSignaler(b: Blendshapes): MogUttrykkStyrker {
   const gap = bs(b, "jawOpen")
   const ballong = bs(b, "cheekPuff")
   const videOyne = (bs(b, "eyeWideLeft") + bs(b, "eyeWideRight")) / 2
-  const bytteoyne = Math.max(videOyne, bs(b, "browInnerUp") * 0.85)
+  // Weight browInnerUp lightly so caps/shadows over the eyebrows never falsely trigger prey-eye penalties.
+  const bytteoyne = Math.max(videOyne, bs(b, "browInnerUp") * 0.55)
   const geip = Math.max(
     (bs(b, "mouthFrownLeft") + bs(b, "mouthFrownRight")) / 2,
     bs(b, "mouthShrugLower"),
@@ -478,7 +481,7 @@ export function uttrykkSignaler(b: Blendshapes): MogUttrykkStyrker {
 
   // Making an ugly grimace, gaping mouth, bug eyes, or puffed cheeks cancels positive mog bonuses.
   const urolig = Math.max(gap, grimase, ballong, bytteoyne, geip)
-  const komposert = urolig < 0.32
+  const komposert = urolig < 0.34
 
   return {
     "the-rock": komposert ? Math.abs(bs(b, "browOuterUpLeft") - bs(b, "browOuterUpRight")) : 0,
@@ -507,11 +510,22 @@ const tommeStyrker = (): MogUttrykkStyrker => ({
   "sur-geip": 0,
 })
 
-/** Sums the bonus for given 0–1 expression strengths. */
+/**
+ * Combines 0–1 expression strengths into a smoothly bounded net score delta.
+ * Both bonuses and grimace penalties saturate smoothly (diminishing returns) so natural bone structure
+ * remains primary and ugly faces drag the score down gradually instead of instantly slamming to 0.0.
+ */
 export function bonusForStyrker(styrker: MogUttrykkStyrker): number {
-  let sum = 0
-  for (const u of MOG_UTTRYKK) sum += klem(styrker[u.id] ?? 0, 0, 1) * u.maks
-  return avrund(klem(sum, MIN_UTTRYKK_BONUS, MAKS_UTTRYKK_BONUS), 3)
+  let posSum = 0
+  let negSum = 0
+  for (const u of MOG_UTTRYKK) {
+    const s = klem(styrker[u.id] ?? 0, 0, 1)
+    if (u.maks > 0) posSum += s * u.maks
+    else negSum += s * -u.maks
+  }
+  const pos = posSum > 0 ? MAKS_UTTRYKK_BONUS * Math.tanh(posSum / MAKS_UTTRYKK_BONUS) : 0
+  const neg = negSum > 0 ? MIN_UTTRYKK_BONUS * (1 - Math.exp(-negSum / 3.4)) : 0
+  return avrund(klem(pos + neg, MIN_UTTRYKK_BONUS, MAKS_UTTRYKK_BONUS), 3)
 }
 
 /**
@@ -554,7 +568,7 @@ export type LivePoeng = {
 }
 
 export const LIVE_ALPHA_STRUKTUR = 0.18
-export const LIVE_ALPHA_UTTRYKK = 0.35
+export const LIVE_ALPHA_UTTRYKK = 0.24
 
 /**
  * Feeds one detected frame into the live HUD smoother and returns the smoothed score.
@@ -749,16 +763,23 @@ export function vurderRamme(
   const lKinn = norm(PUNKTER.venstreKinnben)
   const kinnBredde = Math.max(1e-5, avstand2D(rKinn, lKinn))
   const totalHoyde = Math.max(1e-5, hake.y - panne.y)
+  // Vertical reference anchored on brows-to-chin so caps/bangs shifting landmark 10 never skew symmetry.
+  const symHoyde = Math.max(1e-5, (hake.y - bryn.y) * 1.42)
 
-  // 1. SYMMETRI: mirrored deviation across 16 left/right pairs, x normalized by face width and y by face height.
+  // 1. SYMMETRI: mirrored deviation across 16 left/right pairs, weighted highest on eyes/cheekbones/jaw
+  // and lighter on brows (which often sit under cap brims or shadows).
   let symSum = 0
+  let symVektSum = 0
   for (const [rIdx, lIdx] of SYMMETRI_PAR) {
     const rP = norm(rIdx)
     const lP = norm(lIdx)
+    const erBryn = rIdx === PUNKTER.hoyreBrynYtre || rIdx === PUNKTER.hoyreBrynMidt || rIdx === PUNKTER.hoyreBrynIndre
+    const w = erBryn ? 0.45 : 1
     // Perfect mirror across x = 0 means rP.x === -lP.x and rP.y === lP.y.
-    symSum += Math.hypot((rP.x + lP.x) / kinnBredde, (rP.y - lP.y) / totalHoyde)
+    symSum += w * Math.hypot((rP.x + lP.x) / kinnBredde, (rP.y - lP.y) / symHoyde)
+    symVektSum += w
   }
-  const asymmetri = symSum / SYMMETRI_PAR.length
+  const asymmetri = symSum / symVektSum
   const symmetri = asymPlateauScore(asymmetri, 0, 0.012, 0.024)
 
   // 2. ØYEVINKEL: canthal tilt (degrees, positive = outer corner higher) + Palpebral Fissure Ratio.
@@ -807,17 +828,22 @@ export function vurderRamme(
   const fwhrPoeng = asymPlateauScore(fwhr, 1.75, 2.02, 0.18, 0.26)
   const midtansikt = 0.55 * midtForholdPoeng + 0.45 * fwhrPoeng
 
-  // 5. ANSIKTSTREDJEDELER: forehead (10→9), nose (9→2), lower face (2→152) shares + chin-to-philtrum ratio.
+  // 5. ANSIKTSTREDJEDELER: mid-to-lower third + chin-to-philtrum (cap-proof) + forehead third when uncovered.
   const t1 = Math.max(0, bryn.y - panne.y) / totalHoyde
   const t2 = Math.max(0, neseBunn.y - bryn.y) / totalHoyde
   const t3 = Math.max(0, hake.y - neseBunn.y) / totalHoyde
   // Target shares calibrated for MediaPipe's forehead landmark 10 (slightly below hairline).
   const tredjedelAvvik = (Math.abs(t1 - 0.29) + Math.abs(t2 - 0.35) + Math.abs(t3 - 0.36)) / 3
+  const midtNedreForhold = Math.max(0, neseBunn.y - bryn.y) / Math.max(1e-5, hake.y - neseBunn.y)
   const filtrum = Math.max(1e-5, overleppe.y - neseBunn.y)
   const hakeFiltrum = Math.max(0, hake.y - norm(PUNKTER.underleppeBunn).y) / filtrum
-  const tredjedelPoeng = asymPlateauScore(tredjedelAvvik, 0, 0.015, 0.025)
+  const tredjedelPoeng = asymPlateauScore(tredjedelAvvik, 0, 0.02, 0.032)
+  const midtNedrePoeng = asymPlateauScore(midtNedreForhold, 0.84, 1.08, 0.16, 0.18)
   const hakeFiltrumPoeng = asymPlateauScore(hakeFiltrum, 2.05, 2.55, 0.42, 0.7)
-  const ansiktstredjedeler = 0.65 * tredjedelPoeng + 0.35 * hakeFiltrumPoeng
+  // When a cap or bangs compress the upper forehead share (t1 < 0.25), smoothly shift weight onto cap-proof ratios.
+  const panneVekt = 0.45 * rampe(t1, 0.16, 0.25)
+  const restVekt = 1 - panneVekt
+  const ansiktstredjedeler = panneVekt * tredjedelPoeng + restVekt * (0.55 * midtNedrePoeng + 0.45 * hakeFiltrumPoeng)
 
   // 6. ØYEAVSTAND: Eye Separation Ratio + facial fifths (intercanthal ≈ eye width ≈ 1/5 face width).
   const esr = beregnESR(1, kinnBredde) // IPD is 1 in canonical coordinates.
