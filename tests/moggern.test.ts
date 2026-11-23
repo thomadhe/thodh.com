@@ -626,8 +626,8 @@ test("Moggern kalibrering: bjelkekurve sprer poengene over hele 0–10 og bevare
     forrige = k
   }
   // A 1-point raw gap in the crowded middle becomes a much bigger visible gap
-  assert.ok(kalibrerPoeng(8.4) - kalibrerPoeng(7.4) > 3.5)
-  // Spread across the rank ladder: weak → Bjeffern, typical webcam raw ~7.9 → 5.0 (Normie), strong ~8.7 → ~8.0, elite 9.5 → 9+
+  assert.ok(kalibrerPoeng(7.3) - kalibrerPoeng(6.3) > 3.0)
+  // Spread across the rank ladder: weak → Bjeffern, typical webcam raw ~6.8 → 5.0 (Normie), strong ~7.8 → ~8.1, elite 9.0 → 9+
   const lik = (n: number): DelpoengKart => ({
     symmetri: n,
     oyevinkel: n,
@@ -637,15 +637,29 @@ test("Moggern kalibrering: bjelkekurve sprer poengene over hele 0–10 og bevare
     oyeavstand: n,
     harmoni: n,
   })
-  assert.equal(rangForPoeng(regnTotal(lik(6.0))).tittel, "Bjeffern")
-  assert.ok(regnTotal(lik(7.9)) >= 4.9 && regnTotal(lik(7.9)) <= 5.1, `snitt=${regnTotal(lik(7.9))}`)
-  assert.ok(regnTotal(lik(8.7)) >= 7.5 && regnTotal(lik(8.7)) < 8.8, `sterk=${regnTotal(lik(8.7))}`)
-  assert.ok(regnTotal(lik(9.5)) >= 9, `elite=${regnTotal(lik(9.5))}`)
+  assert.equal(rangForPoeng(regnTotal(lik(4.8))).tittel, "Bjeffern")
+  assert.ok(regnTotal(lik(6.8)) >= 4.9 && regnTotal(lik(6.8)) <= 5.1, `snitt=${regnTotal(lik(6.8))}`)
+  assert.ok(regnTotal(lik(7.8)) >= 7.5 && regnTotal(lik(7.8)) < 8.8, `sterk=${regnTotal(lik(7.8))}`)
+  assert.ok(regnTotal(lik(9.0)) >= 9, `elite=${regnTotal(lik(9.0))}`)
   assert.equal(regnRaaPoeng(lik(7)), 7)
   // Bonus is added after calibration and the final total is clamped to [0, 10]
   assert.equal(regnTotal(lik(10), 2.45), 10)
   assert.equal(regnTotal(lik(0), -3), 0)
-  assert.ok(regnTotal(lik(7.9), 0.8) > regnTotal(lik(7.9)))
+  assert.ok(regnTotal(lik(6.8), 0.8) > regnTotal(lik(6.8)))
+
+  // Slightly non-ideal realistic face shouldn't get pinned near 10 on the 5 tightened sub-scores
+  const normieAnsikt = vurderRamme(
+    lagSyntetiskAnsikt({ asymX: 0.04, tiltGrader: 1.5, oyeHoyde: 0.18, kinnHalv: 1.24, midtansiktY: 1.12, hakeY: 1.98 }),
+    lagRotasjonsMatrise(0, 0, 0),
+    640,
+    480,
+  )
+  assert.ok(normieAnsikt.delpoeng)
+  assert.ok(normieAnsikt.delpoeng.symmetri < 9.0, `symmetri=${normieAnsikt.delpoeng.symmetri}`)
+  assert.ok(normieAnsikt.delpoeng.oyevinkel < 8.0, `oyevinkel=${normieAnsikt.delpoeng.oyevinkel}`)
+  assert.ok(normieAnsikt.delpoeng.midtansikt < 8.5, `midtansikt=${normieAnsikt.delpoeng.midtansikt}`)
+  assert.ok(normieAnsikt.delpoeng.oyeavstand < 8.5, `oyeavstand=${normieAnsikt.delpoeng.oyeavstand}`)
+  assert.ok(normieAnsikt.delpoeng.ansiktstredjedeler < 8.5, `tredjedeler=${normieAnsikt.delpoeng.ansiktstredjedeler}`)
 })
 
 test("Moggern mog-uttrykk: hvilende ansikt gir 0, posering gir moderat bonus og grimaser senker scoren gradvis", () => {
@@ -727,13 +741,13 @@ test("Moggern mog-uttrykk: hvilende ansikt gir 0, posering gir moderat bonus og 
   // Soft-capped well above -4.2 so a normie (5.0) lands in Bjeffern (~1.3) rather than instantly hitting 0.0
   assert.ok(styggGrimase.bonus <= -3.3 && styggGrimase.bonus >= MIN_UTTRYKK_BONUS, `styggGrimase=${styggGrimase.bonus}`)
   const normieDelpoeng: DelpoengKart = {
-    symmetri: 7.9,
-    oyevinkel: 7.9,
-    kjevelinje: 7.9,
-    midtansikt: 7.9,
-    ansiktstredjedeler: 7.9,
-    oyeavstand: 7.9,
-    harmoni: 7.9,
+    symmetri: 6.8,
+    oyevinkel: 6.8,
+    kjevelinje: 6.8,
+    midtansikt: 6.8,
+    ansiktstredjedeler: 6.8,
+    oyeavstand: 6.8,
+    harmoni: 6.8,
   }
   const normieGrimaseScore = regnTotal(normieDelpoeng, styggGrimase.bonus)
   assert.equal(rangForPoeng(normieGrimaseScore).tittel, "Bjeffern")

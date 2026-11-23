@@ -116,12 +116,12 @@ export const MIN_GYLDIGE_RAMMER = 12
 
 /**
  * Population bell-curve calibration: raw structural score R (weighted 0–10) → 10 · Φ((R − μ) / σ).
- * MediaPipe's regularized 3D face mesh naturally averages ~7.9 raw on a typical neutral webcam face,
- * so μ = 7.9, σ = 0.90 centers a neutral normie face cleanly at 5.0 while rewarding natural bone structure
- * (jawline, eye area, cheekbones, symmetry) up into 7.5–9.3 without requiring gimmicky poses.
+ * With all 7 sub-scores tightened to the same realistic difficulty (instead of 5 sitting near 10),
+ * a typical neutral webcam face averages ~6.8 raw, so μ = 6.8, σ = 1.15 centers a neutral normie cleanly at 5.0
+ * while rewarding natural bone structure up into 7.5–9.3 without requiring gimmicky poses.
  */
-export const KALIBRERING_SNITT = 7.9
-export const KALIBRERING_SPREDNING = 0.9
+export const KALIBRERING_SNITT = 6.8
+export const KALIBRERING_SPREDNING = 1.15
 
 /** Golden ratio φ used for the mouth-to-nose width target. */
 export const GYLDENT_SNITT = (1 + Math.sqrt(5)) / 2
@@ -782,7 +782,7 @@ export function vurderRamme(
     symVektSum += w
   }
   const asymmetri = symSum / symVektSum
-  const symmetri = asymPlateauScore(asymmetri, 0, 0.012, 0.024)
+  const symmetri = asymPlateauScore(asymmetri, 0, 0.004, 0.014)
 
   // 2. ØYEVINKEL: canthal tilt (degrees, positive = outer corner higher) + Palpebral Fissure Ratio.
   const rIndre = norm(PUNKTER.hoyreOyeIndre)
@@ -799,9 +799,9 @@ export function vurderRamme(
   const canthalTilt = (tiltHoyre + tiltVenstre) / 2
   const pfr = (beregnPFR(rYtre, rIndre, rTopp, rBunn) + beregnPFR(lYtre, lIndre, lTopp, lBunn)) / 2
 
-  const tiltPoeng = asymPlateauScore(canthalTilt, 4.0, 8.0, 3.8, 5.5)
-  // Hunter/almond eyes (PFR ≈ 3.0–3.7) reward; round eyes (low PFR) fall off fastest.
-  const pfrPoeng = asymPlateauScore(pfr, 3.0, 3.7, 0.42, 0.85)
+  const tiltPoeng = asymPlateauScore(canthalTilt, 5.5, 7.5, 2.4, 3.8)
+  // Hunter/almond eyes (PFR ≈ 3.15–3.55) reward; round eyes (low PFR) fall off fastest.
+  const pfrPoeng = asymPlateauScore(pfr, 3.15, 3.55, 0.3, 0.55)
   const oyevinkel = 0.6 * tiltPoeng + 0.4 * pfrPoeng
 
   // 3. KJEVELINJE: bigonial/bizygomatic width ratio + 3D gonial angle + 2D jaw contour sharpness.
@@ -826,8 +826,8 @@ export function vurderRamme(
   // 4. MIDTANSIKT: IPD / eye-line-to-upper-lip ratio + fWHR.
   const midtansiktForhold = 1 / Math.max(1e-5, overleppe.y)
   const fwhr = beregnFWHR(kinnBredde, overleppe.y - bryn.y)
-  const midtForholdPoeng = asymPlateauScore(midtansiktForhold, 0.95, 1.08, 0.1, 0.14)
-  const fwhrPoeng = asymPlateauScore(fwhr, 1.75, 2.02, 0.18, 0.26)
+  const midtForholdPoeng = asymPlateauScore(midtansiktForhold, 0.99, 1.04, 0.065, 0.085)
+  const fwhrPoeng = asymPlateauScore(fwhr, 1.78, 1.94, 0.11, 0.16)
   const midtansikt = 0.55 * midtForholdPoeng + 0.45 * fwhrPoeng
 
   // 5. ANSIKTSTREDJEDELER: mid-to-lower third + chin-to-philtrum (cap-proof) + forehead third when uncovered.
@@ -839,9 +839,9 @@ export function vurderRamme(
   const midtNedreForhold = Math.max(0, neseBunn.y - bryn.y) / Math.max(1e-5, hake.y - neseBunn.y)
   const filtrum = Math.max(1e-5, overleppe.y - neseBunn.y)
   const hakeFiltrum = Math.max(0, hake.y - norm(PUNKTER.underleppeBunn).y) / filtrum
-  const tredjedelPoeng = asymPlateauScore(tredjedelAvvik, 0, 0.02, 0.032)
-  const midtNedrePoeng = asymPlateauScore(midtNedreForhold, 0.84, 1.08, 0.16, 0.18)
-  const hakeFiltrumPoeng = asymPlateauScore(hakeFiltrum, 2.05, 2.55, 0.42, 0.7)
+  const tredjedelPoeng = asymPlateauScore(tredjedelAvvik, 0, 0.008, 0.02)
+  const midtNedrePoeng = asymPlateauScore(midtNedreForhold, 0.9, 1.0, 0.09, 0.11)
+  const hakeFiltrumPoeng = asymPlateauScore(hakeFiltrum, 2.15, 2.4, 0.25, 0.42)
   // When a cap or bangs compress the upper forehead share (t1 < 0.25), smoothly shift weight onto cap-proof ratios.
   const panneVekt = 0.45 * rampe(t1, 0.16, 0.25)
   const restVekt = 1 - panneVekt
@@ -853,9 +853,9 @@ export function vurderRamme(
   const snittOyeBredde = Math.max(1e-5, (avstand2D(rYtre, rIndre) + avstand2D(lYtre, lIndre)) / 2)
   const oyeFemtedel = indreAvstand / snittOyeBredde
   const oyeAnsiktBredde = snittOyeBredde / kinnBredde
-  const esrPoeng = asymPlateauScore(esr, 0.445, 0.475, 0.024, 0.024)
-  const femtedelPoeng = asymPlateauScore(oyeFemtedel, 0.96, 1.12, 0.15, 0.19)
-  const breddePoeng = asymPlateauScore(oyeAnsiktBredde, 0.195, 0.23, 0.026, 0.03)
+  const esrPoeng = asymPlateauScore(esr, 0.453, 0.467, 0.015, 0.015)
+  const femtedelPoeng = asymPlateauScore(oyeFemtedel, 1.0, 1.08, 0.09, 0.12)
+  const breddePoeng = asymPlateauScore(oyeAnsiktBredde, 0.208, 0.224, 0.016, 0.018)
   const oyeavstand = 0.4 * esrPoeng + 0.35 * femtedelPoeng + 0.25 * breddePoeng
 
   // 7. HARMONI: golden-ratio mouth/nose width, nose/intercanthal ratio, lower/upper lip ratio + sub-score balance.

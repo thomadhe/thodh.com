@@ -16,7 +16,6 @@ import {
   ScanFace,
   ShieldCheck,
   Sparkles,
-  SwitchCamera,
   Trophy,
   UserCheck,
   Volume2,
@@ -68,7 +67,6 @@ import {
   hentKameraStrom,
   hentMikrofonStrom,
   kameraFeilTekst,
-  listKameraer,
   mikrofonFeilTekst,
   stoppStrom,
   useMoggernWebRtc,
@@ -307,11 +305,9 @@ function AktivtMoggernRom({
     }
   }, [motstanderId])
 
-  // ---- Local camera, camera switcher, opt-in microphone & lazy MediaPipe Face Landmarker ----
+  // ---- Local camera, opt-in microphone & lazy MediaPipe Face Landmarker ----
   const [lokalStrom, setLokalStrom] = useState<MediaStream | null>(null)
   const [lydStrom, setLydStrom] = useState<MediaStream | null>(null)
-  const [kameraer, setKameraer] = useState<MediaDeviceInfo[]>([])
-  const [aktivKameraId, setAktivKameraId] = useState<string | null>(null)
   const [starterKamera, setStarterKamera] = useState(false)
   const [starterMik, setStarterMik] = useState(false)
   const [kameraFeil, setKameraFeil] = useState<string | null>(null)
@@ -514,54 +510,29 @@ function AktivtMoggernRom({
     hentModell()
   }, [hentModell])
 
-  const oppdaterKameraliste = useCallback((strom: MediaStream) => {
-    const sporId = strom.getVideoTracks()[0]?.getSettings().deviceId ?? null
-    if (sporId) setAktivKameraId(sporId)
-    void listKameraer().then((liste) => {
-      if (montertRef.current) setKameraer(liste)
-    })
-  }, [])
-
-  const skruPaKamera = useCallback(
-    async (deviceId?: string | null) => {
-      if (starterRef.current || (!deviceId && lokalStromRef.current)) return
-      starterRef.current = true
-      manueltAvRef.current = false
-      setStarterKamera(true)
-      setKameraFeil(null)
-      try {
-        if (deviceId && lokalStromRef.current) {
-          stoppStrom(lokalStromRef.current)
-          lokalStromRef.current = null
-        }
-        const strom = await hentKameraStrom(undefined, deviceId)
-        if (!montertRef.current || (!deviceId && lokalStromRef.current)) {
-          stoppStrom(strom)
-          return
-        }
-        lokalStromRef.current = strom
-        egenLiveRef.current = { struktur: null, styrker: null }
-        setLokalStrom(strom)
-        oppdaterKameraliste(strom)
-        lyder.velg()
-      } catch (err) {
-        if (montertRef.current) setKameraFeil(kameraFeilTekst(err))
-      } finally {
-        starterRef.current = false
-        if (montertRef.current) setStarterKamera(false)
+  const skruPaKamera = useCallback(async () => {
+    if (starterRef.current || lokalStromRef.current) return
+    starterRef.current = true
+    manueltAvRef.current = false
+    setStarterKamera(true)
+    setKameraFeil(null)
+    try {
+      const strom = await hentKameraStrom()
+      if (!montertRef.current || lokalStromRef.current) {
+        stoppStrom(strom)
+        return
       }
-    },
-    [oppdaterKameraliste],
-  )
-
-  const byttKamera = useCallback(() => {
-    if (kameraer.length < 2 || starterRef.current) return
-    const idx = kameraer.findIndex((k) => k.deviceId === aktivKameraId)
-    const neste = kameraer[(idx + 1) % kameraer.length]
-    if (neste?.deviceId) {
-      void skruPaKamera(neste.deviceId)
+      lokalStromRef.current = strom
+      egenLiveRef.current = { struktur: null, styrker: null }
+      setLokalStrom(strom)
+      lyder.velg()
+    } catch (err) {
+      if (montertRef.current) setKameraFeil(kameraFeilTekst(err))
+    } finally {
+      starterRef.current = false
+      if (montertRef.current) setStarterKamera(false)
     }
-  }, [kameraer, aktivKameraId, skruPaKamera])
+  }, [])
 
   // Auto-start: logged in + "Alt er tull" accepted (this component only renders then) → camera on right away.
   useEffect(() => {
@@ -1247,17 +1218,6 @@ function AktivtMoggernRom({
                       <CameraOff className="h-3.5 w-3.5" aria-hidden="true" />
                       <span className="max-md:sr-only">Skru av</span>
                     </button>
-                    {kameraer.length > 1 ? (
-                      <button
-                        type="button"
-                        onClick={byttKamera}
-                        title="Bytt kamera"
-                        className={`${GLASS} inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium hover:bg-[#111214]/85`}
-                      >
-                        <SwitchCamera className="h-3.5 w-3.5" aria-hidden="true" />
-                        <span className="max-lg:sr-only">Bytt kamera</span>
-                      </button>
-                    ) : null}
                     <button
                       type="button"
                       onClick={() => void toggleMikrofon()}
