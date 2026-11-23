@@ -327,6 +327,24 @@ export const DELPOENG_DISSER: Record<DelpoengId, readonly string[]> = {
   ],
 }
 
+export const COOKED_DISSER: readonly string[] = [
+  "Jaja, personlighet er det som er viktig.",
+  "Du er cooked … kom deg på seminar med Datingcoach Norge.",
+  "Det er jo innsiden som teller. Heldigvis for deg.",
+  "Jaja, du får satse på humor og god lønn.",
+  "Noen må jo dra ned snittet for resten av oss.",
+  "Det her kvalifiserer nesten til egenmelding.",
+  "Bare lukk kameraet og lat som denne runden aldri skjedde.",
+]
+
+export const GENERELLE_DISSER: readonly string[] = [
+  "Ikke helt modell, ikke helt katastrofe — akkurat passe for passbilde.",
+  "Helt grei hverdags-aura. Ikke rød løper, mer rød buss.",
+  "Du ser ut som en man stoler på med Wi-Fi-passordet. Det er jo også en seier.",
+  "Midt på treet — trygt valg hvis du vil skli rett gjennom passkontrollen.",
+  "Du er ett godt lys og en hårklipp unna å faktisk bli farlig.",
+]
+
 export type TipsOgDiss = {
   /** 2–3 practical, constructive tips based on capture quality and weakest sub-scores. */
   tips: string[]
@@ -344,9 +362,13 @@ export function lagTipsOgDiss(input: {
   delpoeng: DelpoengKart
   lysStatus: LysStatus
   kvalitet?: Partial<KvalitetStats>
+  /** Final 0–10 score — triggers general/cooked roasts when low or mid-tier. */
+  total?: number
+  /** Points lost by in a 1v1 duel (> 0 when the opponent won). */
+  moggetMed?: number
   fro: string
 }): TipsOgDiss {
-  const { delpoeng, lysStatus, kvalitet, fro } = input
+  const { delpoeng, lysStatus, kvalitet, total, moggetMed, fro } = input
   const svakeste = svakesteDelpoeng(delpoeng)
   const tips: string[] = []
 
@@ -385,6 +407,26 @@ export function lagTipsOgDiss(input: {
       tips: tips.slice(0, 3),
       diss: velgMedFro(LYS_DISSER[lysStatus], `${fro}:lys:${lysStatus}`),
       dissFraLys: true,
+    }
+  }
+
+  // Hard-mogged (lost by >= 1.5 pts) or low total (< 4.5): deliver a general "cooked" roast.
+  const hardtMogget = moggetMed !== undefined && moggetMed >= 1.5
+  const lavScore = total !== undefined && total < 4.5
+  if (hardtMogget || lavScore) {
+    return {
+      tips: tips.slice(0, 3),
+      diss: velgMedFro(COOKED_DISSER, `${fro}:cooked`),
+      dissFraLys: false,
+    }
+  }
+
+  // Mix in general playful roasts (~40% of normal mid-tier rounds) so results aren't only narrow metric nitpicks.
+  if (total !== undefined && total < 7.5 && hashFro(`${fro}:generell`) % 5 < 2) {
+    return {
+      tips: tips.slice(0, 3),
+      diss: velgMedFro(GENERELLE_DISSER, `${fro}:generell:tekst`),
+      dissFraLys: false,
     }
   }
 

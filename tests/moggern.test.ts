@@ -65,7 +65,9 @@ import {
 } from "../features/spill/lib/moggern/rizzler"
 import { kartleggPunktTilVisning } from "../features/spill/lib/moggern/sporing-tegner"
 import {
+  COOKED_DISSER,
   DELPOENG_DISSER,
+  GENERELLE_DISSER,
   lagTipsOgDiss,
   LYS_DISSER,
   rangForPoeng,
@@ -1140,4 +1142,36 @@ test("Moggern kurerte disser: riktig utvalg og nedprioritering av ansiktstredjed
   const veldigSvakTredjedeler: DelpoengKart = { ...littSvakTredjedeler, ansiktstredjedeler: 3.2 }
   const td2 = lagTipsOgDiss({ delpoeng: veldigSvakTredjedeler, lysStatus: "ok", fro: "TEST:2" })
   assert.ok(DELPOENG_DISSER.ansiktstredjedeler.includes(td2.diss), `forventet tredjedel-diss, fikk: ${td2.diss}`)
+
+  // General cooked roasts contain the user's exact lines and trigger on low total or getting mogged hard
+  assert.ok(COOKED_DISSER.includes("Jaja, personlighet er det som er viktig."))
+  assert.ok(COOKED_DISSER.includes("Du er cooked … kom deg på seminar med Datingcoach Norge."))
+
+  const lavScoreDiss = lagTipsOgDiss({ delpoeng: littSvakTredjedeler, lysStatus: "ok", total: 3.8, fro: "COOK:1" })
+  assert.equal(lavScoreDiss.dissFraLys, false)
+  assert.ok(COOKED_DISSER.includes(lavScoreDiss.diss), `forventet cooked-diss ved lav score, fikk: ${lavScoreDiss.diss}`)
+
+  const hardtMoggetDiss = lagTipsOgDiss({
+    delpoeng: littSvakTredjedeler,
+    lysStatus: "ok",
+    total: 6.2,
+    moggetMed: 1.8,
+    fro: "COOK:2",
+  })
+  assert.ok(COOKED_DISSER.includes(hardtMoggetDiss.diss), `forventet cooked-diss når mogget hardt, fikk: ${hardtMoggetDiss.diss}`)
+
+  // Mid-tier rounds deterministically blend general roasts and sub-score roasts; elite scores stay specific
+  let antallGenerelle = 0
+  let antallSpesifikke = 0
+  for (let i = 0; i < 40; i++) {
+    const res = lagTipsOgDiss({ delpoeng: littSvakTredjedeler, lysStatus: "ok", total: 6.1, moggetMed: 0.4, fro: `MID:${i}` })
+    if (GENERELLE_DISSER.includes(res.diss)) antallGenerelle++
+    else if (DELPOENG_DISSER.kjevelinje.includes(res.diss)) antallSpesifikke++
+  }
+  assert.ok(antallGenerelle > 0 && antallSpesifikke > 0, `generelle=${antallGenerelle}, spesifikke=${antallSpesifikke}`)
+
+  for (let i = 0; i < 20; i++) {
+    const elite = lagTipsOgDiss({ delpoeng: littSvakTredjedeler, lysStatus: "ok", total: 8.4, moggetMed: 0, fro: `ELITE:${i}` })
+    assert.ok(!COOKED_DISSER.includes(elite.diss) && !GENERELLE_DISSER.includes(elite.diss))
+  }
 })

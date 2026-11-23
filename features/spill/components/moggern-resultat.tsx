@@ -59,6 +59,7 @@ function SpillerResultatKort({
   erMeg,
   erVinner,
   motstanderNavn,
+  motstanderPoeng,
   bildeUrl,
   solo,
   fro,
@@ -67,6 +68,7 @@ function SpillerResultatKort({
   erMeg: boolean
   erVinner: boolean
   motstanderNavn: string
+  motstanderPoeng?: number | null
   bildeUrl?: string | null
   solo?: boolean
   fro: string
@@ -75,18 +77,21 @@ function SpillerResultatKort({
   const vistPoeng = useTelleOpp(maaling?.ok ? maaling.total : 0)
   const rang = maaling?.ok ? rangForPoeng(maaling.total) : null
   const dom = useMemo(() => (maaling?.ok ? uttrykkDom(maaling.uttrykkSnitt) : null), [maaling])
-  const tipsOgDiss = useMemo(
-    () =>
-      maaling?.ok
-        ? lagTipsOgDiss({
-            delpoeng: maaling.delpoeng,
-            lysStatus: maaling.lysStatus,
-            kvalitet: maaling.kvalitet,
-            fro: `${fro}:${res.deltaker.id}`,
-          })
-        : null,
-    [maaling, fro, res.deltaker.id],
-  )
+  const tipsOgDiss = useMemo(() => {
+    if (!maaling?.ok) return null
+    const moggetMed =
+      !solo && typeof motstanderPoeng === "number"
+        ? Math.max(0, Math.round((motstanderPoeng - maaling.total) * 10) / 10)
+        : undefined
+    return lagTipsOgDiss({
+      delpoeng: maaling.delpoeng,
+      lysStatus: maaling.lysStatus,
+      kvalitet: maaling.kvalitet,
+      total: maaling.total,
+      moggetMed,
+      fro: `${fro}:${res.deltaker.id}`,
+    })
+  }, [maaling, solo, motstanderPoeng, fro, res.deltaker.id])
 
   return (
     <section
@@ -355,10 +360,18 @@ export function MoggernResultat({
         .map((s) => {
           const maaling = s.offisiell!
           const dom = uttrykkDom(maaling.uttrykkSnitt)
+          const mot = utfall.spillere.find((x) => x.deltaker.id !== s.deltaker.id)
+          const motPoeng = mot?.offisiell?.ok ? mot.offisiell.total : null
+          const moggetMed =
+            !solo && typeof motPoeng === "number"
+              ? Math.max(0, Math.round((motPoeng - maaling.total) * 10) / 10)
+              : undefined
           const td = lagTipsOgDiss({
             delpoeng: maaling.delpoeng,
             lysStatus: maaling.lysStatus,
             kvalitet: maaling.kvalitet,
+            total: maaling.total,
+            moggetMed,
             fro: `${fro}:${s.deltaker.id}`,
           })
           return {
@@ -468,6 +481,7 @@ export function MoggernResultat({
               erMeg={s.deltaker.id === meg}
               erVinner={!solo && utfall.vinnerId === s.deltaker.id}
               motstanderNavn={mot?.deltaker.navn ?? "Motstanderen"}
+              motstanderPoeng={mot?.offisiell?.ok ? mot.offisiell.total : null}
               bildeUrl={bilder[s.deltaker.id] ?? null}
               solo={solo}
               fro={fro}
