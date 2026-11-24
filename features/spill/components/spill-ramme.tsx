@@ -4,9 +4,11 @@ import { ArrowLeft, CalendarDays, ChevronLeft, ChevronRight, CircleHelp, Volume2
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react"
+import { SprakKnapp } from "@/components/sprak-knapp"
+import { useSprak, useT } from "@/lib/sprak"
 import { formaterDato, iDagOslo, leggTilDager, START_DATO } from "../lib/dag"
 import { settLyd, useLydPa } from "../lib/lyd"
-import { finnSpill, type DuellSpillId, type QuizId, type SpillId } from "../lib/spill"
+import { finnSpill, spillTekst, type DuellSpillId, type QuizId, type SpillId } from "../lib/spill"
 import { Kalender } from "./kalender"
 import { visningsskrift } from "./skrift"
 import { StegernLogo } from "./stegern-logo"
@@ -51,7 +53,10 @@ export function SpillRamme({
   /** Extra classes on the page root, for a game with its own look. */
   klasse?: string
 }) {
+  const sprak = useSprak()
+  const t = useT()
   const info = finnSpill(spillId)
+  const tekst = spillTekst(info, sprak)
   const forste = info.start ?? START_DATO
   const [panel, setPanel] = useState<Panel>(null)
   const router = useRouter()
@@ -74,23 +79,33 @@ export function SpillRamme({
           fullbredde ? "px-2 sm:px-3" : bred ? "max-w-5xl px-4 sm:px-6" : "max-w-lg px-4 sm:px-6"
         }`}
       >
-        <header className={`flex items-center gap-2 ${fullbredde ? "pt-2" : "pt-4"}`}>
-          <Link href="/" className={ikonKnapp} aria-label="Til skrivebordet">
+        <header className={`flex items-center gap-1.5 sm:gap-2 ${fullbredde ? "pt-2" : "pt-4"}`}>
+          <Link href="/" className={ikonKnapp} aria-label={t("Til skrivebordet", "Back to desktop")}>
             <ArrowLeft className="h-4 w-4" />
           </Link>
           <span
             aria-hidden="true"
-            className={`ml-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-sm font-semibold ${info.farge}`}
+            className={`ml-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-sm font-semibold ${info.farge}`}
           >
             {logoer[spillId] ?? info.ikon}
           </span>
-          <h1 className="min-w-0 flex-1 truncate font-[family-name:var(--font-visning)] text-lg font-extrabold tracking-[-0.04em] text-neutral-950">
-            {info.navn}
-          </h1>
+          <div className="flex min-w-0 flex-1 items-center gap-2">
+            <h1 className="min-w-0 truncate font-[family-name:var(--font-visning)] text-lg font-extrabold tracking-[-0.04em] text-neutral-950">
+              {tekst.navn}
+            </h1>
+            {sprak === "en" && info.norskInnhold ? (
+              <span
+                className="hidden shrink-0 items-center rounded-full border border-white/10 bg-white/[0.06] px-2 py-0.5 font-mono text-[10px] font-medium text-neutral-400 sm:inline-flex"
+                title="Puzzle questions and answers in this game are in Norwegian"
+              >
+                🇳🇴 NO content
+              </span>
+            ) : null}
+          </div>
           {dato ? (
-            <nav className="flex items-center" aria-label="Bytt dag">
+            <nav className="flex items-center" aria-label={t("Bytt dag", "Change day")}>
               {dato > forste ? (
-                <Link href={lenke(leggTilDager(dato, -1))} className={ikonKnapp} aria-label="Forrige dag">
+                <Link href={lenke(leggTilDager(dato, -1))} className={ikonKnapp} aria-label={t("Forrige dag", "Previous day")}>
                   <ChevronLeft className="h-4 w-4" />
                 </Link>
               ) : null}
@@ -101,10 +116,10 @@ export function SpillRamme({
                 className="flex h-9 items-center gap-1.5 rounded-full px-2.5 font-mono text-[11px] text-neutral-500 transition hover:bg-black/5 hover:text-neutral-900 aria-expanded:bg-neutral-900 aria-expanded:text-neutral-50"
               >
                 <CalendarDays className="h-4 w-4" />
-                <span className="max-sm:sr-only">{dato === iDag ? "I dag" : formaterDato(dato).replace(/^\S+ /, "")}</span>
+                <span className="max-sm:sr-only">{dato === iDag ? t("I dag", "Today") : formaterDato(dato, "lang", sprak).replace(/^\S+ /, "")}</span>
               </button>
               {dato !== iDag ? (
-                <Link href={lenke(leggTilDager(dato, 1))} className={ikonKnapp} aria-label="Neste dag">
+                <Link href={lenke(leggTilDager(dato, 1))} className={ikonKnapp} aria-label={t("Neste dag", "Next day")}>
                   <ChevronRight className="h-4 w-4" />
                 </Link>
               ) : null}
@@ -115,12 +130,19 @@ export function SpillRamme({
             type="button"
             onClick={() => veksle("regler")}
             aria-expanded={panel === "regler"}
-            aria-label="Slik spiller du"
+            aria-label={t("Slik spiller du", "How to play")}
             className={ikonKnapp}
           >
             <CircleHelp className="h-4 w-4" />
           </button>
+          <SprakKnapp variant="mork" />
         </header>
+
+        {sprak === "en" && info.norskInnhold ? (
+          <p className="mt-2 inline-flex items-center gap-1.5 self-start rounded-full border border-white/10 bg-white/[0.05] px-2.5 py-0.5 font-mono text-[10px] text-neutral-400 sm:hidden">
+            🇳🇴 Norwegian puzzle content
+          </p>
+        ) : null}
 
         {panel ? (
           <div className="mt-4 rounded-3xl border border-black/5 bg-[var(--spill-flate)] p-5 shadow-sm">
@@ -128,7 +150,12 @@ export function SpillRamme({
               <Kalender spillIder={[spillId as SpillId]} href={info.href} valgt={dato} />
             ) : (
               <div className="space-y-3 text-sm leading-6 text-neutral-600">
-                <p className="text-neutral-900">{info.regel}</p>
+                <p className="text-neutral-900">{tekst.regel}</p>
+                {sprak === "en" && info.norskInnhold ? (
+                  <p className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-neutral-500">
+                    🇳🇴 Note: The daily questions/answers in this game are in Norwegian.
+                  </p>
+                ) : null}
                 {regler}
               </div>
             )}
@@ -143,14 +170,15 @@ export function SpillRamme({
 
 /** Sound effects on/off, shared by every game. */
 function LydKnapp() {
+  const t = useT()
   const pa = useLydPa()
   return (
     <button
       type="button"
       onClick={() => settLyd(!pa)}
       className={ikonKnapp}
-      aria-label={pa ? "Slå av lyd" : "Slå på lyd"}
-      title={pa ? "Lyd på" : "Lyd av"}
+      aria-label={pa ? t("Slå av lyd", "Mute sound") : t("Slå på lyd", "Unmute sound")}
+      title={pa ? t("Lyd på", "Sound on") : t("Lyd av", "Sound off")}
     >
       {pa ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
     </button>
@@ -188,6 +216,7 @@ export function Knapp({
 
 /** Copies a result summary to the clipboard (or opens the native share sheet on mobile). */
 export function DelKnapp({ tekst }: { tekst: string }) {
+  const t = useT()
   const [kopiert, setKopiert] = useState(false)
   return (
     <Knapp
@@ -206,7 +235,7 @@ export function DelKnapp({ tekst }: { tekst: string }) {
         }
       }}
     >
-      {kopiert ? "Kopiert ✓" : "Del resultat"}
+      {kopiert ? t("Kopiert ✓", "Copied ✓") : t("Del resultat", "Share result")}
     </Knapp>
   )
 }

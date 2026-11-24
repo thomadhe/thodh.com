@@ -15,6 +15,7 @@ import {
   Trophy,
 } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
+import { useSprak, useT } from "@/lib/sprak"
 import { lyder } from "../lib/lyd"
 import {
   regnDuellUtfall,
@@ -32,6 +33,7 @@ import {
 import { DELPOENG_LISTE, formaterBonus, formaterMoggernPoeng } from "../lib/moggern/poeng"
 import {
   ANSVARSFRASKRIVELSE_PAAMINNELSE,
+  ANSVARSFRASKRIVELSE_PAAMINNELSE_EN,
   lagTipsOgDiss,
   rangForPoeng,
   uttrykkDom,
@@ -80,10 +82,13 @@ function SpillerResultatKort({
   solo?: boolean
   fro: string
 }) {
+  const sprak = useSprak()
+  const t = useT()
+  const en = sprak === "en"
   const maaling = res.offisiell
   const vistPoeng = useTelleOpp(maaling?.ok ? maaling.total : 0)
-  const rang = maaling?.ok ? rangForPoeng(maaling.total) : null
-  const dom = useMemo(() => (maaling?.ok ? uttrykkDom(maaling.uttrykkSnitt) : null), [maaling])
+  const rang = maaling?.ok ? rangForPoeng(maaling.total, sprak) : null
+  const dom = useMemo(() => (maaling?.ok ? uttrykkDom(maaling.uttrykkSnitt, sprak) : null), [maaling, sprak])
   const tipsOgDiss = useMemo(() => {
     if (!maaling?.ok) return null
     const moggetMed =
@@ -97,8 +102,9 @@ function SpillerResultatKort({
       total: maaling.total,
       moggetMed,
       fro: `${fro}:${res.deltaker.id}`,
+      sprak,
     })
-  }, [maaling, solo, motstanderPoeng, fro, res.deltaker.id])
+  }, [maaling, solo, motstanderPoeng, fro, res.deltaker.id, sprak])
 
   return (
     <section
@@ -123,28 +129,30 @@ function SpillerResultatKort({
               {erVinner ? <Crown className="h-4 w-4 shrink-0 text-lime-300" aria-hidden="true" /> : null}
               <h3 className="truncate text-lg font-semibold tracking-[-0.03em] text-neutral-950 sm:text-xl">
                 {res.deltaker.navn}
-                {erMeg && !solo ? <span className="ml-1.5 text-xs font-normal tracking-normal text-neutral-500">(deg)</span> : null}
+                {erMeg && !solo ? <span className="ml-1.5 text-xs font-normal tracking-normal text-neutral-500">{t("(deg)", "(you)")}</span> : null}
               </h3>
             </div>
             <p className="mt-1 break-words text-[11px] leading-4 text-neutral-500 tabular-nums sm:text-xs">
               {solo
-                ? "15 sekunders solo-test · kun i din nettleser"
+                ? t("15 sekunders solo-test · kun i din nettleser", "15-second solo test · local browser only")
                 : res.kilde === "motstander"
-                  ? `Målt av ${motstanderNavn}${res.egenMaaling?.ok ? ` · egen måling: ${formaterMoggernPoeng(res.egenMaaling.total)}` : ""}`
+                  ? en
+                    ? `Measured by ${motstanderNavn}${res.egenMaaling?.ok ? ` · self-scan: ${formaterMoggernPoeng(res.egenMaaling.total, "en")}` : ""}`
+                    : `Målt av ${motstanderNavn}${res.egenMaaling?.ok ? ` · egen måling: ${formaterMoggernPoeng(res.egenMaaling.total)}` : ""}`
                   : res.kilde === "egen"
-                    ? "Kunne ikke måle over video — viser egen måling"
-                    : "For få frontale bilder til å beregne poeng"}
+                    ? t("Kunne ikke måle over video — viser egen måling", "Could not measure over video — showing self-scan")
+                    : t("For få frontale bilder til å beregne poeng", "Too few frontal frames to calculate a score")}
             </p>
-            {bildeUrl ? <p className="mt-0.5 text-[10px] text-neutral-500/80">Øyeblikksbilde · lagres aldri</p> : null}
+            {bildeUrl ? <p className="mt-0.5 text-[10px] text-neutral-500/80">{t("Øyeblikksbilde · lagres aldri", "Snapshot · never stored")}</p> : null}
           </div>
         </div>
 
         {maaling?.ok ? (
           <div className="shrink-0 text-right">
             <p className="text-[2.35rem] leading-[0.9] font-semibold tracking-[-0.05em] text-neutral-950 tabular-nums sm:text-[3.25rem]">
-              {formaterMoggernPoeng(vistPoeng)}
+              {formaterMoggernPoeng(vistPoeng, sprak)}
             </p>
-            <p className="mt-1 text-[11px] font-medium text-neutral-500">av 10</p>
+            <p className="mt-1 text-[11px] font-medium text-neutral-500">{t("av 10", "out of 10")}</p>
           </div>
         ) : null}
       </div>
@@ -162,16 +170,16 @@ function SpillerResultatKort({
                   maaling.uttrykkBonus > 0 ? "bg-lime-300/15 text-lime-300" : "bg-rose-500/15 text-rose-300"
                 }`}
               >
-                Mog-uttrykk {formaterBonus(maaling.uttrykkBonus)}
+                {t("Mog-uttrykk", "Mog expressions")} {formaterBonus(maaling.uttrykkBonus, sprak)}
               </span>
             ) : null}
             {maaling && maaling.finisherBonus && maaling.finisherBonus > 0 ? (
               <span className="inline-flex items-center gap-1 rounded-full border border-amber-300/40 bg-amber-300/20 px-2.5 py-1 text-xs font-bold text-amber-200 tabular-nums">
-                🤫 Rizzler-finisher {formaterBonus(maaling.finisherBonus)}
+                🤫 {t("Rizzler-finisher", "Rizzler Finisher")} {formaterBonus(maaling.finisherBonus, sprak)}
               </span>
             ) : maaling && maaling.finisherBonus && maaling.finisherBonus < 0 ? (
               <span className="inline-flex items-center gap-1 rounded-full border border-rose-400/30 bg-rose-500/15 px-2.5 py-1 text-xs font-semibold text-rose-200 tabular-nums">
-                😂 Rizz failed {formaterBonus(maaling.finisherBonus)}
+                😂 Rizz failed {formaterBonus(maaling.finisherBonus, sprak)}
               </span>
             ) : null}
           </div>
@@ -190,7 +198,9 @@ function SpillerResultatKort({
         </div>
       ) : (
         <div className="break-words rounded-[20px] border border-amber-400/25 bg-amber-400/10 p-3.5 text-xs leading-5 text-amber-100 sm:rounded-[22px] sm:p-4">
-          Fikk bare {maaling?.kvalitet.gyldigeRammer ?? 0} gyldige frontale bilder. Se rett inn i kameraet i godt lys neste runde!
+          {en
+            ? `Only got ${maaling?.kvalitet.gyldigeRammer ?? 0} valid frontal frames. Look straight into the camera in good light next round!`
+            : `Fikk bare ${maaling?.kvalitet.gyldigeRammer ?? 0} gyldige frontale bilder. Se rett inn i kameraet i godt lys neste runde!`}
         </div>
       )}
 
@@ -198,10 +208,23 @@ function SpillerResultatKort({
         <div className="flex min-w-0 items-start gap-2.5 rounded-[20px] border border-amber-400/30 bg-amber-400/10 p-3.5 text-xs leading-5 text-amber-100 sm:rounded-[22px] sm:p-4">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" aria-hidden="true" />
           <div className="min-w-0 flex-1 break-words">
-            <p className="font-semibold">Uenighet mellom nettleserne ({formaterMoggernPoeng(res.avvik)} poeng forskjell)</p>
+            <p className="font-semibold">
+              {en
+                ? `Browser disagreement (${formaterMoggernPoeng(res.avvik, "en")} pts difference)`
+                : `Uenighet mellom nettleserne (${formaterMoggernPoeng(res.avvik)} poeng forskjell)`}
+            </p>
             <p className="mt-0.5 text-amber-200/85">
-              {motstanderNavn} målte <strong>{formaterMoggernPoeng(res.motstanderMaaling.total)}</strong> · Du målte deg selv til{" "}
-              <strong>{formaterMoggernPoeng(res.egenMaaling.total)}</strong>. (Duellen bruker motstanderens måling.)
+              {en ? (
+                <>
+                  {motstanderNavn} measured <strong>{formaterMoggernPoeng(res.motstanderMaaling.total, "en")}</strong> · You measured yourself at{" "}
+                  <strong>{formaterMoggernPoeng(res.egenMaaling.total, "en")}</strong>. (The duel uses your opponent’s measurement.)
+                </>
+              ) : (
+                <>
+                  {motstanderNavn} målte <strong>{formaterMoggernPoeng(res.motstanderMaaling.total)}</strong> · Du målte deg selv til{" "}
+                  <strong>{formaterMoggernPoeng(res.egenMaaling.total)}</strong>. (Duellen bruker motstanderens måling.)
+                </>
+              )}
             </p>
           </div>
         </div>
@@ -209,7 +232,7 @@ function SpillerResultatKort({
 
       {maaling?.ok ? (
         <div className="min-w-0 space-y-2">
-          <p className="text-xs font-medium text-neutral-500">7 delpoeng</p>
+          <p className="text-xs font-medium text-neutral-500">{t("7 delpoeng", "7 sub-scores")}</p>
           <ul className="space-y-1.5">
             {DELPOENG_LISTE.map((d) => {
               const p = maaling.delpoeng[d.id]
@@ -219,8 +242,8 @@ function SpillerResultatKort({
               return (
                 <li key={d.id} className="space-y-0.5">
                   <div className="flex items-center justify-between gap-2 text-xs">
-                    <span className="truncate text-neutral-700">{d.navn}</span>
-                    <span className="shrink-0 font-semibold text-neutral-950 tabular-nums">{formaterMoggernPoeng(p)}</span>
+                    <span className="truncate text-neutral-700">{en ? d.navnEn : d.navn}</span>
+                    <span className="shrink-0 font-semibold text-neutral-950 tabular-nums">{formaterMoggernPoeng(p, sprak)}</span>
                   </div>
                   <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/[0.07]">
                     <div className={`h-full rounded-full transition-all duration-700 ${barFarge}`} style={{ width: `${bredde}%` }} />
@@ -237,21 +260,23 @@ function SpillerResultatKort({
           <div className="min-w-0 rounded-[20px] border border-rose-400/20 bg-rose-500/10 p-3.5 sm:rounded-[22px] sm:p-4">
             <p className="flex items-center gap-1.5 text-xs font-semibold text-rose-300">
               <Flame className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-              {tipsOgDiss.dissFraLys ? "Dagens lys-diss" : "Dagens diss"}
+              {tipsOgDiss.dissFraLys ? t("Dagens lys-diss", "Lighting roast") : t("Dagens diss", "Roast of the round")}
             </p>
-            <p className="mt-1.5 break-words text-sm leading-6 font-medium text-neutral-950 sm:text-[15px]">«{tipsOgDiss.diss}»</p>
+            <p className="mt-1.5 break-words text-sm leading-6 font-medium text-neutral-950 sm:text-[15px]">
+              {en ? `“${tipsOgDiss.diss}”` : `«${tipsOgDiss.diss}»`}
+            </p>
           </div>
 
           <div className="min-w-0 rounded-[20px] border border-white/[0.06] bg-[#1f2124] p-3.5 sm:rounded-[22px] sm:p-4">
             <p className="flex items-center gap-1.5 text-xs font-semibold text-lime-300">
               <Lightbulb className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-              Slik mogger du mer
+              {t("Slik mogger du mer", "How to mog harder")}
             </p>
             <ul className="mt-2 space-y-1.5 text-xs leading-5 text-neutral-700">
-              {tipsOgDiss.tips.map((t, i) => (
+              {tipsOgDiss.tips.map((tip, i) => (
                 <li key={i} className="flex min-w-0 gap-2">
                   <span className="shrink-0 text-lime-300">•</span>
-                  <span className="min-w-0 break-words">{t}</span>
+                  <span className="min-w-0 break-words">{tip}</span>
                 </li>
               ))}
             </ul>
@@ -291,6 +316,9 @@ export function MoggernResultat({
   stilling?: Record<string, number>
   dagensBeste?: { poeng: number; nyRekord: boolean } | null
 }) {
+  const sprak = useSprak()
+  const t = useT()
+  const en = sprak === "en"
   const [lasterKort, setLasterKort] = useState(false)
   const [delerKort, setDelerKort] = useState(false)
   const [deltStatus, setDeltStatus] = useState<string | null>(null)
@@ -316,20 +344,25 @@ export function MoggernResultat({
     if (solo) {
       const s = utfall.spillere[0]
       if (!s?.offisiell?.ok) {
-        return "Solo-testen er ferdig! For få gyldige frontale bilder."
+        return en ? "Solo test finished! Too few valid frontal frames." : "Solo-testen er ferdig! For få gyldige frontale bilder."
       }
-      const rang = rangForPoeng(s.offisiell.total)
-      return `${s.deltaker.navn} landet på ${formaterMoggernPoeng(s.offisiell.total)}/10 — ${rang.tittel}!`
+      const rang = rangForPoeng(s.offisiell.total, sprak)
+      return en
+        ? `${s.deltaker.navn} scored ${formaterMoggernPoeng(s.offisiell.total, "en")}/10 — ${rang.tittel}!`
+        : `${s.deltaker.navn} landet på ${formaterMoggernPoeng(s.offisiell.total)}/10 — ${rang.tittel}!`
     }
     if (!utfall.beggeHarResultat || utfall.spillere.length !== 2) {
-      return "Runden er ferdig! En eller begge hadde for få gyldige frontale bilder."
+      return en
+        ? "Round complete! One or both players had too few valid frontal frames."
+        : "Runden er ferdig! En eller begge hadde for få gyldige frontale bilder."
     }
     const [a, b] = utfall.spillere
     return vinnerLinje(
       { navn: a.deltaker.navn, poeng: a.offisiell!.total },
       { navn: b.deltaker.navn, poeng: b.offisiell!.total },
+      sprak,
     )
-  }, [solo, utfall])
+  }, [solo, utfall, en, sprak])
 
   const stillingTekst = useMemo(() => {
     if (solo || deltakere.length !== 2) return null
@@ -359,6 +392,7 @@ export function MoggernResultat({
           total: maaling.total,
           moggetMed,
           fro: `${fro}:${s.deltaker.id}`,
+          sprak,
         })
         return {
           navn: s.deltaker.navn,
@@ -372,12 +406,15 @@ export function MoggernResultat({
     return {
       tittel: solo ? null : hovedLinje,
       underTittel: solo
-        ? "Moggern (Solo-test) · thodh.com"
+        ? en
+          ? "Moggern (Solo test) · thodh.com"
+          : "Moggern (Solo-test) · thodh.com"
         : `Moggern · thodh.com${stillingTekst ? ` · ${stillingTekst}` : ""}`,
       spillere: kortSpillere,
       filnavn: solo ? `moggern-solo-${kode.toLowerCase()}.png` : `moggern-duell-${kode.toLowerCase()}-r${runde + 1}.png`,
+      sprak,
     }
-  }, [utfall, fro, solo, bilder, hovedLinje, kode, runde, stillingTekst])
+  }, [utfall, fro, solo, bilder, hovedLinje, kode, runde, stillingTekst, sprak, en])
 
   const lastNedKort = useCallback(async () => {
     if (!kanLasteNedKort || lasterKort) return
@@ -395,22 +432,22 @@ export function MoggernResultat({
     try {
       const res = await delDuellKortPng({
         ...byggKortInput(),
-        tekst: deleTekstForKort(solo),
+        tekst: deleTekstForKort(solo, sprak),
       })
       if (res === "kopiert") {
-        setDeltStatus("Bilde kopiert ✓")
+        setDeltStatus(en ? "Image copied ✓" : "Bilde kopiert ✓")
         window.setTimeout(() => setDeltStatus(null), 2200)
       } else if (res === "lastet-ned") {
-        setDeltStatus("Bilde lastet ned ✓")
+        setDeltStatus(en ? "Image downloaded ✓" : "Bilde lastet ned ✓")
         window.setTimeout(() => setDeltStatus(null), 2200)
       } else if (res === "delt") {
-        setDeltStatus("Delt ✓")
+        setDeltStatus(en ? "Shared ✓" : "Delt ✓")
         window.setTimeout(() => setDeltStatus(null), 1800)
       }
     } finally {
       setDelerKort(false)
     }
-  }, [kanLasteNedKort, delerKort, byggKortInput, solo])
+  }, [kanLasteNedKort, delerKort, byggKortInput, solo, sprak, en])
 
   return (
     <section className="flex w-full min-w-0 flex-col gap-4 sm:gap-5" aria-live="polite">
@@ -419,7 +456,11 @@ export function MoggernResultat({
       >
         <div className="flex flex-wrap items-center justify-center gap-2">
           <p className="text-xs font-medium text-lime-300 tabular-nums">
-            {solo ? "Solo-test · 15 sekunder" : `Resultat · Runde ${runde + 1}`}
+            {solo
+              ? t("Solo-test · 15 sekunder", "Solo test · 15 seconds")
+              : en
+                ? `Result · Round ${runde + 1}`
+                : `Resultat · Runde ${runde + 1}`}
           </p>
           {stillingTekst ? (
             <span className="inline-flex max-w-full items-center gap-1 rounded-full border border-white/10 bg-white/[0.05] px-2.5 py-0.5 text-[11px] font-semibold text-neutral-800 tabular-nums">
@@ -437,8 +478,12 @@ export function MoggernResultat({
               <Trophy className="h-3 w-3 shrink-0" aria-hidden="true" />
               <span className="truncate">
                 {dagensBeste.nyRekord
-                  ? `Ny dagsrekord: ${formaterMoggernPoeng(dagensBeste.poeng)}`
-                  : `Dagens beste: ${formaterMoggernPoeng(dagensBeste.poeng)}`}
+                  ? en
+                    ? `New daily best: ${formaterMoggernPoeng(dagensBeste.poeng, "en")}`
+                    : `Ny dagsrekord: ${formaterMoggernPoeng(dagensBeste.poeng)}`
+                  : en
+                    ? `Today’s best: ${formaterMoggernPoeng(dagensBeste.poeng, "en")}`
+                    : `Dagens beste: ${formaterMoggernPoeng(dagensBeste.poeng)}`}
               </span>
             </span>
           ) : null}
@@ -452,23 +497,23 @@ export function MoggernResultat({
             <>
               <button type="button" onClick={onOmkamp} className={`${MKNAPP} max-w-full px-5 sm:px-6`}>
                 <RotateCcw className="h-4 w-4 shrink-0" aria-hidden="true" />
-                Prøv igjen (15 s)
+                {t("Prøv igjen (15 s)", "Try again (15 s)")}
               </button>
               {onTilbakeTilRom ? (
                 <button type="button" onClick={onTilbakeTilRom} className={`${MKNAPP_SEKUNDAR} max-w-full px-4 sm:px-5`}>
                   <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
-                  Tilbake til rommet
+                  {t("Tilbake til rommet", "Back to room")}
                 </button>
               ) : null}
             </>
           ) : erVert ? (
             <button type="button" onClick={onOmkamp} className={`${MKNAPP} max-w-full px-5 sm:px-6`}>
               <RotateCcw className="h-4 w-4 shrink-0" aria-hidden="true" />
-              Omkamp
+              {t("Omkamp", "Rematch")}
             </button>
           ) : (
             <span className="inline-flex min-h-11 max-w-full items-center justify-center rounded-full border border-white/[0.07] bg-white/[0.03] px-4 py-2 text-center text-xs leading-4 text-neutral-600">
-              Venter på at verten starter omkamp …
+              {t("Venter på at verten starter omkamp …", "Waiting for host to start a rematch …")}
             </span>
           )}
           {kanLasteNedKort ? (
@@ -486,7 +531,7 @@ export function MoggernResultat({
                 ) : (
                   <Share2 className="h-4 w-4 shrink-0" aria-hidden="true" />
                 )}
-                {deltStatus ?? "Del resultat"}
+                {deltStatus ?? t("Del resultat", "Share result")}
               </button>
               <button
                 type="button"
@@ -495,7 +540,7 @@ export function MoggernResultat({
                 className={`${MKNAPP_SEKUNDAR} max-w-full px-4 sm:px-5`}
               >
                 {lasterKort ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden="true" /> : <Download className="h-4 w-4 shrink-0" aria-hidden="true" />}
-                Last ned bilde
+                {t("Last ned bilde", "Download image")}
               </button>
             </>
           ) : null}
@@ -511,7 +556,7 @@ export function MoggernResultat({
               res={s}
               erMeg={s.deltaker.id === meg}
               erVinner={!solo && utfall.vinnerId === s.deltaker.id}
-              motstanderNavn={mot?.deltaker.navn ?? "Motstanderen"}
+              motstanderNavn={mot?.deltaker.navn ?? t("Motstanderen", "Opponent")}
               motstanderPoeng={mot?.offisiell?.ok ? mot.offisiell.total : null}
               bildeUrl={bilder[s.deltaker.id] ?? null}
               solo={solo}
@@ -521,7 +566,9 @@ export function MoggernResultat({
         })}
       </div>
 
-      <p className="break-words px-2 text-center text-xs leading-5 text-neutral-500">{ANSVARSFRASKRIVELSE_PAAMINNELSE}</p>
+      <p className="text-center text-xs leading-5 text-neutral-500">
+        {en ? ANSVARSFRASKRIVELSE_PAAMINNELSE_EN : ANSVARSFRASKRIVELSE_PAAMINNELSE}
+      </p>
     </section>
   )
 }

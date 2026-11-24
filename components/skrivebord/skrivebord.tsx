@@ -2,10 +2,12 @@
 
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react"
+import { SprakKnapp } from "@/components/sprak-knapp"
 import { useAlleResultater } from "@/features/spill/lib/lagring"
 import type { SpillId } from "@/features/spill/lib/spill"
 import { useUtfordringerSynk } from "@/features/spill/lib/utfordring-varsel"
 import { CONTACT_EMAIL } from "@/lib/projects"
+import { useSprak, useT, type Sprak } from "@/lib/sprak"
 import { Ikon, type IkonNavn } from "./ikoner"
 import { OmThodh, Papirkurv } from "./innhold"
 
@@ -15,6 +17,7 @@ import { OmThodh, Papirkurv } from "./innhold"
 type Program = {
   id: string
   navn: string
+  navnEn?: string
   /** Internal path (full page), https URL (new tab) or a built-in window id. */
   mal: string
   ikon?: IkonNavn
@@ -26,35 +29,35 @@ type Program = {
 }
 
 const dagligeProgrammer: Program[] = [
-  { id: "mel", navn: "Mer eller mindre", mal: "/spill/mer-eller-mindre", ikon: "mel", spill: "mer-eller-mindre" },
-  { id: "anelse", navn: "Anelsesløs", mal: "/spill/anelseslos", ikon: "anelse", spill: "anelseslos" },
-  { id: "bie", navn: "Stavebien", mal: "/spill/stavebien", ikon: "bie", spill: "stavebien" },
-  { id: "note", navn: "Sangløs", mal: "/spill/sanglos", ikon: "note", spill: "sanglos" },
-  { id: "omriss", navn: "Omriss", mal: "/spill/omriss", ikon: "form", spill: "omriss" },
-  { id: "canvas", navn: "Canvas", mal: "/spill/canvas", ikon: "flagg", spill: "canvas" },
-  { id: "soket", navn: "Søket", mal: "/spill/soket", ikon: "sok", spill: "soket" },
-  { id: "emovi", navn: "Emovi", mal: "/spill/emovi", ikon: "film", spill: "emovi" },
-  { id: "rusle", navn: "Rusle", mal: "/spill/rusle", ikon: "sti", spill: "rusle" },
-  { id: "tilkoblinger", navn: "Tilkoblinger", mal: "/spill/tilkoblinger", ikon: "grupper", spill: "tilkoblinger" },
-  { id: "havet", navn: "Havet", mal: "/spill/havet", ikon: "bolge", spill: "havet" },
-  { id: "heksagonal-jakt", navn: "Heksagonal jakt", mal: "/spill/heksagonal-jakt", ikon: "sekskant", spill: "heksagonal-jakt" },
-  { id: "67-stegern", navn: "6/7-stegern", mal: "/spill/67-stegern", ikon: "stegern", spill: "67-stegern" },
-  { id: "gjettelos", navn: "Gjetteløs", mal: "/spill/gjettelos", ikon: "anslag", spill: "gjettelos" },
+  { id: "mel", navn: "Mer eller mindre", navnEn: "More or Less", mal: "/spill/mer-eller-mindre", ikon: "mel", spill: "mer-eller-mindre" },
+  { id: "anelse", navn: "Anelsesløs", navnEn: "Clueless", mal: "/spill/anelseslos", ikon: "anelse", spill: "anelseslos" },
+  { id: "bie", navn: "Stavebien", navnEn: "Spelling Bee", mal: "/spill/stavebien", ikon: "bie", spill: "stavebien" },
+  { id: "note", navn: "Sangløs", navnEn: "Songless", mal: "/spill/sanglos", ikon: "note", spill: "sanglos" },
+  { id: "omriss", navn: "Omriss", navnEn: "Outline", mal: "/spill/omriss", ikon: "form", spill: "omriss" },
+  { id: "canvas", navn: "Canvas", navnEn: "Canvas", mal: "/spill/canvas", ikon: "flagg", spill: "canvas" },
+  { id: "soket", navn: "Søket", navnEn: "The Search", mal: "/spill/soket", ikon: "sok", spill: "soket" },
+  { id: "emovi", navn: "Emovi", navnEn: "Emovi", mal: "/spill/emovi", ikon: "film", spill: "emovi" },
+  { id: "rusle", navn: "Rusle", navnEn: "Wander", mal: "/spill/rusle", ikon: "sti", spill: "rusle" },
+  { id: "tilkoblinger", navn: "Tilkoblinger", navnEn: "Connections", mal: "/spill/tilkoblinger", ikon: "grupper", spill: "tilkoblinger" },
+  { id: "havet", navn: "Havet", navnEn: "The Ocean", mal: "/spill/havet", ikon: "bolge", spill: "havet" },
+  { id: "heksagonal-jakt", navn: "Heksagonal jakt", navnEn: "Hex Hunt", mal: "/spill/heksagonal-jakt", ikon: "sekskant", spill: "heksagonal-jakt" },
+  { id: "67-stegern", navn: "6/7-stegern", navnEn: "6/7-Stegern", mal: "/spill/67-stegern", ikon: "stegern", spill: "67-stegern" },
+  { id: "gjettelos", navn: "Gjetteløs", navnEn: "Guessless", mal: "/spill/gjettelos", ikon: "anslag", spill: "gjettelos" },
 ]
 
 const spillProgrammer: Program[] = [
-  { id: "land", navn: "Verdens land", mal: "/spill/verdens-land", ikon: "jord" },
-  { id: "hovedsteder", navn: "Hovedsteder", mal: "/spill/hovedsteder", ikon: "stjerne" },
-  { id: "moggern", navn: "Moggern", mal: "/spill/moggern", ikon: "moggern" },
-  { id: "sjakk-1", navn: "Sjakk for 1", mal: "/sjakk-for-1", ikon: "sjakk1" },
-  { id: "sjakk", navn: "Sjakk for 2", mal: "/sjakk", logo: "/sjakk/favicon.svg" },
+  { id: "land", navn: "Verdens land", navnEn: "World Countries", mal: "/spill/verdens-land", ikon: "jord" },
+  { id: "hovedsteder", navn: "Hovedsteder", navnEn: "Capitals", mal: "/spill/hovedsteder", ikon: "stjerne" },
+  { id: "moggern", navn: "Moggern", navnEn: "Moggern", mal: "/spill/moggern", ikon: "moggern" },
+  { id: "sjakk-1", navn: "Sjakk for 1", navnEn: "Chess for 1", mal: "/sjakk-for-1", ikon: "sjakk1" },
+  { id: "sjakk", navn: "Sjakk for 2", navnEn: "Chess for 2", mal: "/sjakk", logo: "/sjakk/favicon.svg" },
 ]
 
 const sosialProgrammer: Program[] = [
-  { id: "venner", navn: "Venner", mal: "/spill/venner", ikon: "venner" },
-  { id: "ledertavle", navn: "Ledertavle", mal: "/spill/ledertavle", ikon: "ledertavle" },
-  { id: "dueller", navn: "Dueller", mal: "/spill/dueller", ikon: "dueller" },
-  { id: "historikk", navn: "Historikk", mal: "/spill/historikk", ikon: "historikk" },
+  { id: "venner", navn: "Venner", navnEn: "Friends", mal: "/spill/venner", ikon: "venner" },
+  { id: "ledertavle", navn: "Ledertavle", navnEn: "Leaderboard", mal: "/spill/ledertavle", ikon: "ledertavle" },
+  { id: "dueller", navn: "Dueller", navnEn: "Duels", mal: "/spill/dueller", ikon: "dueller" },
+  { id: "historikk", navn: "Historikk", navnEn: "History", mal: "/spill/historikk", ikon: "historikk" },
 ]
 
 const appProgrammer: Program[] = [
@@ -62,18 +65,22 @@ const appProgrammer: Program[] = [
 ]
 
 const systemProgrammer: Program[] = [
-  { id: "papirkurv", navn: "Papirkurv", mal: "papirkurv", ikon: "papirkurv", b: 340, h: 170 },
-  { id: "om", navn: "Om thodh.com", mal: "om", ikon: "datamaskin", b: 420, h: 330 },
-  { id: "konto", navn: "Konto", mal: "/konto", ikon: "person" },
+  { id: "papirkurv", navn: "Papirkurv", navnEn: "Recycle Bin", mal: "papirkurv", ikon: "papirkurv", b: 340, h: 170 },
+  { id: "om", navn: "Om thodh.com", navnEn: "About thodh.com", mal: "om", ikon: "datamaskin", b: 420, h: 330 },
+  { id: "konto", navn: "Konto", navnEn: "Account", mal: "/konto", ikon: "person" },
 ]
 
 const alleProgrammer = [...dagligeProgrammer, ...spillProgrammer, ...sosialProgrammer, ...appProgrammer, ...systemProgrammer]
 
-const grupper: (readonly [string, Program[]])[] = [
-  ["Daglig", dagligeProgrammer],
-  ["Spill", spillProgrammer],
-  ["Sosialt", sosialProgrammer],
-  ["Apper", appProgrammer],
+function programNavn(p: Program, sprak: Sprak) {
+  return sprak === "en" ? (p.navnEn ?? p.navn) : p.navn
+}
+
+const grupper: (readonly [string, string, Program[]])[] = [
+  ["Daglig", "Daily", dagligeProgrammer],
+  ["Spill", "Games", spillProgrammer],
+  ["Sosialt", "Social", sosialProgrammer],
+  ["Apper", "Apps", appProgrammer],
 ]
 
 type Vindu = { mal: string; x: number; y: number; b: number; h: number; z: number; min: boolean; maks: boolean }
@@ -125,14 +132,14 @@ function useKlokke() {
   return useSyncExternalStore(abonnerKlokke, () => osloTid({ hour: "2-digit", minute: "2-digit" }), () => "")
 }
 
-/** "5 t 12 min" until the games change at midnight in Oslo. */
-function useNedtelling() {
+/** "5 t 12 min" / "5h 12m" until the games change at midnight in Oslo. */
+function useNedtelling(sprak: Sprak) {
   return useSyncExternalStore(
     abonnerKlokke,
     () => {
       const [t, m] = osloTid({ hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).split(":").map(Number)
       const igjen = 24 * 60 - (t * 60 + m)
-      return `${Math.floor(igjen / 60)} t ${igjen % 60} min`
+      return sprak === "en" ? `${Math.floor(igjen / 60)}h ${igjen % 60}m` : `${Math.floor(igjen / 60)} t ${igjen % 60} min`
     },
     () => "",
   )
@@ -167,6 +174,7 @@ function Tittellinje({
   onMaks: () => void
   onLukk: () => void
 }) {
+  const t = useT()
   const knapp = "os-knapp flex h-[18px] min-h-0 w-5 items-center p-0 justify-center text-[11px] leading-none font-bold text-black"
   const stopp = (e: React.PointerEvent) => e.stopPropagation()
   return (
@@ -178,15 +186,15 @@ function Tittellinje({
     >
       <span className="flex h-4 w-4 shrink-0 items-center justify-center overflow-hidden">{ikon}</span>
       <span className="min-w-0 flex-1 truncate text-[12px] font-bold">{tittel}</span>
-      <button type="button" className={knapp} onClick={onMin} onPointerDown={stopp} aria-label="Minimer">
+      <button type="button" className={knapp} onClick={onMin} onPointerDown={stopp} aria-label={t("Minimer", "Minimize")}>
         <span className="mt-1.5 block h-0.5 w-2 bg-black" />
       </button>
       {!liten ? (
-        <button type="button" className={knapp} onClick={onMaks} onPointerDown={stopp} aria-label={maks ? "Gjenopprett" : "Maksimer"}>
+        <button type="button" className={knapp} onClick={onMaks} onPointerDown={stopp} aria-label={maks ? t("Gjenopprett", "Restore") : t("Maksimer", "Maximize")}>
           <span className="block h-2 w-2.5 border border-t-2 border-black" />
         </button>
       ) : null}
-      <button type="button" className={`${knapp} ml-0.5`} onClick={onLukk} onPointerDown={stopp} aria-label="Lukk">
+      <button type="button" className={`${knapp} ml-0.5`} onClick={onLukk} onPointerDown={stopp} aria-label={t("Lukk", "Close")}>
         ✕
       </button>
     </div>
@@ -195,6 +203,7 @@ function Tittellinje({
 
 function SkrivebordIkon({
   p,
+  sprak,
   valgt,
   varsel = 0,
   velg,
@@ -202,6 +211,7 @@ function SkrivebordIkon({
   forvarsel,
 }: {
   p: Program
+  sprak: Sprak
   valgt: boolean
   varsel?: number
   velg: () => void
@@ -228,13 +238,13 @@ function SkrivebordIkon({
         {varsel > 0 ? (
           <span
             className="absolute -top-1 -right-1.5 inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full border border-black/80 bg-rose-500 px-1 font-mono text-[10px] leading-none font-bold text-white shadow-[1px_1px_0_#0009]"
-            aria-label={`${varsel} uleste`}
+            aria-label={sprak === "en" ? `${varsel} unread` : `${varsel} uleste`}
           >
             {varsel > 9 ? "9+" : varsel}
           </span>
         ) : null}
       </span>
-      <span className="os-ikon-tekst px-0.5 text-[12px] leading-tight text-white">{p.navn}</span>
+      <span className="os-ikon-tekst px-0.5 text-[12px] leading-tight text-white">{programNavn(p, sprak)}</span>
     </button>
   )
 }
@@ -248,18 +258,21 @@ const status: Record<string, [string, string]> = {
 
 /** Desktop gadget with today's games, their status and the time left until new ones. */
 function DagensSpill({ apne, forvarsel }: { apne: (mal: string) => void; forvarsel: (mal: string) => void }) {
+  const sprak = useSprak()
+  const t = useT()
   const resultater = useAlleResultater()
   const dato = useIDag()
-  const nedtelling = useNedtelling()
+  const nedtelling = useNedtelling(sprak)
   const spill = dagligeProgrammer
   const ferdige = spill.filter((p) => {
     const r = resultater[p.spill!]?.[dato]
     return r && r.status !== "pagar"
   }).length
   return (
-    <aside className="os-ut os-apne w-60 p-[3px]" aria-label="Dagens spill">
+    <aside className="os-ut os-apne w-60 p-[3px]" aria-label={t("Dagens spill", "Today's games")}>
       <div className="os-tittellinje flex h-6 items-center gap-1.5 px-1.5 text-[12px] font-bold" data-aktiv="true">
-        <Ikon navn="spillmappe" storrelse={16} />I dag
+        <Ikon navn="spillmappe" storrelse={16} />
+        {t("I dag", "Today")}
         <span className="ml-auto font-normal opacity-80">
           {ferdige}/{spill.length}
         </span>
@@ -267,7 +280,7 @@ function DagensSpill({ apne, forvarsel }: { apne: (mal: string) => void; forvars
       <ul className="os-inn mt-[3px] divide-y divide-neutral-200">
         {spill.map((p) => {
           const r = resultater[p.spill!]?.[dato]
-          const [merke, stil] = r ? status[r.status] : ["Ny", "bg-[var(--os-tittel)] text-white"]
+          const [merke, stil] = r ? status[r.status] : [t("Ny", "New"), "bg-[var(--os-tittel)] text-white"]
           return (
             <li key={p.id}>
               <button
@@ -277,7 +290,7 @@ function DagensSpill({ apne, forvarsel }: { apne: (mal: string) => void; forvars
                 className="flex w-full items-center gap-2 px-2 py-1.5 text-left text-[12px] hover:bg-[var(--os-tittel)] hover:text-white"
               >
                 <ProgramIkon p={p} storrelse={20} />
-                <span className="flex-1">{p.navn}</span>
+                <span className="flex-1">{programNavn(p, sprak)}</span>
                 {r?.etikett && r.status !== "pagar" ? <span className="text-[10px] opacity-70">{r.etikett}</span> : null}
                 <span className={`min-w-6 px-1 text-center text-[10px] font-bold ${stil}`}>{merke}</span>
               </button>
@@ -286,7 +299,7 @@ function DagensSpill({ apne, forvarsel }: { apne: (mal: string) => void; forvars
         })}
       </ul>
       <p className="px-1.5 pt-1.5 pb-0.5 text-[11px] text-neutral-700" suppressHydrationWarning>
-        {nedtelling ? <>Nye om {nedtelling}</> : " "}
+        {nedtelling ? <>{t("Nye om", "New in")} {nedtelling}</> : " "}
       </p>
     </aside>
   )
@@ -321,6 +334,8 @@ function Skyer() {
 // ---- desktop ----
 
 export function Skrivebord() {
+  const sprak = useSprak()
+  const t = useT()
   const router = useRouter()
   const liten = useLiten()
   const klokke = useKlokke()
@@ -450,7 +465,7 @@ export function Skrivebord() {
 
   const tittelOgIkon = (mal: string): [string, React.ReactNode] => {
     const p = finnProgram(mal)
-    return [p?.navn ?? mal, p ? <ProgramIkon p={p} storrelse={16} /> : <Ikon navn="nett" storrelse={16} />]
+    return [p ? programNavn(p, sprak) : mal, p ? <ProgramIkon p={p} storrelse={16} /> : <Ikon navn="nett" storrelse={16} />]
   }
 
   const innhold = (v: Vindu) => (v.mal === "om" ? <OmThodh lukk={() => lukk(v.mal)} /> : <Papirkurv />)
@@ -461,6 +476,7 @@ export function Skrivebord() {
     <SkrivebordIkon
       key={p.id}
       p={p}
+      sprak={sprak}
       valgt={valgt === p.id}
       varsel={varselFor(p.id)}
       velg={() => setValgt(p.id)}
@@ -471,7 +487,7 @@ export function Skrivebord() {
 
   return (
     <div className="os os-skrivebord fixed inset-0 overflow-hidden text-black select-none">
-      <h1 className="sr-only">thodh.com – spill og apper</h1>
+      <h1 className="sr-only">{t("thodh.com – spill og apper", "thodh.com — games and apps")}</h1>
       <Skyer />
       <p
         aria-hidden="true"
@@ -492,7 +508,7 @@ export function Skrivebord() {
         }}
       >
         <nav
-          aria-label="Programmer"
+          aria-label={t("Programmer", "Programs")}
           onPointerDown={(e) => {
             if (e.target === e.currentTarget) {
               setValgt(null)
@@ -501,9 +517,9 @@ export function Skrivebord() {
           }}
           className="absolute inset-0 flex flex-col gap-3 p-2 max-sm:overflow-y-auto max-sm:pb-24 sm:pointer-events-none sm:flex-row sm:gap-1"
         >
-          {grupper.map(([tittel, liste]) => (
-            <div key={tittel} className="pointer-events-auto flex flex-col">
-              <p className="mb-0.5 px-2 text-[10px] tracking-[0.2em] text-white/70 uppercase">{tittel}</p>
+          {grupper.map(([tittelNo, tittelEn, liste]) => (
+            <div key={tittelNo} className="pointer-events-auto flex flex-col">
+              <p className="mb-0.5 px-2 text-[10px] tracking-[0.2em] text-white/70 uppercase">{t(tittelNo, tittelEn)}</p>
               <div className={`grid grid-cols-4 gap-y-1 ${liste.length > 6 ? "sm:grid-cols-2" : "sm:grid-cols-1"}`}>{liste.map(ikon)}</div>
             </div>
           ))}
@@ -511,11 +527,10 @@ export function Skrivebord() {
 
         <div className="pointer-events-auto absolute right-2 bottom-2">{ikon(systemProgrammer[0])}</div>
 
-        {!liten ? (
-          <div className="absolute top-3 right-3">
-            <DagensSpill apne={apne} forvarsel={forvarsel} />
-          </div>
-        ) : null}
+        <div className="pointer-events-auto absolute top-2.5 right-3 z-20 flex flex-col items-end gap-2">
+          <SprakKnapp variant="os" />
+          {!liten ? <DagensSpill apne={apne} forvarsel={forvarsel} /> : null}
+        </div>
 
         {vinduer.map((v) => {
           const [tittel, tIkon] = tittelOgIkon(v.mal)
@@ -563,9 +578,9 @@ export function Skrivebord() {
             </span>
           </div>
           <div className="flex-1 overflow-y-auto py-1">
-            {[...grupper, ["", systemProgrammer.filter((p) => p.id !== "papirkurv")] as const].map(([tittel, liste], i) => (
+            {[...grupper, ["", "", systemProgrammer.filter((p) => p.id !== "papirkurv")] as const].map(([tittelNo, tittelEn, liste], i) => (
               <div key={i} className={i ? "mt-1 border-t border-[var(--os-skygge)] pt-1 shadow-[inset_0_1px_#fff]" : ""}>
-                {tittel ? <p className="px-2 pt-0.5 text-[10px] tracking-widest text-neutral-600 uppercase">{tittel}</p> : null}
+                {tittelNo ? <p className="px-2 pt-0.5 text-[10px] tracking-widest text-neutral-600 uppercase">{t(tittelNo, tittelEn)}</p> : null}
                 {liste.map((p) => {
                   const antall = varselFor(p.id)
                   return (
@@ -577,7 +592,7 @@ export function Skrivebord() {
                       className="flex w-full items-center gap-2.5 px-2 py-1 text-left text-[12px] hover:bg-[var(--os-tittel)] hover:text-white focus:bg-[var(--os-tittel)] focus:text-white focus:outline-none"
                     >
                       <ProgramIkon p={p} storrelse={20} />
-                      <span>{p.navn}</span>
+                      <span>{programNavn(p, sprak)}</span>
                       {antall > 0 ? (
                         <span className="ml-auto inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 font-mono text-[10px] font-bold text-white">
                           {antall > 9 ? "9+" : antall}
@@ -636,9 +651,9 @@ export function Skrivebord() {
             title={CONTACT_EMAIL}
           >
             <Ikon navn="brev" storrelse={14} />
-            <span className="max-sm:sr-only">Kontakt</span>
+            <span className="max-sm:sr-only">{t("Kontakt", "Contact")}</span>
           </a>
-          <span className="tabular-nums" title="Lær → Bygg → Del" suppressHydrationWarning>
+          <span className="tabular-nums" title={t("Lær → Bygg → Del", "Learn → Build → Share")} suppressHydrationWarning>
             {klokke}
           </span>
         </div>

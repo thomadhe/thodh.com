@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Sparkles,
   Trophy,
+  User,
   UserCheck,
   Volume2,
   Wifi,
@@ -25,7 +26,7 @@ import {
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { lagKode } from "../lib/duell/rom"
+import { lagKode, rensNavn } from "../lib/duell/rom"
 import { serverNa } from "../lib/duell/signatur"
 import { lyder } from "../lib/lyd"
 import {
@@ -158,38 +159,6 @@ export function MoggernRom({
     )
   }
 
-  if (!bruker) {
-    const neste = encodeURIComponent(`/spill/moggern/${kode}`)
-    return (
-      <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
-        <section className={`${MFLATE} p-6 sm:p-8`}>
-          <div className="flex items-center gap-3.5">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/[0.06] text-amber-300">
-              <Lock className="h-5 w-5" aria-hidden="true" />
-            </span>
-            <div>
-              <p className="text-xs font-medium text-neutral-500 tabular-nums">Rom {kode}</p>
-              <h2 className="text-[1.6rem] leading-tight font-semibold tracking-[-0.03em] text-neutral-950">Logg inn for å slå på kameraet</h2>
-            </div>
-          </div>
-          <p className="mt-4 text-[15px] leading-6 text-neutral-700">
-            Moggern krever innlogging for å bruke kameraet, slik at bare kjente brukere kan delta i kameraduellen. Når du har logget inn, kommer du
-            rett tilbake til rom <strong className="font-semibold tracking-[0.12em] text-neutral-950">{kode}</strong>.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-2.5">
-            <Link href={`/logg-inn?neste=${neste}`} className={MKNAPP}>
-              Logg inn og bli med
-            </Link>
-            <Link href={`/registrer?neste=${neste}`} className={MKNAPP_SEKUNDAR}>
-              Opprett konto
-            </Link>
-          </div>
-        </section>
-        <SlikRegnesDet />
-      </div>
-    )
-  }
-
   return <AktivtMoggernRom kode={kode} bruker={bruker} supabaseUrl={supabaseUrl} supabaseNokkel={supabaseNokkel} />
 }
 
@@ -251,7 +220,7 @@ function AktivtMoggernRom({
   supabaseNokkel,
 }: {
   kode: string
-  bruker: MoggernBruker
+  bruker: MoggernBruker | null
   supabaseUrl: string
   supabaseNokkel: string
 }) {
@@ -268,7 +237,7 @@ function AktivtMoggernRom({
   const [motstanderKameraPa, setMotstanderKameraPa] = useState(false)
   const [relayAktiv, setRelayAktiv] = useState(false)
   const [forlattVarsel, setForlattVarsel] = useState<string | null>(null)
-  const [mittNavn, setMittNavn] = useState(bruker.visningsnavn)
+  const [mittNavn, setMittNavn] = useState(bruker?.visningsnavn ?? "")
   const fjernRelayLerretRef = useRef<HTMLCanvasElement | null>(null)
   const relayFangLerretRef = useRef<HTMLCanvasElement | null>(null)
   const relayRammeNrRef = useRef(0)
@@ -277,6 +246,15 @@ function AktivtMoggernRom({
   const relayBildeLasterRef = useRef(false)
   const harFjernWebRtcRef = useRef(false)
   useVisningsnavnSynk(setMittNavn)
+
+  useEffect(() => {
+    if (bruker) return
+    try {
+      const lagret = rensNavn(localStorage.getItem("stegern:duell:navn") ?? "")
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (lagret) setMittNavn(lagret)
+    } catch {}
+  }, [bruker])
 
   const hendelser = useMemo(
     () => ({
@@ -407,9 +385,9 @@ function AktivtMoggernRom({
 
   const { status, settStatus, send, meg, erVert, tilkobling, iRommet, klar, settKlar, nyFase, settNavn } = rom
 
-  // Always present the account's (possibly just edited) display name in the duel room presence.
+  // Always present the account's or guest's (possibly just edited) display name in the duel room presence.
   useEffect(() => {
-    settNavn(mittNavn)
+    if (mittNavn) settNavn(mittNavn)
   }, [mittNavn, settNavn])
 
   const aktiveSpillere = useMemo(() => iRommet.slice(0, MOGGERN_MAKS_SPILLERE), [iRommet])
@@ -1691,12 +1669,15 @@ function AktivtMoggernRom({
               <VisningsnavnPille
                 navn={mittNavn}
                 onEndret={setMittNavn}
+                kunLokal={!bruker}
                 etikett="(deg)"
                 ikon={
                   erVert ? (
                     <Crown className="h-3.5 w-3.5 shrink-0 text-amber-300" aria-label="Vert" />
-                  ) : (
+                  ) : bruker ? (
                     <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-400" aria-hidden="true" />
+                  ) : (
+                    <User className="h-3.5 w-3.5 shrink-0 text-white/60" aria-hidden="true" />
                   )
                 }
                 className="max-w-[55%]"
@@ -2039,7 +2020,7 @@ function AktivtMoggernRom({
                   <div className="space-y-1 pt-0.5">
                     <div className="flex items-center justify-between text-[11px] font-semibold tabular-nums">
                       <span className={egenLeder ? "text-lime-300" : "text-white/75"}>
-                        {mittNavn}: {formaterMoggernPoeng(egenLive.total)}
+                        {mittNavn || "Deg"}: {formaterMoggernPoeng(egenLive.total)}
                       </span>
                       <span className={motLeder ? "text-lime-300" : "text-white/75"}>
                         {motNavn}: {formaterMoggernPoeng(motLive.total)}

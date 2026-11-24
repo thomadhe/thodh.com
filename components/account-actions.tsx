@@ -1,8 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import { signOut } from "@/lib/auth/client";
+import { useT } from "@/lib/sprak";
 
 export function AccountActions() {
+  const t = useT();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   useEffect(() => {
@@ -13,5 +15,24 @@ export function AccountActions() {
     window.addEventListener("pageshow", pageShow);
     return () => { channel?.close(); window.removeEventListener("pageshow", pageShow); };
   }, []);
-  return <div className="mt-8"><button disabled={busy} onClick={async () => { setBusy(true); try { await signOut(); } catch { setError("Kunne ikke logge ut. Prøv igjen."); setBusy(false); } }} className="rounded-xl border border-neutral-300 px-5 py-3 text-sm hover:bg-neutral-100 disabled:opacity-50">{busy ? "Logger ut…" : "Logg ut av thodh.com"}</button>{error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}</div>;
+  return (
+    <div className="mt-8">
+      <button
+        disabled={busy}
+        onClick={async () => {
+          setBusy(true);
+          try {
+            await signOut();
+          } catch {
+            setError(t("Kunne ikke logge ut. Prøv igjen.", "Could not sign out. Please try again."));
+            setBusy(false);
+          }
+        }}
+        className="rounded-xl border border-neutral-300 px-5 py-3 text-sm hover:bg-neutral-100 disabled:opacity-50"
+      >
+        {busy ? t("Logger ut…", "Signing out…") : t("Logg ut av thodh.com", "Sign out of thodh.com")}
+      </button>
+      {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
+    </div>
+  );
 }

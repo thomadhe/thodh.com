@@ -2,6 +2,7 @@
 
 import { Check, Loader2, Pencil, X } from "lucide-react"
 import { useEffect, useId, useRef, useState } from "react"
+import { useT } from "@/lib/sprak"
 import { validerVisningsnavn, VISNINGSNAVN_MAKS, type ProfilInfo } from "../lib/sosial"
 
 /** Fired on window after a successful save so every pill on the page shows the new name at once. */
@@ -41,6 +42,7 @@ export function VisningsnavnPille({
   etikett,
   plassering = "under-venstre",
   storrelse = "normal",
+  kunLokal = false,
   className = "",
 }: {
   navn: string | null
@@ -52,8 +54,11 @@ export function VisningsnavnPille({
   /** Where the editor pops up relative to the pill. */
   plassering?: "under-venstre" | "under-hoyre" | "under-midt" | "over-venstre"
   storrelse?: "normal" | "liten"
+  /** When true (unauthenticated guest), saves locally in localStorage instead of POST /spill/api/profil. */
+  kunLokal?: boolean
   className?: string
 }) {
+  const t = useT()
   const [aapen, setAapen] = useState(false)
   const [utkast, setUtkast] = useState("")
   const [lagrer, setLagrer] = useState(false)
@@ -90,6 +95,21 @@ export function VisningsnavnPille({
       setAapen(false)
       return
     }
+    if (kunLokal) {
+      try {
+        localStorage.setItem("stegern:duell:navn", vurdert.navn)
+      } catch {
+        // Ignore storage restrictions.
+      }
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent(VISNINGSNAVN_HENDELSE, { detail: vurdert.navn }))
+      }
+      onEndret?.(vurdert.navn)
+      setAapen(false)
+      setLagretNa(true)
+      window.setTimeout(() => setLagretNa(false), 1600)
+      return
+    }
     setLagrer(true)
     setFeil(null)
     try {
@@ -123,26 +143,26 @@ export function VisningsnavnPille({
         onClick={() => (aapen ? setAapen(false) : aapne())}
         aria-expanded={aapen}
         aria-haspopup="dialog"
-        title="Endre visningsnavn"
+        title={t("Endre visningsnavn", "Change display name")}
         className={`group inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full border border-white/10 bg-[#111214]/70 font-medium text-white backdrop-blur-md transition hover:border-white/25 hover:bg-[#111214]/85 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none ${
           liten ? "h-7 px-2.5 text-[11px]" : "h-8 px-3 text-xs"
         }`}
       >
         {ikon}
-        <span className="truncate">{navn || "Velg visningsnavn"}</span>
+        <span className="truncate">{navn || t("Velg visningsnavn", "Choose display name")}</span>
         {etikett ? <span className="shrink-0 text-white/50">{etikett}</span> : null}
         {lagretNa ? (
           <Check className="h-3.5 w-3.5 shrink-0 text-lime-300" aria-hidden="true" />
         ) : (
           <Pencil className="h-3 w-3 shrink-0 text-white/45 transition group-hover:text-white" aria-hidden="true" />
         )}
-        <span className="sr-only">– endre visningsnavn</span>
+        <span className="sr-only">{t("– endre visningsnavn", "— change display name")}</span>
       </button>
 
       {aapen ? (
         <div
           role="dialog"
-          aria-label="Endre visningsnavn"
+          aria-label={t("Endre visningsnavn", "Change display name")}
           className={`absolute z-50 w-[min(19rem,calc(100vw-2rem))] rounded-[22px] border border-white/[0.09] bg-[#1d1f22]/95 p-3 text-white shadow-[0_18px_48px_rgb(0_0_0/0.45)] backdrop-blur-xl ${posisjon}`}
         >
           <form
@@ -153,7 +173,7 @@ export function VisningsnavnPille({
             className="flex flex-col gap-2"
           >
             <label htmlFor={feltId} className="px-1 text-[11px] font-medium tracking-wide text-white/55">
-              Visningsnavn
+              {t("Visningsnavn", "Display name")}
             </label>
             <div className="flex items-center gap-1.5">
               <input
@@ -173,14 +193,14 @@ export function VisningsnavnPille({
                 maxLength={VISNINGSNAVN_MAKS}
                 autoComplete="nickname"
                 spellCheck={false}
-                placeholder="f.eks. Tommogger"
+                placeholder={t("f.eks. Tommogger", "e.g. Gigachad")}
                 aria-invalid={!!feil}
                 className="h-10 min-w-0 flex-1 rounded-full border border-white/12 bg-[#111214] px-3.5 text-sm text-white outline-none placeholder:text-white/30 focus:border-white/40"
               />
               <button
                 type="submit"
                 disabled={lagrer || !gyldigUtkast}
-                aria-label="Lagre visningsnavn"
+                aria-label={t("Lagre visningsnavn", "Save display name")}
                 className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f4f4f5] text-[#18191b] transition hover:bg-white disabled:opacity-35"
               >
                 {lagrer ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
@@ -188,14 +208,23 @@ export function VisningsnavnPille({
               <button
                 type="button"
                 onClick={() => setAapen(false)}
-                aria-label="Avbryt"
+                aria-label={t("Avbryt", "Cancel")}
                 className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-white/60 transition hover:bg-white/10 hover:text-white"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
             <p className={`px-1 text-[11px] leading-4 ${feil ? "text-rose-300" : "text-white/40"}`}>
-              {feil ?? `2–${VISNINGSNAVN_MAKS} tegn. Vises på ledertavler, i dueller og for venner.`}
+              {feil ??
+                (kunLokal
+                  ? t(
+                      `2–${VISNINGSNAVN_MAKS} tegn. Lagres lokalt i nettleseren din.`,
+                      `2–${VISNINGSNAVN_MAKS} characters. Saved locally in your browser.`,
+                    )
+                  : t(
+                      `2–${VISNINGSNAVN_MAKS} tegn. Vises på ledertavler, i dueller og for venner.`,
+                      `2–${VISNINGSNAVN_MAKS} characters. Shown on leaderboards, duels, and to friends.`,
+                    ))}
             </p>
           </form>
         </div>

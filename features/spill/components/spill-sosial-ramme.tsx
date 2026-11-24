@@ -3,6 +3,8 @@
 import { Check, Copy, History, LogIn, Swords, Trophy, User, Users } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState, type ReactNode } from "react"
+import { SprakKnapp } from "@/components/sprak-knapp"
+import { useT } from "@/lib/sprak"
 import { synkLokaleResultater } from "../lib/resultat-klient"
 import { VISNINGSNAVN_MAKS, VISNINGSNAVN_MIN, type ProfilInfo } from "../lib/sosial"
 import { useUtfordringerSynk } from "../lib/utfordring-varsel"
@@ -11,15 +13,16 @@ import { useVisningsnavnSynk, VISNINGSNAVN_HENDELSE, VisningsnavnPille } from ".
 
 export type AktivFane = "spill" | "historikk" | "ledertavle" | "venner" | "dueller"
 
-const FANER: { id: AktivFane; href: string; navn: string; Ikon: typeof Trophy }[] = [
-  { id: "historikk", href: "/spill/historikk", navn: "Historikk", Ikon: History },
-  { id: "ledertavle", href: "/spill/ledertavle", navn: "Ledertavle", Ikon: Trophy },
-  { id: "venner", href: "/spill/venner", navn: "Venner", Ikon: Users },
-  { id: "dueller", href: "/spill/dueller", navn: "Dueller", Ikon: Swords },
+const FANER: { id: AktivFane; href: string; navn: string; navnEn: string; Ikon: typeof Trophy }[] = [
+  { id: "historikk", href: "/spill/historikk", navn: "Historikk", navnEn: "History", Ikon: History },
+  { id: "ledertavle", href: "/spill/ledertavle", navn: "Ledertavle", navnEn: "Leaderboard", Ikon: Trophy },
+  { id: "venner", href: "/spill/venner", navn: "Venner", navnEn: "Friends", Ikon: Users },
+  { id: "dueller", href: "/spill/dueller", navn: "Dueller", navnEn: "Duels", Ikon: Swords },
 ]
 
 /** Compact navigation pill bar shown on /spill and all social spill pages, with live friend-request and challenge badges. */
 export function SpillSosialNav({ aktiv }: { aktiv: AktivFane }) {
+  const t = useT()
   const [ventende, setVentende] = useState(0)
   const [vennerVentende, setVennerVentende] = useState(0)
   const [innlogget, setInnlogget] = useState<boolean | null>(null)
@@ -59,11 +62,14 @@ export function SpillSosialNav({ aktiv }: { aktiv: AktivFane }) {
   }, [aktiv])
 
   return (
-    <nav aria-label="Spillmeny" className="flex flex-wrap items-center justify-center gap-2">
-      {FANER.map(({ id, href, navn, Ikon }) => {
+    <nav aria-label={t("Spillmeny", "Games menu")} className="flex flex-wrap items-center justify-center gap-2">
+      {FANER.map(({ id, href, navn, navnEn, Ikon }) => {
         const valgt = aktiv === id
         const merke = id === "dueller" ? ventende : id === "venner" ? vennerVentende : 0
-        const merkeTekst = id === "dueller" ? `${merke} ventende utfordringer` : `${merke} ventende venneforespørsler`
+        const merkeTekst =
+          id === "dueller"
+            ? t(`${merke} ventende utfordringer`, `${merke} pending challenges`)
+            : t(`${merke} ventende venneforespørsler`, `${merke} pending friend requests`)
         return (
           <Link
             key={id}
@@ -76,7 +82,7 @@ export function SpillSosialNav({ aktiv }: { aktiv: AktivFane }) {
             }`}
           >
             <Ikon className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>{navn}</span>
+            <span>{t(navn, navnEn)}</span>
             {merke > 0 ? (
               <span
                 className="ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 font-mono text-[10px] font-bold text-white"
@@ -101,7 +107,7 @@ export function SpillSosialNav({ aktiv }: { aktiv: AktivFane }) {
             href="/konto"
             className="inline-flex h-8 items-center rounded-full px-2.5 text-xs font-medium text-neutral-400 transition hover:bg-white/[0.06] hover:text-white"
           >
-            Konto
+            {t("Konto", "Account")}
           </Link>
         </>
       ) : innlogget === false ? (
@@ -110,7 +116,7 @@ export function SpillSosialNav({ aktiv }: { aktiv: AktivFane }) {
           className="inline-flex h-8 items-center gap-1.5 rounded-full border border-white/15 bg-[#26282c] px-3.5 text-xs font-medium text-neutral-200 transition hover:border-white/30 hover:text-white"
         >
           <LogIn className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>Logg inn</span>
+          <span>{t("Logg inn", "Sign in")}</span>
         </Link>
       ) : null}
     </nav>
@@ -121,37 +127,49 @@ export function SpillSosialNav({ aktiv }: { aktiv: AktivFane }) {
 export function SpillSosialSide({
   aktiv,
   tittel,
+  tittelEn,
   undertittel,
+  undertittelEn,
   children,
 }: {
   aktiv: AktivFane
   tittel: string
+  tittelEn?: string
   undertittel: string
+  undertittelEn?: string
   children: ReactNode
 }) {
+  const t = useT()
   return (
     <div
       className={`${visningsskrift.variable} ${spillskrift.className} min-h-dvh bg-[#18191b] bg-[radial-gradient(rgb(255_255_255/0.035)_1px,transparent_1px)] bg-[length:22px_22px] text-neutral-100`}
     >
       <div className="mx-auto flex min-h-dvh w-full max-w-4xl flex-col px-4 sm:px-8">
-        <header className="flex h-16 items-center justify-between sm:h-20">
+        <header className="flex h-16 items-center justify-between gap-2 sm:h-20">
           <Link
             href="/spill"
             className="inline-flex h-8 items-center rounded-full px-3 text-xs font-medium text-neutral-400 transition hover:bg-white/[0.06] hover:text-white"
           >
-            ← Alle spill
+            {t("← Alle spill", "← All games")}
           </Link>
-          <Link
-            href="/"
-            className="inline-flex h-8 items-center rounded-full px-3 text-xs font-medium text-neutral-500 transition hover:bg-white/[0.06] hover:text-white"
-          >
-            thodh.com
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className="inline-flex h-8 items-center rounded-full px-3 text-xs font-medium text-neutral-500 transition hover:bg-white/[0.06] hover:text-white"
+            >
+              thodh.com
+            </Link>
+            <SprakKnapp variant="mork" />
+          </div>
         </header>
         <main className="flex flex-1 flex-col gap-7 pt-2 pb-16">
           <div className="text-center">
-            <h1 className="text-[2.1rem] leading-[1.05] font-semibold tracking-[-0.035em] text-neutral-50 sm:text-[2.9rem]">{tittel}</h1>
-            <p className="mx-auto mt-2.5 max-w-md text-[15px] leading-6 text-neutral-400">{undertittel}</p>
+            <h1 className="text-[2.1rem] leading-[1.05] font-semibold tracking-[-0.035em] text-neutral-50 sm:text-[2.9rem]">
+              {t(tittel, tittelEn ?? tittel)}
+            </h1>
+            <p className="mx-auto mt-2.5 max-w-md text-[15px] leading-6 text-neutral-400">
+              {t(undertittel, undertittelEn ?? undertittel)}
+            </p>
           </div>
           <SpillSosialNav aktiv={aktiv} />
           {children}
@@ -162,24 +180,37 @@ export function SpillSosialSide({
 }
 
 /** Graceful logged-out prompt for social pages. */
-export function LoggInnKort({ neste, tittel, tekst }: { neste: string; tittel: string; tekst: string }) {
+export function LoggInnKort({
+  neste,
+  tittel,
+  tittelEn,
+  tekst,
+  tekstEn,
+}: {
+  neste: string
+  tittel: string
+  tittelEn?: string
+  tekst: string
+  tekstEn?: string
+}) {
+  const t = useT()
   const qp = `?neste=${encodeURIComponent(neste)}`
   return (
     <section className="mx-auto w-full max-w-lg rounded-[28px] border border-white/[0.07] bg-[#26282c] p-6 text-center sm:p-8">
-      <h2 className="text-xl font-semibold tracking-[-0.02em] text-neutral-50">{tittel}</h2>
-      <p className="mt-2 text-sm leading-6 text-neutral-400">{tekst}</p>
+      <h2 className="text-xl font-semibold tracking-[-0.02em] text-neutral-50">{t(tittel, tittelEn ?? tittel)}</h2>
+      <p className="mt-2 text-sm leading-6 text-neutral-400">{t(tekst, tekstEn ?? tekst)}</p>
       <div className="mt-5 flex flex-wrap justify-center gap-2.5">
         <Link
           href={`/logg-inn${qp}`}
           className="inline-flex h-11 items-center justify-center rounded-full bg-neutral-100 px-6 text-sm font-semibold text-[#18191b] transition hover:bg-white active:scale-[0.98]"
         >
-          Logg inn
+          {t("Logg inn", "Sign in")}
         </Link>
         <Link
           href={`/registrer${qp}`}
           className="inline-flex h-11 items-center justify-center rounded-full border border-white/15 px-6 text-sm font-medium text-neutral-200 transition hover:border-white/30 hover:bg-white/[0.06]"
         >
-          Lag konto
+          {t("Lag konto", "Create account")}
         </Link>
       </div>
     </section>
@@ -198,6 +229,7 @@ export function VisningsnavnSkjema({
   tema?: "mork" | "lys"
   visKode?: boolean
 }) {
+  const t = useT()
   const [utkast, setUtkast] = useState<string | null>(null)
   const navn = utkast ?? profil?.visningsnavn ?? ""
   const [lagrer, setLagrer] = useState(false)
@@ -218,11 +250,11 @@ export function VisningsnavnSkjema({
       })
       const data = (await svar.json().catch(() => ({}))) as { profil?: ProfilInfo; melding?: string }
       if (!svar.ok || !data.profil) {
-        setFeil(data.melding ?? "Klarte ikke å lagre visningsnavnet.")
+        setFeil(data.melding ?? t("Klarte ikke å lagre visningsnavnet.", "Could not save display name."))
         return
       }
       setUtkast(null)
-      setMelding("Lagret!")
+      setMelding(t("Lagret!", "Saved!"))
       if (data.profil.visningsnavn) {
         window.dispatchEvent(new CustomEvent(VISNINGSNAVN_HENDELSE, { detail: data.profil.visningsnavn }))
       }
@@ -236,7 +268,7 @@ export function VisningsnavnSkjema({
       }
       onLagret?.(data.profil)
     } catch {
-      setFeil("Nettverksfeil. Prøv igjen.")
+      setFeil(t("Nettverksfeil. Prøv igjen.", "Network error. Please try again."))
     } finally {
       setLagrer(false)
     }
@@ -266,8 +298,8 @@ export function VisningsnavnSkjema({
           }}
           minLength={VISNINGSNAVN_MIN}
           maxLength={VISNINGSNAVN_MAKS}
-          placeholder="Velg et visningsnavn (f.eks. Ola)"
-          aria-label="Visningsnavn"
+          placeholder={t("Velg et visningsnavn (f.eks. Ola)", "Choose a display name (e.g. Alex)")}
+          aria-label={t("Visningsnavn", "Display name")}
           className={`h-10 min-w-0 flex-1 rounded-full border px-4 text-sm outline-none transition ${
             lys
               ? "border-neutral-300 bg-white text-neutral-900 placeholder:text-neutral-400 focus:border-neutral-900"
@@ -281,7 +313,7 @@ export function VisningsnavnSkjema({
             lys ? "bg-neutral-900 text-white hover:bg-neutral-800" : "bg-neutral-100 text-[#18191b] hover:bg-white"
           }`}
         >
-          {lagrer ? "Lagrer…" : profil?.visningsnavn ? "Oppdater" : "Lagre navn"}
+          {lagrer ? t("Lagrer…", "Saving…") : profil?.visningsnavn ? t("Oppdater", "Update") : t("Lagre navn", "Save name")}
         </button>
       </form>
       {feil ? <p className={`text-xs ${lys ? "text-rose-600" : "text-rose-400"}`}>{feil}</p> : null}
@@ -293,7 +325,7 @@ export function VisningsnavnSkjema({
           }`}
         >
           <span>
-            Din vennekode:{" "}
+            {t("Din vennekode:", "Your friend code:")}{" "}
             <strong className={`font-mono text-sm tracking-widest ${lys ? "text-neutral-950" : "text-white"}`}>
               {profil.vennekode}
             </strong>
@@ -306,7 +338,7 @@ export function VisningsnavnSkjema({
             }`}
           >
             {kopiert ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-            {kopiert ? "Kopiert" : "Kopier kode"}
+            {kopiert ? t("Kopiert", "Copied") : t("Kopier kode", "Copy code")}
           </button>
         </div>
       ) : null}

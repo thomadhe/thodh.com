@@ -32,8 +32,8 @@ export function velgDato(onsket: string | string[] | undefined, iDag = iDagOslo(
   return typeof onsket === "string" && kanSpilles(onsket, iDag) ? onsket : iDag
 }
 
-export function formaterDato(dato: string, stil: "lang" | "kort" = "lang") {
-  return new Intl.DateTimeFormat("nb-NO", {
+export function formaterDato(dato: string, stil: "lang" | "kort" = "lang", sprak: "no" | "en" = "no") {
+  return new Intl.DateTimeFormat(sprak === "en" ? "en-GB" : "nb-NO", {
     timeZone: "UTC",
     ...(stil === "lang"
       ? { weekday: "long", day: "numeric", month: "long" }

@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SprakSynk } from "@/components/sprak-knapp";
 import { UtfordringVarsler } from "@/features/spill/components/utfordring-varsler";
 import { supabaseConfig } from "@/lib/supabase/config";
 import "./globals.css";
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background font-sans text-foreground">
+        <SprakSynk />
         {children}
         <UtfordringVarsler supabaseUrl={url} supabaseNokkel={key} />
         {/* Cookie-free visitor counts (Vercel Web Analytics), to see how many play each day. */}

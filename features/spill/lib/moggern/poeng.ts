@@ -46,63 +46,79 @@ export type DelpoengKart = Record<DelpoengId, number>
 export type DelpoengInfo = {
   id: DelpoengId
   navn: string
+  navnEn: string
   vekt: number
   kortForklaring: string
+  kortForklaringEn: string
 }
 
 export const DELPOENG_LISTE: readonly DelpoengInfo[] = [
   {
     id: "kjevelinje",
     navn: "Kjevelinje",
-    vekt: 0.22,
+    navnEn: "Jawline",
+    vekt: 0.24,
     kortForklaring: "Kjeve-/kinnbensbredde, ekte 3D-kjevevinkel (tragion → gonion → hake) og skarp kjevekontur.",
+    kortForklaringEn: "Jaw-to-cheekbone width, true 3D gonial angle (tragion → gonion → chin), and crisp jaw contour.",
   },
   {
     id: "symmetri",
     navn: "Symmetri",
-    vekt: 0.2,
+    navnEn: "Symmetry",
+    vekt: 0.21,
     kortForklaring: "16 speilte punktpar rundt midtlinjen — vektet tyngst på øyne, kinnben og kjeve.",
+    kortForklaringEn: "16 mirrored landmark pairs across the midline — weighted heaviest on eyes, cheekbones, and jaw.",
   },
   {
     id: "oyevinkel",
     navn: "Øyevinkel",
-    vekt: 0.18,
+    navnEn: "Canthal tilt",
+    vekt: 0.2,
     kortForklaring: "Øyekrok-tilt i grader pluss øyeform (PFR = øyebredde / øyehøyde — mandelform slår runde øyne).",
+    kortForklaringEn: "Eye corner tilt in degrees plus eye shape (PFR = eye width / height — almond beats round).",
   },
   {
     id: "midtansikt",
     navn: "Midtansikt",
+    navnEn: "Midface",
     vekt: 0.14,
     kortForklaring: "Pupillavstand mot øye-til-overleppe og fWHR (kinnbensbredde / bryn-til-overleppe).",
-  },
-  {
-    id: "oyeavstand",
-    navn: "Øyeavstand",
-    vekt: 0.1,
-    kortForklaring: "ESR (pupillavstand / ansiktsbredde, ideelt ~0,45–0,47) og ansiktets femtedeler.",
+    kortForklaringEn: "Interpupillary distance vs. eye-to-lip height and fWHR (cheekbone width / brow-to-lip).",
   },
   {
     id: "harmoni",
     navn: "Harmoni",
+    navnEn: "Harmony",
     vekt: 0.09,
     kortForklaring: "Gyllent snitt munn/nese (φ ≈ 1,618), nese mot øyeavstand, leppeforhold og jevne delpoeng.",
+    kortForklaringEn: "Golden ratio mouth/nose (φ ≈ 1.618), nose-to-eye spacing, lip ratio, and balanced sub-scores.",
   },
   {
     id: "ansiktstredjedeler",
     navn: "Ansiktstredjedeler",
+    navnEn: "Facial thirds",
     vekt: 0.07,
     kortForklaring: "Balanse mellom midtansikt, hake og filtrum — robust mot caps og pannelugg.",
+    kortForklaringEn: "Balance across midface, chin, and philtrum — cap- and bangs-resistant.",
+  },
+  {
+    id: "oyeavstand",
+    navn: "Øyeavstand",
+    navnEn: "Eye spacing",
+    vekt: 0.05,
+    kortForklaring: "ESR (pupillavstand / ansiktsbredde) og ansiktets femtedeler.",
+    kortForklaringEn: "ESR (eye distance / face width) and rule of facial fifths.",
   },
 ] as const
 
 export const DELPOENG_VEKTER: Record<DelpoengId, number> = {
-  kjevelinje: 0.22,
-  symmetri: 0.2,
-  oyevinkel: 0.18,
+  kjevelinje: 0.24,
+  symmetri: 0.21,
+  oyevinkel: 0.2,
   midtansikt: 0.14,
-  oyeavstand: 0.1,
   harmoni: 0.09,
   ansiktstredjedeler: 0.07,
+  oyeavstand: 0.05,
 }
 
 /** Pose & framing gates for counting a frame as valid during the official duel (3D-compensated up to ~30°). */
@@ -215,25 +231,27 @@ export type MogUttrykkId =
 export type MogUttrykkInfo = {
   id: MogUttrykkId
   navn: string
+  navnEn: string
   /** Individual raw weight (positive = bonus, negative = penalty) before diminishing-returns curve. */
   maks: number
   /** Ramp start (signal where the effect begins) and end (signal where it is maxed out). */
   fra: number
   til: number
   forklaring: string
+  forklaringEn: string
 }
 
 export const MOG_UTTRYKK: readonly MogUttrykkInfo[] = [
-  { id: "the-rock", navn: "The Rock", maks: 0.55, fra: 0.28, til: 0.62, forklaring: "Ett øyenbryn hevet, det andre rolig." },
-  { id: "jegeroyne", navn: "Jegerøyne", maks: 0.45, fra: 0.4, til: 0.74, forklaring: "Stram myse uten å blunke eller lage grimase." },
-  { id: "innsugde-kinn", navn: "Innsugde kinn", maks: 0.4, fra: 0.44, til: 0.8, forklaring: "Blue steel: sug inn kinnene med lukket munn." },
-  { id: "mewing", navn: "Mewing", maks: 0.35, fra: 0.36, til: 0.68, forklaring: "Kjeven fram eller leppene stramt lukket." },
-  { id: "smiler", navn: "Smiler", maks: -0.9, fra: 0.28, til: 0.72, forklaring: "Ekte moggere gliser ikke i kameraet!" },
-  { id: "oppblaste-kinn", navn: "Ballongkinn", maks: -1.3, fra: 0.22, til: 0.6, forklaring: "Oppblåste kinn myker opp kjevelinja." },
-  { id: "munn-puster", navn: "Munn-puster", maks: -1.6, fra: 0.18, til: 0.58, forklaring: "Lukk munnen — åpen kjeve er anti-mewing." },
-  { id: "grimase", navn: "Grimase", maks: -1.9, fra: 0.24, til: 0.64, forklaring: "Skjev munn, rynket nese eller rar grimase trekker ned." },
-  { id: "bytteoyne", navn: "Bytteøyne", maks: -1.3, fra: 0.26, til: 0.64, forklaring: "Kuleøyne gir panikk-aura." },
-  { id: "sur-geip", navn: "Sur geip", maks: -1.1, fra: 0.28, til: 0.68, forklaring: "Nedovermunn og sur geip koster poeng." },
+  { id: "the-rock", navn: "The Rock", navnEn: "The Rock", maks: 0.55, fra: 0.28, til: 0.62, forklaring: "Ett øyenbryn hevet, det andre rolig.", forklaringEn: "One eyebrow raised, the other calm." },
+  { id: "jegeroyne", navn: "Jegerøyne", navnEn: "Hunter Eyes", maks: 0.45, fra: 0.4, til: 0.74, forklaring: "Stram myse uten å blunke eller lage grimase.", forklaringEn: "Tight squint without blinking or grimacing." },
+  { id: "innsugde-kinn", navn: "Innsugde kinn", navnEn: "Blue Steel", maks: 0.4, fra: 0.44, til: 0.8, forklaring: "Blue steel: sug inn kinnene med lukket munn.", forklaringEn: "Blue Steel: suck in your cheeks with mouth closed." },
+  { id: "mewing", navn: "Mewing", navnEn: "Mewing", maks: 0.35, fra: 0.36, til: 0.68, forklaring: "Kjeven fram eller leppene stramt lukket.", forklaringEn: "Jaw forward or lips firmly pressed closed." },
+  { id: "smiler", navn: "Smiler", navnEn: "Smiling", maks: -0.9, fra: 0.28, til: 0.72, forklaring: "Ekte moggere gliser ikke i kameraet!", forklaringEn: "Real moggers don't grin at the camera!" },
+  { id: "oppblaste-kinn", navn: "Ballongkinn", navnEn: "Puffed Cheeks", maks: -1.3, fra: 0.22, til: 0.6, forklaring: "Oppblåste kinn myker opp kjevelinja.", forklaringEn: "Puffed cheeks soften your jawline." },
+  { id: "munn-puster", navn: "Munn-puster", navnEn: "Mouth Breather", maks: -1.6, fra: 0.18, til: 0.58, forklaring: "Lukk munnen — åpen kjeve er anti-mewing.", forklaringEn: "Close your mouth — an open jaw is anti-mewing." },
+  { id: "grimase", navn: "Grimase", navnEn: "Grimace", maks: -1.9, fra: 0.24, til: 0.64, forklaring: "Skjev munn, rynket nese eller rar grimase trekker ned.", forklaringEn: "Twisted mouth, nose scrunch, or weird faces tank your score." },
+  { id: "bytteoyne", navn: "Bytteøyne", navnEn: "Prey Eyes", maks: -1.3, fra: 0.26, til: 0.64, forklaring: "Kuleøyne gir panikk-aura.", forklaringEn: "Wide deer-in-headlights eyes give panic aura." },
+  { id: "sur-geip", navn: "Sur geip", navnEn: "Frowning", maks: -1.1, fra: 0.28, til: 0.68, forklaring: "Nedovermunn og sur geip koster poeng.", forklaringEn: "Downturned mouth and frowning cost points." },
 ] as const
 
 export type MogUttrykkStyrker = Record<MogUttrykkId, number>
@@ -890,15 +908,15 @@ export function vurderRamme(
   const restVekt = 1 - panneVekt
   const ansiktstredjedeler = panneVekt * tredjedelPoeng + restVekt * (0.55 * midtNedrePoeng + 0.45 * hakeFiltrumPoeng)
 
-  // 6. ØYEAVSTAND: Eye Separation Ratio + facial fifths (intercanthal ≈ eye width ≈ 1/5 face width).
+  // 6. ØYEAVSTAND: Eye Separation Ratio + facial fifths (calibrated for MediaPipe's ear-contour 234/454 and inner/outer corners).
   const esr = beregnESR(1, kinnBredde) // IPD is 1 in canonical coordinates.
   const indreAvstand = Math.abs(lIndre.x - rIndre.x)
   const snittOyeBredde = Math.max(1e-5, (avstand2D(rYtre, rIndre) + avstand2D(lYtre, lIndre)) / 2)
   const oyeFemtedel = indreAvstand / snittOyeBredde
   const oyeAnsiktBredde = snittOyeBredde / kinnBredde
-  const esrPoeng = asymPlateauScore(esr, 0.453, 0.467, 0.015, 0.015)
-  const femtedelPoeng = asymPlateauScore(oyeFemtedel, 1.0, 1.08, 0.09, 0.12)
-  const breddePoeng = asymPlateauScore(oyeAnsiktBredde, 0.208, 0.224, 0.016, 0.018)
+  const esrPoeng = asymPlateauScore(esr, 0.445, 0.475, 0.025, 0.025)
+  const femtedelPoeng = asymPlateauScore(oyeFemtedel, 0.98, 1.14, 0.13, 0.17)
+  const breddePoeng = asymPlateauScore(oyeAnsiktBredde, 0.195, 0.225, 0.022, 0.024)
   const oyeavstand = 0.4 * esrPoeng + 0.35 * femtedelPoeng + 0.25 * breddePoeng
 
   // 7. HARMONI: golden-ratio mouth/nose width, nose/intercanthal ratio, lower/upper lip ratio + sub-score balance.
@@ -1083,13 +1101,15 @@ export function svakesteDelpoeng(delpoeng: DelpoengKart): DelpoengId[] {
   return [...DELPOENG_LISTE].sort((a, b) => delpoeng[a.id] - delpoeng[b.id]).map((d) => d.id)
 }
 
-/** Formats a 0–10 score with Norwegian decimal comma (e.g. "7,4"). */
-export function formaterMoggernPoeng(poeng: number): string {
-  return poeng.toFixed(1).replace(".", ",")
+/** Formats a 0–10 score with decimal comma in Norwegian ("7,4") or dot in English ("7.4"). */
+export function formaterMoggernPoeng(poeng: number, sprak: "no" | "en" = "no"): string {
+  const s = poeng.toFixed(1)
+  return sprak === "en" ? s : s.replace(".", ",")
 }
 
-/** Formats a signed bonus with Norwegian decimal comma (e.g. "+0,9", "−0,4"). */
-export function formaterBonus(bonus: number): string {
-  const tekst = Math.abs(bonus).toFixed(1).replace(".", ",")
+/** Formats a signed bonus with decimal comma in Norwegian ("+0,9") or dot in English ("+0.9"). */
+export function formaterBonus(bonus: number, sprak: "no" | "en" = "no"): string {
+  const s = Math.abs(bonus).toFixed(1)
+  const tekst = sprak === "en" ? s : s.replace(".", ",")
   return bonus < 0 ? `−${tekst}` : `+${tekst}`
 }

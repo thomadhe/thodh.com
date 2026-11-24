@@ -1,4 +1,7 @@
+"use client"
+
 import { CONTACT_EMAIL } from "@/lib/projects"
+import { useT } from "@/lib/sprak"
 
 function MailIcon() {
   return (
@@ -19,6 +22,7 @@ function MailIcon() {
 }
 
 export function ContactButton({ className = "" }: { className?: string }) {
+  const t = useT()
   const href = `mailto:${CONTACT_EMAIL}`
 
   return (
@@ -28,7 +32,7 @@ export function ContactButton({ className = "" }: { className?: string }) {
         className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-neutral-950 text-sm font-medium text-white transition-colors hover:bg-neutral-800"
       >
         <MailIcon />
-        Kontakt meg
+        {t("Kontakt meg", "Contact me")}
       </a>
       <a
         href={href}

@@ -48,7 +48,6 @@ export const config = {
     "/sjakk/api/apninger",
     "/spill/moggern",
     "/spill/moggern/:path*",
-    "/spill/api/moggern/:path*",
     "/spill/historikk",
     "/spill/ledertavle",
     "/spill/venner",

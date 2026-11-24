@@ -2,14 +2,18 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import { useSprak, useT, type Sprak } from "@/lib/sprak"
 import { START_DATO, iDagOslo } from "../lib/dag"
 import { useAlleResultater, type Resultat } from "../lib/lagring"
-import { spill, type SpillId } from "../lib/spill"
+import { spill, spillTekst, type SpillId } from "../lib/spill"
 
-const UKEDAGER = ["Ma", "Ti", "On", "To", "Fr", "Lø", "Sø"]
+const UKEDAGER: Record<Sprak, readonly string[]> = {
+  no: ["Ma", "Ti", "On", "To", "Fr", "Lø", "Sø"],
+  en: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+}
 
-function maanedNavn(aar: number, maaned: number) {
-  return new Intl.DateTimeFormat("nb-NO", { month: "long", year: "numeric", timeZone: "UTC" }).format(
+function maanedNavn(aar: number, maaned: number, sprak: Sprak) {
+  return new Intl.DateTimeFormat(sprak === "en" ? "en-GB" : "nb-NO", { month: "long", year: "numeric", timeZone: "UTC" }).format(
     new Date(Date.UTC(aar, maaned, 1)),
   )
 }
@@ -33,6 +37,8 @@ const prikk: Record<Resultat["status"], string> = {
  * with several games (the /spill hub) each day shows one dot per game.
  */
 export function Kalender({ spillIder, href, valgt }: { spillIder: SpillId[]; href: string; valgt: string }) {
+  const sprak = useSprak()
+  const t = useT()
   const alle = useAlleResultater()
   const enkelt = spillIder.length === 1
   const iDag = iDagOslo()
@@ -73,24 +79,24 @@ export function Kalender({ spillIder, href, valgt }: { spillIder: SpillId[]; hre
           onClick={() => flytt(-1)}
           disabled={denne <= forste}
           className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-500 transition hover:bg-neutral-100 disabled:opacity-30"
-          aria-label="Forrige måned"
+          aria-label={t("Forrige måned", "Previous month")}
         >
           ‹
         </button>
-        <p className="text-sm font-semibold capitalize tracking-tight text-neutral-900">{maanedNavn(aar, maaned)}</p>
+        <p className="text-sm font-semibold capitalize tracking-tight text-neutral-900">{maanedNavn(aar, maaned, sprak)}</p>
         <button
           type="button"
           onClick={() => flytt(1)}
           disabled={denne >= sist}
           className="flex h-8 w-8 items-center justify-center rounded-full text-neutral-500 transition hover:bg-neutral-100 disabled:opacity-30"
-          aria-label="Neste måned"
+          aria-label={t("Neste måned", "Next month")}
         >
           ›
         </button>
       </div>
 
       <div className="mt-3 grid grid-cols-7 gap-1.5 text-center">
-        {UKEDAGER.map((d) => (
+        {UKEDAGER[sprak].map((d) => (
           <span key={d} className="font-mono text-[10px] uppercase tracking-wider text-neutral-400">
             {d}
           </span>
@@ -122,8 +128,10 @@ export function Kalender({ spillIder, href, valgt }: { spillIder: SpillId[]; hre
               title={resultat?.etikett}
               aria-label={
                 enkelt
-                  ? `${dag}. ${resultat?.etikett ?? "Ikke spilt"}`
-                  : `${dag}. ${ferdigeSpill(dato)} av ${aktive(dato).length} spill ferdig`
+                  ? `${dag}. ${resultat?.etikett ?? t("Ikke spilt", "Not played")}`
+                  : sprak === "en"
+                    ? `${dag}. ${ferdigeSpill(dato)} of ${aktive(dato).length} games completed`
+                    : `${dag}. ${ferdigeSpill(dato)} av ${aktive(dato).length} spill ferdig`
               }
               aria-current={erValgt ? "date" : undefined}
               className={`relative flex aspect-square items-center justify-center rounded-xl text-xs font-medium transition ${ring} ${bakgrunn}`}
@@ -146,23 +154,24 @@ export function Kalender({ spillIder, href, valgt }: { spillIder: SpillId[]; hre
 
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[10px] uppercase tracking-wider text-neutral-400">
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-emerald-500" /> Klart
+          <span className="h-2 w-2 rounded-full bg-emerald-500" /> {t("Klart", "Won")}
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-rose-500" /> Bom
+          <span className="h-2 w-2 rounded-full bg-rose-500" /> {t("Bom", "Missed")}
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-neutral-900" /> Ferdig
+          <span className="h-2 w-2 rounded-full bg-neutral-900" /> {t("Ferdig", "Done")}
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-amber-300" /> Påbegynt
+          <span className="h-2 w-2 rounded-full bg-amber-300" /> {t("Påbegynt", "In progress")}
         </span>
-        <span className="ml-auto">{spilte} spilt</span>
+        <span className="ml-auto">{spilte} {t("spilt", "played")}</span>
       </div>
       {!enkelt ? (
         <p className="mt-2 font-mono text-[10px] leading-4 text-neutral-400">
-          Prikkene viser {spill.filter((s) => spillIder.includes(s.id)).map((s) => s.navn).join(", ")} – i den
-          rekkefølgen.
+          {t("Prikkene viser", "Dots show")}{" "}
+          {spill.filter((s) => spillIder.includes(s.id)).map((s) => spillTekst(s, sprak).navn).join(", ")}{" "}
+          {t("– i den rekkefølgen.", "— in that order.")}
         </p>
       ) : null}
     </div>

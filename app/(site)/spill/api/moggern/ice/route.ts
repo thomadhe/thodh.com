@@ -1,20 +1,8 @@
 import { hentIceKonfig } from "@/features/spill/lib/moggern/ice"
-import { createClient } from "@/lib/supabase/server"
 
 const headers = { "Cache-Control": "private, no-store" }
 
 export async function GET() {
-  let innlogget = false
-  try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    innlogget = !!user
-  } catch {
-    innlogget = false
-  }
-
   const konfig = await hentIceKonfig(
     {
       MOGGERN_TURN_URLS: process.env.MOGGERN_TURN_URLS,
@@ -26,7 +14,7 @@ export async function GET() {
       MOGGERN_METERED_DOMAIN: process.env.MOGGERN_METERED_DOMAIN,
       MOGGERN_METERED_API_KEY: process.env.MOGGERN_METERED_API_KEY,
     },
-    innlogget,
+    true,
   )
 
   return Response.json(konfig, { headers })

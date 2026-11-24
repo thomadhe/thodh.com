@@ -248,10 +248,12 @@ export type DuellKortInput = {
   underTittel: string
   spillere: DuellKortSpiller[]
   filnavn: string
+  sprak?: "no" | "en"
 }
 
 /** Short, clean caption paired with the shared PNG card image (no duplicated score dump). */
-export function deleTekstForKort(solo: boolean): string {
+export function deleTekstForKort(solo: boolean, sprak: "no" | "en" = "no"): string {
+  if (sprak === "en") return solo ? "Moggern (Solo test) · thodh.com" : "Moggern · thodh.com"
   return solo ? "Moggern (Solo-test) · thodh.com" : "Moggern · thodh.com"
 }
 
@@ -368,10 +370,11 @@ export async function lagDuellKortBlob(input: DuellKortInput): Promise<Blob | nu
     ctx.textAlign = "left"
 
     let curY = bildeY + 26
+    const sprak = input.sprak ?? "no"
     if (s.erVinner) {
       ctx.fillStyle = "#bef264"
       ctx.font = `700 14px ${font}`
-      ctx.fillText("★ VINNER", infoX, curY)
+      ctx.fillText(sprak === "en" ? "★ WINNER" : "★ VINNER", infoX, curY)
       curY += 34
     } else if (!erSolo) {
       curY += 10
@@ -384,7 +387,7 @@ export async function lagDuellKortBlob(input: DuellKortInput): Promise<Blob | nu
 
     // Score
     const poengY = curY + (erSolo ? 94 : 82)
-    const poengTekst = formaterMoggernPoeng(s.poeng)
+    const poengTekst = formaterMoggernPoeng(s.poeng, sprak)
     ctx.fillStyle = "#ffffff"
     ctx.font = `700 ${erSolo ? 82 : 70}px ${font}`
     ctx.fillText(poengTekst, infoX, poengY)
@@ -394,7 +397,7 @@ export async function lagDuellKortBlob(input: DuellKortInput): Promise<Blob | nu
     ctx.fillText("/ 10", infoX + poengW + 10, poengY)
 
     // Rank pill
-    const rang = rangForPoeng(s.poeng)
+    const rang = rangForPoeng(s.poeng, sprak)
     const farge = RANG_HEX[rang.id] ?? { bg: "#fcd34d", fg: "#18191b" }
     ctx.font = `700 18px ${font}`
     const pillTekstW = ctx.measureText(rang.tittel).width
@@ -413,8 +416,8 @@ export async function lagDuellKortBlob(input: DuellKortInput): Promise<Blob | nu
     if (s.finisherBonus && s.finisherBonus !== 0) {
       const erGull = s.finisherBonus > 0
       const fTekst = erGull
-        ? `🤫 Rizzler ${formaterBonus(s.finisherBonus)}`
-        : `😂 Rizz failed ${formaterBonus(s.finisherBonus)}`
+        ? `🤫 Rizzler ${formaterBonus(s.finisherBonus, sprak)}`
+        : `😂 Rizz failed ${formaterBonus(s.finisherBonus, sprak)}`
       ctx.font = `700 14px ${font}`
       const fW = Math.min(infoMaksW, ctx.measureText(fTekst).width + 22)
       const fY = pillY + pillH + 10
@@ -436,7 +439,8 @@ export async function lagDuellKortBlob(input: DuellKortInput): Promise<Blob | nu
       const bunnMaksW = kortBredde - pad * 2
       ctx.fillStyle = "#fda4af"
       ctx.font = `500 ${erSolo ? 21 : 18}px ${font}`
-      const dLinjer = brytTekst(ctx, `«${s.diss}»`, bunnMaksW, 3)
+      const sitat = sprak === "en" ? `“${s.diss}”` : `«${s.diss}»`
+      const dLinjer = brytTekst(ctx, sitat, bunnMaksW, 3)
       dLinjer.forEach((l, idx) => {
         ctx.fillText(l, x + pad, dissY + idx * (erSolo ? 29 : 25))
       })

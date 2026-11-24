@@ -13,22 +13,26 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let bruker: { id: string; visningsnavn: string } | null = null
+  try {
+    const supabase = await createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
-  let visningsnavn = user ? utledVisningsnavn(user) : ""
-  if (user) {
-    const { data: profil } = await supabase
-      .from("spill_profiler")
-      .select("visningsnavn")
-      .eq("user_id", user.id)
-      .maybeSingle()
-    if (profil?.visningsnavn) visningsnavn = profil.visningsnavn
+    if (user) {
+      let visningsnavn = utledVisningsnavn(user)
+      const { data: profil } = await supabase
+        .from("spill_profiler")
+        .select("visningsnavn")
+        .eq("user_id", user.id)
+        .maybeSingle()
+      if (profil?.visningsnavn) visningsnavn = profil.visningsnavn
+      bruker = { id: user.id, visningsnavn }
+    }
+  } catch {
+    bruker = null
   }
-
-  const bruker = user ? { id: user.id, visningsnavn } : null
 
   return (
     <SpillRamme
@@ -38,7 +42,7 @@ export default async function Page() {
       regler={
         <>
           <p>
-            Kun med venner: lag et privat rom og send lenken eller romkoden (4 bokstaver) til én venn. Du må være innlogget for å slå på kameraet.
+            Kun med venner: lag et privat rom og send lenken eller romkoden (4 bokstaver) til én venn.
           </p>
           <p>
             Videoen går direkte peer-to-peer mellom de to nettleserne, og ansiktsmålingen kjører lokalt med MediaPipe Face Landmarker. Ingenting blir

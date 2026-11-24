@@ -15,9 +15,11 @@ import {
 export type RangTittel = {
   id: string
   tittel: string
+  tittelEn: string
   minPoeng: number
   maksPoeng: number
   linje: string
+  linjeEn: string
   /** Tailwind accent badge classes for the reveal card. */
   farge: string
 }
@@ -31,76 +33,96 @@ export const RANG_TITLER: readonly RangTittel[] = [
   {
     id: "gigamogger",
     tittel: "Gigamogger",
+    tittelEn: "Gigamogger",
     minPoeng: 9.0,
     maksPoeng: 10.0,
     linje: "Kameraet knelte og ba om autograf. Ren statistisk anomalitet.",
+    linjeEn: "The webcam knelt and asked for an autograph. Pure statistical anomaly.",
     farge: "bg-lime-400 text-[#18191b]",
   },
   {
     id: "sheeshern",
     tittel: "Sheeshern",
+    tittelEn: "Certified Mogger",
     minPoeng: 8.0,
     maksPoeng: 8.9,
     linje: "Sheesh. Linsa måtte blunke to ganger for å sjekke om det var filter.",
+    linjeEn: "Sheesh. The lens had to blink twice to make sure there wasn't a filter on.",
     farge: "bg-emerald-400 text-[#18191b]",
   },
   {
     id: "aura-farmer",
     tittel: "Aura-farmer",
+    tittelEn: "Aura Farmer",
     minPoeng: 7.0,
     maksPoeng: 7.9,
     linje: "Høster aura uten å prøve engang. Solid kjeve-til-lys-forhold.",
+    linjeEn: "Farming aura without even trying. Strong jaw-to-lighting ratio.",
     farge: "bg-cyan-400 text-[#18191b]",
   },
   {
     id: "mid-mogger",
     tittel: "Mid-mogger",
+    tittelEn: "Mid-Mogger",
     minPoeng: 6.0,
     maksPoeng: 6.9,
     linje: "Over snittet i vennegjengen, men ikke si opp dagjobben helt ennå.",
+    linjeEn: "Above average in the group chat, but don't quit your day job just yet.",
     farge: "bg-sky-400 text-[#18191b]",
   },
   {
     id: "normie",
     tittel: "Normie",
+    tittelEn: "Normie",
     minPoeng: 5.0,
     maksPoeng: 5.9,
     linje: "Trygg, klassisk, og akkurat midt på treet. Det finnes håp i godt lys.",
+    linjeEn: "Safe, classic, right down the middle. There is hope with better lighting.",
     farge: "bg-amber-300 text-[#18191b]",
   },
   {
     id: "venstredude",
     tittel: "Venstredude",
+    tittelEn: "Sub-5 NPC",
     minPoeng: 4.0,
     maksPoeng: 4.9,
     linje: "Litt skjev vinkel eller litt sliten tirsdag? Vi skylder på webkameraet.",
+    linjeEn: "Awkward angle or rough Tuesday? Let's just blame the webcam.",
     farge: "bg-orange-400 text-[#18191b]",
   },
   {
     id: "chopped",
     tittel: "Chopped",
+    tittelEn: "Chopped",
     minPoeng: 3.0,
     maksPoeng: 3.9,
     linje: "Huff da. Kalkulatoren trenger et øyeblikk for seg selv etter denne runden.",
+    linjeEn: "Oof. The calculator needs a moment alone after that round.",
     farge: "bg-rose-400 text-[#18191b]",
   },
   {
     id: "bjeffern",
     tittel: "Bjeffern",
+    tittelEn: "Cooked Beyond Repair",
     minPoeng: 0.0,
     maksPoeng: 2.9,
     linje: "Voff. Enten gjorde du grimase med vilje, eller så er kameraet montert i gulvet.",
+    linjeEn: "Woof. Either you threw the round with a grimace or your camera is mounted on the floor.",
     farge: "bg-red-500 text-white",
   },
 ] as const
 
 /** Returns the rank title for a 0–10 total score. */
-export function rangForPoeng(poeng: number): RangTittel {
+export function rangForPoeng(poeng: number, sprak: "no" | "en" = "no"): RangTittel {
   const avrundet = Math.round(Math.max(0, Math.min(10, poeng)) * 10) / 10
+  let treff: RangTittel = RANG_TITLER[RANG_TITLER.length - 1]
   for (const r of RANG_TITLER) {
-    if (avrundet >= r.minPoeng) return r
+    if (avrundet >= r.minPoeng) {
+      treff = r
+      break
+    }
   }
-  return RANG_TITLER[RANG_TITLER.length - 1]
+  return sprak === "en" ? { ...treff, tittel: treff.tittelEn, linje: treff.linjeEn } : treff
 }
 
 /** Deterministic FNV-1a 32-bit hash for seeded tips & roast picks. */
@@ -121,13 +143,21 @@ function velgMedFro<T>(liste: readonly T[], fro: string): T {
 export function vinnerLinje(
   spillerA: { navn: string; poeng: number },
   spillerB: { navn: string; poeng: number },
+  sprak: "no" | "en" = "no",
 ): string {
   const diff = Math.round(Math.abs(spillerA.poeng - spillerB.poeng) * 10) / 10
   if (diff < 0.1) {
-    return `Uavgjort! ${spillerA.navn} og ${spillerB.navn} landet på eksakt ${formaterMoggernPoeng(spillerA.poeng)} poeng.`
+    return sprak === "en"
+      ? `Tie! ${spillerA.navn} and ${spillerB.navn} landed on exactly ${formaterMoggernPoeng(spillerA.poeng, "en")} points.`
+      : `Uavgjort! ${spillerA.navn} og ${spillerB.navn} landet på eksakt ${formaterMoggernPoeng(spillerA.poeng)} poeng.`
   }
   const [vinner, taper] = spillerA.poeng > spillerB.poeng ? [spillerA, spillerB] : [spillerB, spillerA]
-  const diffTekst = formaterMoggernPoeng(diff)
+  const diffTekst = formaterMoggernPoeng(diff, sprak)
+  if (sprak === "en") {
+    if (diff >= 2.5) return `${vinner.navn} brutally mogged ${taper.navn} by ${diffTekst} points.`
+    if (diff <= 0.3) return `${vinner.navn} barely edged out and mogged ${taper.navn} by ${diffTekst} points.`
+    return `${vinner.navn} mogged ${taper.navn} by ${diffTekst} points.`
+  }
   if (diff >= 2.5) {
     return `${vinner.navn} total-mogget ${taper.navn} med ${diffTekst} poeng.`
   }
@@ -137,7 +167,7 @@ export function vinnerLinje(
   return `${vinner.navn} mogget ${taper.navn} med ${diffTekst} poeng.`
 }
 
-// ---- Practical tips ("Slik mogger du mer") ----
+// ---- Practical tips ("Slik mogger du mer" / "How to mog harder") ----
 
 const PRAKTISKE_TIPS_PER_DELPOENG: Record<DelpoengId, readonly string[]> = {
   symmetri: [
@@ -177,10 +207,54 @@ const PRAKTISKE_TIPS_PER_DELPOENG: Record<DelpoengId, readonly string[]> = {
   ],
 }
 
+const PRAKTISKE_TIPS_PER_DELPOENG_EN: Record<DelpoengId, readonly string[]> = {
+  symmetri: [
+    "Put your light source straight in front (window or lamp behind the screen) — side light makes faces read as less symmetrical.",
+    "Square your shoulders and neck so your head isn't leaning slightly to one side.",
+    "A relaxed, composed expression gives much steadier symmetry readings than twitching mid-round.",
+  ],
+  oyevinkel: [
+    "Raise your camera to eye level or slightly above — low laptop angles drag canthal tilt down.",
+    "Relax your forehead and look directly into the lens instead of down at the screen.",
+    "Good sleep, hydration, and tidy brows do more for your gaze than any camera trick.",
+  ],
+  kjevelinje: [
+    "Push your chin slightly forward and down toward the lens — classic portrait photographer trick for instant jaw definition.",
+    "Keep your teeth lightly together, tongue on the roof of your mouth, and sit up straight.",
+    "A haircut or beard line that frames the jaw edge makes a huge visual difference.",
+  ],
+  midtansikt: [
+    "Back up to about arm's length from the camera — close wide-angle lenses stretch the midface.",
+    "Place the camera at eye height so the angle doesn't elongate or compress your midface.",
+    "Sleep and water cut puffiness and sharpen midface contrast on camera.",
+  ],
+  ansiktstredjedeler: [
+    "Keep the camera straight at eye level — looking down into a laptop exaggerates the forehead.",
+    "Experiment with how your hair frames your forehead — the right cut balances thirds instantly.",
+    "Frame your whole head comfortably and stay steady so forehead-to-chin proportions read cleanly.",
+  ],
+  oyeavstand: [
+    "Look straight into the actual camera lens during the capture instead of peeking at your opponent.",
+    "Avoid leaning too close to a wide-angle webcam — it distorts eye spacing relative to your cheekbones.",
+    "Keep your head level and centered while the 15-second timer counts down.",
+  ],
+  harmoni: [
+    "Combine straight posture, front lighting, and an eye-level camera — it lifts every single sub-score at once.",
+    "Hold a calm, steady expression throughout the 15 seconds for a cleaner average.",
+    "Simple skincare, plenty of water, and real sleep beat any webcam angle.",
+  ],
+}
+
 const LIVSSTIL_TIPS: readonly string[] = [
   "Hverdagstips: 7–8 timer søvn og et ekstra glass vann gjør overraskende mye for dagsformen foran kamera.",
   "Hverdagstips: Enkel hudpleie (rens + fuktighetskrem) og ryddige bryn/skjeggkant gir umiddelbart skarpere uttrykk.",
   "Hverdagstips: En klipp eller skjeggform som rammer inn kjeven slår alle kameratriks.",
+]
+
+const LIVSSTIL_TIPS_EN: readonly string[] = [
+  "Daily tip: 7–8 hours of sleep and an extra glass of water work wonders on camera.",
+  "Daily tip: Basic skincare (cleanser + moisturizer) and clean brows/jawline edges instantly sharpen your look.",
+  "Daily tip: A haircut or beard trim that frames the jaw beats every camera hack.",
 ]
 
 const KVALITET_TIPS = {
@@ -189,6 +263,14 @@ const KVALITET_TIPS = {
   forLangtUnna: "Fyll mer av bildet neste gang — sitt omtrent én armlengde fra kameraet.",
   forNaerme: "Sitt litt lenger unna kameraet (armlengde) så vidvinkelen ikke forvrenger proporsjonene.",
   ustabil: "Hold hodet helt rolig og se rett i linsa gjennom alle 15 sekundene for jevnere måling.",
+} as const
+
+const KVALITET_TIPS_EN = {
+  overeksponert: "Dial down the brightness or step away from harsh backlight so the image isn't washed out.",
+  undereksponert: "Turn on a lamp in front of you or face a window — the camera needs front light to read cleanly.",
+  forLangtUnna: "Fill more of the frame next time — sit roughly one arm's length from the camera.",
+  forNaerme: "Sit a little further back (arm's length) so wide-angle distortion doesn't warp your proportions.",
+  ustabil: "Keep your head steady and look straight into the lens for the full 15 seconds.",
 } as const
 
 // ---- Expression verdict summary ----
@@ -243,11 +325,57 @@ const UTTRYKK_DOM_TEKSTER: Record<MogUttrykkId, { sterk: string; middels: string
   },
 }
 
+const UTTRYKK_DOM_TEKSTER_EN: Record<MogUttrykkId, { sterk: string; middels: string }> = {
+  "the-rock": {
+    sterk: "Held the People's Eyebrow for almost the entire round.",
+    middels: "Flashed a solid 'The Rock' eyebrow mid-round.",
+  },
+  jegeroyne: {
+    sterk: "Locked in Hunter Eyes for most of the round — ice-cold focus.",
+    middels: "Squeezed in solid Hunter Eyes seconds along the way.",
+  },
+  "innsugde-kinn": {
+    sterk: "Full Blue Steel cheek-suck from start to finish.",
+    middels: "Snuck in a little Blue Steel for extra points.",
+  },
+  mewing: {
+    sterk: "Mewed with monk-like discipline all the way through.",
+    middels: "Kept the jaw tight with a solid mewing effort.",
+  },
+  smiler: {
+    sterk: "Couldn't stop grinning — cost precious mog points!",
+    middels: "Let a smile slip mid-round and lost a bit of aura.",
+  },
+  "oppblaste-kinn": {
+    sterk: "Ran full blowfish cheeks for most of the round.",
+    middels: "Puffed the cheeks out mid-round and softened the jaw.",
+  },
+  "munn-puster": {
+    sterk: "Mouth hung open half the round — peak anti-mewing!",
+    middels: "Dropped the jaw open a bit and lost points.",
+  },
+  grimase: {
+    sterk: "Delivered pure grimace self-sabotage almost the entire round.",
+    middels: "Scrunched the face or pulled a grimace that dragged the average down.",
+  },
+  bytteoyne: {
+    sterk: "Full wide-eyed panic aura for most of the round.",
+    middels: "Opened the eyes a little too wide mid-round.",
+  },
+  "sur-geip": {
+    sterk: "Held a heavy frown for most of the measurement.",
+    middels: "Slipped into a frown that cost a few tenths.",
+  },
+}
+
 /**
  * Summarizes the dominant facial expression held during a 15 s round (or null if the player stayed mostly neutral).
  * Picks the expression with the biggest weighted impact among those held above 0.18 trimmed-mean strength.
  */
-export function uttrykkDom(uttrykkSnitt?: Partial<Record<MogUttrykkId, number>> | null): UttrykkDom | null {
+export function uttrykkDom(
+  uttrykkSnitt?: Partial<Record<MogUttrykkId, number>> | null,
+  sprak: "no" | "en" = "no",
+): UttrykkDom | null {
   if (!uttrykkSnitt) return null
   let best: { info: (typeof MOG_UTTRYKK)[number]; styrke: number; effekt: number } | null = null
   for (const u of MOG_UTTRYKK) {
@@ -259,10 +387,11 @@ export function uttrykkDom(uttrykkSnitt?: Partial<Record<MogUttrykkId, number>> 
     }
   }
   if (!best) return null
-  const t = UTTRYKK_DOM_TEKSTER[best.info.id]
+  const tabell = sprak === "en" ? UTTRYKK_DOM_TEKSTER_EN : UTTRYKK_DOM_TEKSTER
+  const t = tabell[best.info.id]
   return {
     id: best.info.id,
-    navn: best.info.navn,
+    navn: sprak === "en" ? best.info.navnEn : best.info.navn,
     tekst: best.styrke >= 0.48 ? t.sterk : t.middels,
     positiv: best.info.maks > 0,
   }
@@ -282,6 +411,20 @@ export const LYS_DISSER: Record<Exclude<LysStatus, "ok">, readonly string[]> = {
     "Strømprisene kan umulig være så høye at du ikke har råd til én skrivebordslampe?",
     "Du sitter så mørkt at du ser ut som en opplåsbar karakter man ikke har råd til ennå.",
     "Batman ringte og spurte om han kan få tilbake hula si. Slå på taklampa før neste runde!",
+  ],
+}
+
+export const LYS_DISSER_EN: Record<Exclude<LysStatus, "ok">, readonly string[]> = {
+  overeksponert: [
+    "Overexposed to the moon — you're glowing like a phone screen at 100% brightness at 3 AM.",
+    "So washed out the webcam thought you were a drywall sample. Close the blinds a bit!",
+    "That lighting is a literal flashbang. Turn slightly away from the window before the rematch!",
+    "You're shining so hard on camera your opponent needs sunglasses. Dial the lamp back one notch.",
+  ],
+  undereksponert: [
+    "Electricity prices can't be THAT high — treat yourself to one desk lamp?",
+    "Sitting so far in the dark you look like a locked fighter nobody has unlocked yet.",
+    "Batman called and asked for his cave back. Flip a light on before the next round!",
   ],
 }
 
@@ -306,10 +449,14 @@ export const DELPOENG_DISSER: Record<DelpoengId, readonly string[]> = {
     "Picasso ringte — karakteren fra maleriet hans har rømt.",
     "Symmetrien har to forskjellige postnumre. Slå på lyset forfra før kalkulatoren blir sjøsyk.",
     "Ansiktet ditt ser ut som det ble satt sammen uten IKEA-bruksanvisning. Rett opp hodet og lyset!",
+    "Venstre og høyre halvdel jobber i forskjellige tidssoner. Rett opp hodet og skru på frontlys!",
+    "Speilbildet ditt tok en kreativ frihet. Sitt rett foran linsa med jevnt lys neste runde!",
   ],
   midtansikt: [
     "Lang vei fra øyne til overleppe — enten er det kameraet helt oppi nesa, eller så må vi ringe en arkitekt.",
     "Fra øyne til overleppe må man nesten betale bompenger underveis. Gå ett skritt bakover fra linsa!",
+    "Vidvinkelen dro midtansiktet ditt inn i neste uke. Én armlengde fra kameraet redder deg!",
+    "Midtansiktet søkte om egen bussrute. Litt mer avstand til kameraet gjør underverker!",
   ],
   ansiktstredjedeler: [
     "Panne, nese og hake krangler om kvadratmeterne. Ny sveis eller høyere kamera anbefales umiddelbart.",
@@ -324,6 +471,53 @@ export const DELPOENG_DISSER: Record<DelpoengId, readonly string[]> = {
   ],
   harmoni: [
     "Leonardo da Vinci prøvde å tegne deg og endte opp med abstrakt kunst. Frontlys hjelper!",
+    "Det gyldne snitt så på kalkulatoren og ba om sykemelding. Rett lys og rolig blikk neste runde!",
+    "Alle delene er fine hver for seg — de bare glemte å bli enige om felles gruppeprosjekt.",
+    "Geometrien kjører jazzimprovisasjon i dag. Prøv nøytralt blikk i øyehøyde på omkampen!",
+  ],
+}
+
+export const DELPOENG_DISSER_EN: Record<DelpoengId, readonly string[]> = {
+  oyevinkel: [
+    "Negative canthal tilt? Two-for-one flight to Turkey incoming.",
+    "Eyes sloping down like a Monday morning in November. Raise the webcam before booking Istanbul.",
+    "That eye tilt screams 'needs a double espresso'. Lift the lens up to eye level!",
+    "Gravity is paying zero rent on those eye corners. Raise your camera and lock in!",
+  ],
+  kjevelinje: [
+    "Jawline status: called in sick today. Time for a 3 AM YouTube mewing marathon.",
+    "Chin went into witness protection behind the neck. Push it slightly forward next round!",
+    "Jawline so soft the webcam flagged it as a freshly baked brioche bun. Sit up and lock in!",
+    "Zero sharp edges detected — completely toddler-safe, terrible for the mog.",
+    "Your neck and chin have officially merged into one municipality. Raise the camera a notch!",
+  ],
+  symmetri: [
+    "Picasso called — one of his portraits walked out of the museum.",
+    "Your left and right sides live in two different zip codes. Turn on front lighting!",
+    "Assembled without reading the IKEA manual. Level your head and light from the front!",
+    "Left side and right side are operating in different time zones. Straighten up and light evenly!",
+    "Your mirror reflection took some creative liberties. Center your face in front light next round!",
+  ],
+  midtansikt: [
+    "Long road from eyes to upper lip — either the webcam is glued to your nose or we need an architect.",
+    "You practically need a toll pass to get from eyes to upper lip. Take one step back from the lens!",
+    "That wide-angle lens stretched your midface into next week. Back up one arm's length!",
+    "Your midface just applied for its own bus route. A little more camera distance works wonders!",
+  ],
+  ansiktstredjedeler: [
+    "Forehead, nose, and chin are fighting over square footage. Raise the camera immediately.",
+    "One third went back for seconds at the buffet and left the other two starving.",
+    "Those facial thirds look like someone sliced a birthday cake in the dark. Eye-level camera next round!",
+  ],
+  oyeavstand: [
+    "Your eyes are either in a long-distance relationship or sharing a studio apartment. Back up from the lens!",
+    "With that eye spacing … honestly, just wear sunglasses.",
+  ],
+  harmoni: [
+    "Leonardo da Vinci tried sketching you and accidentally invented abstract art. Front lighting helps!",
+    "The Golden Ratio looked at the calculator and called in sick. Eye-level camera next round!",
+    "Every feature is solid solo — they just forgot to coordinate the group project.",
+    "Your facial geometry is playing free-form jazz today. Try a calm neutral look on the rematch!",
   ],
 }
 
@@ -332,6 +526,13 @@ export const COOKED_DISSER: readonly string[] = [
   "Noen må jo dra ned snittet for resten av oss.",
   "Det her kvalifiserer nesten til egenmelding.",
   "Bare lukk kameraet og lat som denne runden aldri skjedde.",
+]
+
+export const COOKED_DISSER_EN: readonly string[] = [
+  "You are officially cooked … time to sign up for a looksmaxxing bootcamp.",
+  "Hey, someone has to keep the bell curve humble for the rest of us.",
+  "That score practically qualifies for a paid sick day.",
+  "Close the webcam and pretend this round never happened.",
 ]
 
 export type TipsOgDiss = {
@@ -356,8 +557,17 @@ export function lagTipsOgDiss(input: {
   /** Points lost by in a 1v1 duel (> 0 when the opponent won). */
   moggetMed?: number
   fro: string
+  sprak?: "no" | "en"
 }): TipsOgDiss {
-  const { delpoeng, lysStatus, kvalitet, total, moggetMed, fro } = input
+  const { delpoeng, lysStatus, kvalitet, total, moggetMed, fro, sprak = "no" } = input
+  const en = sprak === "en"
+  const kvalTips = en ? KVALITET_TIPS_EN : KVALITET_TIPS
+  const delTips = en ? PRAKTISKE_TIPS_PER_DELPOENG_EN : PRAKTISKE_TIPS_PER_DELPOENG
+  const livTips = en ? LIVSSTIL_TIPS_EN : LIVSSTIL_TIPS
+  const lysDisser = en ? LYS_DISSER_EN : LYS_DISSER
+  const cookedDisser = en ? COOKED_DISSER_EN : COOKED_DISSER
+  const delDisser = en ? DELPOENG_DISSER_EN : DELPOENG_DISSER
+
   const svakeste = svakesteDelpoeng(delpoeng)
   const tips: string[] = []
 
@@ -367,34 +577,34 @@ export function lagTipsOgDiss(input: {
 
   // 1. Capture quality / lighting tip first if relevant.
   if (lysStatus === "overeksponert") {
-    leggTil(KVALITET_TIPS.overeksponert)
+    leggTil(kvalTips.overeksponert)
   } else if (lysStatus === "undereksponert") {
-    leggTil(KVALITET_TIPS.undereksponert)
+    leggTil(kvalTips.undereksponert)
   } else if (kvalitet?.snittIpdAndel !== undefined && kvalitet.snittIpdAndel > 0 && kvalitet.snittIpdAndel < 0.14) {
-    leggTil(KVALITET_TIPS.forLangtUnna)
+    leggTil(kvalTips.forLangtUnna)
   } else if (kvalitet?.snittIpdAndel !== undefined && kvalitet.snittIpdAndel > 0.38) {
-    leggTil(KVALITET_TIPS.forNaerme)
+    leggTil(kvalTips.forNaerme)
   } else if (kvalitet?.stabilitet !== undefined && kvalitet.stabilitet > 0.55) {
-    leggTil(KVALITET_TIPS.ustabil)
+    leggTil(kvalTips.ustabil)
   }
 
   // 2. Practical tips for the weakest sub-scores.
   for (let i = 0; i < svakeste.length && tips.length < 3; i++) {
     const id = svakeste[i]
-    const kandidat = velgMedFro(PRAKTISKE_TIPS_PER_DELPOENG[id], `${fro}:tips:${id}:${i}`)
+    const kandidat = velgMedFro(delTips[id], `${fro}:tips:${id}:${i}`)
     leggTil(kandidat)
   }
 
   // 3. Ensure at least one light lifestyle tip if we still have room (up to 3 tips total).
   if (tips.length < 3) {
-    leggTil(velgMedFro(LIVSSTIL_TIPS, `${fro}:livsstil`))
+    leggTil(velgMedFro(livTips, `${fro}:livsstil`))
   }
 
   // Roast selection: lighting roast takes precedence when exposure is genuinely blown out or dark.
   if (lysStatus === "overeksponert" || lysStatus === "undereksponert") {
     return {
       tips: tips.slice(0, 3),
-      diss: velgMedFro(LYS_DISSER[lysStatus], `${fro}:lys:${lysStatus}`),
+      diss: velgMedFro(lysDisser[lysStatus], `${fro}:lys:${lysStatus}`),
       dissFraLys: true,
     }
   }
@@ -405,23 +615,38 @@ export function lagTipsOgDiss(input: {
   if (hardtMogget || lavScore) {
     return {
       tips: tips.slice(0, 3),
-      diss: velgMedFro(COOKED_DISSER, `${fro}:cooked`),
+      diss: velgMedFro(cookedDisser, `${fro}:cooked`),
       dissFraLys: false,
     }
   }
 
-  // Prefer more intuitive categories over abstract facial thirds unless facial thirds is clearly far weaker.
+  // Prefer more intuitive categories over facial thirds and eye spacing unless they are clearly far weaker.
+  const hovedKandidater = svakeste.filter((id) => id !== "ansiktstredjedeler" && id !== "oyeavstand")
   let dissKategori = svakeste[0]
-  if (dissKategori === "ansiktstredjedeler" && svakeste[1] && delpoeng[svakeste[1]] - delpoeng.ansiktstredjedeler < 1.8) {
-    dissKategori = svakeste[1]
+  const beholdSpesial =
+    (dissKategori === "ansiktstredjedeler" || dissKategori === "oyeavstand") &&
+    (!hovedKandidater[0] || delpoeng[hovedKandidater[0]] - delpoeng[dissKategori] >= (dissKategori === "oyeavstand" ? 2.2 : 1.8))
+
+  if (!beholdSpesial && hovedKandidater.length > 0) {
+    const forste = hovedKandidater[0]
+    const andre = hovedKandidater[1]
+    // Rotate deterministically between the two weakest categories across rematches when they are close (<= 0.8 pts).
+    if (andre && delpoeng[andre] - delpoeng[forste] <= 0.8) {
+      dissKategori = velgMedFro([forste, andre], `${fro}:kategori`)
+    } else {
+      dissKategori = forste
+    }
   }
 
   return {
     tips: tips.slice(0, 3),
-    diss: velgMedFro(DELPOENG_DISSER[dissKategori], `${fro}:diss:${dissKategori}`),
+    diss: velgMedFro(delDisser[dissKategori], `${fro}:diss:${dissKategori}`),
     dissFraLys: false,
   }
 }
 
 export const ANSVARSFRASKRIVELSE_PAAMINNELSE =
   "Husk: Alt her er tull — ingen vitenskap, ingen opptak, og tallene sier null om verdien din."
+
+export const ANSVARSFRASKRIVELSE_PAAMINNELSE_EN =
+  "Remember: Everything here is a joke — zero science, no recordings, and these numbers say nothing about your worth."

@@ -1148,10 +1148,10 @@ test("Moggern kurerte disser: riktig utvalg og nedprioritering av ansiktstredjed
   assert.equal(LYS_DISSER.overeksponert.length, 5)
   assert.equal(LYS_DISSER.undereksponert.length, 3)
   assert.equal(DELPOENG_DISSER.oyevinkel.length, 5)
-  assert.equal(DELPOENG_DISSER.symmetri.length, 3)
-  assert.equal(DELPOENG_DISSER.midtansikt.length, 2)
+  assert.equal(DELPOENG_DISSER.symmetri.length, 5)
+  assert.equal(DELPOENG_DISSER.midtansikt.length, 4)
   assert.equal(DELPOENG_DISSER.oyeavstand.length, 2)
-  assert.equal(DELPOENG_DISSER.harmoni.length, 1)
+  assert.equal(DELPOENG_DISSER.harmoni.length, 4)
   assert.ok(DELPOENG_DISSER.symmetri.includes("Picasso ringte — karakteren fra maleriet hans har rømt."))
   assert.ok(DELPOENG_DISSER.oyeavstand.includes("Den øyeavstanden … bruk solbriller du."))
   assert.ok(DELPOENG_DISSER.kjevelinje.some((d) => d.includes("dårlig for moggen")))
@@ -1173,6 +1173,32 @@ test("Moggern kurerte disser: riktig utvalg og nedprioritering av ansiktstredjed
   const veldigSvakTredjedeler: DelpoengKart = { ...littSvakTredjedeler, ansiktstredjedeler: 3.2 }
   const td2 = lagTipsOgDiss({ delpoeng: veldigSvakTredjedeler, lysStatus: "ok", fro: "TEST:2" })
   assert.ok(DELPOENG_DISSER.ansiktstredjedeler.includes(td2.diss), `forventet tredjedel-diss, fikk: ${td2.diss}`)
+
+  // Eye spacing (oyeavstand) is also deprioritized unless dramatically weakest (>= 2.2 gap)
+  const littSvakOyeavstand: DelpoengKart = { ...littSvakTredjedeler, ansiktstredjedeler: 7.4, oyeavstand: 4.5 }
+  const tdOye1 = lagTipsOgDiss({ delpoeng: littSvakOyeavstand, lysStatus: "ok", fro: "TEST:OYE1" })
+  assert.ok(DELPOENG_DISSER.kjevelinje.includes(tdOye1.diss), `forventet kjevelinje-diss over svak øyeavstand, fikk: ${tdOye1.diss}`)
+  const ekstremOyeavstand: DelpoengKart = { ...littSvakOyeavstand, oyeavstand: 2.5 }
+  const tdOye2 = lagTipsOgDiss({ delpoeng: ekstremOyeavstand, lysStatus: "ok", fro: "TEST:OYE2" })
+  assert.ok(DELPOENG_DISSER.oyeavstand.includes(tdOye2.diss), `forventet øyeavstand-diss ved stort gap, fikk: ${tdOye2.diss}`)
+
+  // When the 2 weakest eligible categories are close (<= 0.8 pts), rematches rotate between both
+  const toNarme: DelpoengKart = {
+    symmetri: 6.4,
+    oyevinkel: 7.8,
+    kjevelinje: 6.0,
+    midtansikt: 7.6,
+    ansiktstredjedeler: 7.5,
+    oyeavstand: 7.4,
+    harmoni: 7.7,
+  }
+  const setteKategorier = new Set<string>()
+  for (let r = 0; r < 20; r++) {
+    const out = lagTipsOgDiss({ delpoeng: toNarme, lysStatus: "ok", fro: `BCDF:${r}:spiller1` })
+    if (DELPOENG_DISSER.kjevelinje.includes(out.diss)) setteKategorier.add("kjevelinje")
+    if (DELPOENG_DISSER.symmetri.includes(out.diss)) setteKategorier.add("symmetri")
+  }
+  assert.equal(setteKategorier.size, 2, `forventet rotasjon mellom kjevelinje og symmetri, fikk: ${[...setteKategorier].join(",")}`)
 
   // General cooked roasts only trigger on low total (< 4.5) or getting mogged hard (>= 1.5)
   assert.equal(COOKED_DISSER.length, 4)

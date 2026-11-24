@@ -20,22 +20,26 @@ export default async function Page({ params }: PageProps<"/spill/moggern/[kode]"
   const kode = normaliserKode(decodeURIComponent((await params).kode))
   if (!erGyldigKode(kode)) notFound()
 
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let bruker: { id: string; visningsnavn: string } | null = null
+  try {
+    const supabase = await createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
-  let visningsnavn = user ? utledVisningsnavn(user) : ""
-  if (user) {
-    const { data: profil } = await supabase
-      .from("spill_profiler")
-      .select("visningsnavn")
-      .eq("user_id", user.id)
-      .maybeSingle()
-    if (profil?.visningsnavn) visningsnavn = profil.visningsnavn
+    if (user) {
+      let visningsnavn = utledVisningsnavn(user)
+      const { data: profil } = await supabase
+        .from("spill_profiler")
+        .select("visningsnavn")
+        .eq("user_id", user.id)
+        .maybeSingle()
+      if (profil?.visningsnavn) visningsnavn = profil.visningsnavn
+      bruker = { id: user.id, visningsnavn }
+    }
+  } catch {
+    bruker = null
   }
-
-  const bruker = user ? { id: user.id, visningsnavn } : null
   const { url, key } = supabaseConfig()
 
   return (
