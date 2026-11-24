@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "
 import { SprakKnapp } from "@/components/sprak-knapp"
 import { useAlleResultater } from "@/features/spill/lib/lagring"
 import type { SpillId } from "@/features/spill/lib/spill"
-import { useUtfordringerSynk } from "@/features/spill/lib/utfordring-varsel"
 import { CONTACT_EMAIL } from "@/lib/projects"
 import { useSprak, useT, type Sprak } from "@/lib/sprak"
 import { Ikon, type IkonNavn } from "./ikoner"
@@ -346,33 +345,8 @@ export function Skrivebord() {
   const [vinduer, setVinduer] = useState<Vindu[]>([])
   const [valgt, setValgt] = useState<string | null>(null)
   const [start, setStart] = useState(false)
-  const [varsler, setVarsler] = useState<{ venner: number; dueller: number }>({ venner: 0, dueller: 0 })
   const flate = useRef<HTMLDivElement>(null)
   const nesteZ = useRef(1)
-
-  useUtfordringerSynk((antall) => {
-    setVarsler((prev) => (prev.dueller === antall ? prev : { ...prev, dueller: antall }))
-  })
-
-  useEffect(() => {
-    let aktivt = true
-    void Promise.all([
-      fetch("/spill/api/venner", { cache: "no-store" })
-        .then((r) => (r.ok ? (r.json() as Promise<{ foresporslerInn?: unknown[] }>) : null))
-        .catch(() => null),
-      fetch("/spill/api/utfordringer", { cache: "no-store" })
-        .then((r) => (r.ok ? (r.json() as Promise<{ antallVentende?: number }>) : null))
-        .catch(() => null),
-    ]).then(([vennerData, utfordringData]) => {
-      if (!aktivt) return
-      const v = Array.isArray(vennerData?.foresporslerInn) ? vennerData.foresporslerInn.length : 0
-      const d = typeof utfordringData?.antallVentende === "number" ? utfordringData.antallVentende : 0
-      setVarsler({ venner: v, dueller: d })
-    })
-    return () => {
-      aktivt = false
-    }
-  }, [])
 
   const synlige = vinduer.filter((v) => !v.min)
   const aktivMal = synlige.length ? synlige.reduce((a, b) => (b.z > a.z ? b : a)).mal : null
@@ -505,15 +479,12 @@ export function Skrivebord() {
     return <Papirkurv />
   }
 
-  const varselFor = (id: string) => (id === "venner" ? varsler.venner : id === "dueller" ? varsler.dueller : 0)
-
   const ikon = (p: Program) => (
     <SkrivebordIkon
       key={p.id}
       p={p}
       sprak={sprak}
       valgt={valgt === p.id}
-      varsel={varselFor(p.id)}
       velg={() => setValgt(p.id)}
       apne={() => apne(p.mal)}
       forvarsel={() => forvarsel(p.mal)}
@@ -617,28 +588,19 @@ export function Skrivebord() {
             {[...grupper, ["", "", systemProgrammer.filter((p) => p.id !== "papirkurv")] as const].map(([tittelNo, tittelEn, liste], i) => (
               <div key={i} className={i ? "mt-1 border-t border-[var(--os-skygge)] pt-1 shadow-[inset_0_1px_#fff]" : ""}>
                 {tittelNo ? <p className="px-2 pt-0.5 text-[10px] tracking-widest text-neutral-600 uppercase">{t(tittelNo, tittelEn)}</p> : null}
-                {liste.map((p) => {
-                  const antall = varselFor(p.id)
-                  return (
-                    <button
-                      key={p.id}
-                      type="button"
-                      role="menuitem"
-                      onClick={() => apne(p.mal)}
-                      className="flex w-full items-center gap-2.5 px-2 py-1 text-left text-[12px] hover:bg-[var(--os-tittel)] hover:text-white focus:bg-[var(--os-tittel)] focus:text-white focus:outline-none"
-                    >
-                      <ProgramIkon p={p} storrelse={20} />
-                      <span>{programNavn(p, sprak)}</span>
-                      {antall > 0 ? (
-                        <span className="ml-auto inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 font-mono text-[10px] font-bold text-white">
-                          {antall > 9 ? "9+" : antall}
-                        </span>
-                      ) : p.mal.startsWith("http") ? (
-                        <span className="ml-auto text-[10px] opacity-60">↗</span>
-                      ) : null}
-                    </button>
-                  )
-                })}
+                {liste.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    role="menuitem"
+                    onClick={() => apne(p.mal)}
+                    className="flex w-full items-center gap-2.5 px-2 py-1 text-left text-[12px] hover:bg-[var(--os-tittel)] hover:text-white focus:bg-[var(--os-tittel)] focus:text-white focus:outline-none"
+                  >
+                    <ProgramIkon p={p} storrelse={20} />
+                    <span>{programNavn(p, sprak)}</span>
+                    {p.mal.startsWith("http") ? <span className="ml-auto text-[10px] opacity-60">↗</span> : null}
+                  </button>
+                ))}
               </div>
             ))}
           </div>

@@ -4,7 +4,7 @@ import { MoggernInngang } from "@/features/spill/components/moggern-inngang"
 import { spillskrift } from "@/features/spill/components/skrift"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
 import { utledVisningsnavn } from "@/features/spill/lib/moggern/duell"
-import { createClient } from "@/lib/supabase/server"
+import { hentBruker } from "@/features/spill/lib/server/sosial-api"
 
 export const dynamic = "force-dynamic"
 
@@ -15,24 +15,16 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   let bruker: { id: string; visningsnavn: string } | null = null
-  try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (user) {
-      let visningsnavn = utledVisningsnavn(user)
-      const { data: profil } = await supabase
-        .from("spill_profiler")
-        .select("visningsnavn")
-        .eq("user_id", user.id)
-        .maybeSingle()
-      if (profil?.visningsnavn) visningsnavn = profil.visningsnavn
-      bruker = { id: user.id, visningsnavn }
-    }
-  } catch {
-    bruker = null
+  const innlogget = await hentBruker()
+  if (innlogget) {
+    let visningsnavn = utledVisningsnavn(innlogget.user)
+    const { data: profil } = await innlogget.supabase
+      .from("spill_profiler")
+      .select("visningsnavn")
+      .eq("user_id", innlogget.user.id)
+      .maybeSingle()
+    if (profil?.visningsnavn) visningsnavn = profil.visningsnavn
+    bruker = { id: innlogget.user.id, visningsnavn }
   }
 
   return (

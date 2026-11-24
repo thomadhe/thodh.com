@@ -1,6 +1,8 @@
 import "server-only"
 
 import type { PostgrestError, SupabaseClient, User } from "@supabase/supabase-js"
+import { cookies } from "next/headers"
+import { hasAuthCookie } from "@/lib/supabase/config"
 import { createClient } from "@/lib/supabase/server"
 
 const PRIVATE_HEADERS = { "Cache-Control": "private, no-store" }
@@ -11,6 +13,8 @@ export function jsonPrivat(data: unknown, status = 200) {
 
 export async function hentBruker(): Promise<{ supabase: SupabaseClient; user: User } | null> {
   try {
+    const store = await cookies()
+    if (!hasAuthCookie(store.getAll())) return null
     const supabase = await createClient()
     const {
       data: { user },

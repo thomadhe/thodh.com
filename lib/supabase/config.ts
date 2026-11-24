@@ -14,3 +14,9 @@ export const authCookieOptions = {
   path: "/",
   secure: process.env.NODE_ENV === "production" && process.env.VERCEL === "1",
 };
+
+/** Fast check for whether any Supabase auth cookie is present (avoids wasted auth round-trips for guests/bots). */
+export function hasAuthCookie(cookies: readonly { name: string }[]): boolean {
+  const prefix = `${authCookieOptions.name}.`;
+  return cookies.some((c) => c.name === authCookieOptions.name || c.name.startsWith(prefix));
+}

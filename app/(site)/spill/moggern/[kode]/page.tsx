@@ -6,8 +6,8 @@ import { spillskrift } from "@/features/spill/components/skrift"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
 import { erGyldigKode, normaliserKode } from "@/features/spill/lib/duell/rom"
 import { utledVisningsnavn } from "@/features/spill/lib/moggern/duell"
+import { hentBruker } from "@/features/spill/lib/server/sosial-api"
 import { supabaseConfig } from "@/lib/supabase/config"
-import { createClient } from "@/lib/supabase/server"
 
 export const dynamic = "force-dynamic"
 
@@ -22,24 +22,16 @@ export default async function Page({ params }: PageProps<"/spill/moggern/[kode]"
   if (!erGyldigKode(kode)) notFound()
 
   let bruker: { id: string; visningsnavn: string } | null = null
-  try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (user) {
-      let visningsnavn = utledVisningsnavn(user)
-      const { data: profil } = await supabase
-        .from("spill_profiler")
-        .select("visningsnavn")
-        .eq("user_id", user.id)
-        .maybeSingle()
-      if (profil?.visningsnavn) visningsnavn = profil.visningsnavn
-      bruker = { id: user.id, visningsnavn }
-    }
-  } catch {
-    bruker = null
+  const innlogget = await hentBruker()
+  if (innlogget) {
+    let visningsnavn = utledVisningsnavn(innlogget.user)
+    const { data: profil } = await innlogget.supabase
+      .from("spill_profiler")
+      .select("visningsnavn")
+      .eq("user_id", innlogget.user.id)
+      .maybeSingle()
+    if (profil?.visningsnavn) visningsnavn = profil.visningsnavn
+    bruker = { id: innlogget.user.id, visningsnavn }
   }
   const { url, key } = supabaseConfig()
 

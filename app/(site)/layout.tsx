@@ -2,8 +2,6 @@ import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SprakSynk } from "@/components/sprak-knapp";
-import { UtfordringVarsler } from "@/features/spill/components/utfordring-varsler";
-import { supabaseConfig } from "@/lib/supabase/config";
 import "./globals.css";
 
 // Only Latin is preloaded; the other subsets stay in the CSS and are fetched when a page needs them.
@@ -28,7 +26,6 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  const { url, key } = supabaseConfig();
   return (
     <html
       lang="nb"
@@ -37,7 +34,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full bg-background font-sans text-foreground">
         <SprakSynk />
         {children}
-        <UtfordringVarsler supabaseUrl={url} supabaseNokkel={key} />
         {/* Cookie-free visitor counts (Vercel Web Analytics), to see how many play each day. */}
         <Analytics />
       </body>

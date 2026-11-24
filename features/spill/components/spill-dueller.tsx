@@ -2,8 +2,6 @@
 
 import {
   ArrowRight,
-  Bell,
-  BellRing,
   Camera,
   Check,
   Crown,
@@ -12,6 +10,7 @@ import {
   KeyRound,
   Loader2,
   Plus,
+  RefreshCw,
   Swords,
   UserPlus,
   Users,
@@ -19,7 +18,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useT } from "@/lib/sprak"
 import { erGyldigKode, lagKode, normaliserKode } from "../lib/duell/rom"
 import {
@@ -31,28 +30,7 @@ import {
   type DuellUtfordring,
   type VennOppforing,
 } from "../lib/sosial"
-import { sendUtfordringerOppdatert, sendUtfordringPing, useUtfordringerSynk, useUtfordringVarsel } from "../lib/utfordring-varsel"
-
-type VarselStatus = NotificationPermission | "stottes-ikke"
-const VARSEL_TILLATELSE_HENDELSE = "thodh-varsel-tillatelse"
-
-function abonnerVarselStatus(varsle: () => void) {
-  window.addEventListener(VARSEL_TILLATELSE_HENDELSE, varsle)
-  window.addEventListener("focus", varsle)
-  return () => {
-    window.removeEventListener(VARSEL_TILLATELSE_HENDELSE, varsle)
-    window.removeEventListener("focus", varsle)
-  }
-}
-
-function lesVarselStatus(): VarselStatus {
-  if (typeof window === "undefined" || typeof Notification === "undefined") return "stottes-ikke"
-  return Notification.permission
-}
-
-function useVarselStatus(): VarselStatus {
-  return useSyncExternalStore(abonnerVarselStatus, lesVarselStatus, () => "stottes-ikke")
-}
+import { sendUtfordringerOppdatert, sendUtfordringPing, useUtfordringVarsel } from "../lib/utfordring-varsel"
 
 type ArenaSpill = {
   id: DuellSpillId
@@ -135,7 +113,6 @@ export function SpillDueller({
 }) {
   const router = useRouter()
   const t = useT()
-  const varselStatus = useVarselStatus()
 
   // Single unified game & mode selector used for open rooms, joining by code, AND 1-click friend challenges
   const [valgtSpill, setValgtSpill] = useState<DuellSpillId>("moggern")
@@ -180,7 +157,7 @@ export function SpillDueller({
         setVenner(v.venner ?? [])
       }
     } catch {
-      // Silent retry on next poll.
+      // Ignore transient network errors; user can refresh manually or wait for Realtime ping.
     } finally {
       setLaster(false)
     }
@@ -189,66 +166,45 @@ export function SpillDueller({
   useEffect(() => {
     if (!innlogget) return
     let aktiv = true
-    const last = () => {
-      void Promise.all([
-        fetch("/spill/api/utfordringer", { cache: "no-store" }),
-        fetch("/spill/api/venner", { cache: "no-store" }),
-      ])
-        .then(async ([uSvar, vSvar]) => {
+    void Promise.all([
+      fetch("/spill/api/utfordringer", { cache: "no-store" }),
+      fetch("/spill/api/venner", { cache: "no-store" }),
+    ])
+      .then(async ([uSvar, vSvar]) => {
+        if (!aktiv) return
+        if (uSvar.ok) {
+          const u = (await uSvar.json()) as {
+            brukerId?: string
+            innkommende?: DuellUtfordring[]
+            utgaende?: DuellUtfordring[]
+            antallVentende?: number
+            melding?: string
+          }
           if (!aktiv) return
-          if (uSvar.ok) {
-            const u = (await uSvar.json()) as {
-              brukerId?: string
-              innkommende?: DuellUtfordring[]
-              utgaende?: DuellUtfordring[]
-              antallVentende?: number
-              melding?: string
-            }
-            if (!aktiv) return
-            setBrukerId(u.brukerId ?? null)
-            setInnkommende(u.innkommende ?? [])
-            setUtgaende(u.utgaende ?? [])
-            if (typeof u.antallVentende === "number") sendUtfordringerOppdatert(u.antallVentende, "dueller")
-            if (u.melding) setFeil(u.melding)
-          }
-          if (vSvar.ok) {
-            const v = (await vSvar.json()) as { venner?: VennOppforing[] }
-            if (!aktiv) return
-            setVenner(v.venner ?? [])
-          }
-        })
-        .catch(() => undefined)
-        .finally(() => {
-          if (aktiv) setLaster(false)
-        })
-    }
-    last()
-    const id = window.setInterval(() => {
-      if (document.visibilityState === "visible") last()
-    }, 15_000)
+          setBrukerId(u.brukerId ?? null)
+          setInnkommende(u.innkommende ?? [])
+          setUtgaende(u.utgaende ?? [])
+          if (typeof u.antallVentende === "number") sendUtfordringerOppdatert(u.antallVentende, "dueller")
+          if (u.melding) setFeil(u.melding)
+        }
+        if (vSvar.ok) {
+          const v = (await vSvar.json()) as { venner?: VennOppforing[] }
+          if (!aktiv) return
+          setVenner(v.venner ?? [])
+        }
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (aktiv) setLaster(false)
+      })
     return () => {
       aktiv = false
-      window.clearInterval(id)
     }
   }, [innlogget])
 
   useUtfordringVarsel(supabaseUrl, supabaseNokkel, brukerId, () => {
     void hentAlt()
   })
-
-  useUtfordringerSynk((_antall, kilde) => {
-    if (kilde !== "dueller") void hentAlt()
-  })
-
-  const beOmVarsler = async () => {
-    if (typeof Notification === "undefined") return
-    try {
-      await Notification.requestPermission()
-      window.dispatchEvent(new Event(VARSEL_TILLATELSE_HENDELSE))
-    } catch {
-      // Ignore permission errors in restricted browsers.
-    }
-  }
 
   const lagApenRom = () => {
     const k = lagKode()
@@ -340,21 +296,14 @@ export function SpillDueller({
                 </span>
               ) : null}
             </div>
-            {varselStatus === "default" ? (
-              <button
-                type="button"
-                onClick={() => void beOmVarsler()}
-                className="inline-flex h-7 items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.05] px-2.5 text-[11px] font-medium text-neutral-200 transition hover:bg-white/10"
-              >
-                <Bell className="h-3 w-3 text-amber-300" aria-hidden="true" />
-                <span>{t("Slå på varsler", "Enable alerts")}</span>
-              </button>
-            ) : varselStatus === "granted" ? (
-              <span className="inline-flex h-7 items-center gap-1 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2.5 text-[11px] font-medium text-emerald-300">
-                <BellRing className="h-3 w-3" aria-hidden="true" />
-                <span>{t("Varsler på", "Alerts on")}</span>
-              </span>
-            ) : null}
+            <button
+              type="button"
+              onClick={() => void hentAlt()}
+              className="inline-flex h-7 items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.05] px-2.5 text-[11px] font-medium text-neutral-200 transition hover:bg-white/10"
+            >
+              <RefreshCw className="h-3 w-3 text-amber-300" aria-hidden="true" />
+              <span>{t("Oppdater", "Refresh")}</span>
+            </button>
           </div>
 
           {feil ? <p className="mt-3 text-xs text-amber-200">{feil}</p> : null}
@@ -605,16 +554,6 @@ export function SpillDueller({
                   <Swords className="h-4 w-4 text-neutral-400" aria-hidden="true" />
                   <span>{t("Utfordre en venn på 1 klikk", "1-click friend challenge")}</span>
                 </div>
-                {innlogget && varselStatus === "default" && !harAktiveUtfordringer ? (
-                  <button
-                    type="button"
-                    onClick={() => void beOmVarsler()}
-                    className="inline-flex h-6 items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 text-[10px] font-medium text-neutral-300 transition hover:bg-white/10"
-                  >
-                    <Bell className="h-3 w-3 text-amber-300" aria-hidden="true" />
-                    <span>{t("Varsler", "Alerts")}</span>
-                  </button>
-                ) : null}
               </div>
 
               {!innlogget ? (
