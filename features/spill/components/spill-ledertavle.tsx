@@ -12,13 +12,11 @@ import {
   FORSTE_DATO,
   FORSTE_MANED,
   gjeldendeManed,
-  KLIENT_SPILL,
   metrikkEtikett,
-  SERVER_SPILL,
   spillEtterId,
   TAVLE_META,
+  TAVLE_SPILL,
   type ProfilInfo,
-  type ServerSpillId,
   type SpillVinnerKort,
   type TavleMetrikk,
   type TavleOmfang,
@@ -145,7 +143,7 @@ export function SpillLedertavle({ innlogget }: { innlogget: boolean }) {
   const erAktivPeriode = erDag ? dato === iDag : maned === denneManeden
   const meta = erTotalt ? null : TAVLE_META[valg]
   const synligeMetrikker = meta ? (erDag ? meta.dagMetrikker : meta.metrikker) : []
-  const klientSpillNavn = KLIENT_SPILL.map((id) => spillEtterId(id)?.navn ?? id).join(", ")
+  const klientSpillNavn = "Mer eller mindre og Omriss"
 
   const vinnereTotalt = totaltRader.filter((r) => r.plass === 1)
   const vinnereSpill = spillRader.filter((r) => r.plass === 1)
@@ -207,7 +205,7 @@ export function SpillLedertavle({ innlogget }: { innlogget: boolean }) {
           <Crown className="h-3.5 w-3.5" aria-hidden="true" />
           <span>Totalt</span>
         </button>
-        {SERVER_SPILL.map((id) => {
+        {TAVLE_SPILL.map((id) => {
           const info = spillEtterId(id)
           const valgt = id === valg
           return (
@@ -382,7 +380,7 @@ export function SpillLedertavle({ innlogget }: { innlogget: boolean }) {
                 </span>
                 <span className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-neutral-300 tabular-nums">
                   {erDag
-                    ? `${vinnereTotalt[0].spilt}/${SERVER_SPILL.length} spill`
+                    ? `${vinnereTotalt[0].spilt}/${TAVLE_SPILL.length} spill`
                     : `${vinnereTotalt[0].dagsseiere} ${vinnereTotalt[0].dagsseiere === 1 ? "dagsseier" : "dagsseiere"}`}
                 </span>
               </div>
@@ -472,7 +470,7 @@ export function SpillLedertavle({ innlogget }: { innlogget: boolean }) {
                     {r.seiere}
                   </td>
                   <td className="hidden whitespace-nowrap px-4 py-3 text-right font-mono text-xs tabular-nums text-neutral-400 sm:table-cell">
-                    {erDag ? `${r.spilt}/${SERVER_SPILL.length}` : r.spilt}
+                    {erDag ? `${r.spilt}/${TAVLE_SPILL.length}` : r.spilt}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-right font-mono text-sm font-semibold tabular-nums text-neutral-50">
                     {r.poeng} p
@@ -536,11 +534,11 @@ export function SpillLedertavle({ innlogget }: { innlogget: boolean }) {
               {dato === iDag ? "Leder per spill i dag" : "Vinnere per spill"}
             </h2>
             <span className="font-mono text-[11px] text-neutral-500">
-              {spillVinnere.length}/{SERVER_SPILL.length} spilt
+              {spillVinnere.length}/{TAVLE_SPILL.length} spilt
             </span>
           </div>
-          <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {SERVER_SPILL.map((id) => {
+          <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+            {TAVLE_SPILL.map((id) => {
               const info = spillEtterId(id)
               const v = spillVinnerKart.get(id)
               if (!v) {

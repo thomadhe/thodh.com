@@ -31,9 +31,21 @@ type Program = {
 const dagligeProgrammer: Program[] = [
   { id: "mel", navn: "Mer eller mindre", navnEn: "More or Less", mal: "/spill/mer-eller-mindre", ikon: "mel", spill: "mer-eller-mindre" },
   { id: "anelse", navn: "Anelsesløs", navnEn: "Clueless", mal: "/spill/anelseslos", ikon: "anelse", spill: "anelseslos" },
+  { id: "omriss", navn: "Omriss", navnEn: "Outline", mal: "/spill/omriss", ikon: "form", spill: "omriss" },
+  { id: "67-stegern", navn: "6/7-stegern", navnEn: "6/7-Stegern", mal: "/spill/67-stegern", ikon: "stegern", spill: "67-stegern" },
+  { id: "gjettelos", navn: "Gjetteløs", navnEn: "Guessless", mal: "/spill/gjettelos", ikon: "anslag", spill: "gjettelos" },
+]
+
+const spillProgrammer: Program[] = [
+  { id: "moggern", navn: "Moggern", navnEn: "Moggern", mal: "/spill/moggern", ikon: "moggern" },
+  { id: "sjakk-1", navn: "Sjakk for 1", navnEn: "Chess for 1", mal: "/sjakk-for-1", ikon: "sjakk1" },
+  { id: "sjakk", navn: "Sjakk for 2", navnEn: "Chess for 2", mal: "/sjakk", logo: "/sjakk/favicon.svg" },
+  { id: "flere-spill", navn: "Flere spill", navnEn: "More games", mal: "flere-spill", ikon: "spillmappe", b: 500, h: 370 },
+]
+
+const flereSpillProgrammer: Program[] = [
   { id: "bie", navn: "Stavebien", navnEn: "Spelling Bee", mal: "/spill/stavebien", ikon: "bie", spill: "stavebien" },
   { id: "note", navn: "Sangløs", navnEn: "Songless", mal: "/spill/sanglos", ikon: "note", spill: "sanglos" },
-  { id: "omriss", navn: "Omriss", navnEn: "Outline", mal: "/spill/omriss", ikon: "form", spill: "omriss" },
   { id: "canvas", navn: "Canvas", navnEn: "Canvas", mal: "/spill/canvas", ikon: "flagg", spill: "canvas" },
   { id: "soket", navn: "Søket", navnEn: "The Search", mal: "/spill/soket", ikon: "sok", spill: "soket" },
   { id: "emovi", navn: "Emovi", navnEn: "Emovi", mal: "/spill/emovi", ikon: "film", spill: "emovi" },
@@ -41,16 +53,8 @@ const dagligeProgrammer: Program[] = [
   { id: "tilkoblinger", navn: "Tilkoblinger", navnEn: "Connections", mal: "/spill/tilkoblinger", ikon: "grupper", spill: "tilkoblinger" },
   { id: "havet", navn: "Havet", navnEn: "The Ocean", mal: "/spill/havet", ikon: "bolge", spill: "havet" },
   { id: "heksagonal-jakt", navn: "Heksagonal jakt", navnEn: "Hex Hunt", mal: "/spill/heksagonal-jakt", ikon: "sekskant", spill: "heksagonal-jakt" },
-  { id: "67-stegern", navn: "6/7-stegern", navnEn: "6/7-Stegern", mal: "/spill/67-stegern", ikon: "stegern", spill: "67-stegern" },
-  { id: "gjettelos", navn: "Gjetteløs", navnEn: "Guessless", mal: "/spill/gjettelos", ikon: "anslag", spill: "gjettelos" },
-]
-
-const spillProgrammer: Program[] = [
   { id: "land", navn: "Verdens land", navnEn: "World Countries", mal: "/spill/verdens-land", ikon: "jord" },
   { id: "hovedsteder", navn: "Hovedsteder", navnEn: "Capitals", mal: "/spill/hovedsteder", ikon: "stjerne" },
-  { id: "moggern", navn: "Moggern", navnEn: "Moggern", mal: "/spill/moggern", ikon: "moggern" },
-  { id: "sjakk-1", navn: "Sjakk for 1", navnEn: "Chess for 1", mal: "/sjakk-for-1", ikon: "sjakk1" },
-  { id: "sjakk", navn: "Sjakk for 2", navnEn: "Chess for 2", mal: "/sjakk", logo: "/sjakk/favicon.svg" },
 ]
 
 const sosialProgrammer: Program[] = [
@@ -70,7 +74,7 @@ const systemProgrammer: Program[] = [
   { id: "konto", navn: "Konto", navnEn: "Account", mal: "/konto", ikon: "person" },
 ]
 
-const alleProgrammer = [...dagligeProgrammer, ...spillProgrammer, ...sosialProgrammer, ...appProgrammer, ...systemProgrammer]
+const alleProgrammer = [...dagligeProgrammer, ...spillProgrammer, ...flereSpillProgrammer, ...sosialProgrammer, ...appProgrammer, ...systemProgrammer]
 
 function programNavn(p: Program, sprak: Sprak) {
   return sprak === "en" ? (p.navnEn ?? p.navn) : p.navn
@@ -468,7 +472,38 @@ export function Skrivebord() {
     return [p ? programNavn(p, sprak) : mal, p ? <ProgramIkon p={p} storrelse={16} /> : <Ikon navn="nett" storrelse={16} />]
   }
 
-  const innhold = (v: Vindu) => (v.mal === "om" ? <OmThodh lukk={() => lukk(v.mal)} /> : <Papirkurv />)
+  const innhold = (v: Vindu) => {
+    if (v.mal === "om") return <OmThodh lukk={() => lukk(v.mal)} />
+    if (v.mal === "flere-spill") {
+      return (
+        <div className="flex h-full flex-col bg-[var(--os-flate)] p-1.5 text-[12px] text-black">
+          <div className="os-inn min-h-0 flex-1 overflow-y-auto p-3">
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+              {flereSpillProgrammer.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => apne(p.mal)}
+                  onPointerEnter={() => forvarsel(p.mal)}
+                  className="group flex flex-col items-center gap-1.5 rounded-[2px] p-2 text-center hover:bg-[var(--os-tittel)] hover:text-white focus:bg-[var(--os-tittel)] focus:text-white focus:outline-none"
+                >
+                  <ProgramIkon p={p} storrelse={36} />
+                  <span className="text-[11px] leading-tight">{programNavn(p, sprak)}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="mt-1.5 flex items-center justify-between px-1 text-[11px] text-neutral-700">
+            <span>
+              {flereSpillProgrammer.length} {t("spill i arkivet", "archived games")}
+            </span>
+            <span>{t("Klikk for å spille", "Click to play")}</span>
+          </div>
+        </div>
+      )
+    }
+    return <Papirkurv />
+  }
 
   const varselFor = (id: string) => (id === "venner" ? varsler.venner : id === "dueller" ? varsler.dueller : 0)
 

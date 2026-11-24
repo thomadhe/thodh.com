@@ -109,7 +109,7 @@ export function formaterTavleDato(dato: string, iDag = iDagOslo()): string {
 
 // ---- Leaderboard games & metrics ----
 
-/** Games with server-side answer judging and server-verified results, eligible for leaderboards. */
+/** Games with server-side answer judging and server-verified results. */
 export const SERVER_SPILL = [
   "anelseslos",
   "67-stegern",
@@ -123,6 +123,14 @@ export const SERVER_SPILL = [
 
 export type ServerSpillId = (typeof SERVER_SPILL)[number]
 
+/** Active flagship server-verified games featured on leaderboards and counted in Seierherre. */
+export const TAVLE_SPILL = ["anelseslos", "67-stegern", "gjettelos"] as const satisfies readonly ServerSpillId[]
+export type TavleSpillId = (typeof TAVLE_SPILL)[number]
+
+export function erTavleSpill(id: string): id is TavleSpillId {
+  return (TAVLE_SPILL as readonly string[]).includes(id)
+}
+
 /** Client-checked games: server-recomputed for personal history, excluded from leaderboards because answers/hints live on the client. */
 export const KLIENT_SPILL = ["omriss", "canvas", "rusle", "mer-eller-mindre", "stavebien", "havet"] as const
 export type KlientSpillId = (typeof KLIENT_SPILL)[number]
@@ -134,7 +142,7 @@ export function erServerSpill(id: string): id is ServerSpillId {
 export type TavleMetrikk = "lost" | "tid" | "hint" | "forsok" | "feil" | "poeng"
 export type TavleOmfang = "global" | "venner"
 export type TavlePeriode = "dag" | "maned"
-export type TavleValg = "totalt" | ServerSpillId
+export type TavleValg = "totalt" | TavleSpillId
 
 export type TavleSpillMeta = {
   id: ServerSpillId
@@ -320,7 +328,7 @@ export const DUELL_MODUS_VALG: Record<DuellSpillId, readonly { id: DuellModus; n
     { id: "pistol", navn: "Startpistolen", kort: "Varm potet med skjult lunte og liv" },
   ],
   gjettelos: [{ id: "runder", navn: "Vanlig duell", kort: "5 tallspørsmål, nærmest fasit vinner" }],
-  moggern: [{ id: "runder", navn: "1v1 med kamera", kort: "10 s kameraduell med venner, høyeste poengsum mogger" }],
+  moggern: [{ id: "runder", navn: "1v1 med kamera", kort: "15 s kameraduell med venner, høyeste poengsum mogger" }],
 }
 
 export type DuellUtfordring = {

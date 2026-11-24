@@ -1,11 +1,11 @@
 import { iDagOslo, kanSpilles } from "@/features/spill/lib/dag"
 import {
   erGyldigManed,
-  erServerSpill,
+  erTavleSpill,
   gjeldendeManed,
   manedGrenser,
-  SERVER_SPILL,
   TAVLE_META,
+  TAVLE_SPILL,
   type ServerSpillId,
   type TavleMetrikk,
   type TavleOmfang,
@@ -22,7 +22,7 @@ export async function GET(request: Request) {
   const url = new URL(request.url)
   const spillParam = url.searchParams.get("spill") ?? "totalt"
   const erTotalt = spillParam === "totalt"
-  if (!erTotalt && !erServerSpill(spillParam)) {
+  if (!erTotalt && !erTavleSpill(spillParam)) {
     return jsonPrivat({ melding: "Dette spillet har ikke ledertavle." }, 400)
   }
 
@@ -63,7 +63,7 @@ export async function GET(request: Request) {
   if (erTotalt) {
     const [spillSvar, { data: profil }] = await Promise.all([
       Promise.all(
-        SERVER_SPILL.map((id) =>
+        TAVLE_SPILL.map((id) =>
           innlogget.supabase
             .rpc("spill_ledertavle_rader", {
               p_spill_id: id,

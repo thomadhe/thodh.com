@@ -1,5 +1,18 @@
 /** Daily games: one puzzle per day, with calendar and stored results. */
 export type SpillId = "mer-eller-mindre" | "anelseslos" | "stavebien" | "sanglos" | "omriss" | "canvas" | "soket" | "emovi" | "rusle" | "tilkoblinger" | "havet" | "heksagonal-jakt" | "67-stegern" | "gjettelos"
+/** Core daily games featured on the front page and top of /spill; the rest live in the "Flere spill" folder. */
+export const HOVED_SPILL_IDER = [
+  "mer-eller-mindre",
+  "anelseslos",
+  "omriss",
+  "67-stegern",
+  "gjettelos",
+] as const satisfies readonly SpillId[]
+
+export function erHovedSpill(id: SpillId): boolean {
+  return (HOVED_SPILL_IDER as readonly string[]).includes(id)
+}
+
 /** Free-play quizzes without a daily puzzle. */
 export type QuizId = "verdens-land" | "hovedsteder"
 /** Standalone multiplayer duels without a daily puzzle. */

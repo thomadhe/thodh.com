@@ -26,16 +26,19 @@ import bilder from "../data/mer-eller-mindre/bilder.json"
 import { dagNummer, iRotasjon, stokk } from "./dag"
 
 /**
- * Five fixed slots in a fixed order (music, film and TV, prices, countries, trivia). Slots with several
- * categories rotate between them day by day. The music slot keeps Nordic artists and songs in their own
- * categories so they never meet global superstars.
+ * Five balanced slots in a fixed order:
+ *   1. Opener: relatable & surprising comparisons (prices, chronology, speed, weight, calories, curiosities)
+ *   2. Money, sports & drama (transfers, acquisitions, heists, facts)
+ *   3. Nature & heights (animal weights, heights, life expectancy)
+ *   4. Geography & Norway (countries, Norwegian municipalities, distances from Oslo)
+ *   5. Pop culture (IMDb films & series, Spotify listeners & streams — Nordic kept separate from global)
  */
 const PLASSER: MerEllerMindreCategory[][] = [
-  [artisterLyttere, sangerStrommer, artisterLytterNorden, sangerStrommerNorden],
-  [filmerImdb, serierImdb],
-  [kuriositeter, ran, oppkjop, overgangssummer, priserNorge],
-  [landBefolkning, landAreal],
-  [dyrVekt, hoyde, matKalorier, hvaKomForst, norskeKommuner, avstandOslo, toppfart, hvaVeierMest, levealder, fakta],
+  [hvaKomForst, priserNorge, toppfart, hvaVeierMest, matKalorier, kuriositeter],
+  [overgangssummer, oppkjop, ran, fakta],
+  [dyrVekt, hoyde, levealder],
+  [landBefolkning, landAreal, norskeKommuner, avstandOslo],
+  [filmerImdb, serierImdb, artisterLyttere, sangerStrommer, artisterLytterNorden, sangerStrommerNorden],
 ]
 
 export const kategorier: MerEllerMindreCategory[] = PLASSER.flat()

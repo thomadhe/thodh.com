@@ -26,6 +26,7 @@ import {
   normaliserVennekode,
   SERVER_SPILL,
   TAVLE_META,
+  TAVLE_SPILL,
   TID_MAKS_SEK,
   TID_MIN_SEK,
   validerVisningsnavn,
@@ -96,6 +97,7 @@ test("alle 14 daglige spill er klassifisert som enten server- eller klientsjekke
   for (const s of spill) {
     assert.ok(serverSett.has(s.id) || klientSett.has(s.id), `${s.id} mangler i SERVER_SPILL/KLIENT_SPILL`)
   }
+  assert.deepEqual([...TAVLE_SPILL], ["anelseslos", "67-stegern", "gjettelos"])
 })
 
 test("Ed25519 økt-, bevis- og radsignaturer oppdager manipulering", () => {

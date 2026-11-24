@@ -1,12 +1,12 @@
 "use client"
 
-import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react"
+import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight, FolderOpen } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { useSprak, useT } from "@/lib/sprak"
 import { dagNummer, formaterDato, iDagOslo, leggTilDager, START_DATO } from "../lib/dag"
 import { useAlleResultater, type Resultat } from "../lib/lagring"
-import { spill, spillTekst, type Spill } from "../lib/spill"
+import { erHovedSpill, HOVED_SPILL_IDER, quizer, spill, spillTekst, type Spill } from "../lib/spill"
 import { illustrasjoner } from "./illustrasjoner"
 import { Kalender } from "./kalender"
 
@@ -71,9 +71,14 @@ export function SpillOversikt({ dato }: { dato: string }) {
   const iDag = iDagOslo()
   const alle = useAlleResultater()
   const [visKalender, setVisKalender] = useState(false)
+  const [visFlere, setVisFlere] = useState(false)
   const erIDag = dato === iDag
   const lenke = (d: string) => (d === iDag ? "/spill" : `/spill?dato=${d}`)
   const pil = "flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-neutral-300 transition hover:bg-white/10"
+
+  const synlige = spill.filter((s) => !s.start || dato >= s.start)
+  const hovedSpill = synlige.filter((s) => erHovedSpill(s.id))
+  const arkivSpill = synlige.filter((s) => !erHovedSpill(s.id))
 
   return (
     <>
@@ -118,18 +123,58 @@ export function SpillOversikt({ dato }: { dato: string }) {
           <p className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-neutral-400">
             {t("Spill tidligere dager", "Play previous days")}
           </p>
-          <Kalender spillIder={spill.map((s) => s.id)} href="/spill" valgt={dato} />
+          <Kalender spillIder={[...HOVED_SPILL_IDER]} href="/spill" valgt={dato} />
         </section>
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2">
-        {/* A game that started later has no puzzle on earlier days. */}
-        {spill
-          .filter((s) => !s.start || dato >= s.start)
-          .map((s) => (
-            <Flis key={s.id} s={s} dato={dato} iDag={iDag} resultater={alle[s.id] ?? {}} />
-          ))}
+        {hovedSpill.map((s) => (
+          <Flis key={s.id} s={s} dato={dato} iDag={iDag} resultater={alle[s.id] ?? {}} />
+        ))}
       </div>
+
+      <section className="flex flex-col gap-4 pt-2">
+        <button
+          type="button"
+          onClick={() => setVisFlere((v) => !v)}
+          aria-expanded={visFlere}
+          className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-neutral-300 transition hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
+        >
+          <FolderOpen className="h-3.5 w-3.5 text-neutral-400" aria-hidden="true" />
+          <span>
+            {t("Flere spill", "More games")} ({arkivSpill.length + quizer.length})
+          </span>
+          <ChevronDown className={`h-3.5 w-3.5 transition-transform ${visFlere ? "rotate-180" : ""}`} aria-hidden="true" />
+        </button>
+
+        {visFlere ? (
+          <div className="flex flex-col gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {arkivSpill.map((s) => (
+                <Flis key={s.id} s={s} dato={dato} iDag={iDag} resultater={alle[s.id] ?? {}} />
+              ))}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {quizer.map((q) => {
+                const tekst = spillTekst(q, sprak)
+                return (
+                  <Link
+                    key={q.id}
+                    href={q.href}
+                    className="flex items-center justify-between gap-3 rounded-2xl border border-white/[0.07] bg-[#26282c] px-5 py-4 transition hover:border-white/20 hover:bg-[#2f3237]"
+                  >
+                    <div>
+                      <p className="text-sm font-semibold text-neutral-100">{tekst.navn}</p>
+                      <p className="mt-0.5 text-xs text-neutral-400">{tekst.kort}</p>
+                    </div>
+                    <span className="font-mono text-xs text-neutral-400">→</span>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        ) : null}
+      </section>
     </>
   )
 }

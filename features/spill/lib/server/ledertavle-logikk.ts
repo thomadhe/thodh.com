@@ -3,8 +3,8 @@
 
 import {
   formaterTidSek,
-  SERVER_SPILL,
   TAVLE_META,
+  TAVLE_SPILL,
   type ServerSpillId,
   type SpillVinnerKort,
   type TavleMetrikk,
@@ -263,7 +263,7 @@ export function aggregerSeierherre(
     return s
   }
 
-  for (const spillId of SERVER_SPILL) {
+  for (const spillId of TAVLE_SPILL) {
     const rader = perSpill[spillId]
     if (!rader?.length) continue
 

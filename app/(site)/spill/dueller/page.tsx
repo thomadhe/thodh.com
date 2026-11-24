@@ -7,8 +7,8 @@ import { supabaseConfig } from "@/lib/supabase/config"
 export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
-  title: "Dueller · Daglige minigames",
-  description: "Lag duellrom med 4-bokstavers kode eller utfordre venner direkte i 6/7-stegern og Gjetteløs.",
+  title: "Dueller · thodh.com",
+  description: "Utfordre venner i Moggern, 6/7-stegern, Gjetteløs og Sjakk for 2 — med romkode eller direkte invitasjon.",
   robots: { index: false },
 }
 
@@ -18,8 +18,10 @@ export default async function Page() {
   return (
     <SpillSosialSide
       aktiv="dueller"
-      tittel="Dueller"
-      undertittel="Lag et åpent rom med kode, bli med med kode, eller utfordre en venn direkte."
+      tittel="Duell-arena"
+      tittelEn="Duel Arena"
+      undertittel="Velg spill, åpne et rom med 4-bokstavers kode, eller utfordre en venn på ett klikk."
+      undertittelEn="Pick a game, open a room with a 4-letter code, or challenge a friend in one click."
     >
       <SpillDueller innlogget={Boolean(innlogget)} supabaseUrl={url} supabaseNokkel={key} />
     </SpillSosialSide>
