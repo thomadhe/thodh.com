@@ -51,6 +51,7 @@ export function useMoggernWebRtc({
   lydStrom = null,
   sendSignal,
   aktiv,
+  sprak = "no",
 }: {
   meg: string | null
   motstanderId: string | null
@@ -58,8 +59,9 @@ export function useMoggernWebRtc({
   /** Optional opt-in local microphone stream (null when muted/off). */
   lydStrom?: MediaStream | null
   sendSignal: (signal: WebRtcSignal) => void
-  /** True only when the user is logged in, has accepted the disclaimer, and is in the active 2-player pair. */
+  /** True only when the user has accepted the disclaimer and is in the active 2-player pair. */
   aktiv: boolean
+  sprak?: "no" | "en"
 }) {
   const [fjernStrom, setFjernStrom] = useState<MediaStream | null>(null)
   const [fjernLydStrom, setFjernLydStrom] = useState<MediaStream | null>(null)
@@ -77,6 +79,7 @@ export function useMoggernWebRtc({
   const sendSignalRef = useRef(sendSignal)
   const megRef = useRef<string | null>(meg)
   const motstanderIdRef = useRef<string | null>(motstanderId)
+  const sprakRef = useRef<"no" | "en">(sprak)
   const venterIceRef = useRef<RTCIceCandidateInit[]>([])
   const ventendeSignalerRef = useRef<WebRtcSignal[]>([])
   const signalKoRef = useRef<Promise<void>>(Promise.resolve())
@@ -90,6 +93,7 @@ export function useMoggernWebRtc({
     sendSignalRef.current = sendSignal
     megRef.current = meg
     motstanderIdRef.current = motstanderId
+    sprakRef.current = sprak
   })
 
   // Fetch STUN + optional TURN configuration before opening the RTCPeerConnection (with 2 s safety fallback).
@@ -304,7 +308,11 @@ export function useMoggernWebRtc({
     }
     if (typeof RTCPeerConnection === "undefined") {
       setStatus("feil")
-      setFeil("Nettleseren støtter ikke WebRTC-video.")
+      setFeil(
+        sprakRef.current === "en"
+          ? "Your browser does not support WebRTC video."
+          : "Nettleseren støtter ikke WebRTC-video.",
+      )
       return
     }
 
@@ -398,10 +406,15 @@ export function useMoggernWebRtc({
     const markerFeil = () => {
       if (pcRef.current !== pc) return
       setStatus("feil")
+      const en = sprakRef.current === "en"
       setFeil(
         iceKonfigRef.current.harTurn
-          ? "Mistet videokoblingen til motstanderen. Trykk «Koble til på nytt»."
-          : "Klarte ikke å koble video direkte (ofte mobilnett/4G uten TURN-server). Prøv samme Wi-Fi eller trykk «Koble til på nytt».",
+          ? en
+            ? "Lost video connection to your opponent. Tap “Reconnect”."
+            : "Mistet videokoblingen til motstanderen. Trykk «Koble til på nytt»."
+          : en
+            ? "Could not connect direct video (often mobile data without a TURN server). Try the same Wi-Fi or tap “Reconnect”."
+            : "Klarte ikke å koble video direkte (ofte mobilnett/4G uten TURN-server). Prøv samme Wi-Fi eller trykk «Koble til på nytt».",
       )
     }
 

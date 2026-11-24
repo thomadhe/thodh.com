@@ -26,7 +26,7 @@ import {
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { useT } from "@/lib/sprak"
+import { useSprak, useT } from "@/lib/sprak"
 import { lagKode, rensNavn } from "../lib/duell/rom"
 import { serverNa } from "../lib/duell/signatur"
 import { lyder } from "../lib/lyd"
@@ -102,13 +102,31 @@ import type { MoggernBruker } from "./moggern-inngang"
 import { MoggernResultat } from "./moggern-resultat"
 import { useVisningsnavnSynk, VisningsnavnPille } from "./visningsnavn-pille"
 
-const VEILEDNING_TEKST: Record<Veiledning, string> = {
-  "ingen-ansikt": "Ingen ansikt i bildet — flytt deg inn i rammen",
-  "for-langt-unna": "Kom litt nærmere kameraet",
-  "for-naerme": "Gå et lite steg bakover",
-  "snu-rett": "Se litt rettere mot kameraet",
-  "vipp-rett": "Hold hodet litt rettere",
-  ok: "Perfekt! Hold blikket rolig",
+const VEILEDNING_TEKST: Record<Veiledning, { no: string; en: string }> = {
+  "ingen-ansikt": {
+    no: "Ingen ansikt i bildet — flytt deg inn i rammen",
+    en: "No face in frame — center yourself in view",
+  },
+  "for-langt-unna": {
+    no: "Kom litt nærmere kameraet",
+    en: "Move a bit closer to the camera",
+  },
+  "for-naerme": {
+    no: "Gå et lite steg bakover",
+    en: "Take a small step back",
+  },
+  "snu-rett": {
+    no: "Se litt rettere mot kameraet",
+    en: "Face the camera a bit more straight on",
+  },
+  "vipp-rett": {
+    no: "Hold hodet litt rettere",
+    en: "Keep your head a bit more level",
+  },
+  ok: {
+    no: "Perfekt! Hold blikket rolig",
+    en: "Perfect! Hold your gaze steady",
+  },
 }
 
 const MAALING_INTERVALL_MS = 140
@@ -144,12 +162,17 @@ export function MoggernRom({
   supabaseUrl: string
   supabaseNokkel: string
 }) {
+  const t = useT()
   const { godkjent, lastet } = useHarGodkjentTull()
   const [lokalGodkjent, setLokalGodkjent] = useState(false)
   const harGodkjent = godkjent || lokalGodkjent
 
   if (!lastet) {
-    return <div className="mx-auto w-full max-w-xl py-12 text-center text-xs text-neutral-500 tabular-nums">Laster rom {kode} …</div>
+    return (
+      <div className="mx-auto w-full max-w-xl py-12 text-center text-xs text-neutral-500 tabular-nums">
+        {t(`Laster rom ${kode} …`, `Loading room ${kode} …`)}
+      </div>
+    )
   }
 
   if (!harGodkjent) {
@@ -165,25 +188,31 @@ export function MoggernRom({
 
 /** Live score + rank title badge floating over a video tile. */
 function LiveRating({ live, modell, aktiv }: { live: LivePoeng | null; modell: ModellStatus; aktiv: boolean }) {
+  const sprak = useSprak()
+  const t = useT()
   if (!aktiv) return null
   if (!live) {
     return (
       <span className={`${GLASS} inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[11px] font-medium text-white/75`}>
         {modell === "laster" ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : null}
-        {modell === "laster" ? "Laster ansiktsmodell …" : "Vis ansiktet i kameraet"}
+        {modell === "laster" ? t("Laster ansiktsmodell …", "Loading face model …") : t("Vis ansiktet i kameraet", "Show your face in the camera")}
       </span>
     )
   }
-  const rang = rangForPoeng(live.total)
+  const rang = rangForPoeng(live.total, sprak)
   return (
     <div
       className={`${GLASS} flex items-center gap-2 rounded-[18px] py-1 pr-3 pl-1 shadow-[0_8px_24px_rgb(0_0_0/0.25)]`}
       aria-live="off"
-      title={`Struktur ${formaterMoggernPoeng(live.strukturPoeng)} · uttrykk ${formaterBonus(live.bonus)}`}
+      title={
+        sprak === "en"
+          ? `Structure ${formaterMoggernPoeng(live.strukturPoeng, "en")} · expressions ${formaterBonus(live.bonus, "en")}`
+          : `Struktur ${formaterMoggernPoeng(live.strukturPoeng)} · uttrykk ${formaterBonus(live.bonus)}`
+      }
     >
       <span className={`rounded-[14px] px-2.5 py-1 text-xs font-semibold tracking-[-0.01em] sm:text-[13px] ${rang.farge}`}>{rang.tittel}</span>
       <span className="text-[1.65rem] leading-none font-semibold tracking-[-0.04em] tabular-nums sm:text-[2rem]">
-        {formaterMoggernPoeng(live.total)}
+        {formaterMoggernPoeng(live.total, sprak)}
       </span>
     </div>
   )
@@ -191,6 +220,7 @@ function LiveRating({ live, modell, aktiv }: { live: LivePoeng | null; modell: M
 
 /** Compact pills for active mog-uttrykk with their live bonus/penalty. */
 function UttrykkPiller({ styrker }: { styrker: MogUttrykkStyrker | null }) {
+  const sprak = useSprak()
   if (!styrker) return null
   const aktive = MOG_UTTRYKK.filter((u) => (styrker[u.id] ?? 0) >= UTTRYKK_VIS_TERSKEL)
   if (!aktive.length) return null
@@ -205,8 +235,8 @@ function UttrykkPiller({ styrker }: { styrker: MogUttrykkStyrker | null }) {
               u.maks > 0 ? "bg-lime-300/90 text-[#18191b]" : "bg-rose-500/85 text-white"
             }`}
           >
-            {u.navn}
-            <span className="opacity-70">{formaterBonus(verdi)}</span>
+            {sprak === "en" ? u.navnEn : u.navn}
+            <span className="opacity-70">{formaterBonus(verdi, sprak)}</span>
           </span>
         )
       })}
@@ -226,7 +256,13 @@ function AktivtMoggernRom({
   supabaseNokkel: string
 }) {
   const router = useRouter()
+  const sprak = useSprak()
   const t = useT()
+  const en = sprak === "en"
+  const sprakRef = useRef(sprak)
+  useEffect(() => {
+    sprakRef.current = sprak
+  }, [sprak])
 
   const signalHandtererRef = useRef<(payload: unknown) => void>(() => {})
   const motSendtBildeRef = useRef<{ runde: number; av: string; dataUrl: string } | null>(null)
@@ -333,7 +369,7 @@ function AktivtMoggernRom({
         motFinisherBonusRef.current = h.type === "utlost" ? RIZZLER_BONUS : RIZZLER_FEIL_STRAFF
         if (h.type === "utlost") lyder.rizzler()
         else lyder.rizzFeil()
-        visBannerRef.current(h.type, false, h.navn || "Motstanderen")
+        visBannerRef.current(h.type, false, h.navn || (sprakRef.current === "en" ? "Opponent" : "Motstanderen"))
       },
       bilde: (payload: unknown, romCtx: Romkontekst<MoggernStatus>) => {
         const p = payload as { runde?: unknown; av?: unknown; dataUrl?: unknown }
@@ -356,8 +392,13 @@ function AktivtMoggernRom({
       forlat: (payload: unknown, romCtx: Romkontekst<MoggernStatus>) => {
         const p = payload as { id?: unknown; navn?: unknown }
         if (typeof p?.id === "string" && p.id !== romCtx.meg) {
-          const hvem = typeof p.navn === "string" && p.navn ? p.navn : "Motstanderen"
-          setForlattVarsel(`${hvem} forlot rommet.`)
+          const hvem =
+            typeof p.navn === "string" && p.navn
+              ? p.navn
+              : sprakRef.current === "en"
+                ? "Opponent"
+                : "Motstanderen"
+          setForlattVarsel(sprakRef.current === "en" ? `${hvem} left the room.` : `${hvem} forlot rommet.`)
           setMotstanderKameraPa(false)
           relayRammeNrRef.current = 0
           sisteAnalysertRelayNrRef.current = 0
@@ -534,6 +575,7 @@ function AktivtMoggernRom({
     lydStrom,
     sendSignal,
     aktiv: !erFullt && tilkobling === "klar",
+    sprak,
   })
 
   useEffect(() => {
@@ -776,7 +818,7 @@ function AktivtMoggernRom({
       setLokalStrom(strom)
       lyder.velg()
     } catch (err) {
-      if (montertRef.current) setKameraFeil(kameraFeilTekst(err))
+      if (montertRef.current) setKameraFeil(kameraFeilTekst(err, sprakRef.current))
     } finally {
       starterRef.current = false
       if (montertRef.current) setStarterKamera(false)
@@ -823,7 +865,7 @@ function AktivtMoggernRom({
       setLydStrom(strom)
       lyder.velg()
     } catch (err) {
-      if (montertRef.current) setMikFeil(mikrofonFeilTekst(err))
+      if (montertRef.current) setMikFeil(mikrofonFeilTekst(err, sprakRef.current))
     } finally {
       if (montertRef.current) setStarterMik(false)
     }
@@ -1411,7 +1453,11 @@ function AktivtMoggernRom({
     const lenke = typeof window !== "undefined" ? window.location.href : ""
     try {
       if (navigator.share && matchMedia("(pointer: coarse)").matches) {
-        await navigator.share({ title: "Moggern · thodh.com", text: `Bli med i Moggern-duell (${kode})!`, url: lenke })
+        await navigator.share({
+          title: "Moggern · thodh.com",
+          text: sprakRef.current === "en" ? `Join my Moggern duel (${kode})!` : `Bli med i Moggern-duell (${kode})!`,
+          url: lenke,
+        })
         return
       }
       await navigator.clipboard.writeText(lenke)
@@ -1423,7 +1469,7 @@ function AktivtMoggernRom({
   const soloResultat = useMemo<SpillerSluttResultat | null>(() => {
     if (!erSoloAktiv || !soloMaaling) return null
     return {
-      deltaker: { id: meg ?? "solo", navn: mittNavn || "Deg", farge: 0 },
+      deltaker: { id: meg ?? "solo", navn: mittNavn || (en ? "You" : "Deg"), farge: 0 },
       offisiell: soloMaaling,
       kilde: soloMaaling.ok ? "egen" : "ingen",
       egenMaaling: soloMaaling,
@@ -1431,7 +1477,7 @@ function AktivtMoggernRom({
       stortAvvik: false,
       avvik: 0,
     }
-  }, [erSoloAktiv, soloMaaling, meg, mittNavn])
+  }, [erSoloAktiv, soloMaaling, meg, mittNavn, en])
 
   const romStillingTekst = useMemo(() => {
     const par = status.deltakere.length === 2 ? status.deltakere : aktiveSpillere.length === 2 ? aktiveSpillere : null
@@ -1439,24 +1485,33 @@ function AktivtMoggernRom({
     const a = status.stilling[par[0].id] ?? 0
     const b = status.stilling[par[1].id] ?? 0
     if (a + b === 0) return null
-    return `${par[0].navn || "Spiller 1"} ${a} – ${b} ${par[1].navn || "Spiller 2"}`
-  }, [status.deltakere, status.stilling, aktiveSpillere])
+    const p1 = par[0].navn || (en ? "Player 1" : "Spiller 1")
+    const p2 = par[1].navn || (en ? "Player 2" : "Spiller 2")
+    return `${p1} ${a} – ${b} ${p2}`
+  }, [status.deltakere, status.stilling, aktiveSpillere, en])
 
   if (erFullt) {
     return (
       <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
         <section className={`${MFLATE} p-6 text-center sm:p-8`}>
-          <p className="text-xs font-medium text-rose-300">Rom {kode} er fullt</p>
-          <h2 className="mt-2 text-[1.6rem] font-semibold tracking-[-0.03em] text-neutral-950">Maks 2 spillere per duell</h2>
+          <p className="text-xs font-medium text-rose-300">
+            {en ? `Room ${kode} is full` : `Rom ${kode} er fullt`}
+          </p>
+          <h2 className="mt-2 text-[1.6rem] font-semibold tracking-[-0.03em] text-neutral-950">
+            {t("Maks 2 spillere per duell", "Max 2 players per duel")}
+          </h2>
           <p className="mt-3 text-[15px] leading-6 text-neutral-700">
-            Det er allerede to venner i dette rommet. Lag ditt eget rom for å starte en ny 1v1-duell.
+            {t(
+              "Det er allerede to venner i dette rommet. Lag ditt eget rom for å starte en ny 1v1-duell.",
+              "There are already two friends in this room. Create your own room to start a new 1v1 duel.",
+            )}
           </p>
           <div className="mt-6 flex justify-center gap-2.5">
             <button type="button" onClick={() => router.push(`/spill/moggern/${lagKode()}`)} className={MKNAPP}>
-              Lag nytt rom
+              {t("Lag nytt rom", "Create new room")}
             </button>
             <Link href="/spill/moggern" className={MKNAPP_SEKUNDAR}>
-              Tilbake
+              {t("Tilbake", "Back")}
             </Link>
           </div>
         </section>
@@ -1465,9 +1520,9 @@ function AktivtMoggernRom({
   }
 
   const nedtellingTall = Math.max(1, Math.min(3, Math.ceil(gjenstarMs / 1000)))
-  const maalingSek = (gjenstarMs / 1000).toFixed(1).replace(".", ",")
+  const maalingSek = en ? (gjenstarMs / 1000).toFixed(1) : (gjenstarMs / 1000).toFixed(1).replace(".", ",")
   const maalingFremdrift = Math.min(100, Math.max(0, ((MALING_MS - gjenstarMs) / MALING_MS) * 100))
-  const motNavn = motstander?.navn || "Motstanderen"
+  const motNavn = motstander?.navn || t("Motstanderen", "Opponent")
 
   // Live tug-of-war lead during 1v1 measurement
   const harTautrekking = !erSoloAktiv && aktivFase === "maling" && !!egenLive && !!motLive
@@ -1477,20 +1532,35 @@ function AktivtMoggernRom({
   const egenTautrekkingAndel = harTautrekking ? Math.max(12, Math.min(88, Math.round(50 + liveDiff * 14))) : 50
 
   const lobbyHint = !lokalStrom
-    ? "Slå på kameraet ditt for å gjøre deg klar."
+    ? t("Slå på kameraet ditt for å gjøre deg klar.", "Turn on your camera to get ready.")
     : !motstander
-      ? "Del lenken eller koden med én venn — eller prøv en 15 s solo-test mens du venter."
+      ? t(
+          "Del lenken eller koden med én venn — eller prøv en 15 s solo-test mens du venter.",
+          "Share the link or code with a friend — or try a 15 s solo test while you wait.",
+        )
       : !motstanderHarVideo
-        ? `Venter på at ${motNavn} slår på kameraet.`
+        ? en
+          ? `Waiting for ${motNavn} to turn on their camera.`
+          : `Venter på at ${motNavn} slår på kameraet.`
         : !motstanderKlar
-          ? `Venter på at ${motNavn} trykker «Klar».`
-          : "Begge er klare — trykk Start for 3-2-1 og 15 sekunders måling!"
+          ? en
+            ? `Waiting for ${motNavn} to press “Ready”.`
+            : `Venter på at ${motNavn} trykker «Klar».`
+          : t(
+              "Begge er klare — trykk Start for 3-2-1 og 15 sekunders måling!",
+              "Both ready — press Start for 3-2-1 and a 15-second scan!",
+            )
 
   const gjesteHint = !lokalStrom
-    ? "Slå på kameraet ditt og trykk «Klar til duell»."
+    ? t("Slå på kameraet ditt og trykk «Klar til duell».", "Turn on your camera and press “Ready to duel”.")
     : klar
-      ? `Du er klar! Venter på at ${motstander?.navn || "verten"} starter.`
-      : "Trykk «Klar» når du sitter i godt lys og ser rett i kameraet."
+      ? en
+        ? `You’re ready! Waiting for ${motstander?.navn || "the host"} to start.`
+        : `Du er klar! Venter på at ${motstander?.navn || "verten"} starter.`
+      : t(
+          "Trykk «Klar» når du sitter i godt lys og ser rett i kameraet.",
+          "Press “Ready” when you’re in good lighting looking straight at the camera.",
+        )
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-2">
@@ -1501,16 +1571,16 @@ function AktivtMoggernRom({
       <div className="flex w-full min-w-0 flex-wrap items-center justify-between gap-2">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <span className="inline-flex h-9 items-center gap-2 rounded-full border border-white/[0.07] bg-[var(--spill-flate)] pr-1 pl-3.5">
-            <span className="text-[11px] font-medium text-neutral-500">Rom</span>
+            <span className="text-[11px] font-medium text-neutral-500">{t("Rom", "Room")}</span>
             <span className="text-[15px] font-semibold tracking-[0.18em] text-neutral-950 tabular-nums">{kode}</span>
             <button
               type="button"
               onClick={kopierLenke}
-              aria-label="Kopier invitasjonslenke"
+              aria-label={t("Kopier invitasjonslenke", "Copy invite link")}
               className="inline-flex h-7 items-center gap-1 rounded-full bg-white/[0.06] px-2.5 text-[11px] font-medium text-neutral-800 transition hover:bg-white/[0.12]"
             >
               {kopiert ? <Check className="h-3.5 w-3.5 text-lime-400" /> : <Copy className="h-3.5 w-3.5" />}
-              <span className="max-sm:sr-only">{kopiert ? "Kopiert!" : "Kopier lenke"}</span>
+              <span className="max-sm:sr-only">{kopiert ? t("Kopiert!", "Copied!") : t("Kopier lenke", "Copy link")}</span>
             </button>
           </span>
           <span className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/[0.07] bg-[var(--spill-flate)] px-3 text-[11px] font-medium text-neutral-600 tabular-nums">
@@ -1522,12 +1592,12 @@ function AktivtMoggernRom({
             ) : tilkobling === "feil" ? (
               <>
                 <WifiOff className="h-3.5 w-3.5 text-rose-400" aria-hidden="true" />
-                Feil
+                {t("Feil", "Error")}
               </>
             ) : (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin text-neutral-500" aria-hidden="true" />
-                Kobler …
+                {t("Kobler …", "Connecting …")}
               </>
             )}
           </span>
@@ -1539,10 +1609,11 @@ function AktivtMoggernRom({
           {dagensBeste ? (
             <span
               className="hidden h-9 items-center gap-1.5 rounded-full border border-white/[0.07] bg-[var(--spill-flate)] px-3 text-[11px] font-medium text-neutral-600 tabular-nums sm:inline-flex"
-              title="Din beste score på denne enheten i dag"
+              title={t("Din beste score på denne enheten i dag", "Your best score on this device today")}
             >
               <Trophy className="h-3.5 w-3.5 text-lime-300" aria-hidden="true" />
-              I dag: <strong className="text-neutral-950">{formaterMoggernPoeng(dagensBeste.poeng)}</strong>
+              {t("I dag:", "Today:")}{" "}
+              <strong className="text-neutral-950">{formaterMoggernPoeng(dagensBeste.poeng, sprak)}</strong>
             </span>
           ) : null}
         </div>
@@ -1602,7 +1673,7 @@ function AktivtMoggernRom({
 
       {/* Stage: edge-to-edge full-viewport in lobby, and true 100vw × 100dvh fullscreen during countdown & duel/solo. */}
       <section
-        aria-label="Kameraduell"
+        aria-label={t("Kameraduell", "Camera duel")}
         className={visResultat ? "hidden" : iDuell ? "fixed inset-0 z-50 bg-[#0d0e10] p-0" : "w-full"}
       >
         <div
@@ -1648,17 +1719,23 @@ function AktivtMoggernRom({
                 <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.06] text-white/60">
                   {starterKamera ? <Loader2 className="h-5 w-5 animate-spin" /> : <CameraOff className="h-5 w-5" aria-hidden="true" />}
                 </span>
-                <p className="text-[15px] font-medium text-white">{starterKamera ? "Starter kameraet …" : "Kameraet ditt er av"}</p>
+                <p className="text-[15px] font-medium text-white">
+                  {starterKamera ? t("Starter kameraet …", "Starting camera …") : t("Kameraet ditt er av", "Your camera is off")}
+                </p>
                 {!starterKamera ? (
                   <button type="button" onClick={() => void skruPaKamera()} className={MKNAPP}>
                     <Camera className="h-4 w-4" />
-                    Slå på kamera
+                    {t("Slå på kamera", "Turn on camera")}
                   </button>
                 ) : (
-                  <p className="max-w-xs text-xs leading-5 text-white/50">Svar «Tillat» hvis nettleseren spør om kameraet.</p>
+                  <p className="max-w-xs text-xs leading-5 text-white/50">
+                    {t("Svar «Tillat» hvis nettleseren spør om kameraet.", "Click “Allow” if your browser asks for camera access.")}
+                  </p>
                 )}
                 {kameraFeil ? <p className="max-w-sm text-xs leading-5 text-rose-300">{kameraFeil}</p> : null}
-                <p className="max-w-xs text-[11px] leading-4 text-white/35">Videoen går bare direkte til vennen din. Ingenting lagres.</p>
+                <p className="max-w-xs text-[11px] leading-4 text-white/35">
+                  {t("Videoen går bare direkte til vennen din. Ingenting lagres.", "Video goes directly to your friend. Nothing is stored.")}
+                </p>
               </div>
             ) : null}
 
@@ -1672,10 +1749,10 @@ function AktivtMoggernRom({
                 navn={mittNavn}
                 onEndret={setMittNavn}
                 kunLokal={!bruker}
-                etikett="(deg)"
+                etikett={t("(deg)", "(you)")}
                 ikon={
                   erVert ? (
-                    <Crown className="h-3.5 w-3.5 shrink-0 text-amber-300" aria-label="Vert" />
+                    <Crown className="h-3.5 w-3.5 shrink-0 text-amber-300" aria-label={t("Vert", "Host")} />
                   ) : bruker ? (
                     <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-400" aria-hidden="true" />
                   ) : (
@@ -1688,16 +1765,16 @@ function AktivtMoggernRom({
                 <LiveRating live={egenLive} modell={modell} aktiv={!!lokalStrom && modell !== "feil"} />
                 {aktivFase === "maling" && egenFinisherStatus === "utlost" ? (
                   <span className="mel-pop inline-flex h-7 items-center gap-1 rounded-full bg-amber-300 px-2.5 text-[11px] font-bold text-[#18191b] shadow-[0_0_20px_rgb(250_204_21/0.55)] tabular-nums">
-                    🤫 Rizzler {formaterBonus(RIZZLER_BONUS)} · låst
+                    🤫 Rizzler {formaterBonus(RIZZLER_BONUS, sprak)} · {t("låst", "locked")}
                   </span>
                 ) : aktivFase === "maling" && egenFinisherStatus === "feilet" ? (
                   <span className="mel-pop inline-flex h-7 items-center gap-1 rounded-full bg-rose-500/90 px-2.5 text-[11px] font-bold text-white tabular-nums">
-                    😂 Rizz failed {formaterBonus(RIZZLER_FEIL_STRAFF)}
+                    😂 Rizz failed {formaterBonus(RIZZLER_FEIL_STRAFF, sprak)}
                   </span>
                 ) : aktivFase === "maling" && egenPoengLast ? (
                   <span className="mel-pop inline-flex h-7 items-center gap-1 rounded-full border border-amber-300/50 bg-[#111214]/85 px-2.5 text-[11px] font-semibold text-amber-200 backdrop-blur-md">
                     <Lock className="h-3 w-3 shrink-0 text-amber-300" aria-hidden="true" />
-                    Poeng låst
+                    {t("Poeng låst", "Score locked")}
                   </span>
                 ) : null}
                 {modell === "feil" && lokalStrom ? (
@@ -1707,7 +1784,7 @@ function AktivtMoggernRom({
                     className={`${GLASS} inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[11px] font-medium text-amber-200 hover:bg-[#111214]/85`}
                   >
                     <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
-                    Ansiktsmodellen feilet · prøv igjen
+                    {t("Ansiktsmodellen feilet · prøv igjen", "Face model failed · retry")}
                   </button>
                 ) : null}
               </div>
@@ -1717,29 +1794,35 @@ function AktivtMoggernRom({
             <div className="absolute inset-x-2.5 bottom-2.5 flex flex-col gap-2 sm:inset-x-3.5 sm:bottom-3.5">
               {lokalStrom && !iDuell && status.fase === "lobby" && lobbyRizzler ? (
                 <span className="mel-pop inline-flex h-7 self-start items-center gap-1.5 rounded-full bg-amber-300/95 px-3 text-[11px] font-bold text-[#18191b] shadow-[0_0_24px_rgb(250_204_21/0.45)]">
-                  🤫 Rizzler-pose treffer! (Klar ved 13 s)
+                  {t("🤫 Rizzler-pose treffer! (Klar ved 13 s)", "🤫 Rizzler pose detected! (Unlocks at 13 s)")}
                 </span>
               ) : null}
               {lokalStrom && iFinisherForvarsel ? (
                 <span className="mel-pop inline-flex h-7 self-start items-center gap-1.5 rounded-full border border-amber-300/40 bg-[#111214]/85 px-3 text-[11px] font-semibold text-amber-200 backdrop-blur-md tabular-nums">
-                  🤫 Rizzler om {Math.max(1, Math.ceil((gjenstarMs - RIZZLER_VINDU_MS) / 1000))} s — pekefinger klar
+                  {en
+                    ? `🤫 Rizzler in ${Math.max(1, Math.ceil((gjenstarMs - RIZZLER_VINDU_MS) / 1000))} s — get your index finger ready`
+                    : `🤫 Rizzler om ${Math.max(1, Math.ceil((gjenstarMs - RIZZLER_VINDU_MS) / 1000))} s — pekefinger klar`}
                 </span>
               ) : null}
               {lokalStrom && aktivFase === "maling" && egenFinisherStatus === "inaktiv" && (kanBrukeFinisher || finisherFremdrift > 0) ? (
                 <div className="mel-pop flex max-w-xs flex-col gap-1.5 self-start rounded-2xl border border-amber-300/50 bg-[#111214]/88 px-3 py-2 text-amber-200 shadow-[0_0_28px_rgb(250_204_21/0.35)] backdrop-blur-md">
                   <p className="text-[11px] leading-4 font-bold tracking-tight text-amber-300">
                     {finisherFremdrift > 0
-                      ? "🤫 Lader Rizzler … IKKE SMIL!"
+                      ? t("🤫 Lader Rizzler … IKKE SMIL!", "🤫 Charging Rizzler … DON’T SMILE!")
                       : rizzlerPoseStatus === "aapen-hand"
-                        ? "☝️ Knytt de andre fingrene — kun pekefinger!"
+                        ? t("☝️ Knytt de andre fingrene — kun pekefinger!", "☝️ Curl your other fingers — index finger only!")
                         : rizzlerPoseStatus === "for-langt-unna"
-                          ? "👉 Flytt pekefingeren til gullringen på haka!"
-                          : "🤫 RIZZLER KLAR — pek på gullringen på haka!"}
+                          ? t("👉 Flytt pekefingeren til gullringen på haka!", "👉 Move your index finger to the gold chin ring!")
+                          : t("🤫 RIZZLER KLAR — pek på gullringen på haka!", "🤫 RIZZLER READY — point to the gold chin ring!")}
                   </p>
                   <p className="text-[10px] leading-3.5 text-white/70">
                     {finisherFremdrift > 0
-                      ? `Poeng låst 🔒 — hold rolig for ${formaterBonus(RIZZLER_BONUS)} boost`
-                      : `Knytt hånda, 1 pekefinger på haka/leppa · låser poeng + sjanse på ${formaterBonus(RIZZLER_BONUS)}`}
+                      ? en
+                        ? `Score locked 🔒 — hold steady for ${formaterBonus(RIZZLER_BONUS, "en")} boost`
+                        : `Poeng låst 🔒 — hold rolig for ${formaterBonus(RIZZLER_BONUS)} boost`
+                      : en
+                        ? `Curl fingers, 1 index finger on chin/lips · locks score + chance for ${formaterBonus(RIZZLER_BONUS, "en")}`
+                        : `Knytt hånda, 1 pekefinger på haka/leppa · låser poeng + sjanse på ${formaterBonus(RIZZLER_BONUS)}`}
                   </p>
                   <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/15">
                     <div
@@ -1751,7 +1834,9 @@ function AktivtMoggernRom({
               ) : null}
               {lokalStrom ? <UttrykkPiller styrker={egenLive?.styrker ?? null} /> : null}
               {lokalStrom && egenVeiledning && egenVeiledning !== "ok" ? (
-                <p className={`${GLASS} self-start rounded-full px-3 py-1.5 text-[11px] font-medium text-amber-100`}>{VEILEDNING_TEKST[egenVeiledning]}</p>
+                <p className={`${GLASS} self-start rounded-full px-3 py-1.5 text-[11px] font-medium text-amber-100`}>
+                  {VEILEDNING_TEKST[egenVeiledning][sprak]}
+                </p>
               ) : null}
               {lokalStrom ? (
                 <div className="flex flex-wrap items-center justify-between gap-2">
@@ -1759,18 +1844,18 @@ function AktivtMoggernRom({
                     <button
                       type="button"
                       onClick={skruAvKamera}
-                      title="Skru av kamera"
+                      title={t("Skru av kamera", "Turn off camera")}
                       className={`${GLASS} inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium hover:bg-[#111214]/85`}
                     >
                       <CameraOff className="h-3.5 w-3.5" aria-hidden="true" />
-                      <span className="max-md:sr-only">Skru av</span>
+                      <span className="max-md:sr-only">{t("Skru av", "Cam off")}</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => void toggleMikrofon()}
                       disabled={starterMik}
                       aria-pressed={!!lydStrom}
-                      title={lydStrom ? "Skru av mikrofon" : "Slå på mikrofon (valgfritt)"}
+                      title={lydStrom ? t("Skru av mikrofon", "Mute microphone") : t("Slå på mikrofon (valgfritt)", "Enable microphone (optional)")}
                       className={`${GLASS} inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium hover:bg-[#111214]/85 ${
                         lydStrom ? "border-lime-300/40 text-lime-300" : "text-white/70"
                       }`}
@@ -1782,19 +1867,19 @@ function AktivtMoggernRom({
                       ) : (
                         <MicOff className="h-3.5 w-3.5" aria-hidden="true" />
                       )}
-                      <span className="max-lg:sr-only">{lydStrom ? "Mik på" : "Mik av"}</span>
+                      <span className="max-lg:sr-only">{lydStrom ? t("Mik på", "Mic on") : t("Mik av", "Mic off")}</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setVisSporing((v) => !v)}
                       aria-pressed={visSporing}
-                      title={visSporing ? "Skjul grønne sporingslinjer" : "Vis grønne sporingslinjer"}
+                      title={visSporing ? t("Skjul grønne sporingslinjer", "Hide green tracking lines") : t("Vis grønne sporingslinjer", "Show green tracking lines")}
                       className={`${GLASS} inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium hover:bg-[#111214]/85 ${
                         visSporing ? "border-emerald-400/35 text-emerald-300" : "text-white/70"
                       }`}
                     >
                       <ScanFace className="h-3.5 w-3.5" aria-hidden="true" />
-                      <span className="max-lg:sr-only">Sporing</span>
+                      <span className="max-lg:sr-only">{t("Sporing", "Tracking")}</span>
                     </button>
                   </div>
 
@@ -1804,11 +1889,11 @@ function AktivtMoggernRom({
                         <button
                           type="button"
                           onClick={startSoloTest}
-                          title="Kjør en 15 sekunders solo-test uten motstander"
+                          title={t("Kjør en 15 sekunders solo-test uten motstander", "Run a 15-second solo test without an opponent")}
                           className={`${GLASS} inline-flex h-9 items-center gap-1.5 rounded-full px-3.5 text-xs font-semibold text-lime-200 transition hover:bg-[#111214]/85 active:scale-[0.98]`}
                         >
                           <Sparkles className="h-3.5 w-3.5 text-lime-300" aria-hidden="true" />
-                          Solo-test (15 s)
+                          {t("Solo-test (15 s)", "Solo test (15 s)")}
                         </button>
                       ) : null}
                       {!erVert && landmarkerKlar ? (
@@ -1824,7 +1909,7 @@ function AktivtMoggernRom({
                           }`}
                         >
                           <UserCheck className="h-3.5 w-3.5" aria-hidden="true" />
-                          {klar ? "Klar ✓" : "Klar til duell"}
+                          {klar ? t("Klar ✓", "Ready ✓") : t("Klar til duell", "Ready to duel")}
                         </button>
                       ) : null}
                       {erVert ? (
@@ -1836,7 +1921,7 @@ function AktivtMoggernRom({
                           className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[#f4f4f5] px-4 text-xs font-semibold text-[#18191b] transition hover:bg-white active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           <Play className="h-3.5 w-3.5" aria-hidden="true" />
-                          Start duell (15 s)
+                          {t("Start duell (15 s)", "Start duel (15 s)")}
                         </button>
                       ) : null}
                     </div>
@@ -1869,7 +1954,7 @@ function AktivtMoggernRom({
             />
             <canvas
               ref={fjernRelayLerretRef}
-              aria-label={motstander ? `Direktebilde fra ${motNavn}` : undefined}
+              aria-label={motstander ? (en ? `Live video from ${motNavn}` : `Direktebilde fra ${motNavn}`) : undefined}
               className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${!webrtc.fjernStrom && relayAktiv ? "opacity-100" : "opacity-0"}`}
             />
             <canvas
@@ -1884,19 +1969,32 @@ function AktivtMoggernRom({
                   {motstander ? <Loader2 className="h-5 w-5 animate-spin" /> : <Camera className="h-5 w-5" aria-hidden="true" />}
                 </span>
                 <p className="text-[15px] font-medium text-white">
-                  {!motstander ? "Venter på motstander …" : motstanderKameraPa ? `Kobler video til ${motNavn} …` : `${motNavn} har kameraet av`}
+                  {!motstander
+                    ? t("Venter på motstander …", "Waiting for opponent …")
+                    : motstanderKameraPa
+                      ? en
+                        ? `Connecting video to ${motNavn} …`
+                        : `Kobler video til ${motNavn} …`
+                      : en
+                        ? `${motNavn} has their camera off`
+                        : `${motNavn} har kameraet av`}
                 </p>
                 {!motstander ? (
                   <>
                     <p className="text-[2.4rem] leading-none font-semibold tracking-[0.22em] text-white tabular-nums">{kode}</p>
                     <button type="button" onClick={kopierLenke} className={MKNAPP_SEKUNDAR}>
                       {kopiert ? <Check className="h-4 w-4 text-lime-400" /> : <Copy className="h-4 w-4" />}
-                      {kopiert ? "Kopiert!" : "Kopier invitasjonslenke"}
+                      {kopiert ? t("Kopiert!", "Copied!") : t("Kopier invitasjonslenke", "Copy invite link")}
                     </button>
                   </>
                 ) : null}
                 <p className="max-w-xs text-xs leading-5 text-white/45">
-                  {!motstander ? "Send romkoden eller lenken til én venn." : "Kobler over Wi-Fi eller 5G — bytter automatisk til mobil-relay ved behov."}
+                  {!motstander
+                    ? t("Send romkoden eller lenken til én venn.", "Send the room code or link to a friend.")
+                    : t(
+                        "Kobler over Wi-Fi eller 5G — bytter automatisk til mobil-relay ved behov.",
+                        "Connecting over Wi-Fi or 5G — switches automatically to mobile relay if needed.",
+                      )}
                 </p>
               </div>
             ) : null}
@@ -1906,8 +2004,8 @@ function AktivtMoggernRom({
 
             <div className="absolute inset-x-2.5 top-2.5 flex items-start justify-between gap-2 sm:inset-x-3.5 sm:top-3.5">
               <span className={`${GLASS} inline-flex h-8 max-w-[55%] items-center gap-1.5 rounded-full px-3 text-xs font-medium`}>
-                {motstander && !erVert ? <Crown className="h-3.5 w-3.5 shrink-0 text-amber-300" aria-label="Vert" /> : null}
-                <span className="truncate">{motstander ? motNavn : "Ledig plass"}</span>
+                {motstander && !erVert ? <Crown className="h-3.5 w-3.5 shrink-0 text-amber-300" aria-label={t("Vert", "Host")} /> : null}
+                <span className="truncate">{motstander ? motNavn : t("Ledig plass", "Open slot")}</span>
                 {motstander && !webrtc.fjernStrom && relayAktiv ? (
                   <span className="shrink-0 rounded-full bg-cyan-400/20 px-1.5 py-0.5 text-[9px] font-semibold tracking-wide text-cyan-200">
                     5G/Relay
@@ -1917,10 +2015,10 @@ function AktivtMoggernRom({
                   <span
                     aria-label={
                       webrtc.status === "tilkoblet" || relayAktiv
-                        ? "Video tilkoblet"
+                        ? t("Video tilkoblet", "Video connected")
                         : webrtc.status === "feil"
-                          ? "Videofeil"
-                          : "Kobler video"
+                          ? t("Videofeil", "Video error")
+                          : t("Kobler video", "Connecting video")
                     }
                     className={`h-1.5 w-1.5 shrink-0 rounded-full ${
                       webrtc.status === "tilkoblet" || relayAktiv
@@ -1941,7 +2039,17 @@ function AktivtMoggernRom({
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   {status.fase === "lobby" ? (
                     <span className={`${GLASS} rounded-full px-3 py-1.5 text-[11px] font-medium text-white/80`}>
-                      {motstanderKlar ? `${motNavn} er klar ✓` : erVert ? `Venter på at ${motNavn} blir klar` : `${motNavn} starter duellen`}
+                      {motstanderKlar
+                        ? en
+                          ? `${motNavn} is ready ✓`
+                          : `${motNavn} er klar ✓`
+                        : erVert
+                          ? en
+                            ? `Waiting for ${motNavn} to ready up`
+                            : `Venter på at ${motNavn} blir klar`
+                          : en
+                            ? `${motNavn} starts the duel`
+                            : `${motNavn} starter duellen`}
                     </span>
                   ) : (
                     <span />
@@ -1959,7 +2067,7 @@ function AktivtMoggernRom({
                         className={`${GLASS} inline-flex h-8 items-center gap-1.5 rounded-full border-lime-300/35 px-3 text-[11px] font-medium text-lime-200 hover:bg-[#111214]/85`}
                       >
                         <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
-                        Slå på lyd
+                        {t("Slå på lyd", "Unmute audio")}
                       </button>
                     ) : null}
                     {!harMotVideoVisning && (webrtc.status === "feil" || motstanderKameraPa) ? (
@@ -1969,7 +2077,7 @@ function AktivtMoggernRom({
                         className={`${GLASS} inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[11px] font-medium hover:bg-[#111214]/85`}
                       >
                         <RefreshCw className="h-3.5 w-3.5" />
-                        Koble til på nytt
+                        {t("Koble til på nytt", "Reconnect")}
                       </button>
                     ) : null}
                   </div>
@@ -1997,7 +2105,9 @@ function AktivtMoggernRom({
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
               <div className={`${GLASS} flex flex-col items-center rounded-[32px] px-8 py-5 shadow-[0_24px_64px_rgb(0_0_0/0.45)]`}>
                 <p className="text-xs font-medium text-white/70">
-                  {erSoloAktiv ? "Solo-test · Se rett inn i kameraet" : "Se rett inn i kameraet"}
+                  {erSoloAktiv
+                    ? t("Solo-test · Se rett inn i kameraet", "Solo test · Look straight at the camera")
+                    : t("Se rett inn i kameraet", "Look straight at the camera")}
                 </p>
                 <p key={nedtellingTall} className="mel-pop text-[5.5rem] leading-none font-semibold tracking-[-0.05em] text-lime-300 tabular-nums">
                   {nedtellingTall}
@@ -2010,7 +2120,13 @@ function AktivtMoggernRom({
             <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-center px-3 pt-14 sm:pt-3">
               <div className={`${GLASS} flex w-full max-w-sm flex-col gap-2 rounded-[20px] px-3.5 py-2.5 shadow-[0_12px_32px_rgb(0_0_0/0.35)]`}>
                 <div className="flex items-center justify-between gap-3 text-xs font-medium">
-                  <span>{gjenstarMs > 0 ? (erSoloAktiv ? "Solo-måling — hold blikket!" : "Måler — hold blikket!") : "Beregner resultat …"}</span>
+                  <span>
+                    {gjenstarMs > 0
+                      ? erSoloAktiv
+                        ? t("Solo-måling — hold blikket!", "Solo scan — hold your gaze!")
+                        : t("Måler — hold blikket!", "Scanning — hold your gaze!")
+                      : t("Beregner resultat …", "Calculating result …")}
+                  </span>
                   <span className="text-sm font-semibold text-lime-300 tabular-nums">{maalingSek} s</span>
                 </div>
                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/15">
@@ -2022,10 +2138,10 @@ function AktivtMoggernRom({
                   <div className="space-y-1 pt-0.5">
                     <div className="flex items-center justify-between text-[11px] font-semibold tabular-nums">
                       <span className={egenLeder ? "text-lime-300" : "text-white/75"}>
-                        {mittNavn || "Deg"}: {formaterMoggernPoeng(egenLive.total)}
+                        {mittNavn || t("Deg", "You")}: {formaterMoggernPoeng(egenLive.total, sprak)}
                       </span>
                       <span className={motLeder ? "text-lime-300" : "text-white/75"}>
-                        {motNavn}: {formaterMoggernPoeng(motLive.total)}
+                        {motNavn}: {formaterMoggernPoeng(motLive.total, sprak)}
                       </span>
                     </div>
                     <div className="relative flex h-2 w-full overflow-hidden rounded-full bg-white/10">
@@ -2041,7 +2157,7 @@ function AktivtMoggernRom({
 
                 <div className="flex justify-between text-[10px] text-white/55 tabular-nums">
                   <span>
-                    Deg: {gyldigeEgen}/{MIN_GYLDIGE_RAMMER}+
+                    {t("Deg", "You")}: {gyldigeEgen}/{MIN_GYLDIGE_RAMMER}+
                   </span>
                   {!erSoloAktiv ? (
                     <span>
@@ -2083,19 +2199,31 @@ function AktivtMoggernRom({
                   {finisherBanner.type === "utlost"
                     ? finisherBanner.avMeg
                       ? "RIZZLER FINISHER!"
-                      : `MOGGED AV ${finisherBanner.navn.toUpperCase()}!`
+                      : en
+                        ? `MOGGED BY ${finisherBanner.navn.toUpperCase()}!`
+                        : `MOGGED AV ${finisherBanner.navn.toUpperCase()}!`
                     : finisherBanner.avMeg
                       ? "RIZZ FAILED!"
-                      : `${finisherBanner.navn.toUpperCase()} KNAKK SAMMEN!`}
+                      : en
+                        ? `${finisherBanner.navn.toUpperCase()} BROKE CHARACTER!`
+                        : `${finisherBanner.navn.toUpperCase()} KNAKK SAMMEN!`}
                 </p>
                 <p className="mt-1 text-xs font-semibold text-white/85 tabular-nums">
                   {finisherBanner.type === "utlost"
                     ? finisherBanner.avMeg
-                      ? `Iskald kjevelinje — ${formaterBonus(RIZZLER_BONUS)} bonus`
-                      : `${finisherBanner.navn} dro Rizzler Finisher (${formaterBonus(RIZZLER_BONUS)})`
+                      ? en
+                        ? `Ice-cold jawline — ${formaterBonus(RIZZLER_BONUS, "en")} bonus`
+                        : `Iskald kjevelinje — ${formaterBonus(RIZZLER_BONUS)} bonus`
+                      : en
+                        ? `${finisherBanner.navn} landed Rizzler Finisher (${formaterBonus(RIZZLER_BONUS, "en")})`
+                        : `${finisherBanner.navn} dro Rizzler Finisher (${formaterBonus(RIZZLER_BONUS)})`
                     : finisherBanner.avMeg
-                      ? `Du smilte midt i finisheren — ${formaterBonus(RIZZLER_FEIL_STRAFF)} poeng`
-                      : `Smilte under finisheren (${formaterBonus(RIZZLER_FEIL_STRAFF)})`}
+                      ? en
+                        ? `You smiled mid-finisher — ${formaterBonus(RIZZLER_FEIL_STRAFF, "en")} pts`
+                        : `Du smilte midt i finisheren — ${formaterBonus(RIZZLER_FEIL_STRAFF)} poeng`
+                      : en
+                        ? `Smiled during finisher (${formaterBonus(RIZZLER_FEIL_STRAFF, "en")})`
+                        : `Smilte under finisheren (${formaterBonus(RIZZLER_FEIL_STRAFF)})`}
                 </p>
               </div>
             </div>
@@ -2108,7 +2236,10 @@ function AktivtMoggernRom({
         <p className="mx-auto max-w-xl px-2 text-center text-[13px] leading-5 text-neutral-500">
           {erVert ? lobbyHint : gjesteHint}
           {lokalStrom && landmarkerKlar
-            ? " Live-poenget reagerer når du poserer — kvalifiserer du ved 13 s dukker gullringen opp på haka for Rizzler Finisher (+0,2, låser poengene). Prøv gjerne posen her i lobbyen først!"
+            ? t(
+                " Live-poenget reagerer når du poserer — kvalifiserer du ved 13 s dukker gullringen opp på haka for Rizzler Finisher (+0,2, låser poengene). Prøv gjerne posen her i lobbyen først!",
+                " Live score reacts as you pose — qualify at 13 s and the gold chin ring unlocks Rizzler Finisher (+0.2, locks your score). Try practicing the pose in the lobby first!",
+              )
             : ""}
         </p>
       ) : null}

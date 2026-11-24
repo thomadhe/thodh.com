@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { Tekst } from "@/components/sprak-knapp"
 import { MoggernRom } from "@/features/spill/components/moggern-rom"
 import { spillskrift } from "@/features/spill/components/skrift"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
@@ -50,14 +51,23 @@ export default async function Page({ params }: PageProps<"/spill/moggern/[kode]"
       regler={
         <>
           <p>
-            1v1 kameraduell kun for venner (maks 2 spillere per rom). Begge slår på kameraet, trykker klar, og ser rett inn i linsa under 15 sekunders
-            måling.
+            <Tekst
+              no="1v1 kameraduell kun for venner (maks 2 spillere per rom). Begge slår på kameraet, trykker klar, og ser rett inn i linsa under 15 sekunders måling."
+              en="1v1 camera duel for friends (max 2 players per room). Both turn on their camera, hit ready, and look straight at the lens during the 15-second scan."
+            />
           </p>
           <p>
-            Begge nettleserne måler både eget og motstanderens bilde lokalt. Resultatet bruker motstanderens måling av deg — hvis de to målingene
-            spriker mye, vises begge.
+            <Tekst
+              no="Begge nettleserne måler både eget og motstanderens bilde lokalt. Resultatet bruker motstanderens måling av deg — hvis de to målingene spriker mye, vises begge."
+              en="Both browsers measure both faces locally. The official duel score uses your opponent’s measurement of you — if they disagree noticeably, both are shown."
+            />
           </p>
-          <p>Video går direkte peer-to-peer og ingenting tas opp eller lagres. Alt her er tull.</p>
+          <p>
+            <Tekst
+              no="Video går direkte peer-to-peer og ingenting tas opp eller lagres. Alt her er tull."
+              en="Video flows directly peer-to-peer and nothing is recorded or stored. Everything here is pure satire."
+            />
+          </p>
         </>
       }
     >

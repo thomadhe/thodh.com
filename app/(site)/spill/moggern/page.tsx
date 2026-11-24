@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Tekst } from "@/components/sprak-knapp"
 import { MoggernInngang } from "@/features/spill/components/moggern-inngang"
 import { spillskrift } from "@/features/spill/components/skrift"
 import { SpillRamme } from "@/features/spill/components/spill-ramme"
@@ -42,13 +43,23 @@ export default async function Page() {
       regler={
         <>
           <p>
-            Kun med venner: lag et privat rom og send lenken eller romkoden (4 bokstaver) til én venn.
+            <Tekst
+              no="Kun med venner: lag et privat rom og send lenken eller romkoden (4 bokstaver) til én venn."
+              en="Friends only: create a private room and send the link or 4-letter room code to a friend."
+            />
           </p>
           <p>
-            Videoen går direkte peer-to-peer mellom de to nettleserne, og ansiktsmålingen kjører lokalt med MediaPipe Face Landmarker. Ingenting blir
-            tatt opp eller lagret.
+            <Tekst
+              no="Videoen går direkte peer-to-peer mellom de to nettleserne, og ansiktsmålingen kjører lokalt med MediaPipe Face Landmarker. Ingenting blir tatt opp eller lagret."
+              en="Video streams directly peer-to-peer between the two browsers, and face scoring runs locally with MediaPipe Face Landmarker. Nothing is recorded or stored."
+            />
           </p>
-          <p>Alt her er tull — ren matte på gøy uten vitenskapelig grunnlag.</p>
+          <p>
+            <Tekst
+              no="Alt her er tull — ren matte på gøy uten vitenskapelig grunnlag."
+              en="Everything here is pure satire — math for fun with zero scientific basis."
+            />
+          </p>
         </>
       }
     >

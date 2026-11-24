@@ -1,32 +1,40 @@
 // Camera and optional microphone stream helpers for Moggern (pure, framework-free so they can be unit tested in Node).
 // Microphone is strictly opt-in (off by default); video defaults to selfie camera.
 
-export function kameraFeilTekst(err: unknown): string {
+export function kameraFeilTekst(err: unknown, sprak: "no" | "en" = "no"): string {
+  const en = sprak === "en"
   const navn = err instanceof DOMException || err instanceof Error ? err.name : ""
   if (navn === "NotAllowedError" || navn === "PermissionDeniedError" || navn === "SecurityError") {
-    return "Kameratilgang ble avslått. Tillat kamera i nettleseren og prøv igjen."
+    return en
+      ? "Camera access was denied. Allow camera access in your browser and try again."
+      : "Kameratilgang ble avslått. Tillat kamera i nettleseren og prøv igjen."
   }
   if (navn === "NotFoundError" || navn === "DevicesNotFoundError") {
-    return "Fant ikke noe kamera på denne enheten."
+    return en ? "No camera was found on this device." : "Fant ikke noe kamera på denne enheten."
   }
   if (navn === "NotReadableError" || navn === "TrackStartError") {
-    return "Kameraet er opptatt i en annen app eller fane. Lukk den og prøv igjen."
+    return en
+      ? "Your camera is in use by another app or tab. Close it and try again."
+      : "Kameraet er opptatt i en annen app eller fane. Lukk den og prøv igjen."
   }
   if (navn === "OverconstrainedError") {
-    return "Kameraet støttet ikke ønsket oppløsning. Prøv igjen."
+    return en ? "The camera didn’t support the requested resolution. Please try again." : "Kameraet støttet ikke ønsket oppløsning. Prøv igjen."
   }
-  return "Kunne ikke starte kameraet. Sjekk at nettleseren har tilgang og prøv på nytt."
+  return en
+    ? "Could not start the camera. Check browser permissions and try again."
+    : "Kunne ikke starte kameraet. Sjekk at nettleseren har tilgang og prøv på nytt."
 }
 
-export function mikrofonFeilTekst(err: unknown): string {
+export function mikrofonFeilTekst(err: unknown, sprak: "no" | "en" = "no"): string {
+  const en = sprak === "en"
   const navn = err instanceof DOMException || err instanceof Error ? err.name : ""
   if (navn === "NotAllowedError" || navn === "PermissionDeniedError" || navn === "SecurityError") {
-    return "Mikrofontilgang ble avslått i nettleseren."
+    return en ? "Microphone access was denied in your browser." : "Mikrofontilgang ble avslått i nettleseren."
   }
   if (navn === "NotFoundError" || navn === "DevicesNotFoundError") {
-    return "Fant ingen mikrofon på denne enheten."
+    return en ? "No microphone was found on this device." : "Fant ingen mikrofon på denne enheten."
   }
-  return "Kunne ikke starte mikrofonen."
+  return en ? "Could not start the microphone." : "Kunne ikke starte mikrofonen."
 }
 
 /** Preferred selfie constraints; the plain fallback works on cameras/browsers that reject them. */
