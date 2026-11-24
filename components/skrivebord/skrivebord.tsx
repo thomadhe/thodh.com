@@ -527,10 +527,11 @@ export function Skrivebord() {
 
         <div className="pointer-events-auto absolute right-2 bottom-2">{ikon(systemProgrammer[0])}</div>
 
-        <div className="pointer-events-auto absolute top-2.5 right-3 z-20 flex flex-col items-end gap-2">
-          <SprakKnapp variant="os" />
-          {!liten ? <DagensSpill apne={apne} forvarsel={forvarsel} /> : null}
-        </div>
+        {!liten ? (
+          <div className="pointer-events-auto absolute top-2.5 right-3 z-20 flex flex-col items-end gap-2">
+            <DagensSpill apne={apne} forvarsel={forvarsel} />
+          </div>
+        ) : null}
 
         {vinduer.map((v) => {
           const [tittel, tIkon] = tittelOgIkon(v.mal)
@@ -643,7 +644,8 @@ export function Skrivebord() {
             )
           })}
         </div>
-        {/* The tray doubles as the site footer: contact and the clock, out of the way. */}
+        {/* The tray doubles as the site footer: language toggle, contact, and the clock, always reachable. */}
+        <SprakKnapp variant="os" className="shrink-0" />
         <div className="os-inn flex h-[30px] shrink-0 items-center gap-3 px-2.5 text-[11px]" style={{ background: "transparent" }}>
           <a
             href={`mailto:${CONTACT_EMAIL}`}

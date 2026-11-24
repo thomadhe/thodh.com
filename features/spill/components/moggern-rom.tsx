@@ -26,6 +26,7 @@ import {
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useT } from "@/lib/sprak"
 import { lagKode, rensNavn } from "../lib/duell/rom"
 import { serverNa } from "../lib/duell/signatur"
 import { lyder } from "../lib/lyd"
@@ -225,6 +226,7 @@ function AktivtMoggernRom({
   supabaseNokkel: string
 }) {
   const router = useRouter()
+  const t = useT()
 
   const signalHandtererRef = useRef<(payload: unknown) => void>(() => {})
   const motSendtBildeRef = useRef<{ runde: number; av: string; dataUrl: string } | null>(null)
@@ -1551,7 +1553,7 @@ function AktivtMoggernRom({
           className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-rose-400/25 bg-rose-500/10 px-3.5 text-xs font-semibold text-rose-300 transition hover:bg-rose-500/20"
         >
           <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
-          Blokker / forlat
+          {t("Forlat / rage quit", "Leave / rage quit")}
         </button>
       </div>
 
@@ -1987,7 +1989,7 @@ function AktivtMoggernRom({
               className={`${GLASS} absolute right-3 bottom-3 z-10 inline-flex h-9 items-center gap-1.5 rounded-full border-rose-400/30 px-3 text-xs font-semibold text-rose-200 transition hover:bg-rose-500/30`}
             >
               <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
-              {erSoloAktiv ? "Avbryt" : "Forlat"}
+              {erSoloAktiv ? t("Avbryt", "Cancel") : "Rage quit"}
             </button>
           ) : null}
 
