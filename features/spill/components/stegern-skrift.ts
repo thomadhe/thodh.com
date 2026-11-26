@@ -1,19 +1,20 @@
-import { Pixelify_Sans, Silkscreen } from "next/font/google"
+import { JetBrains_Mono, Space_Grotesk } from "next/font/google"
 
-// 6/7-stegern's pixel faces, loaded only on its pages (and the Gjetteløs duel). Pixelify Sans is the display face:
-// headings, the wordmark and scores. Silkscreen is for numbers and codes that must read at a glance (its C and O,
-// B and 8, 5 and S never look alike). Questions, answers, labels and buttons use the site's sans, since bitmap
-// faces tire the eye at body sizes. Both have æ, ø and å.
+// 6/7-stegern's display & numeric faces (also used in the Gjetteløs duel). Space Grotesk gives crisp,
+// readable headings, wordmarks and scores with clean æ, ø and å; JetBrains Mono keeps room codes and
+// tabular numbers unmistakable at a glance (0/O, 5/S, 8/B and C/O never blur together).
 
-export const pikselskrift = Pixelify_Sans({
+export const pikselskrift = Space_Grotesk({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["500", "600", "700"],
+  display: "swap",
   variable: "--font-piksel",
 })
 
-export const etikettskrift = Silkscreen({
+export const etikettskrift = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["600", "700"],
+  display: "swap",
   variable: "--font-etikett",
 })
 

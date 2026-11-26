@@ -415,9 +415,28 @@ test("6/7-stegern: tall og romertall må stemme nøyaktig", () => {
   assert.equal(treff(rocky, "Rokcy II"), "Rocky II")
   assert.equal(treff(rocky, "rocky iv"), "Rocky IV")
   assert.equal(treff("Henrik VIII | | | | ", "Henrik VII"), null)
+  assert.equal(treff("Henrik VIII | | | | ", "Henrik 8"), "Henrik VIII")
+  assert.equal(treff("Henrik VIII | | | | ", "Henrik den åttende"), "Henrik VIII")
+  assert.equal(treff(rocky, "Rocky 2"), "Rocky II")
   assert.equal(treff("Apollo 11 | | | | ", "Apollo 13"), null)
   assert.equal(treff("Apollo 11 | | | | ", "Apolo 11"), "Apollo 11")
   assert.equal(treff("Ocean's Eleven | | | | ", "Ocean's 11"), null)
+  assert.equal(treff("zorbiker | | | | ", "zorbik"), "zorbiker")
+
+  // Regression checks: drinks & Norwegian royal family / kings.
+  const dag25 = stegernDager[24]
+  const drikk = byggOppgave(dag25.sporsmal[0])
+  for (const s of ["Faxe Kondi", "faxe kondi", "Red Bull", "Monster", "Pepsi Max", "Coca-Cola"]) {
+    assert.notEqual(finnAlternativ(drikk, s), null, `drikk: ${s}`)
+  }
+  const kongefamilie = byggOppgave(dag25.sporsmal[3])
+  for (const s of ["Kong Olav den fjerde", "Olav IV", "Olav 4.", "Kong Olav V", "Kong Harald V", "Haakon den sjuende", "Kong Haakon 7."]) {
+    assert.notEqual(finnAlternativ(kongefamilie, s), null, `kongefamilie: ${s}`)
+  }
+  const konger = byggOppgave(stegernDager[8].sporsmal[3])
+  for (const s of ["Kong Olav den fjerde", "Olav 4", "Kong Harald Hårfagre", "Christian den 4."]) {
+    assert.notEqual(finnAlternativ(konger, s), null, `konger: ${s}`)
+  }
 })
 
 test("6/7-stegern: svar fra andre spørsmål i banken godtas ikke ved et uhell", () => {
