@@ -75,11 +75,62 @@ const ORDENSTALL: Record<string, string> = {
   tyvende: "20",
 }
 
-const TITLER = new Set(["kong", "dronning", "kronprins", "kronprinsesse", "prins", "prinsesse", "keiser", "keiserinne", "tsar", "farao"])
+const ARTIKLER = new Set(["the", "den", "det", "de", "a", "an"])
+const TITLER = new Set([
+  "kong",
+  "dronning",
+  "kronprins",
+  "kronprinsesse",
+  "prins",
+  "prinsesse",
+  "keiser",
+  "keiserinne",
+  "tsar",
+  "tsarina",
+  "farao",
+  "sir",
+  "lord",
+  "lady",
+  "dr",
+  "doktor",
+  "prof",
+  "professor",
+  "kaptein",
+  "captain",
+  "sankt",
+  "st",
+  "pave",
+  "president",
+  "general",
+  "admiral",
+  "oberst",
+  "mr",
+  "mrs",
+  "ms",
+  "miss",
+  "herr",
+  "fru",
+  "frk",
+  "onkel",
+  "tante",
+  "grev",
+  "greve",
+  "baron",
+  "hertug",
+  "master",
+  "mester",
+])
+const VITAMIN = /^(?:[acdek]|b\d{0,2})$/
 
-/** Words with Roman numerals, Arabic digits and Norwegian ordinals unified to plain digits ("Olav den fjerde" → ["olav", "4"]). */
+/**
+ * Words with Roman numerals, Arabic digits, Norwegian ordinals, "&"/"og"/"and" conjunctions and
+ * "vitamin X"/"X-vitamin" order unified ("Olav den fjerde" → ["olav", "4"], "gin & tonic" = "gin og tonic").
+ */
 function ordKanon(s: string) {
-  const pre = s.toLowerCase().replace(/åttende/g, "aattende")
+  const pre = s
+    .toLowerCase()
+    .replace(/åttende/g, "aattende")
+    .replace(/\s*&\s*/g, " og ")
   const ra = ord(pre).flatMap((w) => {
     const m = /^([a-z]{2,})(\d+)$/.exec(w)
     return m ? [m[1], m[2]] : [w]
@@ -87,6 +138,10 @@ function ordKanon(s: string) {
   const ut: string[] = []
   for (let i = 0; i < ra.length; i++) {
     const w = ra[i]
+    if (w === "and" && i > 0 && i + 1 < ra.length) {
+      ut.push("og")
+      continue
+    }
     if (w === "den" && i > 0 && i + 1 < ra.length) {
       const neste = ra[i + 1]
       if (ORDENSTALL[neste]) {
@@ -110,10 +165,16 @@ function ordKanon(s: string) {
       ut.push(w)
     }
   }
+  if (ut.length === 2 && ut[0] === "vitamin" && VITAMIN.test(ut[1])) return [ut[1], "vitamin"]
   return ut
 }
 
-/** Canonical key unifying Roman numerals, Arabic digits and Norwegian ordinals ("Olav IV" = "Olav 4." = "Olav den fjerde"). */
+/** Phonetic key unifying common Norwegian/English spelling variants (c/k/ch/ck, ph/f, oe/ø, ae/ä, w/v, z/s). */
+function fonetisk(s: string) {
+  return s.replace(/ph/g, "f").replace(/ch/g, "k").replace(/ck/g, "k").replace(/c/g, "k").replace(/oe/g, "o").replace(/ae/g, "a").replace(/w/g, "v").replace(/z/g, "s")
+}
+
+/** Canonical key unifying Roman numerals, Arabic digits, Norwegian ordinals and &/og/and. */
 export function kanoniser(s: string) {
   return ordKanon(s).join("").replace(/aa/g, "a")
 }
@@ -166,8 +227,14 @@ export type Oppgave = {
   tekst: string
   alternativer: Alternativ[]
   indeks: Map<string, number>
-  /** Canonical keys (unified Roman/Arabic/ordinal numbers, plus optional leading article stripped). */
+  /** Canonical keys (unified Roman/Arabic/ordinal numbers, &/og/and, vitamin order). */
   kanonIndeks: Map<string, number>
+  /** Title-stripped keys for people/character prompts ("Sir Isaac Newton" → "isaacnewton"), checked before kjente(). */
+  tittelIndeks: Map<string, number>
+  /** Article-stripped keys ("The Dark Knight" → "darkknight"), checked only when input is not in kjente(). */
+  loyseIndeks: Map<string, number>
+  /** Phonetic keys (`${fonetisk(key)}|${tall}`), checked only when input is not in kjente(). */
+  fonetiskIndeks: Map<string, number>
   /** Keys of lowercase common nouns, the only answers that are inflected. */
   boyelige: Map<string, number>
   /** Singular stems of stored plural common nouns ("sokker" → "sokk", "bønner" → "bønne"). */
@@ -175,7 +242,7 @@ export type Oppgave = {
   /** The numbers in each key (see `tallIOrd`). */
   tall: Map<string, string>
   kanonTall: Map<string, string>
-  /** Whether the prompt is about royalty/monarchs/rulers, so a leading title ("Kong ", "Dronning ") can be optional. */
+  /** Whether the prompt is about people/characters/royalty, so a leading title ("Kong ", "Sir ", "Kaptein ") is optional. */
   harTittel: boolean
   streng: boolean
   nei: Set<string>
@@ -272,18 +339,40 @@ export function byggOppgave(s: StegernSporsmal): Oppgave {
 
   const indeks = new Map<string, number>()
   const kanonIndeks = new Map<string, number>()
+  const tittelIndeks = new Map<string, number>()
+  const loyseIndeks = new Map<string, number>()
+  const fonetiskIndeks = new Map<string, number>()
   const boyelige = new Map<string, number>()
   const boyeligeStammer = new Map<string, number>()
   const tall = new Map<string, string>()
   const kanonTall = new Map<string, string>()
   const streng = s.streng ?? false
   const nei = new Set((s.nei ?? "").split(",").map(normaliser).filter(Boolean))
-  const harTittel = /\b(konge|dronning|kongefamilien|keiser|farao)\b/i.test(s.tekst)
+  const harTittel =
+    /\b(konge|dronning|kongefamilien|keiser|farao|person|figur|nordmann|skurk|helt|pirat|president|statsminister|vitenskapsperson|forfatter|komponist|skuespiller|artist|utøver|spiller|oppdagelsesreisende|nobelprisvinner|viking|bibelen|apostel|gud|gudinne|heks|trollmann|robot|bjørn|hund|katt)\b/i.test(
+      s.tekst,
+    )
 
   const leggTilKanon = (kk: string, tVal: string, i: number) => {
     if (!kk || (forbokstav && !kk.startsWith(forbokstav)) || nei.has(kk) || kanonIndeks.has(kk)) return
     kanonIndeks.set(kk, i)
     kanonTall.set(kk, tVal)
+  }
+
+  const leggTilTittel = (tk: string, i: number) => {
+    if (!tk || tk.length < 5 || (forbokstav && !tk.startsWith(forbokstav)) || nei.has(tk) || tittelIndeks.has(tk)) return
+    tittelIndeks.set(tk, i)
+  }
+
+  const leggTilLoyse = (lk: string, i: number) => {
+    if (!lk || lk.length < 4 || (forbokstav && !lk.startsWith(forbokstav)) || nei.has(lk) || loyseIndeks.has(lk)) return
+    loyseIndeks.set(lk, i)
+  }
+
+  const leggTilFonetisk = (kk: string, tVal: string, i: number) => {
+    if (!kk || kk.length < 5 || forbokstav) return
+    const fk = `${fonetisk(kk)}|${tVal}`
+    if (!fonetiskIndeks.has(fk)) fonetiskIndeks.set(fk, i)
   }
 
   alternativer.forEach((a, i) => {
@@ -317,11 +406,23 @@ export function byggOppgave(s: StegernSporsmal): Oppgave {
           .join(" ")
         const kk = w.join("").replace(/aa/g, "a")
         leggTilKanon(kk, tVal, i)
+        leggTilFonetisk(kk, tVal, i)
+        if (!forbokstav && w.length > 1) {
+          if (ARTIKLER.has(w[0])) {
+            const uten = w.slice(1).join("").replace(/aa/g, "a")
+            leggTilLoyse(uten, i)
+          }
+          if (harTittel && TITLER.has(w[0])) {
+            const uten = w.slice(1).join("").replace(/aa/g, "a")
+            if (w.length >= 3) leggTilTittel(uten, i)
+            else if (uten.length >= 5) leggTilLoyse(uten, i)
+          }
+        }
       }
     }
     a.nokler = nokler
   })
-  return { tekst: s.tekst, alternativer, indeks, kanonIndeks, boyelige, boyeligeStammer, tall, kanonTall, harTittel, streng, nei }
+  return { tekst: s.tekst, alternativer, indeks, kanonIndeks, tittelIndeks, loyseIndeks, fonetiskIndeks, boyelige, boyeligeStammer, tall, kanonTall, harTittel, streng, nei }
 }
 
 /** Hand-written texts claimed by two different answers in one prompt, which would make matching ambiguous. */
@@ -363,9 +464,9 @@ function kjente() {
 }
 
 /**
- * Index of the answer a text matches, or null. Exact first, then canonical number/ordinal/title forms,
- * then inflected forms of common nouns, then small typos. A real word from elsewhere in the bank
- * ("Irak" when only Iran fits) is never inflected or read as a typo.
+ * Index of the answer a text matches, or null. Exact first, then canonical number/ordinal/conjunction/title/article
+ * forms, then loose article & phonetic spelling & inflected common nouns, then small typos. A real word from
+ * elsewhere in the bank ("Irak" when only Iran fits) is never loosely matched, inflected or read as a typo.
  */
 export function finnAlternativ(o: Oppgave, tekst: string): number | null {
   const t = normaliser(tekst)
@@ -374,30 +475,52 @@ export function finnAlternativ(o: Oppgave, tekst: string): number | null {
   if (direkte !== undefined) return direkte
   if (o.nei.has(t) || o.streng) return null
 
-  const treffKanonDirekte = o.kanonIndeks.get(t)
+  const treffKanonDirekte = o.kanonIndeks.get(t) ?? o.tittelIndeks.get(t)
   if (treffKanonDirekte !== undefined) return treffKanonDirekte
 
-  // Canonical exact match: unifies Roman numerals, Arabic digits and Norwegian ordinals
-  // ("Olav IV" = "Olav 4." = "Olav den fjerde", "Rocky 2" = "Rocky II", "2. verdenskrig" = "andre verdenskrig").
+  // Canonical exact match: unifies Roman numerals, Arabic digits, Norwegian ordinals, "&"/"og"/"and",
+  // "vitamin X"/"X-vitamin", and leading articles/titles typed by the player.
   // Skip multi-word/digit parsing on plain single-word inputs (keeps hot lookup paths O(1)).
   let kt = t
-  if (/[\s\d.-]/.test(tekst)) {
+  let tall: string | null = null
+  if (/[\s\d&.-]/.test(tekst)) {
     const wKanon = ordKanon(tekst)
     kt = wKanon.join("").replace(/aa/g, "a")
+    tall = wKanon
+      .filter((x) => /^\d+$/.test(x))
+      .map((x) => String(Number(x)))
+      .join(" ")
     if (kt && kt !== t) {
-      const treffKanon = o.kanonIndeks.get(kt)
+      const treffKanon = o.kanonIndeks.get(kt) ?? o.tittelIndeks.get(kt)
       if (treffKanon !== undefined) return treffKanon
     }
-    if (o.harTittel && wKanon.length > 1 && TITLER.has(wKanon[0])) {
+    if (wKanon.length > 1 && ARTIKLER.has(wKanon[0])) {
       const uten = wKanon.slice(1).join("").replace(/aa/g, "a")
       if (uten.length >= 4 && !o.nei.has(uten)) {
         const treff = o.kanonIndeks.get(uten) ?? o.indeks.get(uten)
         if (treff !== undefined) return treff
       }
     }
+    if (o.harTittel && wKanon.length > 1 && TITLER.has(wKanon[0])) {
+      const uten = wKanon.slice(1).join("").replace(/aa/g, "a")
+      if (uten.length >= 4 && !o.nei.has(uten)) {
+        const treff = o.kanonIndeks.get(uten) ?? o.indeks.get(uten) ?? o.tittelIndeks.get(uten) ?? o.loyseIndeks.get(uten)
+        if (treff !== undefined) return treff
+      }
+    }
   }
 
   if (kjente().has(t)) return null
+
+  const loyse = o.loyseIndeks.get(kt) ?? (kt !== t ? o.loyseIndeks.get(t) : undefined)
+  if (loyse !== undefined) return loyse
+
+  const tVal = tall ?? ""
+  if (kt.length >= 5) {
+    const fon = o.fonetiskIndeks.get(`${fonetisk(kt)}|${tVal}`)
+    if (fon !== undefined) return fon
+  }
+
   for (const e of ENDELSER) {
     if (!t.endsWith(e) || t.length - e.length < (e.length === 1 ? 5 : 4)) continue
     const i = o.boyelige.get(t.slice(0, -e.length))
@@ -406,13 +529,12 @@ export function finnAlternativ(o: Oppgave, tekst: string): number | null {
   const fraFlertall = o.boyeligeStammer.get(t)
   if (fraFlertall !== undefined) return fraFlertall
 
-  const tall = tallIOrd(tekst)
   let best: number | null = null
   let bestAvstand = Infinity
   const sjekkKart = (kart: Map<string, number>, tallKart: Map<string, string>, sok: string) => {
     for (const [k, i] of kart) {
       // Typos rarely hit the first letter, and requiring it keeps "Mali" from passing as "Bali".
-      if (k[0] !== sok[0] || tallKart.get(k) !== tall) continue
+      if (k[0] !== sok[0] || tallKart.get(k) !== tVal) continue
       const tol = toleranse(k.length)
       if (tol === 0) continue
       const d = avstand(sok, k, tol)

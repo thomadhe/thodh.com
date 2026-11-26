@@ -14,7 +14,7 @@ export const dager7 = [
     ),
     sp(
       "Nevn en figur fra Astrid Lindgrens bøker",
-      "Pippi Langstrømpe/Pippi, Emil/Emil i Lønneberget, Ronja/Ronja Røverdatter, Karlsson på taket/Karlsson | Lillebror, Tommy, Annika, Brødrene Løvehjerte/Jonatan Løvehjerte/Jonatan, Kavring/Karl Løvehjerte, Madicken, Lotta/Lotta på Bråkmakergata, Birk, Mattis, Ida | Herr Nilsson, Lilla Gubben/Lille Gubben, Alfred, Mio/Mio min Mio, Kalle Blomkvist, Bullerbybarna, Tengil, Katla| Lisa, Lasse, Bosse, Britta, Anna, Olle, Skorpan, Sofia, Jum-Jum, Ture Sventon, Rasmus, Paradis-Oskar, Mattisrøverne, Lovis, Borka, Skalle-Per, Krösa-Maja, Fröken Bock/Frøken Bock| Pelle, Ronja dup",
+      "Pippi Langstrømpe/Pippi, Emil/Emil i Lønneberget, Ronja/Ronja Røverdatter, Karlsson på taket/Karlsson | Lillebror, Tommy, Annika, Brødrene Løvehjerte/Jonatan Løvehjerte/Jonatan, Kavring/Karl Løvehjerte/Skorpan, Madicken, Lotta/Lotta på Bråkmakergata, Birk/Birk Borkason, Mattis, Ida | Herr Nilsson, Lilla Gubben/Lille Gubben, Alfred, Mio/Mio min Mio, Kalle Blomkvist, Bullerbybarna, Tengil, Katla, Tjorven, Båtsmann, Farbror Melker/Melker, Lina, Anton, Alma | Lisa, Lasse, Bosse, Britta, Anna, Olle, Sofia, Jum-Jum, Ture Sventon, Rasmus, Paradis-Oskar, Mattisrøverne, Lovis, Borka, Skalle-Per, Krösa-Maja, Fröken Bock/Frøken Bock, Prusseluskan, Kling og Klang, Efraim Langstrømpe, Malin, Stina, Pelle | Kommandora, Lisabet, Mia-Maria, Jonas, Nisse, Kato, Orvar, Jossi, Hubert, Rumpnissene, Grådvergene, Villvettene",
     ),
     sp(
       "Nevn et rom i et hus",
@@ -52,12 +52,12 @@ export const dager7 = [
   dag(
     sp(
       "Nevn en cocktail eller drink",
-      "mojito, pina colada, margarita, gin og tonic/gin tonic | cosmopolitan, daiquiri, bloody mary, martini, sex on the beach, white russian, aperol spritz/spritz, long island iced tea | caipirinha, negroni, old fashioned, manhattan, mai tai, tequila sunrise, moscow mule, espresso martini, cuba libre, irish coffee, whiskey sour, blue lagoon, black russian, screwdriver, gin fizz, tom collins, mimosa, bellini | sidecar, sazerac, mint julep, paloma, dark 'n' stormy, french 75, kir royale, hugo spritz, pornstar martini, zombie, singapore sling, gimlet, aviation, amaretto sour, pisco sour, americano, boulevardier, grasshopper, b-52, hurricane, rusty nail, godfather, kamikaze, harvey wallbanger | corpse reviver, last word, paper plane, penicillin, clover club, bee's knees, vieux carré, ramos gin fizz, jungle bird, bramble, hanky panky, mary pickford, el diablo, fernet con coca, salty dog",
+      "mojito, pina colada/piña colada, margarita, gin og tonic/gin tonic/GT | cosmopolitan/cosmo, daiquiri, bloody mary, martini, sex on the beach, white russian, aperol spritz/spritz, long island iced tea/long island, espresso martini, rom og cola/rum and coke | caipirinha, negroni, old fashioned, manhattan, mai tai, tequila sunrise, moscow mule, cuba libre, irish coffee, whiskey sour, blue lagoon, black russian, screwdriver, gin fizz, tom collins, mimosa, bellini, vodka red bull/vodka battery, fjellbekk, san francisco, lennart, jägerbomb, strawberry daiquiri, frozen margarita, hugo/hugo spritz, pornstar martini, whiskey cola/jack and coke, vodka soda/skinny bitch | sidecar, sazerac, mint julep, paloma, dark 'n' stormy/dark and stormy, french 75, kir royale, zombie, singapore sling, gimlet, aviation, amaretto sour, pisco sour, americano, boulevardier, grasshopper, b-52, hurricane, rusty nail, godfather, kamikaze, harvey wallbanger, hot shot, sure sivert, negroni sbagliato, tequila slammer, irish car bomb | corpse reviver, last word, paper plane, penicillin, clover club, bee's knees, vieux carré, ramos gin fizz, jungle bird, bramble, hanky panky, mary pickford, el diablo, fernet con coca, salty dog, grønn drage",
     ),
     sp("Nevn et land som grenser til Ukraina", "#RU, #PL | #BY, #RO, #HU | #SK, #MD | | @naboer:UA"),
     sp(
       "Nevn en haiart",
-      "hvithai, hammerhai, hvalhai, brugde | tigerhai, oksehai, blåhai, pigghå, sitronhai | håbrann, makohai, grønlandshai/håkjerring, revehai, svarttipphai, hvittipphai, sandtigerhai| kattehai/småflekket rødhai, rødhai, megamunnhai, koboldhai, dvergpigghai, epaulettehai, wobbegong, sebrahai, silkehai, galapagoshai, håkjerring dup | grå revhai, havengel, kragehai/frynsehai, spinnerhai, sixgill/kamtannhai",
+      "hvithai, hammerhai, hvalhai, brugde | tigerhai, oksehai, blåhai, pigghå, sitronhai | håbrann, makohai, grønlandshai/håkjerring, revehai, svarttipphai, hvittipphai, sandtigerhai | kattehai/småflekket rødhai, rødhai, megamunnhai, koboldhai, dvergpigghai, epaulettehai, wobbegong, sebrahai, silkehai, galapagoshai, hågjel | grå revhai, havengel, kragehai/frynsehai, spinnerhai, sixgill/kamtannhai",
       { nei: "delfin, spekkhogger, rokke" },
     ),
     sp(
@@ -78,7 +78,7 @@ export const dager7 = [
   dag(
     sp(
       "Nevn en ølstil eller øltype",
-      "pils/pilsner, IPA, lager, stout | pale ale, porter, juleøl, bokkøl/bock, hveteøl/weissbier, alkoholfritt øl, sour/surøl | ale, brown ale, red ale, amber ale, double IPA, NEIPA/new england ipa, lettøl, bayer, export, dunkel, saison, tripel, dubbel, witbier, kölsch, helles, märzen, gose, berliner weisse, imperial stout, barley wine/byggvin | lambic, gueuze, kriek, rauchbier, altbier, quadrupel, scotch ale, milk stout, oatmeal stout, session ipa, west coast ipa, hazy ipa, black ipa, doppelbock, eisbock, kveik, maltøl, stjørdalsøl, steinøl | grisette, sahti, kvass, faro, oud bruin, flanders red, biere de garde, california common/steam beer, cream ale, wee heavy, schwarzbier, zwickelbier, kellerbier, roggenbier, dampfbier",
+      "pils/pilsner, IPA/India Pale Ale, lager, stout | pale ale, porter, juleøl, bokkøl/bock, hveteøl/weissbier, alkoholfritt øl/alkoholfri øl, sour/surøl, fatøl | ale, brown ale, red ale, amber ale, double IPA, NEIPA/new england ipa, lettøl, bayer, export, dunkel, saison, tripel, dubbel, witbier, kölsch, helles, märzen, gose, berliner weisse, imperial stout, barley wine/byggvin, lys lager, mørk lager, vørterøl, radler/shandy, påskeøl, sommerøl, trappist/trappistøl, klosterøl, glutenfritt øl, fruktøl, sterkøl, skjærgårdspils | lambic, gueuze, kriek, rauchbier, altbier, quadrupel, scotch ale, milk stout, oatmeal stout, session ipa, west coast ipa, hazy ipa, black ipa, doppelbock, eisbock, kveik, maltøl, stjørdalsøl, steinøl | grisette, sahti, kvass, faro, oud bruin, flanders red, biere de garde, california common/steam beer, cream ale, wee heavy, schwarzbier, zwickelbier, kellerbier, roggenbier, dampfbier",
     ),
     sp("Nevn et land som begynner på T", "#DE, #TH, #TR | #TN, #TZ, #CZ | #TW, #TJ, #TD, #TG, #TM | #TO, #TT, #TV | @start:T"),
     sp(
@@ -91,7 +91,7 @@ export const dager7 = [
     ),
     sp(
       "Nevn en ting du finner i en førstehjelpskoffert",
-      "plaster, bandasje/gasbind, saks, kompress | pinsett, elastisk bind, sportstape/tape, desinfeksjon/sårrens/desinfiserende, engangshansker/hansker, termometer, smertestillende/paracet/paracetamol | trekantbandasje/trekanttørkle, isposer/kuldepose/kalde omslag, redningsteppe/isolasjonsteppe/folieteppe, sikkerhetsnål/sikkerhetsnåler, sårteip/sårstrips, sårsalve, gnagsårplaster, øyeskylling/øyeskyllevæske, munnstykke/ansiktsmaske | brannsårgel, splintpinsett, tourniquet/årepresse, flåttfjerner/flåttang, nesespray, antihistamin, hjertestarter, pustemaske, førstehjelpsveiledning | strips, aloe vera, jodtinktur",
+      "plaster, bandasje/gasbind, saks, kompress | pinsett, elastisk bind, sportstape/tape, desinfeksjon/sårrens/desinfiserende, engangshansker/hansker, termometer, smertestillende/paracet/paracetamol, ibux/ibuprofen, antibac/håndsprit, pyrisept | trekantbandasje/trekanttørkle, isposer/ispose/kuldepose/kalde omslag, redningsteppe/isolasjonsteppe/folieteppe, sikkerhetsnål/sikkerhetsnåler, sårteip/sårstrips, sårsalve, gnagsårplaster, øyeskylling/øyeskyllevæske, munnstykke/ansiktsmaske, klorheksidin, bomull, munnbind, q-tips, førstehjelpsveiledning/førstehjelpsbok | brannsårgel/brannsalve, splintpinsett, tourniquet/årepresse, flåttfjerner/flåttang, nesespray, antihistamin, hjertestarter, pustemaske, vaselin, hydrokortison, refleksvest, lommelykt, fløyte | strips, aloe vera, jodtinktur, skalpell, nål, tråd",
     ),
     sp(
       "Nevn en norrøn gud, gudinne eller et vesen fra norrøn mytologi",
@@ -115,11 +115,11 @@ export const dager7 = [
     ),
     sp(
       "Nevn en hånd i poker",
-      "par, fullt hus, royal flush, flush | straight, to par, tress/tre like, fire like | straight flush, høyt kort | | ",
+      "par, fullt hus/full house, royal flush/royal straight flush, flush | straight/gate, to par, tress/tre like, fire like | straight flush, høyt kort/high card | | ",
     ),
     sp(
       "Nevn en film av Christopher Nolan eller Quentin Tarantino",
-      "Inception, Interstellar, Pulp Fiction, Oppenheimer, The Dark Knight | Kill Bill, Django Unchained, Inglourious Basterds, Memento, Batman Begins, Tenet, Reservoir Dogs, Dunkirk, The Dark Knight Rises, The Prestige | Once Upon a Time in Hollywood, The Hateful Eight, Jackie Brown, Insomnia, Death Proof, Kill Bill Vol. 2 | Following, Grindhouse, Four Rooms, The Odyssey/Odysseen, Doodlebug | ",
+      "Inception, Interstellar, Pulp Fiction, Oppenheimer, The Dark Knight | Kill Bill/Kill Bill Vol. 1/Kill Bill 1/Kill Bill: Volume 1, Django Unchained, Inglourious Basterds/Inglourious Bastards, Memento, Batman Begins, Tenet, Reservoir Dogs, Dunkirk, The Dark Knight Rises, The Prestige | Once Upon a Time in Hollywood, The Hateful Eight, Jackie Brown, Insomnia, Death Proof, Kill Bill Vol. 2/Kill Bill 2/Kill Bill: Volume 2 | Following, Grindhouse, Four Rooms, The Odyssey/Odysseen, Doodlebug | ",
       { nei: "Avatar, Titanic, Fight Club, Seven" },
     ),
   ),

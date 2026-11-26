@@ -34,6 +34,8 @@ test("6/7-stegern duellbank: hvert spørsmål kan leses og er velformet", () => 
   for (const s of stegernDuellBank) {
     const hvor = s.tekst
     assert.ok(!s.svar.includes("?"), `usikkert svar: ${hvor}`)
+    assert.ok(!/[\uFFFD\uAC00-\uD7AF\u0000-\u001F]/.test(s.tekst + s.svar), `ødelagt tegnkoding: ${hvor}`)
+    assert.ok(!/\b(dup|todo|fixme|placeholder)\b/i.test(s.svar), `ufullstendig eller midlertidig tekst i fasit: ${hvor}`)
     const o = byggOppgave(s)
     assert.ok(o.alternativer.some((a) => a.nivaa === 1), `${hvor}: ingen svar på nivå 1`)
     assert.ok(o.alternativer.length >= 15, `${hvor}: bare ${o.alternativer.length} svar`)

@@ -423,7 +423,7 @@ test("6/7-stegern: tall og romertall må stemme nøyaktig", () => {
   assert.equal(treff("Ocean's Eleven | | | | ", "Ocean's 11"), null)
   assert.equal(treff("zorbiker | | | | ", "zorbik"), "zorbiker")
 
-  // Regression checks: drinks & Norwegian royal family / kings.
+  // Regression checks: drinks, Norwegian royal family/kings, &/og/and, titles, articles, vitamins, phonetic spelling.
   const dag25 = stegernDager[24]
   const drikk = byggOppgave(dag25.sporsmal[0])
   for (const s of ["Faxe Kondi", "faxe kondi", "Red Bull", "Monster", "Pepsi Max", "Coca-Cola"]) {
@@ -437,6 +437,30 @@ test("6/7-stegern: tall og romertall må stemme nøyaktig", () => {
   for (const s of ["Kong Olav den fjerde", "Olav 4", "Kong Harald Hårfagre", "Christian den 4."]) {
     assert.notEqual(finnAlternativ(konger, s), null, `konger: ${s}`)
   }
+  const cocktail = byggOppgave(stegernDager[27].sporsmal[0])
+  for (const s of ["gin & tonic", "gin and tonic", "gin og tonic", "rom & cola", "rum & coke"]) {
+    assert.notEqual(finnAlternativ(cocktail, s), null, `cocktail: ${s}`)
+  }
+  const keiser = byggOppgave(stegernDager[25].finale)
+  for (const s of ["Keiser Augustus", "Keiser Nero", "Konstantius 2.", "Konstantius den andre"]) {
+    assert.notEqual(finnAlternativ(keiser, s), null, `keiser: ${s}`)
+  }
+  const vitamin = byggOppgave(stegernDager[54].sporsmal[4])
+  for (const s of ["vitamin B", "B-vitamin", "vitamin C", "C-vitamin", "vitamin B12", "B6-vitamin", "vitamin B9"]) {
+    assert.notEqual(finnAlternativ(vitamin, s), null, `vitamin: ${s}`)
+  }
+  const hp = byggOppgave(stegernDager[36].sporsmal[3])
+  for (const s of ["Harry Potter og fangen fra Azkaban", "Harry Potter and the Chamber of Secrets", "Sorcerer's Stone", "Philosopher's Stone"]) {
+    assert.notEqual(finnAlternativ(hp, s), null, `hp: ${s}`)
+  }
+  // Phonetic Norwegian/English spelling variants & optional titles/articles.
+  assert.equal(treff("Christofer Columbus | | | | ", "Kristofer Kolumbus"), "Christofer Columbus")
+  assert.equal(treff("Cappuccino | | | | ", "Kappuccino"), "Cappuccino")
+  assert.equal(treff("Phosphorus | | | | ", "Fosforus"), "Phosphorus")
+  assert.equal(treff("The Dark Knight | | | | ", "Dark Knight"), "The Dark Knight")
+  const tittelOppg = byggOppgave(sp("Nevn en kjent person", "Sir Isaac Newton | | | | "))
+  assert.equal(tittelOppg.alternativer[finnAlternativ(tittelOppg, "Isaac Newton")!]?.vis, "Sir Isaac Newton")
+  assert.equal(tittelOppg.alternativer[finnAlternativ(tittelOppg, "Dr. Isaac Newton")!]?.vis, "Sir Isaac Newton")
 })
 
 test("6/7-stegern: svar fra andre spørsmål i banken godtas ikke ved et uhell", () => {
@@ -568,6 +592,8 @@ test("6/7-stegern: hver dag i banken er velformet", () => {
       assert.ok(!tekster.has(s.tekst), `to like spørsmål: ${hvor}`)
       tekster.add(s.tekst)
       assert.ok(!s.svar.includes("?"), `usikkert svar: ${hvor}`)
+      assert.ok(!/[\uFFFD\uAC00-\uD7AF\u0000-\u001F]/.test(s.tekst + s.svar), `ødelagt tegnkoding: ${hvor}`)
+      assert.ok(!/\b(dup|todo|fixme|placeholder)\b/i.test(s.svar), `ufullstendig eller midlertidig tekst i fasit: ${hvor}`)
       const o = byggOppgave(s)
       assert.ok(o.alternativer.length >= 4, hvor)
       assert.ok(o.alternativer.some((a) => a.nivaa === 1), hvor)

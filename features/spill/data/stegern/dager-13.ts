@@ -78,7 +78,7 @@ export const dager13 = [
   dag(
     sp(
       "Nevn en nudelrett eller type nudler",
-      "ramen, udon, pad thai, Mr. Lee/nudler i kopp/instantnudler | soba, chow mein, lo mein, risnudler, glassnudler, eggnudler, pho, laksa, yakisoba, dan dan nudler | japchae, mi goreng, pancit, somen, shirataki, hokkien mee, char kway teow, wontonnudler, bún bò Huế, bún chả, khao soi, naengmyeon, jajangmyeon, biang biang, lanzhou-nudler, Indomie, Nissin/Cup Noodles, pad see ew, pad kee mao/drunken noodles, singapore-nudler, mee siam, mee rebus | tsukemen, hiyashi chuka, zaru soba, kitsune udon, tempura udon, champon, abura soba, mazemen, kalguksu, ramyeon,,, mì Quảng, cao lầu, bún riêu, khanom jeen, rad na, kway teow, mohinga, shan-nudler, thukpa, lagman, beshbarmak, reshteh,| ",
+      "ramen, udon, pad thai, Mr. Lee/nudler i kopp/koppnudler/instantnudler/hurtignudler | soba, chow mein, lo mein, risnudler, glassnudler, eggnudler, pho, laksa, yakisoba, dan dan nudler, Yum Yum, woknudler, nudelsuppe, stekte nudler | japchae, mi goreng, pancit, somen, shirataki, hokkien mee, char kway teow, wontonnudler, bún bò Huế, bún chả, khao soi, naengmyeon, jajangmyeon, biang biang, lanzhou-nudler, Indomie, Nissin/Cup Noodles, Samyang/Buldak, Shin Ramyun, Mama, pad see ew, pad kee mao/drunken noodles, singapore-nudler, mee siam, mee rebus, fullkornsnudler, hvetenudler, vermicelli, kyllingnudler, biffnudler | tsukemen, hiyashi chuka, zaru soba, kitsune udon, tempura udon, champon, abura soba, mazemen, kalguksu, ramyeon, mì Quảng, cao lầu, bún riêu, khanom jeen, rad na, kway teow, mohinga, shan-nudler, thukpa, lagman, beshbarmak, reshteh | zhajiangmian, yi mein, ho fun, kishimen, inaniwa udon, tokoroten, janchi guksu, bibim guksu, kongguksu, mee goreng, lormee, ban mian, guilin-nudler",
     ),
     sp("Nevn et land som grenser til Belgia", "#FR, #NL, #DE | #LU | | | @naboer:BE"),
     sp(
@@ -103,7 +103,7 @@ export const dager13 = [
   dag(
     sp(
       "Nevn noe man kan lage av epler",
-      "eplekake, eplemos, eplejuice/eplemost, sider/cider | eplepai, eplecrumble, eplestrudel, eplesaft, bakte epler, eplegelé, eplesyltetøy | tarte tatin, eplechips, eplevin, calvados, eplecidereddik/epleeddik, karamelliserte epler, eplemuffins, eplekompott, tørkede epleringer/epleringer, waldorfsalat, kjærlighetsepler/toffee apple, eplebrandy, eplesmør, eplesuppe | apple turnover, eplesorbet, eplegrøt, eplepannekaker, eplefritter, eplechutney,,| ",
+      "eplekake, eplemos, eplejuice/eplemost, sider/cider | eplepai, eplecrumble/smuldrepai, eplestrudel/apfelstrudel, eplesaft, bakte epler, eplegelé, eplesyltetøy, tilslørte bondepiker | tarte tatin, eplechips, eplevin, calvados, eplecidereddik/epleeddik, karamelliserte epler, eplemuffins, eplekompott, tørkede epleringer/epleringer, waldorfsalat, kjærlighetsepler/toffee apple, eplebrandy, eplesmør, eplesuppe, eplegløgg, eplesmoothie, eplesaus, epleterte, epleboller, eplebrød | apple turnover, eplesorbet, epleis, eplegrøt, eplepannekaker, eplefritter, eplechutney, eplemarmelade, eplevafler, eplesalat, eplekrem | eplelikør, eplesnaps, pommeau, apfelküchle, eplesirup, eplecurd, eplegalette, eplescones",
     ),
     sp("Nevn et land som begynner på U", "#UA, #HU/Ungarn, #UY | #UG, #UZ | | | @start:U"),
     sp(

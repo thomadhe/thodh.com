@@ -76,7 +76,7 @@ export const dager8 = [
   dag(
     sp(
       "Nevn en småkake eller kjeks",
-      "sjokoladekjeks/cookie/cookies, pepperkake/pepperkaker, havrekjeks/digestive, Oreo | sandkake/sandkaker, krumkake/krumkaker, berlinerkrans/berlinerkranser, kokosmakron/kokosmakroner, havreflarn, sirupsnipp/sirupsnipper, Mariekjeks/Marie | serinakake/serinakaker, fattigmann/fattigmenn, vaniljekrans/vaniljekranser, makron/macarons, shortbread, biscotti/cantucci, Bixit, Safari, Ritz, smørkjeks, goro, rosettbakkels | amaretti, florentiner, snickerdoodle, spekulaas, lebkuchen, mandelflarn, kakemann/kakemenn, sprutbakkels, hjortetakk, brune pinner, sarakaker, kransekakestenger | alfajores, pizzelle, stroopwafel, tuiles, kattetunger/langues de chat, madeleine, polvorón, kourabiedes, ma'amoul, anzac biscuits, hobnobs, jaffa cakes, custard creams, bourbon, rich tea, ginger nuts, lykkekake/fortune cookie",
+      "sjokoladekjeks/cookie/cookies/chocolate chip cookie, pepperkake/pepperkaker, havrekjeks/digestive, Oreo | sandkake/sandkaker, krumkake/krumkaker, berlinerkrans/berlinerkranser, kokosmakron/kokosmakroner, havreflarn, sirupsnipp/sirupsnipper, Mariekjeks/Marie, Kornmo, Bixit, Safari, Ritz, Ballerina, Bokstavkjeks | serinakake/serinakaker, fattigmann/fattigmenn, vaniljekrans/vaniljekranser, makron/macarons, shortbread, biscotti/cantucci, smørkjeks, goro, rosettbakkels, Singoalla, Gjende, Tom og Jerry/Tom & Jerry, Kapteinkjeks/Kaptein, TUC, Brago, Biscoff/Lotus Biscoff, Maryland, Café Bakeriet/Cafe Bakeriet, Gjendekjeks, kakemann/kakemenn/julemann | amaretti, florentiner, snickerdoodle, spekulaas, lebkuchen, mandelflarn, sprutbakkels, hjortetakk, brune pinner, sarakaker, kransekakestenger, kransekake, Peppernøtter, Smultring, Jødekake, Bordstabelbakkels | alfajores, pizzelle, stroopwafel, tuiles, kattetunger/langues de chat, madeleine, polvorón, kourabiedes, ma'amoul, anzac biscuits, hobnobs, jaffa cakes, custard creams, bourbon, rich tea, ginger nuts, lykkekake/fortune cookie, savoiardi/ladyfingers",
     ),
     sp("Nevn et land som grenser til Argentina", "#CL, #BR | #UY, #PY | #BO | | @naboer:AR"),
     sp(
@@ -113,7 +113,7 @@ export const dager8 = [
     ),
     sp(
       "Nevn en norsk TV-kanal",
-      "NRK1, TV 2, TVNorge, NRK2 | NRK Super, NRK3, TV3, V4/Viasat 4, FEM, TV 2 Sport, TV 2 Zebra, TV 2 Nyheter | MAX, VOX, TV 2 Livsstil, Eurosport, Discovery Channel/Discovery, Disney Channel, Cartoon Network, Nickelodeon, National Geographic, Animal Planet, TLC, BBC, CNN, V Sport | TV 2 Sportskanalen, Frikanalen, Euronews, NRK Tegnspråk, TV Vest, TV Haugaland,, TV 2 Humor,|,",
+      "NRK1/NRK, TV 2/TV 2 Direkte, TVNorge/TVN, NRK2 | NRK Super, NRK3, TV3, V4/Viasat 4/TV3+, FEM, TV 2 Sport/TV 2 Sport 1/TV 2 Sport 2, TV 2 Zebra, TV 2 Nyheter/TV 2 Nyhetskanalen | MAX, VOX, TV 2 Livsstil, TV6, Eurosport/Eurosport Norge/Eurosport 1, Discovery Channel/Discovery, Disney Channel, Cartoon Network, Nickelodeon, National Geographic, Animal Planet, TLC, BBC, CNN, V Sport, TV 2 Sport Premium/TV 2 Premier League, Visjon Norge | TV 2 Sportskanalen, TV 2 Humor, TV 2 Filmkanalen, TV 2 Bliss, Frikanalen, Euronews, NRK Tegnspråk, Kanal 10, TV3 Norge, Matkanalen, Rikstoto Direkte | TV Vest, TV Haugaland, TV Øst, TV Budstikka, TV Romerike, TV Agder, TV Telemark, TVNord, TV Trøndelag, NRK Sápmi",
     ),
     sp(
       "Nevn en gresk øy",

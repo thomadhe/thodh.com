@@ -29,7 +29,7 @@ export const dager9 = [
   dag(
     sp(
       "Nevn et melkeprodukt",
-      "melk, ost, yoghurt, smør | fløte, rømme, kesam, cottage cheese | kefir, kremfløte, matfløte, crème fraîche, is, skyr | kulturmelk/surmelk, kvarg, brunost, prim, ghee, kondensert melk, melkepulver, mysost, mascarpone, ricotta, sjokolademelk, lettmelk, skummet melk, helmelk | ayran, lassi, labneh, kumys, tjukkmjølk, gomme, myse, råmelk, dulce de leche, clotted cream, smetana, quark, filmjölk, piimä",
+      "melk, ost, yoghurt, smør | fløte, rømme, kesam, cottage cheese, is/iskrem, kremfløte, brunost | kefir, matfløte, crème fraîche, skyr, Biola, Litago, sjokolademelk, kremost, fløteis, softis, gulost/hvitost, Norvegia, Jarlsberg, parmesan, mozzarella, feta/fetaost, brie, cheddar | kulturmelk/surmelk, Cultura, kvarg, prim, ghee, kondensert melk, melkepulver, mysost, mascarpone, ricotta, lettmelk, skummet melk, helmelk, ekstra lett melk, seterrømme, lettrømme, vaniljesaus, milkshake, smøreost, krem, pisket krem, blåmuggost/muggost, camembert, halloumi, gouda | ayran, lassi, labneh, kumys, tjukkmjølk, gomme, myse, råmelk, dulce de leche, clotted cream, smetana, quark, filmjölk, piimä, kjernemelk, rømmegrøt, burrata",
     ),
     sp("Nevn et land som begynner på I", "#IT, #IS, #IN | #IE, #IR, #IQ, #IL, #ID | | | @start:I"),
     sp(
@@ -39,7 +39,7 @@ export const dager9 = [
     ),
     sp(
       "Nevn en Harry Potter-bok eller -film",
-      "De vises stein/Harry Potter og de vises stein/The Philosopher's Stone, Fangen fra Azkaban/The Prisoner of Azkaban | Mysteriekammeret/The Chamber of Secrets, Ildbegeret/The Goblet of Fire, Dødstalismanene/The Deathly Hallows | Føniksordenen/The Order of the Phoenix, Halvblodsprinsen/The Half-Blood Prince | Fantastiske skapninger/Fantastic Beasts, Det forbannede barnet/The Cursed Child | Grindelwalds forbrytelser/The Crimes of Grindelwald, Humlesnurrs hemmeligheter/The Secrets of Dumbledore, Quidditch gjennom tidene/Quidditch Through the Ages",
+      "De vises stein/Harry Potter og de vises stein/The Philosopher's Stone/Harry Potter and the Philosopher's Stone/The Sorcerer's Stone/Harry Potter and the Sorcerer's Stone, Fangen fra Azkaban/Harry Potter og fangen fra Azkaban/The Prisoner of Azkaban/Harry Potter and the Prisoner of Azkaban | Mysteriekammeret/Harry Potter og mysteriekammeret/The Chamber of Secrets/Harry Potter and the Chamber of Secrets, Ildbegeret/Harry Potter og ildbegeret/The Goblet of Fire/Harry Potter and the Goblet of Fire, Dødstalismanene/Harry Potter og dødstalismanene/The Deathly Hallows/Harry Potter and the Deathly Hallows | Føniksordenen/Harry Potter og føniksordenen/The Order of the Phoenix/Harry Potter and the Order of the Phoenix, Halvblodsprinsen/Harry Potter og halvblodsprinsen/The Half-Blood Prince/Harry Potter and the Half-Blood Prince | Fantastiske skapninger/Fantastic Beasts/Fantastiske skapninger og hvor de er å finne, Det forbannede barnet/Harry Potter og barnet som ble forbannet/The Cursed Child/Harry Potter and the Cursed Child | Grindelwalds forbrytelser/The Crimes of Grindelwald, Humlesnurrs hemmeligheter/The Secrets of Dumbledore, Quidditch gjennom tidene/Quidditch Through the Ages, Skald Bards eventyr/The Tales of Beedle the Bard",
     ),
     sp(
       "Nevn et tall mellom 1 og 100 som er delelig med 7",

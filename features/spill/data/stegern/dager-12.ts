@@ -93,12 +93,12 @@ export const dager12 = [
     ),
     sp(
       "Nevn en norsk dagligvarekjede",
-      "Rema 1000/Rema, Kiwi, Coop Extra/Extra, Meny | Spar, Joker, Bunnpris, Coop Prix/Prix, Coop Mega/Mega, Coop Obs/Obs, Eurospar | Coop Marked, Nærbutikken, Matkroken, Oda, Kolonial, Europris, Holdbart, | Mix, Narvesen, 7-Eleven, Deli de Luca,, Ica, Rimi,| Fudi, Matbørsen, Centra, Prima, Joker Nærbutikk,,, Godt Levert, Adams Matkasse, Kolonihagen, Lidl, Smart Club, Gigaboks,,",
+      "Rema 1000/Rema, Kiwi, Coop Extra/Extra, Meny, Coop | Spar, Joker, Bunnpris, Coop Prix/Prix, Coop Mega/Mega, Coop Obs/Obs/Obs Hypermarked, Eurospar | Coop Marked, Nærbutikken, Matkroken, Oda, Kolonial, Europris, Holdbart, Gigaboks, Jacob's/Jacobs | Mix, Narvesen, 7-Eleven, Deli de Luca, ICA/Ica, Rimi, Lidl, Ultra, Meny Netthandel, Bunnpris Gourmet | Fudi, Matbørsen, Centra, Prima, Joker Nærbutikk, Godt Levert, Adams Matkasse, Kolonihagen, Smart Club, Maxi, ICA Maxi, ICA Nær, S-Marked, Samvirkelaget, Domus, Havaristen",
       { nei: "Ikea, Elkjøp, Clas Ohlson, XXL, Power, Jernia" },
     ),
     sp(
       "Nevn et kort i en vanlig kortstokk",
-      "ess, konge, dame/dronning, knekt, joker | hjerter ess, spar ess, kløver, spar, ruter, hjerter | spar dame, hjerter dame, ruter knekt, kløver konge, tieren/ti, nieren/ni, åtteren/åtte, sjueren/sju, seksern/seks, femmeren/fem, fireren/fire, treeren/tre, toeren/to | kløver ess, ruter ess, spar konge, hjerter konge, ruter konge, kløver dame, ruter dame, spar knekt, hjerter knekt, kløver knekt,| ",
+      "ess, konge, dame/dronning, knekt, joker | hjerter ess, spar ess, kløver, spar, ruter, hjerter | spar dame, hjerter dame, ruter knekt, kløver konge, tieren/ti/10, nieren/ni/9, åtteren/åtte/8, sjueren/sju/syv/7, sekseren/seksern/seks/6, femmeren/fem/5, fireren/fire/4, treeren/tre/3, toeren/to/2 | kløver ess, ruter ess, spar konge, hjerter konge, ruter konge, kløver dame, ruter dame, spar knekt, hjerter knekt, kløver knekt, hjerter ti/hjerter 10, spar ti/spar 10, ruter ti/ruter 10, kløver ti/kløver 10, spar to/spar 2, hjerter to/hjerter 2, kløver to/kløver 2, ruter to/ruter 2 | spar tre/spar 3, hjerter tre/hjerter 3, ruter tre/ruter 3, kløver tre/kløver 3, spar fire/spar 4, hjerter fire/hjerter 4, ruter fire/ruter 4, kløver fire/kløver 4, spar fem/spar 5, hjerter fem/hjerter 5, ruter fem/ruter 5, kløver fem/kløver 5, spar seks/spar 6, hjerter seks/hjerter 6, ruter seks/ruter 6, kløver seks/kløver 6, spar sju/spar 7, hjerter sju/hjerter 7, ruter sju/ruter 7, kløver sju/kløver 7, spar åtte/spar 8, hjerter åtte/hjerter 8, ruter åtte/ruter 8, kløver åtte/kløver 8, spar ni/spar 9, hjerter ni/hjerter 9, ruter ni/ruter 9, kløver ni/kløver 9",
       { nei: "kortstokk, kabal, poker" },
     ),
     sp(
@@ -123,7 +123,7 @@ export const dager12 = [
     ),
     sp(
       "Nevn et vitamin eller et mineral i kosten",
-      "C-vitamin/vitamin C, D-vitamin/vitamin D, jern, kalsium | A-vitamin/vitamin A, B12/B12-vitamin/vitamin B12, magnesium, sink, kalium, jod,, E-vitamin/vitamin E, K-vitamin/vitamin K | folat/folsyre/B9, B6/vitamin B6, selen, natrium/salt, fosfor, B1/tiamin, B2/riboflavin, B3/niacin, biotin/B7, fluor | kobber, mangan, krom, molybden, klorid, pantotensyre/B5, kolin, betakaroten, kobolt | vanadium, bor, nikkel, silisium",
+      "C-vitamin/vitamin C, D-vitamin/vitamin D, jern, kalsium, B-vitamin/vitamin B | A-vitamin/vitamin A, B12/B12-vitamin/vitamin B12, magnesium, sink, kalium, jod, E-vitamin/vitamin E, K-vitamin/vitamin K | folat/folsyre/B9/B9-vitamin, B6/B6-vitamin/vitamin B6, selen, natrium/salt, fosfor, B1/B1-vitamin/tiamin, B2/B2-vitamin/riboflavin, B3/B3-vitamin/niacin, biotin/B7/B7-vitamin, fluor | kobber, mangan, krom, molybden, klorid/klor, pantotensyre/B5/B5-vitamin, kolin, betakaroten, kobolt, svovel | vanadium, bor, nikkel, silisium, litium",
       { nei: "protein, fett, karbohydrater, fiber, sukker" },
     ),
     sp(
