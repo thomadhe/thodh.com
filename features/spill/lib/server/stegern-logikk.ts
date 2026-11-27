@@ -123,8 +123,8 @@ const TITLER = new Set([
 const VITAMIN = /^(?:[acdek]|b\d{0,2})$/
 
 /**
- * Words with Roman numerals, Arabic digits, Norwegian ordinals, "&"/"og"/"and" conjunctions and
- * "vitamin X"/"X-vitamin" order unified ("Olav den fjerde" → ["olav", "4"], "gin & tonic" = "gin og tonic").
+ * Words with Roman numerals, Arabic digits, Norwegian ordinals, "&"/"og"/"and" conjunctions, syv/sju, tyve/tjue
+ * and "vitamin X"/"X-vitamin" order unified ("Olav den fjerde" → ["olav", "4"], "gin & tonic" = "gin og tonic").
  */
 function ordKanon(s: string) {
   const pre = s
@@ -140,6 +140,14 @@ function ordKanon(s: string) {
     const w = ra[i]
     if (w === "and" && i > 0 && i + 1 < ra.length) {
       ut.push("og")
+      continue
+    }
+    if (w === "syv") {
+      ut.push("sju")
+      continue
+    }
+    if (w === "tyve") {
+      ut.push("tjue")
       continue
     }
     if (w === "den" && i > 0 && i + 1 < ra.length) {
@@ -222,6 +230,69 @@ export function toleranse(lengde: number) {
 const ENDELSER = ["ene", "ane", "er", "ar", "en", "et", "r", "s", "e"]
 const FLERTALL_ENDELSER = ["ene", "ane", "er", "ar", "r"]
 
+// Subject-anchored category nouns players naturally append/prepend (or swap) in Norwegian compounds:
+// e.g. "marinara saus" ↔ "marinara", "bearnaisesaus" ↔ "bearnaise", "teriyaki" ↔ "teriyakisaus",
+// "vaniljeis" ↔ "vanilje", "brieost" ↔ "brie", "pizza margherita" ↔ "margherita", "ragdollkatt" ↔ "ragdoll".
+type KatRegel = { re: RegExp; suff: string[]; pref?: string[]; fuge?: boolean; kort?: boolean }
+const KATEGORI_REGLER: KatRegel[] = [
+  { re: /^Nevn en (?:type |kjent )?saus\b/i, suff: ["saus", "sauce", "dressing"], pref: ["sauce"], fuge: true, kort: true },
+  { re: /^Nevn en (?:type |kjent )?ost\b/i, suff: ["ost", "cheese"], fuge: true, kort: true },
+  { re: /^Nevn en (?:type )?pizza\b/i, suff: ["pizza"], pref: ["pizza"], kort: true },
+  { re: /^Nevn en issmak\b/i, suff: ["iskrem", "sorbet", "is"] },
+  { re: /^Nevn en (?:type )?suppe\b/i, suff: ["suppe", "soup"], fuge: true },
+  { re: /^Nevn en (?:type )?salat\b/i, suff: ["salat", "salad"], fuge: true },
+  { re: /^Nevn en (?:type )?kake\b/i, suff: ["kake", "cake"], fuge: true },
+  { re: /^Nevn en småkake eller kjeks\b/i, suff: ["smakake", "cookies", "biscuit", "cookie", "kjeks"], kort: true },
+  { re: /^Nevn en (?:type )?(?:te|tesort)\b/i, suff: ["tea", "te"], kort: true },
+  { re: /^Nevn en (?:ølstil|type øl)\b/i, suff: ["beer", "ol"], kort: true },
+  { re: /^Nevn en (?:type )?vin\b/i, suff: ["wine", "vin"], kort: true },
+  { re: /^Nevn en druesort\b/i, suff: ["druer", "drue"], kort: true },
+  { re: /^Nevn en kattrase\b/i, suff: ["katt"] },
+  { re: /^Nevn en hunderase\b/i, suff: ["hund"] },
+  { re: /^Nevn en hesterase\b/i, suff: ["hest"], fuge: true },
+  { re: /^Nevn en haiart\b/i, suff: ["hai"] },
+  { re: /^Nevn en selart\b/i, suff: ["sel"] },
+  { re: /^Nevn en (?:rov|kråke)?fugl\b/i, suff: ["fugl"] },
+  { re: /^Nevn en fisk\b/i, suff: ["fisk"] },
+  { re: /^Nevn en sopp\b/i, suff: ["sopp"] },
+  { re: /^Nevn en (?:blomst|stueplante)\b/i, suff: ["blomst", "plante"] },
+  { re: /^Nevn et (?:type )?tre\b/i, suff: ["tre"], fuge: true },
+  { re: /^Nevn en nøtt\b/i, suff: ["notter", "nott"] },
+  { re: /^Nevn en (?:sitrus)?frukt\b/i, suff: ["frukt"] },
+  { re: /^Nevn et bær\b/i, suff: ["baer", "bar"] },
+  { re: /^Nevn en type brød\b|^Nevn et brød\b/i, suff: ["brod"] },
+  { re: /^Nevn en (?:type )?pasta/i, suff: ["pasta"] },
+  { re: /^Nevn en nudelrett\b/i, suff: ["noodles", "nudler", "nudel"] },
+  { re: /^Nevn en type grøt\b/i, suff: ["grot"], fuge: true },
+  { re: /^Nevn en pai eller terte\b/i, suff: ["terte", "pai"] },
+  { re: /^Nevn en type pannekake\b/i, suff: ["pannekaker", "pannekake"] },
+  { re: /^Nevn en (?:type )?brus\b/i, suff: ["soda", "brus"] },
+  { re: /^Nevn en (?:type )?sjokolade\b/i, suff: ["sjokolade"] },
+  { re: /^Nevn en (?:type )?kaffe/i, suff: ["coffee", "kaffe"] },
+  { re: /^Nevn et (?:type )?krydder\b/i, suff: ["krydder", "pulver"] },
+  { re: /^Nevn en (?:type )?dans\b/i, suff: ["dance", "dans"], fuge: true },
+  { re: /^Nevn en (?:type )?farge\b/i, suff: ["farge"] },
+  { re: /^Nevn et rom\b/i, suff: ["vaerelse", "varelse", "rom"], fuge: true },
+  { re: /^Nevn en musikksjanger\b/i, suff: ["musikk", "music"] },
+  { re: /^Nevn et språk\b/i, suff: ["sprak"] },
+  {
+    re: /^Nevn en (?:kjent )?(?:norsk |spansk |tysk |engelsk |italiensk |fransk )?fotballklubb\b/i,
+    suff: ["fotballklubb", "afc", "fc", "fk", "bk", "sk", "if", "il", "ik", "ac", "sc", "cf"],
+    pref: ["afc", "fc", "fk", "bk", "sk", "if", "il", "ik", "ac", "sc", "cf"],
+    kort: true,
+  },
+  { re: /^Nevn en stavkirke\b/i, suff: ["stavkirke", "kirke"], kort: true },
+  { re: /^Nevn et (?:norsk |kjent )?fjell\b|^Nevn en norsk fjelltopp\b/i, suff: ["fjellet", "fjell"], pref: ["mount", "mt"] },
+  { re: /^Nevn en vulkan\b/i, suff: ["vulkanen", "vulkan"], pref: ["mount", "mt"] },
+  { re: /^Nevn en (?:norsk |kjent )?fjord\b/i, suff: ["fjorden", "fjord"] },
+  { re: /^Nevn en (?:kjent )?(?:norsk )?foss\b/i, suff: ["fallene", "fossen", "falls", "foss"], kort: true },
+  { re: /^Nevn en (?:kjent )?(?:norsk )?(?:bro|bru)\b/i, suff: ["bridge", "broen", "brua", "bro", "bru"] },
+  { re: /^Nevn en (?:norsk |kjent )?elv\b/i, suff: ["elven", "elva", "elv"], pref: ["river"] },
+  { re: /^Nevn en (?:norsk |kjent )?innsjø\b/i, suff: ["innsjoen", "innsjo", "sjoen", "sjo"], pref: ["lake"] },
+  { re: /^Nevn en (?:norsk |gresk |kjent )?øy\b/i, suff: ["island", "oyen", "oya", "oy"] },
+  { re: /^Nevn et norsk skisted\b/i, suff: ["alpinsenter", "skianlegg", "skisenter"], kort: true },
+]
+
 type Alternativ = { vis: string; nokler: string[]; nivaa: Exclude<Nivaa, 0>; geo: boolean }
 export type Oppgave = {
   tekst: string
@@ -235,6 +306,10 @@ export type Oppgave = {
   loyseIndeks: Map<string, number>
   /** Phonetic keys (`${fonetisk(key)}|${tall}`), checked only when input is not in kjente(). */
   fonetiskIndeks: Map<string, number>
+  /** Optional category noun rule for suffix/prefix stripping & swapping ("bearnaisesaus" ↔ "bearnaise"). */
+  katRegel: KatRegel | null
+  /** Stems of stored answers after stripping the prompt's category noun ("teriyakisaus" → "teriyaki"). */
+  katStammer: Map<string, number>
   /** Keys of lowercase common nouns, the only answers that are inflected. */
   boyelige: Map<string, number>
   /** Singular stems of stored plural common nouns ("sokker" → "sokk", "bønner" → "bønne"). */
@@ -244,6 +319,8 @@ export type Oppgave = {
   kanonTall: Map<string, string>
   /** Whether the prompt is about people/characters/royalty, so a leading title ("Kong ", "Sir ", "Kaptein ") is optional. */
   harTittel: boolean
+  /** Whether the prompt restricts answers to a specific starting letter. */
+  forbokstav: boolean
   streng: boolean
   nei: Set<string>
 }
@@ -342,6 +419,7 @@ export function byggOppgave(s: StegernSporsmal): Oppgave {
   const tittelIndeks = new Map<string, number>()
   const loyseIndeks = new Map<string, number>()
   const fonetiskIndeks = new Map<string, number>()
+  const katStammer = new Map<string, number>()
   const boyelige = new Map<string, number>()
   const boyeligeStammer = new Map<string, number>()
   const tall = new Map<string, string>()
@@ -352,6 +430,7 @@ export function byggOppgave(s: StegernSporsmal): Oppgave {
     /\b(konge|dronning|kongefamilien|keiser|farao|person|figur|nordmann|skurk|helt|pirat|president|statsminister|vitenskapsperson|forfatter|komponist|skuespiller|artist|utøver|spiller|oppdagelsesreisende|nobelprisvinner|viking|bibelen|apostel|gud|gudinne|heks|trollmann|robot|bjørn|hund|katt)\b/i.test(
       s.tekst,
     )
+  const katRegel = streng ? null : (KATEGORI_REGLER.find((r) => r.re.test(s.tekst)) ?? null)
 
   const leggTilKanon = (kk: string, tVal: string, i: number) => {
     if (!kk || (forbokstav && !kk.startsWith(forbokstav)) || nei.has(kk) || kanonIndeks.has(kk)) return
@@ -375,6 +454,28 @@ export function byggOppgave(s: StegernSporsmal): Oppgave {
     if (!fonetiskIndeks.has(fk)) fonetiskIndeks.set(fk, i)
   }
 
+  const leggTilKatStamme = (k: string, i: number) => {
+    if (!katRegel) return
+    for (const w of katRegel.suff) {
+      if (k.endsWith(w) && k.length - w.length >= 4) {
+        const st = k.slice(0, -w.length)
+        if (!nei.has(st) && !katStammer.has(st)) katStammer.set(st, i)
+        if (katRegel.fuge && (st.endsWith("s") || st.endsWith("e")) && st.length >= 5) {
+          const st2 = st.slice(0, -1)
+          if (!nei.has(st2) && !katStammer.has(st2)) katStammer.set(st2, i)
+        }
+      }
+    }
+    if (!forbokstav && katRegel.pref) {
+      for (const w of katRegel.pref) {
+        if (k.startsWith(w) && k.length - w.length >= 4) {
+          const st = k.slice(w.length)
+          if (!nei.has(st) && !katStammer.has(st)) katStammer.set(st, i)
+        }
+      }
+    }
+  }
+
   alternativer.forEach((a, i) => {
     if (forbokstav && !normaliser(a.vis).startsWith(forbokstav)) a.vis = a.nokler.find((n) => normaliser(n).startsWith(forbokstav!)) ?? a.vis
     const nokler: string[] = []
@@ -386,6 +487,7 @@ export function byggOppgave(s: StegernSporsmal): Oppgave {
       if (!indeks.has(k)) {
         indeks.set(k, i)
         tall.set(k, tallIOrd(n))
+        leggTilKatStamme(k, i)
         if (!a.geo && /^[a-zæøå]/.test(n)) {
           boyelige.set(k, i)
           for (const e of FLERTALL_ENDELSER) {
@@ -422,7 +524,25 @@ export function byggOppgave(s: StegernSporsmal): Oppgave {
     }
     a.nokler = nokler
   })
-  return { tekst: s.tekst, alternativer, indeks, kanonIndeks, tittelIndeks, loyseIndeks, fonetiskIndeks, boyelige, boyeligeStammer, tall, kanonTall, harTittel, streng, nei }
+  return {
+    tekst: s.tekst,
+    alternativer,
+    indeks,
+    kanonIndeks,
+    tittelIndeks,
+    loyseIndeks,
+    fonetiskIndeks,
+    katRegel,
+    katStammer,
+    boyelige,
+    boyeligeStammer,
+    tall,
+    kanonTall,
+    harTittel,
+    forbokstav: Boolean(forbokstav),
+    streng,
+    nei,
+  }
 }
 
 /** Hand-written texts claimed by two different answers in one prompt, which would make matching ambiguous. */
@@ -463,10 +583,59 @@ function kjente() {
   return (kjenteOrd = ord)
 }
 
+/** Match an input that appends/prepends the prompt's category word ("bearnaisesaus" → "bearnaise", "pizza margherita" → "margherita"). */
+function finnKatTreff(o: Oppgave, sok: string, tVal: string, medFuzzy: boolean): number | undefined {
+  const regel = o.katRegel
+  if (!regel) return undefined
+  const sokStamme = (st: string): number | undefined => {
+    if (o.nei.has(st)) return undefined
+    const eksakt = o.indeks.get(st) ?? o.kanonIndeks.get(st) ?? o.katStammer.get(st)
+    if (eksakt !== undefined) return eksakt
+    if (!medFuzzy || st.length < 4) return undefined
+    if (st.length >= 5) {
+      const fon = o.fonetiskIndeks.get(`${fonetisk(st)}|${tVal}`)
+      if (fon !== undefined) return fon
+    }
+    let best: number | undefined
+    let bestD = Infinity
+    for (const [k, i] of o.indeks) {
+      if (k[0] !== st[0] || o.tall.get(k) !== tVal) continue
+      const tol = Math.min(1, toleranse(k.length))
+      if (tol === 0) continue
+      const d = avstand(st, k, tol)
+      if (d <= tol && (d < bestD || (d === bestD && best !== undefined && o.alternativer[i].nivaa < o.alternativer[best].nivaa))) {
+        best = i
+        bestD = d
+      }
+    }
+    return best
+  }
+  for (const w of regel.suff) {
+    if (sok.endsWith(w) && sok.length - w.length >= 3) {
+      const st = sok.slice(0, -w.length)
+      const treff = sokStamme(st)
+      if (treff !== undefined) return treff
+      if (regel.fuge && (st.endsWith("s") || st.endsWith("e")) && st.length >= 4) {
+        const treff2 = sokStamme(st.slice(0, -1))
+        if (treff2 !== undefined) return treff2
+      }
+    }
+  }
+  if (!o.forbokstav && regel.pref) {
+    for (const w of regel.pref) {
+      if (sok.startsWith(w) && sok.length - w.length >= 3) {
+        const treff = sokStamme(sok.slice(w.length))
+        if (treff !== undefined) return treff
+      }
+    }
+  }
+  return undefined
+}
+
 /**
  * Index of the answer a text matches, or null. Exact first, then canonical number/ordinal/conjunction/title/article
- * forms, then loose article & phonetic spelling & inflected common nouns, then small typos. A real word from
- * elsewhere in the bank ("Irak" when only Iran fits) is never loosely matched, inflected or read as a typo.
+ * and category-noun compound forms, then loose article, phonetic spelling, inflected common nouns and small typos.
+ * A real word from elsewhere in the bank ("Irak" when only Iran fits) is never loosely matched, inflected or read as a typo.
  */
 export function finnAlternativ(o: Oppgave, tekst: string): number | null {
   const t = normaliser(tekst)
@@ -510,12 +679,22 @@ export function finnAlternativ(o: Oppgave, tekst: string): number | null {
     }
   }
 
+  const tVal = tall ?? ""
+  const katEksakt = finnKatTreff(o, t, tVal, false) ?? (kt !== t ? finnKatTreff(o, kt, tVal, false) : undefined)
+  if (katEksakt !== undefined) return katEksakt
+
   if (kjente().has(t)) return null
+
+  if (o.katRegel?.kort && t.length >= 6) {
+    const fraKatStamme = o.katStammer.get(t) ?? (kt !== t ? o.katStammer.get(kt) : undefined)
+    if (fraKatStamme !== undefined) return fraKatStamme
+  }
+  const katFuzzy = finnKatTreff(o, t, tVal, true) ?? (kt !== t ? finnKatTreff(o, kt, tVal, true) : undefined)
+  if (katFuzzy !== undefined) return katFuzzy
 
   const loyse = o.loyseIndeks.get(kt) ?? (kt !== t ? o.loyseIndeks.get(t) : undefined)
   if (loyse !== undefined) return loyse
 
-  const tVal = tall ?? ""
   if (kt.length >= 5) {
     const fon = o.fonetiskIndeks.get(`${fonetisk(kt)}|${tVal}`)
     if (fon !== undefined) return fon
@@ -523,7 +702,19 @@ export function finnAlternativ(o: Oppgave, tekst: string): number | null {
 
   for (const e of ENDELSER) {
     if (!t.endsWith(e) || t.length - e.length < (e.length === 1 ? 5 : 4)) continue
-    const i = o.boyelige.get(t.slice(0, -e.length))
+    const st = t.slice(0, -e.length)
+    const i = o.boyelige.get(st)
+    if (i !== undefined) return i
+    // Doubled-consonant definite/plural stems ("soverommet" → "soverom", "kammen" → "kam").
+    if (e.length >= 2 && st.length >= 4 && st[st.length - 1] === st[st.length - 2] && /[bdfgklmnpt]$/.test(st)) {
+      const i2 = o.boyelige.get(st.slice(0, -1))
+      if (i2 !== undefined) return i2
+    }
+  }
+  // Feminine/neuter "-a" definite ending ("stua" → "stue", "hytta" → "hytte", "boka" → "bok").
+  if (t.endsWith("a") && t.length >= 4) {
+    const st = t.slice(0, -1)
+    const i = o.boyelige.get(st) ?? o.boyelige.get(st + "e")
     if (i !== undefined) return i
   }
   const fraFlertall = o.boyeligeStammer.get(t)

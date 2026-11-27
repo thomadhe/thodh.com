@@ -461,12 +461,106 @@ test("6/7-stegern: tall og romertall må stemme nøyaktig", () => {
   const tittelOppg = byggOppgave(sp("Nevn en kjent person", "Sir Isaac Newton | | | | "))
   assert.equal(tittelOppg.alternativer[finnAlternativ(tittelOppg, "Isaac Newton")!]?.vis, "Sir Isaac Newton")
   assert.equal(tittelOppg.alternativer[finnAlternativ(tittelOppg, "Dr. Isaac Newton")!]?.vis, "Sir Isaac Newton")
+
+  // Regression checks: Day 26 (sauces, cats, Astrid Lindgren, rooms) + systemic category suffix/prefix & definite forms.
+  const saus = byggOppgave(stegernDager[25].sporsmal[0])
+  for (const s of [
+    "marinara saus",
+    "marinarasaus",
+    "marinara",
+    "bearnaisesaus",
+    "bearnaise saus",
+    "bernaisesaus",
+    "hollandaise saus",
+    "teriyaki",
+    "hoisin",
+    "worcestershire",
+    "sweet chili saus",
+    "bechamelsaus",
+    "rødvinssaus",
+    "fløtesaus",
+  ]) {
+    assert.notEqual(finnAlternativ(saus, s), null, `saus: ${s}`)
+  }
+  for (const feil of ["tomat", "ost", "brun", "hvit"]) {
+    assert.equal(finnAlternativ(saus, feil), null, `saus skal avvise: ${feil}`)
+  }
+  const katt = byggOppgave(stegernDager[25].sporsmal[2])
+  for (const s of ["ragdollkatt", "bengalkatt", "maine coon katt", "tyrkisk angora", "tyrkisk van"]) {
+    assert.notEqual(finnAlternativ(katt, s), null, `katt: ${s}`)
+  }
+  const lindgren = byggOppgave(stegernDager[25].sporsmal[3])
+  for (const s of ["Negerkongen", "Sydhavskongen", "Kurrekurreduttkongen", "Kling", "Klang", "Marikken", "Bakkebybarna", "Lukas", "Frøken Prysselius"]) {
+    assert.notEqual(finnAlternativ(lindgren, s), null, `lindgren: ${s}`)
+  }
+  const rom = byggOppgave(stegernDager[25].sporsmal[4])
+  for (const s of ["bøttekott", "bøttekottet", "kott", "stua", "soverommet", "baderommet", "toalettrom", "garderoberom", "wc", "gjestetoalett", "loftstue", "teknisk rom", "lekerom"]) {
+    assert.notEqual(finnAlternativ(rom, s), null, `rom: ${s}`)
+  }
+  // Systemic category-compound checks across other days.
+  const issmak = byggOppgave(stegernDager[32].sporsmal[0])
+  for (const s of ["vaniljeis", "sjokoladeis", "pistasjis", "mangosorbet"]) {
+    assert.notEqual(finnAlternativ(issmak, s), null, `issmak: ${s}`)
+  }
+  const pizza = byggOppgave(stegernDager[47].sporsmal[0])
+  for (const s of ["pizza margherita", "margheritapizza", "hawaiipizza", "pepperonipizza"]) {
+    assert.notEqual(finnAlternativ(pizza, s), null, `pizza: ${s}`)
+  }
+  const friends = byggOppgave(stegernDager[32].sporsmal[3])
+  for (const s of ["Ross Geller", "Rachel Green", "Chandler Bing", "Joey Tribbiani", "Monica Geller", "Phoebe Buffay"]) {
+    assert.notEqual(finnAlternativ(friends, s), null, `friends: ${s}`)
+  }
+  const eventyr = byggOppgave(stegernDager[30].sporsmal[3])
+  for (const s of ["Sjuende far i huset", "Den syvende far i huset", "Veslefrikk med fela", "Hvorfor havet er salt"]) {
+    assert.notEqual(finnAlternativ(eventyr, s), null, `eventyr: ${s}`)
+  }
+  const hund = byggOppgave(stegernDager[31].sporsmal[3])
+  for (const s of ["Labbetuss", "Båtsmann", "Tassen", "Rantanplan"]) {
+    assert.notEqual(finnAlternativ(hund, s), null, `hund: ${s}`)
+  }
 })
 
 test("6/7-stegern: svar fra andre spørsmål i banken godtas ikke ved et uhell", () => {
-  // Reviewed exceptions as "day.question: key → accepted answer". Add one only after checking that the
-  // text really is a right answer to that question (then it should rather be listed there as an alias).
-  const godkjent = new Set<string>([])
+  // Reviewed exceptions as "day.question: key → accepted answer". Every entry below is a genuine valid
+  // category-compound form matched automatically by KATEGORI_REGLER (e.g. "vaniljeis" on ice cream flavors).
+  const godkjent = new Set<string>([
+    "11.1: pistasjnotter → pistasj",
+    "13.5: epletre → villeple",
+    "13.5: kirsebaertre → fuglekirsebær",
+    "15.3: przewalskishest → przewalskihest",
+    "16.1: redvelvetcake → red velvet",
+    "16.1: prinsessekake → prinsesskake",
+    "26.1: worcestersaus → worcestershiresaus",
+    "26.1: worcestershiresauce → worcestershiresaus",
+    "26.1: bechamelsaus → bechamel",
+    "26.1: burgerdressing → hamburgerdressing",
+    "26.1: ranchdressing → ranch",
+    "26.1: sweetchilisaus → sweet chili",
+    "26.1: rommedressing → rømmesaus",
+    "29.4: mounterebus → Erebus",
+    "29.4: sinaifjellet → Sinai",
+    "32.5: linedans → linedance",
+    "33.1: eplesorbet → eple",
+    "33.1: epleis → eple",
+    "33.1: sjokoladeis → sjokolade",
+    "33.1: vaniljeis → vanilje",
+    "34.1: sjokoladecookies → sjokoladekjeks",
+    "38.1: caesarsalad → cæsarsalat",
+    "38.1: cobbsalad → cobbsalat",
+    "38.1: capresesalat → caprese",
+    "38.1: waldorfsalad → waldorfsalat",
+    "45.5: startil → Start",
+    "48.1: pizzamargherita → margherita",
+    "48.1: pizzahawaii → Hawaii",
+    "48.1: hawaiipizza → Hawaii",
+    "48.1: deepdishpizza → deep dish",
+    "51.7: rolvsoy → Rolvsøya",
+    "56.5: brooklynbroen → Brooklyn Bridge",
+    "76.3: honefoss → Hønefossen",
+    "84.7: jordanelven → Jordan",
+    "106.3: lakselv → Lakselva",
+    "110.1: epleterte → eplepai",
+  ])
   const alle = stegernDager.flatMap((d, i) => [...d.sporsmal, d.finale].map((s, j) => ({ hvor: `${i + 1}.${j === 5 ? 7 : j + 1}`, o: byggOppgave(s) })))
   const nokler = new Set(alle.flatMap(({ o }) => [...o.indeks.keys(), ...o.nei]))
   const feil: string[] = []
